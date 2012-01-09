@@ -1,0 +1,100 @@
+\name{merge.list.mx.by.rows}
+\alias{merge.list.mx.by.rows}
+\title{Takes any number of 2D matrices, each with the same number of rows but with
+any set of named cols. Every row 1 of the matrices are combined into a new
+matrix, as are every row 2,3 etc.}
+\usage{
+  merge.list.mx.by.rows(...)
+
+  merge.list.mx.by.rows(...)
+}
+\description{
+  Takes any number of 2D matrices, each with the same
+  number of rows but with any set of named cols. Every row
+  1 of the matrices are combined into a new matrix, as are
+  every row 2,3 etc.
+
+  Takes any number of 2D matrices, each with the same
+  number of rows but with any set of named cols. Every row
+  1 of the matrices are combined into a new matrix, as are
+  every row 2,3 etc.
+}
+\examples{
+xlistm <- list(matrix(c(1,5,2,6,3,7,4,8),nrow=2,dimnames=list(c(),c("a","b","c","d"))),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c(),c("a","d","e"))),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c(),c("c","e","f"))))
+		xlistm
+		[[1]]
+		a b c d
+		[1,] 1 2 3 4
+		[2,] 5 6 7 8
+
+		[[2]]
+		a  d  e
+		[1,] 11 14 20
+		[2,] 15 18 21
+
+		[[3]]
+		c  e  f
+		[1,] 13 30 40
+		[2,] 17 31 41
+
+(matrices = 3, cols = x*, rows = 2)
+
+Cols in the matrices are joined on column name to produce a list of y matrices, with z cols, and a unique merged
+set of rows, eg: matrices = 2, cols = 3, rows = x*, eg:
+> merge.list.mx.by.rows(xlistm)
+[[1]]
+      a  b  c  d  e  f
+[1,]  1  2  3  4 NA NA
+[2,] 11 NA NA 14 20 NA
+[3,] NA NA 13 NA 30 40
+
+[[2]]
+      a  b  c  d  e  f
+[1,]  5  6  7  8 NA NA
+[2,] 15 NA NA 18 21 NA
+[3,] NA NA 17 NA 31 41
+
+Another example:
+xlistm <- runs.all.cfreq$gpmorb
+xlistm <- list(first=matrix(1:6, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))), second=matrix(11:16, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))))
+merge.list.mx.by.rows(xlistm)
+xlistm <- list(matrix(c(1,5,2,6,3,7,4,8),nrow=2,dimnames=list(c(),c("a","b","c","d"))),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c(),c("a","d","e"))),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c(),c("c","e","f"))))
+		xlistm
+		[[1]]
+		a b c d
+		[1,] 1 2 3 4
+		[2,] 5 6 7 8
+
+		[[2]]
+		a  d  e
+		[1,] 11 14 20
+		[2,] 15 18 21
+
+		[[3]]
+		c  e  f
+		[1,] 13 30 40
+		[2,] 17 31 41
+
+(matrices = 3, cols = x*, rows = 2)
+
+Cols in the matrices are joined on column name to produce a list of y matrices, with z cols, and a unique merged
+set of rows, eg: matrices = 2, cols = 3, rows = x*, eg:
+> merge.list.mx.by.rows(xlistm)
+[[1]]
+      a  b  c  d  e  f
+[1,]  1  2  3  4 NA NA
+[2,] 11 NA NA 14 20 NA
+[3,] NA NA 13 NA 30 40
+
+[[2]]
+      a  b  c  d  e  f
+[1,]  5  6  7  8 NA NA
+[2,] 15 NA NA 18 21 NA
+[3,] NA NA 17 NA 31 41
+
+Another example:
+xlistm <- runs.all.cfreq$gpmorb
+xlistm <- list(first=matrix(1:6, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))), second=matrix(11:16, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))))
+merge.list.mx.by.rows(xlistm)
+}
+

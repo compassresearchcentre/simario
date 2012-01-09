@@ -1,0 +1,21 @@
+Package: simar
+Type: Package
+Title: Dynamic micro-simulation framework for R
+Version: 1.0
+Date: 2012-01-09
+Author: Oliver Mannion <o.mannion@auckland.ac.nz>
+Maintainer: Oliver Mannion <o.mannion@auckland.ac.nz>
+Description: Framework for executing multi-run dynamic micro-simulation and
+    aggregating results across all runs
+License: What license is it under?
+Collate:
+    'CalcListMatrix.R'
+    'ChartUtil.R'
+    'ListUtil.r'
+    'MatrixUtil.R'
+    'Simenv.r'
+    'Simmodule.R'
+    'simulate.r'
+    'StringUtil.R'
+    'modifyProps.r'
+    'support.r'
