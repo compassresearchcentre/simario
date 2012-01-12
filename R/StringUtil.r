@@ -16,6 +16,19 @@ strip.alpha <- function(x) {
 	gsub("[^\\.0-9-]", "", x)
 }
 
+#' Remove any numbers from character vector, leaving only alpha.
+#' 
+#' @param x
+#'  character vector
+#' @examples 
+#' 
+#' x <- c("1 (%)", "-2 (%)", "2.102 (%)", "10 (%)")
+#' strip.numeric(x)
+strip.numeric <- function(x) {
+	# strip any characters that are . 0-9 or -
+	gsub("[\\.0-9-]", "", x)
+}
+
 #' Remove any alpha from row and col names, leaving only numbers.
 #' 
 #' @param mx

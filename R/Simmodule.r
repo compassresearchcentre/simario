@@ -7,7 +7,9 @@
 
 library(proto)
 
-Simmodule <- proto(expr = {
+Simmodule <- proto(
+. = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace
+expr = {
 	name <- NULL 
 	outcomes <- list()
 			
@@ -132,7 +134,7 @@ Simmodule <- proto(expr = {
 					structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
 				})
 		
-		.$runs$means <- lapply.subset.append.lol.args(outcomes_wtotals, .$runs$means, .FUN= wtdmeancols.lbl)
+		.$runs$means <- lapply.subset.append.lol.args(outcomes_wtotals, .$runs$means, .FUN= wtdmeancols)
 
 		.$runs$cfreqs <- lapply.subset.append (.$runs$cfreqs, outcomes_wtotals, simplify = FALSE, .FUN=table.grpby.mx.cols)
 		
@@ -156,26 +158,30 @@ Simmodule <- proto(expr = {
 	#' . <- env.base$modules$years1_5
 	#' . <- env.base$modules$years6_13
 	#' . <- env.scenario$modules$years1_5
-	#' 
-	#' calcFinalResults(.) 
-	calcFinalResults <- function(.) {
+	#' simenv <- env.base
+	#' simenv <- env.scenario
+	#' .$calcFinalResults(simenv) 
+	calcFinalResults <- function(., simenv) {
 		cat(gettextf("Generating final results for %s\n", .$name))
 		
 		.$results <- list()
 		
 		#.$results$freqs <- lapply(.$runs$freqs, mean.list.var.run.mx)
-		.$results$freqs <- lapply.inner(.$runs$freqs, finialise.lolmx)
+		.$results$freqs <- lapply.inner(.$runs$freqs, finialise.lolmx, dict = simenv$dict)
 		
 		#.$results$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
-		.$results$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, removeZeroCategory = FALSE)
-		.$results$histo <- lapply(.$runs$cfreqs, finialise.lolmx, asPercentages = F, removeZeroCategory = FALSE, CI = T)
+		.$results$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
+		.$results$histo <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
 		
 		.$results$means <- lapply.inner(.$runs$means, mean.array.z)
 		.$results$summaries <- lapply(.$runs$summaries, mean.array.z)
 		.$results$quantiles <- lapply(.$runs$quantiles, mean.array.z)
 		
-		# label first col
+		.$results$means  <- lapply.inner(.$results$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
+		
+		# label first col from list name
 		.$results$means <- lapply(.$results$means, function(x) labelCol1.list(x, "Mean"))
+		
 		
 		return()
 	}

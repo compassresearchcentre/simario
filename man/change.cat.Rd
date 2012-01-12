@@ -1,0 +1,28 @@
+\name{change.cat}
+\alias{change.cat}
+\title{Change values in a categorical vector to a lower or higher value}
+\usage{
+  change.cat(num, rank.col, i, new.all.dat, n.change)
+}
+\arguments{
+  \item{num}{the number of categories above you want to
+  steal from if you are giving and not stealing, you always
+  give to the category directly above and num=1}
+
+  \item{rank.col}{the colum in which the rankings will be}
+
+  \item{i}{the interation you are up to in the while/for
+  loop}
+
+  \item{new.all.dat}{the data you are working on and want
+  modeified}
+}
+\description{
+  Change values in a categorical vector to a lower or
+  higher value
+}
+\seealso{
+  This function is called by the function
+  \code{\link{modifyProps}}
+}
+

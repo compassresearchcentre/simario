@@ -3,24 +3,15 @@
 \title{Remove any alpha from row and col names, leaving only numbers.}
 \usage{
   strip.alpha.mx(mx)
-
-  strip.alpha.mx(mx)
 }
 \arguments{
-  \item{mx}{matrix}
-
   \item{mx}{matrix}
 }
 \description{
   Remove any alpha from row and col names, leaving only
   numbers.
-
-  Remove any alpha from row and col names, leaving only
-  numbers.
 }
 \examples{
-mx <- matrix(c(1:4), nrow=2, ncol=2, dimnames=list(c("0 (\%)", "1 (\%)"), c("0 (\%)", "1 (\%)")))
-strip.alpha.mx(mx)
 mx <- matrix(c(1:4), nrow=2, ncol=2, dimnames=list(c("0 (\%)", "1 (\%)"), c("0 (\%)", "1 (\%)")))
 strip.alpha.mx(mx)
 }

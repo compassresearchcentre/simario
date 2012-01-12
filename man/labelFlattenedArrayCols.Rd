@@ -2,7 +2,7 @@
 \alias{labelFlattenedArrayCols}
 \title{Label columns of a 3D array that has flattened codes for colnames.}
 \usage{
-  labelFlattenedArrayCols(xa,
+  labelFlattenedArrayCols(xa, dict,
     varname = attr(xa, "meta")["varname"],
     grpby.tag = attr(xa, "meta")["grpby.tag"],
     removeZeroCategory = T)

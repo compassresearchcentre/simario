@@ -652,13 +652,6 @@ nsort <- function (x, stripAlpha = TRUE, ...) {
 }
 
 
-orderByDictLookup <- function (...) {
-	# order the list by the results returned applying
-	# dictLookup to the list's elements
-	xlist <- c(...)
-	ordering <- sort.list(sapply(xlist, dictLookup))
-	xlist[ordering]
-}
 
 prependRowMeanInfo <- function (xm) {
 	#prepend mean, err, left & right CI to each row of matrix 
@@ -711,6 +704,18 @@ readXLSSheet1 <- function (filedir, filename) {
 	read.xlsx2(paste(filedir, filename, sep=""), sheetIndex = 1)
 } 
 
+#' Identify columns will all NAs, then remove
+#' 
+#' @param mx
+#'  matrix
+#' @examples
+#' mx <- matrix(c(1:4, NA, NA), nrow=2)
+#' remove.NA.cols(mx)
+remove.NA.cols <- function(mx) {
+	col.is.na <- colSums(is.na(mx)) == nrow(mx)
+	structure(mx[,!col.is.na], meta=attr(mx,"meta"))
+}
+
 removeObs <- function(xframe, indices) {
 	#remove observations (ie. rows) of 
 	#xframe specified by indices
@@ -722,6 +727,48 @@ removeObs <- function(xframe, indices) {
 	invlogi[indices] = FALSE
 	
 	xframe[invlogi, ]
+}
+
+#' Remove cols by name.
+#' 
+#' @param mx
+#'  matrix
+#' @param cnames
+#'  vector of colnames
+#' @examples
+#' 
+#' mx <- matrix(1:4, dimnames=list(NULL, c("A","NA (%)")), nrow = 2)
+#' mx <- matrix(1:4, dimnames=list(NULL, c("A","B")), nrow = 2)
+#' cnames <- "NA (%)"
+#' remove.cols(mx, cnames)
+remove.cols <- function(mx, cnames) {
+	matched <- match(cnames, colnames(mx))
+	if (is.na(matched)) {
+		mx
+	} else {
+		mx[,-matched, drop = FALSE]
+	}
+}
+
+#' Remove rows by name.
+#' 
+#' @param mx
+#'  matrix
+#' @param rnames
+#'  vector of rownames
+#' @examples
+#'
+#' mx <- matrix(1:4, dimnames=list(c("A","NA (%)"), NULL), nrow = 2)
+#' mx <- matrix(1:4, dimnames=list(c("A","B"), NULL), nrow = 2)
+#' rnames <- "NA (%)"
+#' remove.rows(mx, rnames)
+remove.rows <- function(mx, rnames) {
+	matched <- match(rnames, rownames(mx))
+	if (is.na(matched)) {
+		mx
+	} else {
+		mx[-matched,, drop = FALSE]
+	}
 }
 
 #' Remove all objects in global environment.

@@ -5,17 +5,8 @@ creating new column names from a combination of old rownames
 and colnames.}
 \usage{
   flatten.mx(mx, row.names.first = FALSE)
-
-  flatten.mx(mx, row.names.first = FALSE)
 }
 \arguments{
-  \item{row.names.first}{if TRUE, row.names will appear
-  first in the names of the resultant columns, eg: becomes
-  A1,B1,A2,B2 else row.names will appear last, eg: 1A, 1B,
-  2A, 2B}
-
-  \item{mx}{matrix}
-
   \item{row.names.first}{if TRUE, row.names will appear
   first in the names of the resultant columns, eg: becomes
   A1,B1,A2,B2 else row.names will appear last, eg: 1A, 1B,
@@ -25,41 +16,15 @@ and colnames.}
 }
 \value{
   a single row matrix (1,c)
-
-  a single row matrix (1,c)
 }
 \description{
-  A single row matrix, unlike a vector, has the advantage
-  that it can have a row name.
-
   A single row matrix, unlike a vector, has the advantage
   that it can have a row name.
 }
 \details{
   eg: A1, A2, B1, B2
-
-  eg: A1, A2, B1, B2
 }
 \examples{
-# 2 x 3 matrix
-mx <- matrix(c(1:6), nrow = 2, ncol = 3, dimnames=list(c("A", "B"), c("1", "2", "3")))
-
-# 1 columned matrix (2 x 1) with no col names
-mx <- matrix(c(10,20), nrow = 2, ncol = 1, dimnames=list(c("0", "1"), NULL))
-
-# 1 columned matrix (3 x 1) with no dim names
-mx <- matrix(c(1,2,3), nrow = 3, ncol = 1)
-
-# 1 columned matrix (2 x 1) with no col names and NA in row name
-mx <- matrix(c(10,20), nrow = 2, ncol = 1, dimnames=list(c("0", NA), NULL))
-
-# 1 columned matrix (1 x 1) with no col names and NA in row name
-mx <- matrix(c(10), nrow = 1, ncol = 1, dimnames=list(c(NA), NULL))
-
-# vector
-mx <- c("a"=1,"b"=2,"c"=3)
-
-flatten.mx(mx)
 # 2 x 3 matrix
 mx <- matrix(c(1:6), nrow = 2, ncol = 3, dimnames=list(c("A", "B"), c("1", "2", "3")))
 

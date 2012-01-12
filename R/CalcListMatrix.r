@@ -525,12 +525,22 @@ wtdtablecols.list <- function (xframe, varnames, wgtsname="weightBase") {
 #' wtdmeancols(mx,wgts, grpby)
 #' 
 #' mx <- matrix (c(1:10), ncol = 2)
-#' mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2)
-#' grpby <- c("A","A","A","B","B") ; grpby = NULL
+#' mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) ; logiset=NULL
+#' grpby <- c("A","A","A","B","B") ; grpby.tag = "AB" 
+#' grpby = NULL
 #' wgts = rep(1, nrow(mx))
 #' na.rm = T ; na.rm = F
-#' wtdmeancols(mx, na.rm = na.rm, grpby=grpby)
-wtdmeancols <- function (mx, logiset=NULL, wgts = rep(1, nrow(mx)), grpby=NULL, na.rm = F) {
+#' 
+#' mx <- env.base$modules$years1_5$outcomes$gptotvis ; logiset = childsets$males
+#' mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpby = NULL; grpby.tag = NULL
+#' 
+#' wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = F)
+wtdmeancols <- function (mx, logiset=NULL, wgts = NULL, grpby=NULL, grpby.tag = NULL, na.rm = F) {
+	
+	if (is.null(wgts)) wgts <- rep(1, nrow(mx))  #can't make this default param for some reason need to set here
+	
+	# save before subsetting mx 
+	varname <- attr(mx, "varname")
 	
 	# subset
 	if (!is.null(logiset)) mx <- subset(mx, logiset)
@@ -544,11 +554,9 @@ wtdmeancols <- function (mx, logiset=NULL, wgts = rep(1, nrow(mx)), grpby=NULL, 
 					sum(x[non.nas] * wgts[non.nas]) / sum(wgts[non.nas])
 				})
 		
-		t(t(result))
+		result <- t(t(result))
 		
 	} else {
-		
-		
 		result <- t(apply(mx, COL, function (x) {
 							#x <- mx[,1]
 							non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
@@ -559,8 +567,9 @@ wtdmeancols <- function (mx, logiset=NULL, wgts = rep(1, nrow(mx)), grpby=NULL, 
 							
 						}))
 		dimnames(result)[[COL]] <- sort(unique(grpby))	
-		result
 	}
+	
+	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 }
 
 #' Calculates the mean of each column (ie: wtdmeancols) of xlist[[varname]],
@@ -594,8 +603,11 @@ wtdmeancols <- function (mx, logiset=NULL, wgts = rep(1, nrow(mx)), grpby=NULL, 
 #' mx <- env.base$modules$years1_5$outcomes$gptotvis ; mx <- xframe$gptotvis
 #' logiset <- childsets$females
 #' wgts <- NULL; wgts <- children$weightBase ; wgts <- rep(1, nrow(mx))
+#' grpby = NULL; grpby.tag = NULL
 #' grpby <- children$r1stchildethn ;  grpby.tag <- "r1stchildethn"
 #' grpby <- children$z1gender ;  grpby.tag <- "z1gender"
+#' 
+#' mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpyby = NULL; grpby.tag = NULL
 #' 
 #' wtdmeancols.lbl(mx, logiset=logiset, grpby=grpby, grpby.tag=grpby.tag)
 #' wtdmeancols.lbl(mx, logiset, wgts, grpby, grpby.tag)

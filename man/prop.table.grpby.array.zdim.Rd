@@ -3,7 +3,7 @@
 \title{Calculate the proportions within groups that
 exist in the rows of the matrics in the ZDIM of xa}
 \usage{
-  prop.table.grpby.array.zdim(xa,
+  prop.table.grpby.array.zdim(xa, codings,
     grpby.tag = attr(xa, "meta")["grpby.tag"])
 }
 \arguments{

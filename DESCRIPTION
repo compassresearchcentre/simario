@@ -9,13 +9,14 @@ Description: Framework for executing multi-run dynamic micro-simulation and
     aggregating results across all runs
 License: What license is it under?
 Collate:
-    'CalcListMatrix.R'
-    'ChartUtil.R'
+    'CalcListMatrix.r'
+    'ChartUtil.r'
+    'Dictionary.r'
     'ListUtil.r'
-    'MatrixUtil.R'
-    'Simenv.r'
-    'Simmodule.R'
-    'simulate.r'
-    'StringUtil.R'
+    'MatrixUtil.r'
     'modifyProps.r'
+    'Simenv.r'
+    'Simmodule.r'
+    'simulate.r'
+    'StringUtil.r'
     'support.r'

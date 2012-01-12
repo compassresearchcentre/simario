@@ -7,7 +7,7 @@
  label columns
  and calculate mean across all matrices}
 \usage{
-  finialise.lolmx(lol.mx, asPercentages = T,
+  finialise.lolmx(lol.mx, dict, asPercentages = T,
     removeZeroCategory = T, CI = F)
 }
 \arguments{
@@ -19,6 +19,8 @@
 
   NB: matrices can have different dimensions and are
   aligned first within a list, and then between the lists.}
+
+  \item{dict}{Dictionary object instance}
 
   \item{asPercentages}{convert values to percentages of
   their grouping (if any)}

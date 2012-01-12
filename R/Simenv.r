@@ -5,11 +5,14 @@
 
 library(proto)
 
-Simenv <- proto(expr = {  
+Simenv <- proto(
+. = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
+expr = {  
 	numCases <- NULL
 	numRuns <- 0L
 	envName <- NULL
 	simframe <- NULL
+	dict <- NULL
 	base.tables <- list()
 
 	#' Categorical variable adjustments.
@@ -40,9 +43,10 @@ Simenv <- proto(expr = {
 	#' 
 	#' @examples
 	#' env <- Simenv$new(name = "Base", simframe=simframe.start)
-	new <- function (., name, simframe, catadjs=list(level.vars=list(), nonlevel.vars=list())) {
+	new <- function (., name, simframe, dict, catadjs=list(level.vars=list(), nonlevel.vars=list())) {
 		proto(.,
 				simframe=simframe,
+				dict=dict,
 				numCases=dim(simframe)[1],
 				numRuns <- 0L,
 				envName=name,
@@ -302,7 +306,7 @@ Simenv <- proto(expr = {
 		}
 		
 		# calc final results
-		invisible(lapply(.$modules, function(simmodule) simmodule$calcFinalResults()))
+		invisible(lapply(.$modules, function(simmodule) simmodule$calcFinalResults(simenv=.)))
 
 		pt.end <- proc.time()
 		

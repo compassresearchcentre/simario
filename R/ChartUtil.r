@@ -6,7 +6,7 @@
 
 
 #' Draw a 2-series (base & scenario) side-by-side bar graph with 
-#' error bars.
+#' error bars on the current device.
 #' 
 #' @param title
 #'  chart title. Also used in navigator node name.
@@ -71,10 +71,8 @@
 #' ylab="Freq"
 #'  
 #'    
-#' chart.2series.bar.err(title, title, xlab, ylab, result.row.base, result.row.scenario, scenario.name)
-chart.2series.bar.err <- function(title, group.title=xlab, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
-	
-	navigator.path <- paste(scenario.name, group.title, sep="/")
+#' chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name)
+chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
 	
 	# remove NAs
 	result.row.base <- na.omit(result.row.base)
@@ -91,7 +89,6 @@ chart.2series.bar.err <- function(title, group.title=xlab, xlab, ylab, result.ro
 				x[is.na(x)] <- 0; x
 			})
 	
-	if (exists("activateJavaGD")) activateJavaGD(title, navigator.path)
 	chart.bar.err(me$means, me$errs, 
 			xlab=xlab, 
 			ylab=ylab, main=title,
@@ -100,7 +97,7 @@ chart.2series.bar.err <- function(title, group.title=xlab, xlab, ylab, result.ro
 }
 
 #' Draw a side-by-side bar plot with error bars and a legend to the right
-#' of the plot.
+#' of the plot on the current device.
 #' 
 #' @param y
 #'  vector/matrix of y values. Each row of matrix is a separate series.
@@ -142,7 +139,7 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 }
 
 
-#' Draws an error bar.
+#' Draws an error bar on the current device.
 #' 
 #' @param x
 #'   vector/matrix of x locations to draw error bar, usually mid point of any bar (e.g. that returned from a barplot)

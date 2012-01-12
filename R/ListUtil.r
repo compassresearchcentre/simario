@@ -337,6 +337,9 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #' 
 #' lapply.subset.append (lol, X, simplify = FALSE, .FUN=wtdtablecols)
 #' 
+#' 
+#' lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset)
+#' 
 #' results.list <- runs$freqs$all; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
 #' lapply.subset.append (runs$freqs$all, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
 #' 	
@@ -378,6 +381,11 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' 
 #' @examples
 #' 
+#' X <- outcomes_wtotals
+#' lol <- .$runs$means
+#' lol.args <- attr(lol, "args.list")
+#' .FUN <- wtdmeancols
+#' 
 #' X <- env.base$years1_5$outcomes
 #' lol <- env.base$years1_5$runs$means
 #' lol.args <- attr(lol, "args.list")
@@ -389,14 +397,16 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' attr(lol, "args.list") <- lol.args
 #' .FUN <- wtdmeancols.lbl
 #'   
-#' lapply.subset.append.lol.args(X, lol, lol.args, .FUN)
+#' lapply.subset.append.lol.args(X, lol, lol.args, simplify=T, .FUN)
 lapply.subset.append.lol.args <- function(X, lol, lol.args = attr(lol, "args.list"), simplify=TRUE, .FUN) {
 	
 	result <- mapply(function(lol.x,lol.a) {
 				# lol.x <- lol[[1]] ; lol.a <- lol.args[[1]]
+				# lol.x <- lol[[2]] ; lol.a <- lol.args[[2]]
 				# lol.x <- lol[[6]] ; lol.a <- lol.args[[6]]
 				# lol.x <- lol[[10]] ; lol.a <- lol.args[[10]]
 				
+				# lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset) 
 				do.call(lapply.subset.append, 
 						args=c(list(
 										results.list=lol.x,

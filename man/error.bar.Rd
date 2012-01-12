@@ -3,28 +3,8 @@
 \title{Draws an error bar.}
 \usage{
   error.bar(x, y, upper, lower = upper, length = 0.1, ...)
-
-  error.bar(x, y, upper, lower = upper, length = 0.1, ...)
 }
 \arguments{
-  \item{x}{vector/matrix of x locations to draw error bar,
-  usually mid point of any bar (e.g. that returned from a
-  barplot)}
-
-  \item{y}{vector/matrix of y locations of middle of error
-  bar, usually the top of a data bar}
-
-  \item{upper}{vector/matrix of amounts above y to draw,
-  eg:}
-
-  \item{lower}{vector/matrix of amounts below y to draw,
-  defaults to upper.}
-
-  \item{length}{width of error bar whisker, defaults to
-  0.1}
-
-  \item{...}{any other parameters to arrows}
-
   \item{x}{vector/matrix of x locations to draw error bar,
   usually mid point of any bar (e.g. that returned from a
   barplot)}
@@ -45,20 +25,8 @@
 }
 \description{
   Draws an error bar.
-
-  Draws an error bar.
 }
 \examples{
-y <- rnorm(500, mean=1)
-y <- matrix(y,100,5)
-y.means <- apply(y,2,mean)
-y.sd <- apply(y,2,sd)
-barx <- barplot(y.means, names.arg=1:5,ylim=c(0,1.5), col="blue", axis.lty=1, xlab="Replicates", ylab="Value (arbitrary units)")
-error.bar(barx, y.means, 1.96*y.sd/10)
-
-error.bar(barx, y.means, y.err)
-x = barx; y = y.means
-upper = y.err; lower=upper
 y <- rnorm(500, mean=1)
 y <- matrix(y,100,5)
 y.means <- apply(y,2,mean)

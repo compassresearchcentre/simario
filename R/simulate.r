@@ -47,93 +47,9 @@ checkOutcomeVars <- function(outcomes, simframe) {
 	}
 }
 
-#' Return the category names for a vector of coded values.
-#' If no category names, returns the list as is.
-#' 
-#' @param x
-#'  coded values
-#' @param varname
-#'  name of the category of x, or NULL
-#' 
-#' @param
-#'  x, is there are no codings for varname, else a vector of category names
-#'  corresponding to the values in x
-#' 
-#' @examples
-#'  x <- c(0,1,0,1,0,1) ;  varname <- z1singleLvl1
-#'  x <- character(0) ; varname <- NULL 
-#'  codingsMatch(x, varname)
-codingsMatch <- function (x, varname) {
-	if (is.null(varname)) return(x)
-	
-	xcodings <- codings[[varname]]
-	if (is.null(xcodings)) return(x)
-	
-	# match x in catcodings
-	codings.indices <- match(x, xcodings)
-	names(xcodings)[codings.indices]
-	
-}
-
-#' Returns the category names for the vector of flattened codes.
-#'  
-#' @param varname
-#'  identifies the varname coding
-#' @param grpby.tag
-#'  identifies the grping coding, or NULL if no grouping coding.
-#' @param x.flat
-#'  a vector of flattened codes. A flattened code is in the form "0 1",
-#'  where the first value is a grping code and the second a varname code.
-#'  If grpby.tag is NULL or NA, then the flattened code will be in the form "0", 
-#'  i.e: no grping codes only varname codes.
-#' 
-#' @examples
-#'  x.flat = c("1 0", "1 1", "2 0", "2 1", "3 0", "3 1"); varname = "z1singleLvl1"; grpby.tag = "r1stchildethn" 
-#'  x.flat = c("0","1") ; varname = "z1singleLvl1"; grpby.tag = NULL
-#'  x.flat = c("0", "1", "3", "5") ; varname = "gptotvis" ; grpby.tag = NULL
-#'  x.flat = c("1 0", "2 1", "3 3", "1 0", "3 5") ; varname = "gptotvis" ; grpby.tag = "r1stchildethn"
-#'  codingMatchFlattened(x.flat, varname, grpby.tag)
-codingMatchFlattened <- function (x.flat, varname, grpby.tag) {
-	# add category and group by coding names, if any
-	grping.match <- regexpr(".*\\s", x.flat)
-	
-	if (is.null(grpby.tag) || is.na(grpby.tag)) {
-		#no grping codes, only varname codes
-		codingsMatch(x.flat, varname)	
-	} else {
-		
-		grping <- trim(regmatches(x.flat, grping.match))
-		grpingNames <- codingsMatch(grping, grpby.tag)
-		
-		cats.match <- regexpr("\\s.*", x.flat)
-		cats <- trim(regmatches(x.flat, cats.match))
-		catsNames <- codingsMatch(cats, varname)
-		
-		paste(grpingNames, catsNames)
-	}
-	
-}
 
 
-#' Returns the names of the codings for the supplied variables.
-#' NB: Requires codings variable to have been set in global environment.
-#' 
-#' @param vars
-#'  vector of variable names
-#' 
-#' @return 
-#'  list of coding names for the variables supplied
-#' 
-#' @examples
-#' 
-#' vars <- c("msmoke", "fsmoke") 
-#' vars <- names(runs.mean.freq)
-#' 
-#' codingsNamesLookup(vars)
-codingsNamesLookup <- function(vars) {
-	cn <- codings[vars]
-	lapply(cn, names)
-}
+
 
 #' Create a generalized linear model
 #' from a model dataframe that contains the model variables
@@ -341,76 +257,6 @@ createOutputMatrix <- function (simvarname, rows, cols) {
 	structure(namedMatrix(rows, cols), varname = simvarname)
 }
 
-#' Lookup description of variable x in the dictionary
-#' first determines the name of variable x, then does the lookup
-#' 
-#' @examples
-#' x <- env.base$years1_5$results$freqs$all$z1msmokeLvl1
-#' x <- env.base$years1_5$results$freqs$all.by.ethnicity$z1msmokeLvl1
-#' dictLookup(x)
-#' dictLookup("burt")
-#' dictLookup(c(1,2))
-#' dictLookup(freqSingle)
-#' dictLookup("single")
-#' dictLookup("don't exist")
-#' dictLookup(runs.mean.freq$base$o.chres)
-dictLookup <- function(x) {
-	
-	name <- c()
-	grouping <- c()
-	set <- c()
-	weighting <- c()
-	meta <- attr(x, "meta")
-	
-	#get the variable name
-	if (!is.null(meta)) {
-		#use the meta attribute
-		name <- meta["varname"]
-		if (!is.na(meta["grouping"])) grouping <- paste(" by ", meta["grouping"], sep="")
-		if (!is.na(meta["grpby.tag"])) grouping <- paste(" by ", dictLookup(meta["grpby.tag"]), sep="")
-		if (!is.na(meta["set"])) set <- paste(" (", meta["set"], ")", sep="")
-		if (!is.na(meta["weighting"])) weighting <- meta["weighting"]
-		
-	} 
-	
-	# if no meta, or no name from meta
-	if (is.null(name) || is.na(name)) {
-		
-		if (class(x) %in% c("matrix", "array", "table") && !is.null(names(dimnames(x)))) {
-			#get name from names of dimensions
-			namesdim <- names(dimnames(x))
-			namesdim <- stripEmpty(namesdim) #remove NAs and empty strings
-			
-			# get last dim for name
-			name <- namesdim[length(namesdim)]
-			
-		} else if (class(x) == "character") {
-			#get name from first position of char vector
-			name <- x[1]
-			
-		} else {
-			#fail
-			firstParamName <- as.character(sys.call())[2]
-			stop(gettextf("cannot determine varname from %s: no meta or names", firstParamName))
-		}
-	}
-	
-	#lookup name in dictionary
-	if (!name %in% names(dict)) {
-		stop(gettextf("'%s' does not exist in the data dictionary", name))
-	}
-	
-	desc <- dict[[name]]
-	
-	if (is.null(desc)) {
-		stop(gettextf("variable named '%s' does not exist in data dictionary", name))
-		name <- dname
-	}
-	
-	#add grouping, weighting, and set descriptions (if any)
-	weightdesc <- ifelse(weighting == "weightBase", "", " scenario")
-	paste(desc, grouping, weightdesc, set, sep="")
-}
 
 
 #' Prepare run results for display by:
@@ -432,6 +278,8 @@ dictLookup <- function(x) {
 #' 
 #'  NB: matrices can have different dimensions and are aligned first within a list, and then between the lists.
 #'  @seealso align.by.name.list.mx
+#' @param dict
+#'  Dictionary object instance
 #' @param asPercentages
 #'  convert values to percentages of their grouping (if any)
 #' @param removeZeroCategory 
@@ -457,17 +305,17 @@ dictLookup <- function(x) {
 #' removeZeroCategory = F
 #' finialise.lolmx(lol.mx)
 #' finialise.lolmx(lol.mx, asPercentages, removeZeroCategory, CI)
-finialise.lolmx <- function(lol.mx, asPercentages = T, removeZeroCategory = T, CI = F) {
+finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T, CI = F) {
 	# flatten into 3D array
 	lol.mx.array <- flatten.lolmx(lol.mx)
 	
 	# get percentages
 	if (asPercentages) {
-		lol.mx.array <- prop.table.grpby.array.zdim(lol.mx.array) * 100
+		lol.mx.array <- prop.table.grpby.array.zdim(lol.mx.array, dict$codings) * 100
 	}
 	
 	# label cols, remove 0
-	lol.mx.array.lbl <- labelFlattenedArrayCols(lol.mx.array, removeZeroCategory = removeZeroCategory)
+	lol.mx.array.lbl <- labelFlattenedArrayCols(lol.mx.array, dict, removeZeroCategory = removeZeroCategory)
 	
 	# add (%) to column names
 	if (asPercentages) {
@@ -526,7 +374,11 @@ getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_se
 #' Label columns of a 3D array that has flattened codes for colnames.
 #' 
 #' @param xa
-#'  3D array with flattened codes for colnames
+#'  3D array with flattened codes for colnames.
+#'  A flattened code is in the form "0 1",
+#'  where the first value is a grping code and the second a varname code.
+#'  If grpby.tag is NULL or NA, then the flattened code will be in the form "0", 
+#'  i.e: no grping codes only varname codes.
 #' @param varname
 #'  category variable name of this 3D array
 #' @param grpby.tag
@@ -544,11 +396,15 @@ getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_se
 #' lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
 #' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
 #' xa <- flatten.lolmx(lol.mx) 
-#' 
+#' dict <- dict.MELC
 #' removeZeroCategory = F
-#' labelFlattenedArrayCols(xa, removeZeroCategory=removeZeroCategory)
-labelFlattenedArrayCols <- function(xa, varname=attr(xa, "meta")["varname"], 
-		grpby.tag=attr(xa, "meta")["grpby.tag"], removeZeroCategory = T) { 
+#' 
+#' xa <- r$all.by.gender$householdsize
+#' 
+#' labelFlattenedArrayCols(xa, dict=dict, removeZeroCategory=removeZeroCategory)
+labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"], 
+		grpby.tag=attr(xa, "meta")["grpby.tag"], removeZeroCategory = T) {
+	
 	# identify 0 category columns
 	cnames <- colnames(xa)
 	if (is.null(grpby.tag) || is.na(grpby.tag)) {
@@ -557,7 +413,7 @@ labelFlattenedArrayCols <- function(xa, varname=attr(xa, "meta")["varname"],
 		zerocols <- grep("\\s0", cnames)
 	}
 	
-	colnames(xa) <- codingMatchFlattened(cnames, varname, grpby.tag)
+	colnames(xa) <- dict$cmatchFlattened(cnames, varname, grpby.tag)
 	
 	# remove 0 category, if requested
 	if (removeZeroCategory && length(zerocols)) {
@@ -567,76 +423,54 @@ labelFlattenedArrayCols <- function(xa, varname=attr(xa, "meta")["varname"],
 	}
 }
 
+#' Label columns of a 3D array with the codings of the specified varname.
+#' 
+#' @param x
+#'  vector/array with a column for each category, ordered
+#' @param varname
+#'  categorical variable name. The codings for this variable are applied
+#'  as column names.
+#' @return
+#'  x with column names that use the codings of varname, and a column label 
+#'  that is the decsription of varname.
+#' 
+#' @examples
+#' x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
+#' x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
+#' 
+#' x <- env.base$modules$years1_5$results$means$all.by.gender$kids
+#' x <- env.scenario$modules$years1_5$results$means$all.by.gender$kids
+#' x <- env.base$modules$years1_5$results$means$all$kids
+#' x <- env.base$modules$years1_5$results$means$all.by.gender$gptotvis
+#' varname=attr(x, "meta")["grpby.tag"]
+#' dict <- dict.MELC
+#' labelColumnCodes(x, dict, varname)
+labelColumnCodes <- function(x, dict, varname) {
+
+	if (is.null(varname) || is.na(varname)) {
+		return(x)
+	}
+	
+	# match codings into colnames stripped of alpha
+	cnames <- dimnames(x)[[COL]]
+	cnames_numeric <- strip.alpha(cnames)
+	cnames_alpha <- strip.numeric(cnames)
+	catcodings <- dict$codings[[varname]]
+	
+	codings_indices <- match(cnames_numeric, catcodings)
+	cnames_numeric_desc <- names(catcodings)[codings_indices]
+	
+	# combine desc with existing alpha, NB: assume alpha is at the end
+	dimnames(x)[[COL]] <- paste(cnames_numeric_desc, cnames_alpha, sep = "")	
+	
+	# add varname desc
+	desc <- dict$vardesc[[varname]]
+	names(dimnames(x))[[COL]] <- desc
+	
+	x
+}
+
 library(xlsx)
-
-#' Load codings xls file and return named list of codings.
-#' 
-#' @param filedir
-#'  file directory, ending with "/", eg: "d:/workspace/"
-#' @param filename
-#'  file name, eg: "myfile.xls". 
-#' The codings file must contain 2 columns:
-#'  Varname = the name of the categorical variable
-#'  Codings_Expr = an expression which generates the codings, eg:
-#'  				c("Other"=1, "Pacific"=2, "Maori"=3)
-#'  			   NB: Codings must be specified in numeric order
-#' 
-#' @examples
-#' filedir = "D:/workspace.sim/MELC/CHDS/base/"
-#' filename = "CHDS data dictionary.xlsx"
-#' 
-#' codings <- loadCodingsXLS(filedir, filename)
-loadCodingsXLS <- function (filedir, filename) {
-	codings.df <- readXLSSheet1(filedir, filename)
-	
-	#remove empty variables, 
-	#these are blank lines at the end of the file or
-	#variables without any coding expr
-	codings.df  <- subset(codings.df, !(Varname==""))
-	codings.df  <- subset(codings.df, !(Codings_Expr==""))
-	
-	#evaluate "Codings_Expr" column in global environment
-	codings <- eval.list(codings.df$Codings_Expr)
-	
-	names(codings) <- codings.df$Varname
-	
-	#add "varname" attribute for use with wtdmeancols.lbl function
-	codings <- mapply(function(coding, name) {
-			structure(coding, varname=name)
-			}, codings, names(codings))
-
-	codings
-}
-
-#' Load dictionary xls file and return dictionary vector.
-#'
-#' @param filedir
-#'  file directory, ending with "/", eg: "d:/workspace/"
-#' @param filename
-#'  file name, eg: "myfile.xls". Must contain a column called
-#'  "Description" and a column called "Varname".
-#' 
-#' @return 
-#'  a vector with values = Description column and names = Varname column
-#'  of xls file.
-#' 
-#' @examples
-#' filedir = "D:/workspace.sim/MELC/CHDS/base/"
-#' filename = "CHDS data dictionary.xlsx"
-#' 
-#' loadDictionaryXLS(filedir, filename)
-loadDictionaryXLS <- function (filedir, filename) {
-	dict_frame <- readXLSSheet1(filedir, filename)
-	
-	#remove empty variables, generally these are blank lines
-	#at the end of the file
-	dict_frame <- subset(dict_frame, !(Varname==""))
-	
-	dict <- dict_frame$Description
-	names(dict) <- dict_frame$Varname
-	
-	dict
-}
 
 #' Load and create a GLM from the first sheet in an xlsx file.
 #'
@@ -1328,7 +1162,7 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' 
 #' xa <- lol.mx.array
 #' prop.table.grpby.array.zdim(xa)
-prop.table.grpby.array.zdim <- function (xa, grpby.tag=attr(xa, "meta")["grpby.tag"]) {
+prop.table.grpby.array.zdim <- function (xa, codings, grpby.tag=attr(xa, "meta")["grpby.tag"]) {
 	  
 	# if no groupings, then across the whole row
 	numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(codings[[grpby.tag]]) 
@@ -1448,7 +1282,7 @@ save.env <- function(env=env.scenario, file="env.rdata") {
 #' setScenarioSimenv(SimenvMELC$new())
 setScenarioSimenv <- function(simenv) {
 	if (!exists("envs")) {
-		envs <<- list()
+		envs <<- list()		# create in .GlobalEnv
 		if (existsFunction("ascapeKeepObject")) ascapeKeepObject("envs")
 	}
 	
@@ -1457,8 +1291,11 @@ setScenarioSimenv <- function(simenv) {
 	}
 	
 	env.scenario <<- simenv
-	envs[[simenv$envName]] <<- env.scenario
+	envs[[simenv$envName]] <<- simenv
 }
+#load_all will set the environment to this package ONLY, so won't find
+#envs. so we need to manually set the environment to the global env.
+environment(setScenarioSimenv) <- .GlobalEnv
 
 #' Produce a proportioned table for x, using
 #' the specified coding as names and 
