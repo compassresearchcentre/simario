@@ -4,9 +4,14 @@
 \usage{
   updatelist(dest, src)
 }
+\arguments{
+  \item{dest}{dest list}
+
+  \item{src}{src list}
+}
 \description{
   Use this to update a dest list when the ordering of src
-  is different from dest and you wish to preserve the dest
+  is different from dest and you wwsh to preserve the dest
   list ordering.
 }
 

@@ -8,6 +8,10 @@
 
 #' Checks that the variables used in all of the models
 #' exist in simvalues, if not generate stop
+#' @param models
+#'  a list of glm objects
+#' @param simframe
+#'  the simframe
 #' 
 #' @examples
 #' simframe <- simframe.start
@@ -59,6 +63,8 @@ checkOutcomeVars <- function(outcomes, simframe) {
 #' NB: the variable "_sd" will not be added to the model formula
 #'     but will be added as the model component m.glm$sd 
 #' 
+#' @param modeldf
+#'  model dataframe containing the rows:
 #' "Variable" = variable name. can be an expression like MAGE*MAGE
 #' "ClassVal0" = variable level. If present is appended to the variable name, eg: MAGELvl1
 #' "Estimate" = variable coeffient
@@ -127,7 +133,7 @@ createGLM <- function (modeldf) {
 #' The variables to create are those from the outcome set specified by "outcomeSetName". 
 #' 
 #' @param simframe simulation frame
-#' @param outcomesetName name of the outcomeset to create variables for
+#' @param outcomeSetName name of the outcomeset to create variables for
 #' @param iterations either a vector of names for each iteration,
 #'  eg: ("Year 5", "Year 6" ...) or a scalar specifying the number 
 #'  of iterations.
@@ -237,25 +243,6 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 }
 
 
-#' Create a matrix of NA with specified col/row names/lengths.
-#' 
-#' @param cols columns names, or a numeric scalar for the number of cols
-#' @param rows row names, or a numeric scalar for the number of rows
-#' @param simvarname 
-#' 		simframe source var. stored in the "simvar" attribute.
-#'      of the matrix. This is the name of the variable in the
-#' 		simframe that will be used to fill this matrix during simulation
-#' @return
-#' a matrix with the "varname" attribute set to simvarname
-#' 
-#' @examples 
-#' rows <- length(children$z1msmoke1)
-#' cols <- 5
-#' simvarname <- "z1msmokeLvl1"
-#' createOutputMatrix(simvarname, nrows, ncols)
-createOutputMatrix <- function (simvarname, rows, cols) {
-	structure(namedMatrix(rows, cols), varname = simvarname)
-}
 
 
 
@@ -311,7 +298,11 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 	
 	# get percentages
 	if (asPercentages) {
-		lol.mx.array <- prop.table.grpby.array.zdim(lol.mx.array, dict$codings) * 100
+		#calculating numgrps. If no groupings, then across the whole row
+		grpby.tag = attr(lol.mx.array, "meta")["grpby.tag"]
+		numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(dict$codings[[grpby.tag]]) 
+		
+		lol.mx.array <- prop.table.grpby.array.zdim(lol.mx.array, numgrps) * 100
 	}
 	
 	# label cols, remove 0
@@ -361,9 +352,9 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_set=NULL, sorted=FALSE) {
 	
 	df.outcome.vars <- attr(simframe, "df.outcome.vars")
-	select_expr <- 
-			outcomeSet <- subset(df.outcome.vars, (is.null(select_outcome_set) | outcome_set %in% select_outcome_set)
-							& (is.null(select_outcome_type) | outcome_type %in% select_outcome_type ))
+	outcomeSet <- df.outcome.vars[with(df.outcome.vars, 
+					(is.null(select_outcome_set) | outcome_set %in% select_outcome_set)
+							& (is.null(select_outcome_type) | outcome_type %in% select_outcome_type )),]
 	
 	setVars <- outcomeSet$simvarname
 	names(setVars) <- outcomeSet$simvarname
@@ -379,6 +370,8 @@ getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_se
 #'  where the first value is a grping code and the second a varname code.
 #'  If grpby.tag is NULL or NA, then the flattened code will be in the form "0", 
 #'  i.e: no grping codes only varname codes.
+#' @param dict
+#'  a Dictionary proto object
 #' @param varname
 #'  category variable name of this 3D array
 #' @param grpby.tag
@@ -427,6 +420,8 @@ labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"
 #' 
 #' @param x
 #'  vector/array with a column for each category, ordered
+#' @param dict
+#'  a Dictionary proto object
 #' @param varname
 #'  categorical variable name. The codings for this variable are applied
 #'  as column names.
@@ -586,7 +581,7 @@ loadSimFrame <- function (bf, sfdef) {
 	
 	#remove empty variables, generally these are blank lines
 	#at the end of the file
-	sfdef <- subset(sfdef, !(simvarname==""))
+	sfdef <- sfdef[!sfdef$simvarname=="", ]
 	
 	#check for duplicated simvarnames
 	dups <- which(duplicated(sfdef$simvarname))
@@ -634,7 +629,7 @@ loadSimFrame <- function (bf, sfdef) {
 	}
 	
 	#data frame of outcome var mappings, types and set
-	df.outcome.vars <- subset(sfdef, outcome_set != "", c("simvarname", "outcome_type", "outcome_set"))
+	df.outcome.vars <- with(sfdef, sfdef[outcome_set != "", c("simvarname", "outcome_type", "outcome_set")])
 	
 	#return
 	structure(sfvalues.df, previous=sfprevious,
@@ -642,224 +637,7 @@ loadSimFrame <- function (bf, sfdef) {
 			na.actions=nas)
 }
 
-#' Get the column (category) values (or as a percentage) of the mean of all runs in list.var.run.mx
-#' combining all year matrices into a single matrix.
-#' 
-#' For each list in list.var.run.mx:
-#' *take the mean, combining multiple lists of matrices into a single list of matrices.
-#' *flatten each matrix into a single row, calculating proportions and removing 0 category if requested
-#' *combine the rows (ie. iterations) into a single matrix
-#'  
-#' @param list.var.run.mx
-#'  a list of variable elements, containing run elements, containing year matrices.
-#'  Year matrices are frequency tables, columns are the grouped by elements
-#'  and rows the categories
-#' 
-#'  eg:
-#' 
-#'  > str(list.var.run.mx)
-#'  List of 13
-#'  $ msmoke       :List of 2
-#'  ..$ :List of 5
-#'  .. ..$ 1: 'table' int [1:2, 1:3] 646 284 23 12 52 58
-#'
-#' @param removeZeroCategory
-#'  if TRUE, remove all category (column) that is named "0"
-#' @param asPercentages
-#'  if TRUE, return the values as a column percentage 
-#' 
-#' @return
-#'  a list of matrices containing the calculated proportion of the 
-#'  mean of all runs
-#' 
-#' @examples
-#' . <- env.base$modules$years1_5 ; . <- env.scenario$modules$years1_5
-#' list.var.run.mx <- .$runs$cfreqs ;  removeZeroCategory = F; asPercentages = F
-#' list.var.run.mx <- env.base$modules$years1_5$runs$cfreqs ;  removeZeroCategory = F
-#' list.var.run.mx <- env.base$modules$years1_5$runs$freqs$all
-#' list.var.run.mx <- .$runs$freqs$all.by.ethnicity
-#' 
-#' removeZeroCategory = TRUE ; removeZeroCategory = F 
-#' list.var.run.mx.mean.flat.combined <- mean.list.var.run.mx ( list.var.run.mx )
-#' list.var.run.mx.mean.flat.combined <- mean.list.var.run.mx ( list.var.run.mx , removeZeroCategory)
-mean.list.var.run.mx <- function (list.var.run.mx, removeZeroCategory = T, asPercentages = T) {
 
-	if(length(list.var.run.mx) == 0) {
-		return(list.var.run.mx)
-	}
-	
-	# get mean across all years' matrices. combines multiple lists of matrices into a single list.
-	# to do this, aligns each inner combination first
-	# lapply.inner.combination (list.var.run.mx[[1]], .FUN=mean.list.mx)
-	# lapply.inner.combination (list.var.run.mx$typeofchange, .FUN=mean.list.mx)
-	list.var.run.mx.mean <- lapply(list.var.run.mx, lapply.inner.combination, .FUN=mean.list.mx)
-
-	# add varname attribute from list element name. used by next step
-	varnames <- names(list.var.run.mx)
-	if(is.null(varnames)) varnames <- ""
-	list.var.run.mx.mean2 <- mapply(function(x, varname) {
-				lapply(x, `attr<-`, "varname.tag", varname)
-			}, list.var.run.mx.mean, varnames, SIMPLIFY = FALSE)
-	
-	# flatten each matrix into a single row, calculating proportions and removing 0 category if requested,
-	# and adding group by and category codings if any
-	list.var.run.mx.mean.flat <- lapply.inner(list.var.run.mx.mean2, function(mx)  {
-		#mx <- list.var.run.mx.mean2[[1]][[1]]
-		#mx <- list.var.run.mx.mean2[[1]][[2]]
-		#mx <- list.var.run.mx.mean2[[3]][[1]]
-		#mx <- list.var.run.mx.mean2[[14]][[1]]
-		#mx <- list.var.run.mx.mean2[[14]][[2]]				
-		#mx <- list.var.run.mx.mean2[[14]][[3]]
-		
-		# get COL proportions, i.e: proportions by each group by (if any)
-		if (asPercentages) {
-			mx <- prop.table(mx, COL) * 100
-		}
-		
-		# add group by codings, if any
-		grpby.tag <- attr(mx, "meta")["grpby.tag"]
-		if(!is.null(grpby.tag)) {
-			colnames(mx) <- names(codings[[grpby.tag]])
-		}
-		
-		# identify 0 category
-		zero.cat.row <- which(rownames(mx) %in% "0")
-		
-		# add category codings, if any
-		varname <- attr(mx, "varname.tag")
-		catcodings <-  codings[[varname]]
-		if (!is.null(catcodings)) {
-			#rownames(mx) <- names(catcodings)
-			
-			# match row names into codings
-			codings.indices <- match(rownames(mx), catcodings)
-			rownames(mx) <- names(catcodings)[codings.indices]
-		}
-		
-		# remove 0 category
-		if (removeZeroCategory && length(zero.cat.row) > 0) {
-			# drop = FALSE so we don't coerce down to vector
-			# and lose the rowname if only a single row left
-			mx <- mx[-zero.cat.row,,drop = FALSE]
-		}
-		
-		# flatten into single row matrix
-		mx.flat <- flatten.mx(mx)
-		
-		# NB: we add percentages to column names in the last stage below,
-		# AFTER we have done the aligning
-		
-		# add meta for identification during display
-		structure(mx.flat, meta=c(varname=varname, grpby.tag))
-	})
-	
-	# align each matrix, and then collapse into a single matrix with rows = years and z = cols
-	list.var.run.mx.mean.flat.array <- lapply(list.var.run.mx.mean.flat, function(x) {
-				#x <- list.var.run.mx.mean.flat[[3]]
-				#x <- list.var.run.mx.mean.flat$typeofchange
-				
-				# NB: do not drop extra dimensions of length 1, else if the 
-				# column dimension is 1 (as in the case of a single category)
-				# then vectors will be created and the column name heading will be lost
-				# this will return an array
-				
-				# NB: may be possible to use unlist here instead of laply
-				# but it's working now with laply
-				x.aligned <- align.by.name.list.mx(x)
-				x.aligned.combined <- laply(x.aligned , .fun=identity, .drop = FALSE)
-				
-				# return with first meta
-				structure(x.aligned.combined, meta=attr(x[[1]],"meta"), rowlabels = names(x))
-		})
-
-	# drop y dimension of length 1 and add rowlabels. keep meta.
-	lapply(list.var.run.mx.mean.flat.array, function(x) {
-				#x <- list.var.run.mx.mean.flat.array[[1]]
-				#x <- list.var.run.mx.mean.flat.array[[2]]
-			
-				col.names <- dimnames(x)[[ZDIM]]
-				if (asPercentages) {
-					# add percentages to column names
-					# NB: we add them at the last stage because adding (%) to NA
-					# makes a non-numeric value which will produce a non-numeric
-					# sort during align.by.name.list.mx above
-					col.names <- paste(col.names , "(%)")
-				}
-				
-				structure(
-						matrix(x, nrow=dim(x)[ROW], ncol=dim(x)[ZDIM], 
-								dimnames=list("Year"=attr(x, "rowlabels"), col.names)),
-						meta=attr(x,"meta"))
-			})
-}
-
-
-
-#' Create means of frequencies across all runs
-#' 
-#' @examples
-#' runs.freqs <- runs$freqs$all
-#' results$freqs$all <- meanRunFreqs(runsfreqs)
-meanRunFreqs <- function(runs.freqs) {
-	
-	# Take mean across Z dim, label the column names with coding names,
-	# and set the column title to the same as the name in the list
-	freqs <- labelColFromVec(labelColTitleFromList(
-					lapply(runs.freqs, function(x) 
-								mean.array.z(x, CI=FALSE))), codingsNamesLookup(names(runs.freqs)))
-	
-	# add row percents and "Year" row title
-	freqs <- lapply(freqs, 
-			function(x) labelTitle(addRowPercents(x), ROW, "Year"))
-	
-	# remove counts 
-	freqs <- lapply(freqs,
-			function(x) {
-				# remove first two columns, keep meta
-				structure(x[,-c(1,2)], meta=attr(x, "meta"))
-			})
-	
-	freqs
-}
-
-#' Create means of continuous frequencies across all runs
-#' 
-#' @param runs.cfreqs
-#'  a list of lists. the inner lists contain as many elements
-#'  as their were runs
-#' 
-#' @examples
-#'
-#' runs.cfreqs <- runs$cfreqs
-#' runs.cfreqs <- env.base$years1_5$runs$cfreqs
-#' runs.cfreqs <- runs$summaries
-#' results$cfreqs <- meanRunCFreqs(runs)
-meanRunCFreqs <- function(runs.cfreqs) {
-	
-	if (length(runs.cfreqs) == 0) {
-		return(list())
-	}
-	
-	iterationNames <- rownames(runs.cfreqs[[1]][[1]])
-	
-	# merge rows to get by year (in sorted column order)
-	by.year <- lapply(runs.cfreqs, merge.list.mx.by.rows)
-	
-	# calculate mean across runs, NAs are return as 0.
-	cfreqs <- lapply(by.year, colmeans.list)
-	
-	# combine each year into a single matrix and label row with year
-	cfreqs <- lapply(cfreqs, function(x) {
-				mx <- as.matrixFromList(x)
-				rownames(mx) <- iterationNames
-				mx
-			})
-	
-	# calculate as proportion
-	cfreqs.prop <- lapply(cfreqs, prop.table, ROW)
-	
-	cfreqs.prop
-}
 
 #' Return the coefficients used in the supplied model.
 #' 
@@ -927,8 +705,8 @@ modelVariableCoefs <- function (model, combineMultipleLevels = TRUE, ignoreMulti
 #' Removes "LvlX" suffix, and surrounding "I( )"
 #' as well as disaggregates squared variables
 #' 
-#' @param xterms
-#'   terms
+#' @param model
+#'   a glm model
 #' @param strip.Lvl
 #'  strip the LvlX from names. Defaults to TRUE.
 #' @return
@@ -1141,12 +919,14 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 }
 
 #' Calculate the proportions within groups that 
-#' exist in the rows of the matrics in the ZDIM of xa
+#' exist in the rows of the matrices in the ZDIM of xa
 #' 
 #' @param xa
 #'  and 3D array, with matrices in the ZDIM.
-#' @param grpby.tag
-#'  specifies a categorical variable with codings, or NULL if no groups 
+#' @param numgrps
+#'  the num of groups. Each row in the ZDIM is divided into this number of groups.
+#'  Proportions are then calculated within these groups. If numgrps = 1, then 
+#'  there is only 1 group and proportions are calculated across the whole row.
 #' @return
 #'  xa as proportions
 #' @examples
@@ -1161,11 +941,10 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' xa <- array(c(1:5, 9,8,7,6,5), dim=c(5,2,1), dimnames=list(LETTERS[1:5], c("Col 1", "Col 2")))
 #' 
 #' xa <- lol.mx.array
-#' prop.table.grpby.array.zdim(xa)
-prop.table.grpby.array.zdim <- function (xa, codings, grpby.tag=attr(xa, "meta")["grpby.tag"]) {
+#' codings <- dict.MELC$codings
+#' prop.table.grpby.array.zdim(xa,codings)
+prop.table.grpby.array.zdim <- function (xa, numgrps) {
 	  
-	# if no groupings, then across the whole row
-	numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(codings[[grpby.tag]]) 
 	grpsize <- ncol(xa) / numgrps
 	grpby <- rep(1:numgrps, each=grpsize)
 	
@@ -1208,7 +987,8 @@ prop.table.grpby.array.zdim <- function (xa, codings, grpby.tag=attr(xa, "meta")
 #' 
 #' eg:
 #' 
-#' > result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
+#' result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
+#' \dontrun{
 #' > result.row
 #'     Mean    Lower    Upper 
 #' 10.99488 10.62256 11.36721
@@ -1222,7 +1002,7 @@ prop.table.grpby.array.zdim <- function (xa, codings, grpby.tag=attr(xa, "meta")
 #' 
 #' 0.3723213 
 #'
-#'  
+#' }
 #' result.row <- c("0%"=5,"20%"=5,"40%"=9,"60%"=11,"80%"=15,"100%"=50)
 #' result.row <- structure(c(5, 5, 5, 5, 5, 5, 9, 9, 9, 11, 11, 11, 15, 15, 15,50.5, 6.02828342338857, 94.9717165766114), .Names = c("0% Mean","0% Lower", "0% Upper", "20% Mean", "20% Lower", "20% Upper","40% Mean", "40% Lower", "40% Upper", "60% Mean", "60% Lower","60% Upper", "80% Mean", "80% Lower", "80% Upper", "100% Mean","100% Lower", "100% Upper"))
 #' 
@@ -1268,35 +1048,6 @@ save.env <- function(env=env.scenario, file="env.rdata") {
 	save(env, file=file)
 }
 
-#' Appends the supplied simenv to envs (the list of
-#' scenario environments) and sets env.scenario
-#' to point to the simenv.
-#' 
-#' Called by initMELC()
-#'
-#' @param simenv
-#'  a simenv. If name is NULL then the name will be set to "Scenario X" where X is the
-#'  next scenario number.
-#' 
-#' @examples
-#' setScenarioSimenv(SimenvMELC$new())
-setScenarioSimenv <- function(simenv) {
-	if (!exists("envs")) {
-		envs <<- list()		# create in .GlobalEnv
-		if (existsFunction("ascapeKeepObject")) ascapeKeepObject("envs")
-	}
-	
-	if (is.null(simenv$envName)) {
-		simenv$envName <- paste("Scenario",length(envs)+1)
-	}
-	
-	env.scenario <<- simenv
-	envs[[simenv$envName]] <<- simenv
-}
-#load_all will set the environment to this package ONLY, so won't find
-#envs. so we need to manually set the environment to the global env.
-environment(setScenarioSimenv) <- .GlobalEnv
-
 #' Produce a proportioned table for x, using
 #' the specified coding as names and 
 #' setting the "meta" attribute to "varname"
@@ -1329,9 +1080,21 @@ table.catvar <- function (x, coding) {
 	tbl
 }
 
-#' Display a continuous variable in a table using the
+#' Display a vector of continuous values in a table using the
 #' breaks supplied.
 #' Attachs a meta attribute with varname
+#' 
+#' @param x
+#'  vector of continous values
+#' 
+#' @param breaks
+#' a numeric vector of two or more cut points
+#' NB: note that the cut point value is not included in the bin 
+#' (ie: include.lowest = FALSE)
+#' Therefore the very first cut point must be less than min(x)
+#' 
+#' @param varname
+#'  added as a tag on the meta attribute
 #' 
 #' @examples
 #' 

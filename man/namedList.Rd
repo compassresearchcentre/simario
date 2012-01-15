@@ -5,7 +5,7 @@
   namedList(...)
 }
 \arguments{
-  \item{elementNames}{names of the elements}
+  \item{...}{names of the elements}
 }
 \description{
   Create a named list of NULL elements.

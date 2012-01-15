@@ -179,8 +179,8 @@ expr = {
 		
 		.$results$means  <- lapply.inner(.$results$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
 		
-		# label first col from list name
-		.$results$means <- lapply(.$results$means, function(x) labelCol1.list(x, "Mean"))
+		# set non-existant colnames to "Mean"
+		.$results$means <- lapply(.$results$means, function(x) labelCols.list(x, "Mean"))
 		
 		
 		return()

@@ -1,6 +1,6 @@
 \name{error.bar}
 \alias{error.bar}
-\title{Draws an error bar.}
+\title{Draws an error bar on the current device.}
 \usage{
   error.bar(x, y, upper, lower = upper, length = 0.1, ...)
 }
@@ -24,7 +24,7 @@
   \item{...}{any other parameters to arrows}
 }
 \description{
-  Draws an error bar.
+  Draws an error bar on the current device.
 }
 \examples{
 y <- rnorm(500, mean=1)

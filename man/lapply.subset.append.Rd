@@ -49,6 +49,9 @@ X <- outcomes
 
 lapply.subset.append (lol, X, simplify = FALSE, .FUN=wtdtablecols)
 
+
+lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset)
+
 results.list <- runs$freqs$all; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
 lapply.subset.append (runs$freqs$all, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
 

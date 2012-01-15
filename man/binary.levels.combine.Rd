@@ -28,10 +28,9 @@ binlevel1 <- c(1,0,0)
 binlevel2 <- c(0,1,0)
 binlevel3 <- c(0,0,1)
 levelvalues <- c(1,2,3)
-binary.levels.combine(binlevel1, binlevel2, binlevel3)
-[1] 1 2 3
-binary.levels.combine(list(binlevel1, binlevel2, binlevel3))
-[1] 1 2 3
+binary.levels.combine(binlevel1, binlevel2, binlevel3)   # [1] 1 2 3
+
+binary.levels.combine(list(binlevel1, binlevel2, binlevel3)) # [1] 1 2 3
 
 level1 <- env.scenario$simframe$SESBTHLvl1
 level2 <- env.scenario$simframe$SESBTHLvl2

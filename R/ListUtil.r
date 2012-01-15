@@ -47,8 +47,8 @@
 #' by.name = TRUE
 #' r <- append.lists(list.dest, list.src, by.name)
 #' 
-#' Test first three cases:
-#'
+#' #Test first three cases:
+#' 
 #' ml0 <- namedList("msmoke", "fsmoke")
 #' x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table.grpby.mx.cols
 #' list.src <- lapply.subset(x, indices, .FUN)
@@ -64,7 +64,7 @@
 #' list.dest <- ml0
 #' list.dest <- ml1
 #' 
-#' Test with lists with differently named items.
+#' #Test with lists with differently named items.
 #' 
 #' list.dest <- list(foo=matrix(1:4)) ; list.dest <- years1_5$results$quantiles
 #' list.src <- list(bar=matrix(5:10)) ; list.src <- years6_13$results$quantiles
@@ -105,11 +105,13 @@ append.lists <- function(list.dest, list.src, by.name = FALSE, flatten.src = FAL
 	}
 }
 
-
-
-
 #' Convert list to dataframe simply by setting class attr
 #' This preserves any matrices in the list.
+#' 
+#' @param xlist
+#'  list
+#' @param row.names
+#'  row names for the data.frame
 as.data.frame.list.as.is <- function(xlist, row.names=NULL) {
 	structure(xlist, 
 			class="data.frame", row.names=row.names)
@@ -167,6 +169,13 @@ isListOfNulls <- function(xlist) {
 #'  function that takes an element from lol
 #' @param ...
 #'  other arguments to pass to .FUN
+#' @param simplify
+#' logical or character string; should the result be simplified to a vector, 
+#' matrix or higher dimensional array if possible? See \code{\link{sapply}}.
+#' @param USE.NAMES
+#' logical; if TRUE and if X is character, use X as names for the result unless it had names already.
+#' See \code{\link{sapply}}.
+#' 
 #' 
 #' @return a list of lists, the result of applying .FUN to lol
 #' 
@@ -377,7 +386,22 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' Apply lapply.subset.append to each element of lol, using the arguments from 
 #' the parallel list lol.args and the function .FUN.
 #' 
-#' 
+#' @param X
+#'   vector, list or dataframe on which to execute .FUN
+#' @param lol
+#'  a list of lists containing matrix elements
+#' @param lol.args
+#'  For each list in lol, there is a set of arguments that are supplied to .FUN.
+#'  Each matrix in the list will use the arguments from its corresponding lol.args list.
+#'  e.g: .FUN will be called on matrices in lol[[1]] with arguments supplied in
+#'       lol.args[[1]] 
+#'  Defaults to a "args.list" attribute on lol.
+#' @param simplify
+#'  if TRUE, then results will be added to the Z dimension of the
+#'  matrix elements in lol. If FALSE, then results will be added
+#'  as a extra list element to each matrix elements of lol 
+#' @param .FUN
+#'  .FUN to execute over elements of X
 #' 
 #' @examples
 #' 
@@ -424,7 +448,7 @@ lapply.subset.append.lol.args <- function(X, lol, lol.args = attr(lol, "args.lis
 
 #' Create a named list of NULL elements.
 #' 
-#' @param elementNames
+#' @param ...
 #'  names of the elements
 #' 
 #' @examples 
@@ -441,7 +465,12 @@ namedList <- function(...) {
 #' Update dest with the values in src, removing any values from dest that don't exist in src.
 #' 
 #' Use this to update a dest list when the ordering of src is different from dest and you
-#' wish to preserve the dest list ordering.
+#' wwsh to preserve the dest list ordering.
+#' 
+#' @param dest
+#'  dest list
+#' @param src
+#'  src list
 updatelist <- function(dest, src) {
 	# get all non nulls
 	src <- src[!sapply(src, is.null)]

@@ -9,7 +9,7 @@ Errors if expressions cannot be evaluated.}
 \arguments{
   \item{exprlist}{list/vector of strings to evaluate}
 
-  \item{enviro}{environment to evaluate in, defaults to
+  \item{envir}{environment to evaluate in, defaults to
   global environment.}
 
   \item{allowEmptyExpr}{allow expressions to return no

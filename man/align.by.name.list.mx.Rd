@@ -20,25 +20,25 @@ NAs are used to pad missing rows and cols.}
   cols. NAs are used to pad missing rows and cols.
 }
 \examples{
-# list of vectors with same names
+#list of vectors with same names
 listmx2 <- list(A = c("0"=720L, "1"=353L), B = c("0"=722L, "1"=355L))
 
-#' list of vectors with diff names
+#list of vectors with diff names
 listmxa <- list(A = c("0"=720L, "1"=353L), B = c("1"=722L, "2"=355L))
 
-# list of 2 4x1 matrices with same number of rows but different row names, and no col names
+#list of 2 4x1 matrices with same number of rows but different row names, and no col names
 listmx7 <- list(matrix(c(10,20,30,40), dimnames = list(c(1:4), NULL)), matrix(c(20,30,40,50), dimnames = list(c(2:5), NULL)))
 
-# list of 3x2 matrix and 4x2 matrix
+#list of 3x2 matrix and 4x2 matrix
 listmx8 <- list(matrix(c(10,20,30,40,50,60), nrow = 3, ncol = 2, dimnames = list(c("1","10","100"), c("b","a"))), matrix(c(20,30,40,50,60,70,80,90), nrow = 4, ncol = 2, dimnames = list(c("10","2","100","200"), c("b","c"))))
 
-#' list of 5x1 table and 4x1 table
+#list of 5x1 table and 4x1 table
 listmx9 <-  list(structure(c(1L, 15L, 3L, 27L, 1029L), .Dim = c(5L, 1L), .Dimnames = structure(list(    c("1", "2", "3", "4", "5"), NULL), .Names = c("", "")), class = "table"),    structure(c(11L, 1L, 18L, 1045L), .Dim = c(4L, 1L), .Dimnames = structure(list(        c("2", "3", "4", "5"), NULL), .Names = c("", "")), class = "table"))
 
-#' list with a matrix with NA for a rowname
+#list with a matrix with NA for a rowname
 listmxa <- list(matrix(c(10,20), ncol = 1, dimnames = list(c("1","10"), NULL)), matrix(c(200,1000), ncol = 1, dimnames = list(c("2",NA), NULL)) )
 
-#' list of 2 matrices with meta
+#list of 2 matrices with meta
 listmx10 <- list(structure(matrix(100, dimnames = list(1, NULL)), meta=c("grpby.tag"="r1stchildethn")), matrix(c(200,300), dimnames = list(c(1,2), NULL)))
 
 listmx11 <- list(numeric(0), structure(0.5, .Dim = c(1,1), .Dimnames = list(NULL, "Cat 1")))
@@ -54,6 +54,6 @@ listmx <- listmxa
 listmx <- listmx10
 listmx <- listmx11
 
-align.by.name.list.mx (listmx)
+align.by.name.list.mx(listmx)
 }
 

@@ -24,7 +24,6 @@ xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0,
 table(bin(x, 0.5))
 table(bin(xi, 0.5))
 
-
 x <- env.scenario$simframe$INTERACT
 factoredx <- bin(x, binbreaks$INTERACT, breaklast=NULL)
 factorincrements <- rep(0,9)

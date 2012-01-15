@@ -28,6 +28,7 @@ f <- c(1,2,3)
 
 binary.levels.split (x, f):
 
+\dontrun{
 $`1`
 [1] 1 0 0 0 1
 
@@ -36,6 +37,7 @@ $`2`
 
 $`3`
 [1] 0 0 1 0 0
+}
 
 x <- adjcatvar
 f=sort(unique(x))

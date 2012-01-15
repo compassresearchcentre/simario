@@ -7,6 +7,7 @@ ROW <- 1
 COL <- 2
 ZDIM <- 3
 
+library(xlsx)
 
 addRowPercents <- function (counts) {
 	#adds row percentages to a set of counts
@@ -25,28 +26,15 @@ addRowPercents <- function (counts) {
 	combined
 }
 
-#' Add a column totals row, preserving meta and names.
-#' 
-#' @examples
-#' x <- runs.mean.mean$all$gpmorb
-#' x <- env.base$years1_5$results$quantiles$kids
-#' x <- years1_5$runs$means$all$gpmorb
-#' x <- results$means$all$kids
-#' addColumnTotals(x)
-addColumnTotals <- function (x) {
-	#rows <- !rownames(x) %in% "All Years"
-	#xr <- x[rows,,drop=FALSE]
-	#xt <- structure(rbind(x,"Total"=colSums(xr, na.rm=TRUE)), meta=attr(x, "meta"))
-	
-	xt <- structure(rbind(x,"Total"=colSums(x, na.rm=TRUE)), meta=attr(x, "meta"))
-	names(dimnames(xt)) <- names(dimnames(x))
-	xt
-}
-
 #' Produces a csv string from x, returned as a length 1 chr vector.
 #' 
+#' @param x
+#'  object
 #' @param title
 #'  optional title to prepend to output
+#' @param row.names
+#'  either a logical value indicating whether the row names of x are to be written along with x, 
+#'  or a character vector of row names to be written
 #' 
 #' @examples
 #' x <- matrix(c(2,3,4,5,6,7,8,9),nrow=2)
@@ -121,7 +109,7 @@ assert <- function(xvec) {
 #' binbreaks <- list()
 #' binbreaks$pregalc <- c(-1,0,1,2,3,4,5,6,7,max(children$pregalc))
 #' names(binbreaks$pregalc) <- c(NA, 0:7,"8+")
-#' table(bin(children$pregalc,binbreaks$pregalc))  x <- children$pregalc;breaks<-binbreaks$pregalc 
+#' table(bin(children$pregalc,binbreaks$pregalc)); x <- children$pregalc;breaks<-binbreaks$pregalc 
 #' 
 #' binbreaks$bwgrams <- c(0,2499,2999,3499,3999,max(children$bwgrams))
 #' names(binbreaks$bwgrams) <- c(NA, "< 2500", "2500 - 2999", "3000 - 3499", "3500 - 3999", "4000 + ") 
@@ -182,10 +170,9 @@ bin <- function (x, breaks, blabels = names(breaks), breaklast=NULL) {
 #' binlevel2 <- c(0,1,0)
 #' binlevel3 <- c(0,0,1)
 #' levelvalues <- c(1,2,3)
-#' binary.levels.combine(binlevel1, binlevel2, binlevel3)
-#' [1] 1 2 3
-#' binary.levels.combine(list(binlevel1, binlevel2, binlevel3))
-#' [1] 1 2 3
+#' binary.levels.combine(binlevel1, binlevel2, binlevel3)   # [1] 1 2 3
+#' 
+#' binary.levels.combine(list(binlevel1, binlevel2, binlevel3)) # [1] 1 2 3
 #' 
 #' level1 <- env.scenario$simframe$SESBTHLvl1
 #' level2 <- env.scenario$simframe$SESBTHLvl2
@@ -235,6 +222,7 @@ binary.levels.combine  <- function (..., levelvalues = NULL) {
 #' 
 #' binary.levels.split (x, f):
 #' 
+#' \dontrun{ 
 #' $`1`
 #' [1] 1 0 0 0 1
 #' 
@@ -243,6 +231,7 @@ binary.levels.combine  <- function (..., levelvalues = NULL) {
 #' 
 #' $`3`
 #' [1] 0 0 1 0 0
+#' }
 #' 
 #' x <- adjcatvar
 #' f=sort(unique(x))
@@ -265,7 +254,6 @@ binary.levels.split <- function(x, f=sort(unique(x))) {
 #' table(bin(x, 0.5))
 #' table(bin(xi, 0.5))
 #' 
-#' 
 #' x <- env.scenario$simframe$INTERACT
 #' factoredx <- bin(x, binbreaks$INTERACT, breaklast=NULL)
 #' factorincrements <- rep(0,9)
@@ -284,6 +272,8 @@ incByFactor <- function(x, factoredx, factorincrements) {
 #' Check a list for any NAs, producing error if they exist, otherwise
 #' silently exit.
 #' 
+#' @param xlist
+#'  list to check
 #' @examples
 #' 	foo <- c(1,NA,3)
 #'  names(foo) <- c("a","b","c")
@@ -302,11 +292,11 @@ checkNAs <- function (xlist) {
 	}
 }
 
-#' Detach returning the modified attached environment.
-#' NB: the returned environment contains the modified
-#'     contents of the attached environment but is
-#'     actually a newly created different environment
-#'     object from the original. 
+#' Detach an environment and return it.
+#' NB: the returned environment contains the contents of the attached environment but is
+#' actually a newly created different environment object from the original.
+#' @param envname
+#'  name of the attached environment 
 detachReturn <- function(envname) {
 	#store modified env
 	#env <- updatelist(env, as.list(as.environment(envname)))
@@ -342,7 +332,7 @@ err <- function (x) {
 #' Errors if expressions cannot be evaluated.
 #' 
 #' @param exprlist list/vector of strings to evaluate
-#' @param enviro environment to evaluate in, defaults to global environment.
+#' @param envir environment to evaluate in, defaults to global environment.
 #' @param allowEmptyExpr allow expressions to return no value, defaults to FALSE
 #' 
 #' @examples
@@ -384,7 +374,7 @@ eval.list <- function (exprlist, envir = .GlobalEnv, allowEmptyExpr = FALSE) {
 
 factorWeights <- function (xvecfactors, desiredProp) {
 	#generates a weighting for each factor in xvecfactors such that 
-	#propWtdtable(xvecfactors, factorWeights(xvecfactors, desiredProp)) == desiredProp
+	#prop.table(wtdtable(xvecfactors, factorWeights(xvecfactors, desiredProp))) == desiredProp
 	#
 	#eg: xvecfactors = children$SESBTH
 	#eg: desiredProp <- c(0.2,0.3,0.5)
@@ -432,9 +422,11 @@ global <- function (x, pos = 1) {
 	globalNamed(param1Name, x, pos)
 }
 
-
 #' Returns whether x is a scalar (i.e. length 1)
-#' and numeric
+#' and numeric.
+#' 
+#' @param x
+#'  object
 is.numeric.scalar <- function (x) {
 	length(x) == 1 && is.numeric(x)
 }
@@ -454,29 +446,7 @@ labelColTitleFromList <- function(xnamedlist) {
 	mapply(labelCol, xnamedlist, names(xnamedlist), SIMPLIFY = FALSE)
 }
 
-
-#' Set the first column to label.
-#' 
-#' @param x
-#'  object with columns
-#' @param onlyIfNull
-#'  if TRUE, then naming will only occued if x 
-#'  has no existing colnames
-#' 
-#' @examples
-#' xnamedlist <- env.base$years1_5$results$means$all
-#' xnamedlist <- results$means$all
-#' x <- xnamedlist$gptotvis
-#' labelCol1FromList(x, "Mean")
-labelCol1 <- function(x, label, onlyIfNull = TRUE) {
-	if (!onlyIfNull || is.null(colnames(x))) {
-		colnames(x) <- label
-	}
-	x
-}
-
-#' Set name of each object's 1st column to the
-#' object's name in the named list.
+#' Set the colnames on each object in a list.
 #' 
 #' @param xlist
 #'  list
@@ -491,9 +461,16 @@ labelCol1 <- function(x, label, onlyIfNull = TRUE) {
 #' xlist <- env.base$years1_5$results$means$all
 #' xlist <- results$means$all
 #' x <- xlist$gptotvis
-#' labelCol1.list(xlist, "Mean")
-labelCol1.list <- function(xlist, xlabels = names(xlist), onlyIfNull = TRUE) {
-	mapply(labelCol1, xlist, xlabels, MoreArgs = list(onlyIfNull = onlyIfNull), SIMPLIFY = FALSE)
+#' labelCols.list(xlist, "Mean")
+labelCols.list <- function(xlist, xlabels = names(xlist), onlyIfNull = TRUE) {
+	
+	mapply(function(x, label) {
+			if (!onlyIfNull || is.null(colnames(x))) {
+				colnames(x) <- label
+			}
+			x
+			},
+			xlist, xlabels, SIMPLIFY = FALSE)
 }
 
 labelTitle <- function (xm, along, title) {
@@ -616,6 +593,10 @@ meta.add.list.varname <- function(xlist, varnames = names(xlist)) {
 #'  object to sort
 #' @param stripAlpha
 #'  remove alpha characters before attempting sort
+#' @param ...
+#'  additional arguments passed to sort
+#' 
+#' @seealso sort
 #' 
 #' @examples
 #'  
@@ -934,7 +915,5 @@ withinfunc <- function(data, func, ...) {
 	# returned modified dataenv
 	updatelist(data, as.list(dataenv))
 }
-
-library("plyr")
 
 cat("Loaded support functions\n")

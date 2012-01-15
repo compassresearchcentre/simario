@@ -15,7 +15,9 @@
   loop}
 
   \item{new.all.dat}{the data you are working on and want
-  modeified}
+  modified}
+
+  \item{n.change}{}
 }
 \description{
   Change values in a categorical vector to a lower or

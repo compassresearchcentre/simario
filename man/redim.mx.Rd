@@ -46,6 +46,7 @@ which has the rows from mx specified in newrows and the cols from mx specified i
 \examples{
 mx <- matrix(c(10,20,30,40,50,60), nrow = 3, ncol = 2, dimnames = list(c("a","b","c"), c(2:1)))
 mx <- as.table(mx)
+\dontrun{
 > mx
    2  1
 a 10 40
@@ -64,7 +65,7 @@ C 60 30 NA
 D NA NA NA
 E NA NA NA
 F NA NA NA
-
+}
 mx <- listmx[[1]]
 
 # mx as a table

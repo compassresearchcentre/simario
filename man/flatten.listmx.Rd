@@ -22,6 +22,7 @@ and then returns a single matrix.}
 }
 \examples{
 listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
+flatten.listmx(listmx)
 }
 \seealso{
   listmx.flat.aligned)

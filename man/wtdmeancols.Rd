@@ -3,7 +3,7 @@
 \title{Calculates the weighted mean for each column of the matrix
 optionally subsetting first and grouping by another (equal length) variable.}
 \usage{
-  wtdmeancols(mx, logiset = NULL, wgts = rep(1, nrow(mx)),
+  wtdmeancols(mx, logiset = NULL, wgts = NULL,
     grpby = NULL, grpby.tag = NULL, na.rm = F)
 }
 \arguments{
@@ -18,6 +18,10 @@ optionally subsetting first and grouping by another (equal length) variable.}
 
   \item{grpby}{elements to group by, or NULL or unspecified
   to do no grouping}
+
+  \item{grpby.tag}{added to meta attribute of the result}
+
+  \item{na.rm}{logical. Should missing values be removed?}
 }
 \description{
   Calculates the weighted mean for each column of the
@@ -44,6 +48,10 @@ grpby <- c("A","A","A","B","B") ; grpby.tag = "AB"
 grpby = NULL
 wgts = rep(1, nrow(mx))
 na.rm = T ; na.rm = F
-wtdmeancols(mx, logiset=logiset, grpby=grpby, grpby.tag=grpby.tag, na.rm = F)
+
+mx <- env.base$modules$years1_5$outcomes$gptotvis ; logiset = childsets$males
+mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpby = NULL; grpby.tag = NULL
+
+wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = F)
 }
 

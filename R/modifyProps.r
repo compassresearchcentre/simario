@@ -9,7 +9,9 @@
 #' @param i
 #'   the interation you are up to in the while/for loop
 #' @param new.all.dat
-#'    the data you are working on and want modeified
+#'    the data you are working on and want modified
+#' @param n.change
+#'  
 #' @seealso This function is called by the function \code{\link{modifyProps}}
 change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	if (sign(n.change[i])==1) {

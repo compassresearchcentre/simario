@@ -10,6 +10,9 @@ specified by grpby.}
 
   \item{grpby}{a vector of indices, the length of x, which
   specify the group each value of x belongs to}
+
+  \item{na.rm}{logical. Should missing values (including
+  NaN) be removed?}
 }
 \value{
   vector of proportions, calculated according to group

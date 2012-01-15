@@ -38,7 +38,7 @@ table(bin(children$pregalc,1,breaklast=7)) #x <- children$pregalc; breaks = 1; b
 binbreaks <- list()
 binbreaks$pregalc <- c(-1,0,1,2,3,4,5,6,7,max(children$pregalc))
 names(binbreaks$pregalc) <- c(NA, 0:7,"8+")
-table(bin(children$pregalc,binbreaks$pregalc))  x <- children$pregalc;breaks<-binbreaks$pregalc
+table(bin(children$pregalc,binbreaks$pregalc)); x <- children$pregalc;breaks<-binbreaks$pregalc
 
 binbreaks$bwgrams <- c(0,2499,2999,3499,3999,max(children$bwgrams))
 names(binbreaks$bwgrams) <- c(NA, "< 2500", "2500 - 2999", "3000 - 3499", "3500 - 3999", "4000 + ")

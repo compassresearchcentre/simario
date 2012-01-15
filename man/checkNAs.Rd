@@ -5,6 +5,9 @@ silently exit.}
 \usage{
   checkNAs(xlist)
 }
+\arguments{
+  \item{xlist}{list to check}
+}
 \description{
   Check a list for any NAs, producing error if they exist,
   otherwise silently exit.

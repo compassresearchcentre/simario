@@ -17,8 +17,8 @@
 }
 \examples{
 cols <- 2 ; rows <- 5
-cols <- names(codings$smoke); rows <- 5
-cols <- names(codings$smoke); rows <- paste("Year", 1:5)
+cols <- c("Male","Female"); rows <- 5
+cols <- c("Male","Female"); rows <- paste("Year", 1:5)
 
 namedMatrix(rows, cols)
 }

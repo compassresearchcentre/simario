@@ -5,6 +5,9 @@
   table.grpby(x, grpby = NULL)
 }
 \arguments{
+  \item{x}{vector of values which can be interpreted as
+  factors}
+
   \item{grpby}{elements to group by, or NULL to do no
   grouping}
 }

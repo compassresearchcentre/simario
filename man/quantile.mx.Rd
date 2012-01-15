@@ -9,6 +9,9 @@
 
   \item{new.names}{if specified, the names of the result
   will be set to this vector}
+
+  \item{...}{additional arguments to pass to
+  \code{\link{quantile}}}
 }
 \value{
   quantile of each column returned as a row

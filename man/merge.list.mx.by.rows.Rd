@@ -6,6 +6,9 @@ matrix, as are every row 2,3 etc.}
 \usage{
   merge.list.mx.by.rows(...)
 }
+\arguments{
+  \item{...}{matrices, or a list of matrices}
+}
 \description{
   Takes any number of 2D matrices, each with the same
   number of rows but with any set of named cols. Every row
@@ -15,6 +18,8 @@ matrix, as are every row 2,3 etc.}
 \examples{
 xlistm <- list(matrix(c(1,5,2,6,3,7,4,8),nrow=2,dimnames=list(c(),c("a","b","c","d"))),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c(),c("a","d","e"))),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c(),c("c","e","f"))))
 		xlistm
+\dontrun{
+
 		[[1]]
 		a b c d
 		[1,] 1 2 3 4
@@ -46,9 +51,9 @@ set of rows, eg: matrices = 2, cols = 3, rows = x*, eg:
 [1,]  5  6  7  8 NA NA
 [2,] 15 NA NA 18 21 NA
 [3,] NA NA 17 NA 31 41
-
-Another example:
-xlistm <- runs.all.cfreq$gpmorb
+}
+# Another example:
+#xlistm <- runs.all.cfreq$gpmorb
 xlistm <- list(first=matrix(1:6, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))), second=matrix(11:16, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))))
 merge.list.mx.by.rows(xlistm)
 }

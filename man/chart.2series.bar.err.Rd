@@ -1,18 +1,14 @@
 \name{chart.2series.bar.err}
 \alias{chart.2series.bar.err}
 \title{Draw a 2-series (base & scenario) side-by-side bar graph with
-error bars.}
+error bars on the current device.}
 \usage{
-  chart.2series.bar.err(title, group.title = xlab, xlab,
-    ylab, result.row.base, result.row.scenario,
-    scenario.name)
+  chart.2series.bar.err(title, xlab, ylab, result.row.base,
+    result.row.scenario, scenario.name)
 }
 \arguments{
   \item{title}{chart title. Also used in navigator node
   name.}
-
-  \item{group.title}{group title. Used as navigator
-  folder.}
 
   \item{xlab}{x axis label.}
 
@@ -36,7 +32,7 @@ error bars.}
 }
 \description{
   Draw a 2-series (base & scenario) side-by-side bar graph
-  with error bars.
+  with error bars on the current device.
 }
 \seealso{
   result.as.means.and.errs
@@ -73,7 +69,7 @@ error bars.}
   paste(dictLookup(varname), "all years") xlab="Value"
   ylab="Freq"
 
-  chart.2series.bar.err(title, title, xlab, ylab,
-  result.row.base, result.row.scenario, scenario.name)
+  chart.2series.bar.err(title, xlab, ylab, result.row.base,
+  result.row.scenario, scenario.name)
 }
 

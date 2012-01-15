@@ -9,7 +9,7 @@ The variables to create are those from the outcome set specified by "outcomeSetN
 \arguments{
   \item{simframe}{simulation frame}
 
-  \item{outcomesetName}{name of the outcomeset to create
+  \item{outcomeSetName}{name of the outcomeset to create
   variables for}
 
   \item{iterations}{either a vector of names for each

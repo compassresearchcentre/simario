@@ -34,10 +34,9 @@ the corresponding element of listmx.dest in the specified dimension.}
   in the specified dimension.
 }
 \examples{
-listmx.dest <- mxlist
-listmx.src <- results
+#listmx.dest <- mxlist
+#listmx.src <- results
 append.list.mx(listmx.dest, listmx.src)
-
 
 listmx.dest <- list(a=c(1:3), b=c(1:2))
 listmx.src <- list(a=c(11:13), b=c(11:12))
@@ -46,8 +45,8 @@ into.dim=ROW
 result <- append.list.mx(listmx.dest, listmx.src, into.dim)
 result <- append.list.mx(result, listmx.src, into.dim)
 
-listmx.dest <- me.base
-listmx.src <- me.scenario
+#listmx.dest <- me.base
+#listmx.src <- me.scenario
 into.dim=ROW
 
 listmx.dest <- structure(list(means = structure(c(5, 5, 9, 11, 15, 50), .Names = c("0\%","20\%", "40\%", "60\%", "80\%", "100\%")), errs = structure(c(0, 0,0, 0, 0, 0), .Names = c("0\%", "20\%", "40\%", "60\%", "80\%", "100\%"))))

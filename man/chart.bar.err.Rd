@@ -1,7 +1,7 @@
 \name{chart.bar.err}
 \alias{chart.bar.err}
 \title{Draw a side-by-side bar plot with error bars and a legend to the right
-of the plot.}
+of the plot on the current device.}
 \usage{
   chart.bar.err(y, y.err, legend.text, col, ...)
 }
@@ -11,20 +11,18 @@ of the plot.}
 
   \item{y.err}{amount above and below y to draw error bar}
 
+  \item{legend.text}{vector of text to appear in legend}
+
   \item{col}{a vector of colors for the bars or bar
   components. By default, grey is used if height is a
   vector, and a gamma-corrected grey palette if height is a
   matrix.}
 
-  \item{legend.text}{vector of text to appear in legend}
-
-  \item{col}{colours used for bars}
-
   \item{...}{additional params to pass to barplot}
 }
 \description{
   Draw a side-by-side bar plot with error bars and a legend
-  to the right of the plot.
+  to the right of the plot on the current device.
 }
 \examples{
 y <- me$means

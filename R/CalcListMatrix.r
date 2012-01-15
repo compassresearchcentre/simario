@@ -3,6 +3,7 @@
 # Author: oman002
 ###############################################################################
 
+library(plyr)
 
 colmeans.list <- function (xlistm) {
 	# xlistm is a list of matrices
@@ -184,7 +185,9 @@ mean.list.mx <- function(listmx) {
 #'  a vector of values
 #' @param grpby
 #'  a vector of indices, the length of x, which specify the group
-#'  each value of x belongs to  
+#'  each value of x belongs to
+#' @param na.rm
+#'   logical. Should missing values (including NaN) be removed?
 #' 
 #' @return 
 #'  vector of proportions, calculated according to group
@@ -201,12 +204,6 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE) {
 	structure(as.vector(x / grpsum[grpby]), .Names=names(x))
 }
 
-propWtdtable <- function (variable, wgts) {
-	#return proportions of variable weighted
-	#eg: propWtdtable(people$sex, people$weightBase)
-	prop.table(wtdtable(variable, wgts))
-}
-
 #' Execute quantile on the columns of a matrix.
 #' 
 #' @param mx
@@ -214,6 +211,8 @@ propWtdtable <- function (variable, wgts) {
 #' @param new.names
 #'  if specified, the names of the result will be 
 #'  set to this vector
+#' @param ...
+#'  additional arguments to pass to \code{\link{quantile}}
 #' 
 #' @return
 #'  quantile of each column returned as a row
@@ -243,6 +242,8 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 
 #' Frequency table, with option to group results.
 #'  
+#' @param x
+#'  vector of values which can be interpreted as factors 
 #' @param grpby
 #'  elements to group by, or NULL to do no grouping
 #' 
@@ -347,153 +348,7 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL) {
 	
 }
 
-#' Weighted frequency table
-#'
-#' x <- c(8,8,2,1,1,8)
-#' wgts <- c(1,1,2,1,1,1)
-#' 
-#' wtdtable(x, wgts)
-#' 
-#' 1 2 8 
-#' 2 2 3
-#' 
-#' x <- env.base$years1_5$outcomes$z1accomLvl1[,1]
-#' grpby <- env.base$years1_5$outcomes$z1gender
-#' 
-#' table(x, useNA = "ifany")
-#' table(x,grpby) 
-#' 
-#' wtdtable(x, wgts)
-wtdtable <- function (x, wgts=rep(1,length(x))) {
-	if(length(x) != length(wgts)) {
-		param1Name <- as.character(sys.call())[2]
-		param2Name <- as.character(sys.call())[3]
-		stop(gettextf("Length of %s != length of weights %s", param1Name, param2Name))
-	}
-	
-	wt <- wtd.table(x, weights=wgts)
-	tbl <- wt$sum.of.weights
-	names(tbl) <- wt$x
-	
-	# wtd.table does not count NAs so we have to do it here
-	NAs <- sum(wgts[is.na(x)])
-	if (NAs > 0) {
-		#attach NA column to table
-		expandedTbl <- as.array(c(tbl,NAs))
-		names(expandedTbl) <- c(names(tbl), NA)
-		tbl <- expandedTbl
-	}
-	
-	#NB: cast to table because wtd.table doesn't do this
-	#but table does and we want wtdtable to act like table
-	#so when it is passed to the data.frame command it 
-	#works properly
-	as.table(tbl)
-}
 
-#' Produces a weighted frequency distribution for each column 
-#' of the matrix mx and returns them altogether in one table.
-#' Each column can have a different set of categories 
-#' (ie: frequency "buckets")
-#' 
-#' @param mx
-#'  matrix
-#' 
-#' @param wgts
-#'  weights. If unspecified, a default weightof 1 is used for each row
-#' 
-#' @param addVariableName
-#'  if addVariableName = TRUE, then the columns will be given the name of mx
-#' 
-#' @examples
-#' 
-#' wgts = rep(1,nrow(mx))
-#' addVariableName = FALSE
-#' 
-#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
-#' 
-#' wtdtablecols(mx)
-wtdtablecols <- function(mx, wgts = rep(1,nrow(mx)), addVariableName = FALSE) {
-	
-	if(nrow(mx) != length(wgts)) {
-		param1Name <- as.character(sys.call())[2]
-		stop(gettextf("Number of rows in %s != length of wgts", param1Name))
-	}
-	
-	# if no column names, number them off
-	if (is.null(dimnames(mx)[[COL]])) {
-		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
-	}
-	
-	# get the total set of categories (ie: frequency buckets)
-	cats <- as.numeric(names(table(mx)))
-	
-	# get freqs for each column of mx
-	freqs <- apply(mx, COL, function (x) { wtdtable(x,wgts)})
-	
-	if (mode(freqs)=="list") {
-		# if its a list it means that the set of cats between
-		# columns is not consistent so we need to combine all 
-		# the freqs together, joining into cats 
-		freqs <- data.frame(
-				lapply(freqs, 
-						function (x)	{ 
-							merge(cats, x, by = 1, all.x=TRUE)$Freq 
-						}
-				)
-				, row.names = cats, check.names = FALSE
-		)
-	}
-	
-	# transponse  
-	tfreqs <- t(freqs)
-	
-	# add variable name
-	if (addVariableName) {
-		firstParamName <- as.character(sys.call())[2] 
-		names(dimnames(tfreqs))[2] <- firstParamName
-	}
-	
-	tfreqs
-}
-
-#' Executes wtdtablecols on each varname in xframe and return the results as a list.
-#' Add a "meta" attributed that specifies the weighting variable name (ie: wgtsname).
-#' 
-#' @param xframe
-#'  data frame
-#' @param varnames
-#'  variables to calculate wtdtablecols on
-#' @param wgtsname
-#'  weighting variable in xframe to use for weighting
-#' 
-#' @examples
-#' 
-#' xframe <- env.base$years1_5$outcomes
-#' varnames <- names(env.base$years1_5$runs$cfreqs)
-#'
-#' varnames <- names(existingMatrices)
-#'  
-#' w <- wtdtablecols.list(xframe, varnames, wgtsname = "weightBase") 
-wtdtablecols.list <- function (xframe, varnames, wgtsname="weightBase") {
-	if (is.null(xframe[[wgtsname]])) {
-		firstParamName <- as.character(sys.call())[2]
-		stop(gettextf("Weighting variable '%s' does not exist in '%s'", wgtsname, firstParamName))
-	}
-	
-	if (is.null(varnames)) {
-		paramName <- as.character(sys.call())[3]
-		stop(gettextf("Varnames '%s' are NULL.", paramName))
-	}
-	
-	# get frequency tables for all varnames  
-	results <- lapply.subset(xframe, varnames, wtdtablecols, wgts=xframe[[wgtsname]])
-	
-	# add meta with weighting
-	results <- lapply(results, structure, meta=c(weighting=wgtsname))
-	
-	results
-}
 
 #' Calculates the weighted mean for each column of the matrix
 #' optionally subsetting first and grouping by another (equal length) variable.
@@ -509,6 +364,12 @@ wtdtablecols.list <- function (xframe, varnames, wgtsname="weightBase") {
 #'
 #' @param grpby
 #'  elements to group by, or NULL or unspecified to do no grouping
+#' 
+#' @param grpby.tag
+#'  added to meta attribute of the result
+#' 
+#' @param na.rm
+#'  logical. Should missing values be removed?  
 #' 
 #' @examples
 #' 	mx <- children$o.gptotvis
@@ -570,64 +431,5 @@ wtdmeancols <- function (mx, logiset=NULL, wgts = NULL, grpby=NULL, grpby.tag = 
 	}
 	
 	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
-}
-
-#' Calculates the mean of each column (ie: wtdmeancols) of xlist[[varname]],
-#' names the columns, and labels the result with a meta attribute.
-#' 
-#' If logiset is not null, then xlist is firstly subsetted and will
-#' only include those obs that have indexed with a TRUE value in the logiset
-#' logical vector.
-#' 
-#' If grpbycoding is not null, then grouping is applied before calculating
-#' the mean.
-#' 
-#' @param mx
-#'  matrix or dataframe to calculate column means of 
-#'  
-#' @param logiset
-#'  logical vector indicating which observations to include, or NULL to include all.
-#'  Can contain a "desc" attribute which describes the set.
-#'
-#' @param wgts
-#'  elemets to weight by, or NULL to do no weighting
-#'
-#' @param grpby
-#'  elements to group by, or NULL or unspecified to do no grouping
-#' 
-#' @param grpby.tag
-#'  if specified this value with be attached as the
-#'  meta attribute "grpby.tag"
-#'  
-#' @examples
-#' mx <- env.base$modules$years1_5$outcomes$gptotvis ; mx <- xframe$gptotvis
-#' logiset <- childsets$females
-#' wgts <- NULL; wgts <- children$weightBase ; wgts <- rep(1, nrow(mx))
-#' grpby = NULL; grpby.tag = NULL
-#' grpby <- children$r1stchildethn ;  grpby.tag <- "r1stchildethn"
-#' grpby <- children$z1gender ;  grpby.tag <- "z1gender"
-#' 
-#' mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpyby = NULL; grpby.tag = NULL
-#' 
-#' wtdmeancols.lbl(mx, logiset=logiset, grpby=grpby, grpby.tag=grpby.tag)
-#' wtdmeancols.lbl(mx, logiset, wgts, grpby, grpby.tag)
-#' 
-wtdmeancols.lbl <- function (mx, logiset = NULL, wgts = NULL, grpby = NULL, grpby.tag = NULL) {
-	
-	if (is.null(wgts)) wgts <- rep(1, nrow(mx))  #can't make this default param for some reason need to set here
-	
-	grpdesc <- NULL
-	result <- wtdmeancols(mx, logiset, wgts, grpby)
-	
-	if (!is.null(grpby)) {
-		# set column names
-		grpdesc <- dict[[grpby.tag]]
-		dimnames(result)[[COL]] <- names(codings[[grpby.tag]])
-		names(dimnames(result))[[COL]] <- grpdesc
-	}
-	
-	
-	# return with meta
-	structure(result, meta=c(varname=attr(mx, "varname"), grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 }
 

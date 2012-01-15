@@ -3,12 +3,7 @@
 # Author: oman002
 ###############################################################################
 
-
-a <- function (mylist) {
-	## alias for toArray
-	toArray(mylist)
-}
-
+library(abind)
 
 #' Convert a list of matrices into an array, with each matrix in the z dimension.
 #' 
@@ -16,6 +11,7 @@ a <- function (mylist) {
 #'  list of matrices. Each must matrix the same dimensions.
 #' @return
 #'  array with dimnames and meta from listmx
+#' @export 
 #' @examples
 #'  listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
 #'  as.array.listmx(listmx)
@@ -43,28 +39,29 @@ as.array.listmx <- function(listmx) {
 #' @return
 #'  the list of the matrices aligned to the maximal set of rows and cols.
 #'  rows and cols are in numerical sort order.
-#' 
+#'
+#' @export 
 #' @examples 
 #' 
-#' # list of vectors with same names
+#' #list of vectors with same names
 #' listmx2 <- list(A = c("0"=720L, "1"=353L), B = c("0"=722L, "1"=355L))
 #' 
-#' #' list of vectors with diff names
+#' #list of vectors with diff names
 #' listmxa <- list(A = c("0"=720L, "1"=353L), B = c("1"=722L, "2"=355L))
 #'  
-#' # list of 2 4x1 matrices with same number of rows but different row names, and no col names 
+#' #list of 2 4x1 matrices with same number of rows but different row names, and no col names 
 #' listmx7 <- list(matrix(c(10,20,30,40), dimnames = list(c(1:4), NULL)), matrix(c(20,30,40,50), dimnames = list(c(2:5), NULL)))
 #'
-#' # list of 3x2 matrix and 4x2 matrix  
+#' #list of 3x2 matrix and 4x2 matrix  
 #' listmx8 <- list(matrix(c(10,20,30,40,50,60), nrow = 3, ncol = 2, dimnames = list(c("1","10","100"), c("b","a"))), matrix(c(20,30,40,50,60,70,80,90), nrow = 4, ncol = 2, dimnames = list(c("10","2","100","200"), c("b","c"))))
 #' 
-#' #' list of 5x1 table and 4x1 table
+#' #list of 5x1 table and 4x1 table
 #' listmx9 <-  list(structure(c(1L, 15L, 3L, 27L, 1029L), .Dim = c(5L, 1L), .Dimnames = structure(list(    c("1", "2", "3", "4", "5"), NULL), .Names = c("", "")), class = "table"),    structure(c(11L, 1L, 18L, 1045L), .Dim = c(4L, 1L), .Dimnames = structure(list(        c("2", "3", "4", "5"), NULL), .Names = c("", "")), class = "table"))
 #' 
-#' #' list with a matrix with NA for a rowname
+#' #list with a matrix with NA for a rowname
 #' listmxa <- list(matrix(c(10,20), ncol = 1, dimnames = list(c("1","10"), NULL)), matrix(c(200,1000), ncol = 1, dimnames = list(c("2",NA), NULL)) )
 #'
-#' #' list of 2 matrices with meta
+#' #list of 2 matrices with meta
 #' listmx10 <- list(structure(matrix(100, dimnames = list(1, NULL)), meta=c("grpby.tag"="r1stchildethn")), matrix(c(200,300), dimnames = list(c(1,2), NULL))) 
 #' 
 #' listmx11 <- list(numeric(0), structure(0.5, .Dim = c(1,1), .Dimnames = list(NULL, "Cat 1")))
@@ -80,7 +77,7 @@ as.array.listmx <- function(listmx) {
 #' listmx <- listmx10
 #' listmx <- listmx11
 #' 
-#' align.by.name.list.mx (listmx)
+#' align.by.name.list.mx(listmx)
 align.by.name.list.mx <- function(listmx) {
 	
 	listmx.is.vector <- sapply(listmx, is.vector)
@@ -176,23 +173,21 @@ align.by.name.list.mx <- function(listmx) {
 #'  If into.dom = ROW (i.e: 1) then listmx.src elements will be added as the 2nd
 #'  row into each vector/matrix element of listmx.dest. Existing elements of listmx.dest
 #'  will be in the first row(s).  
-#'  
+#' 
+#' @export 
 #' @examples
 #'
-#' listmx.dest <- mxlist
-#' listmx.src <- results
-#' append.list.mx(listmx.dest, listmx.src)
-#'
-#'  
 #' listmx.dest <- list(a=c(1:3), b=c(1:2))
 #' listmx.src <- list(a=c(11:13), b=c(11:12))
-#' 
 #' into.dim=ROW
+#' 
 #' result <- append.list.mx(listmx.dest, listmx.src, into.dim)
 #' result <- append.list.mx(result, listmx.src, into.dim)
-#' 
-#' listmx.dest <- me.base
-#' listmx.src <- me.scenario
+#'
+#' #listmx.dest <- mxlist
+#' #listmx.src <- results
+#' #listmx.dest <- me.base
+#' #listmx.src <- me.scenario
 #' into.dim=ROW 
 #' 
 #' listmx.dest <- structure(list(means = structure(c(5, 5, 9, 11, 15, 50), .Names = c("0%","20%", "40%", "60%", "80%", "100%")), errs = structure(c(0, 0,0, 0, 0, 0), .Names = c("0%", "20%", "40%", "60%", "80%", "100%"))))
@@ -217,51 +212,24 @@ append.list.mx <- function(listmx.dest, listmx.src, into.dim=ZDIM) {
 	
 }
 
-library(abind)
-arrZAdd <- function(m, arrName) {
-	#add the 2d matrix m to the 3d array specified by the string arrName
-	#in the next z dimension slot
-	#eg: arrZAdd(matrix(1:12,3,4), "arr3d")
-	# m <- matrix(1:12,3,4)
-	# dimnames(m) <- list(letters=c("A","B","C"), numbers=c("1st","2nd","3rd","4th"))
-	# arrZAdd(m, "arr3d")
-	
-	if (length(dim(m)) != 2) {
-		firstParamName <- as.character(sys.call())[2]
-		stop(gettextf("'%s' must have 2 dimensions\n",firstParamName))
-	}
-	
-	#create new NULL variable if arrName doesn't exist
-	if (!exists(arrName)) {
-		assign(arrName, NULL, envir = .GlobalEnv)
-	}
-	
-	#get current value of arrName
-	arr <- eval(parse(text=arrName))
-	
-	#bind m to the 3rd dimension of arr
-	arr <- abind(arr,m,along=3)
-	
-	#add back names of dimension because they get lost in abind
-	names(dimnames(arr)) <- names(dimnames(m))
-	
-	#keep meta attribute
-	attr(arr, "meta") <- attr(m, "meta")	
-	
-	#save to arrName
-	assign(arrName, arr, envir = .GlobalEnv)
+as.arrayFromList <- function (mylist) {
+	## convert list of vectors to an array
+	t(array(unlist(mylist), dim=c(length(mylist[[1]]),length(mylist))))
 }
 
 #' Converts a list of same length vectors to a matrix.
 #' Unlike as.matrix.default, it unlists first and
 #' uses names from the first list element in the result.
 #' 
+#' @param xlist
+#'  a list of same length vectors
 #' @param byrow
 #'  if TRUE, each list element becomes a row in the matrix
 #'  else, each list element becomes a column in the matrix
 #' 
+#' @export 
 #' @examples
-#'  xlist <- runs.mean.cfreq$gpmorb
+#'  #xlist <- runs.mean.cfreq$gpmorb
 #' 
 #'  xlist <- list(a=c("1st"=1,"2nd"=2, "3rd"=3), b=c(11:13))
 #' 
@@ -283,59 +251,12 @@ as.matrixFromList <- function (xlist, byrow = TRUE) {
 	}				
 }
 
-cAdd <- function(vec, arrName, colName) {
-	#add the vector to the 2d array specified by the string arrName
-	#in the next column slot
-	#eg: cAdd(c(1,2,3,4,5), "arr2d", "col1")
-	# vec <- c(1,2,3)
-	# names(vec) <- c("a","b","c")
-	# cAdd(vec, "arr2d", "col1")
-	
-	#create new NULL variable if arrName doesn't exist
-	if (!exists(arrName)) {
-		assign(arrName, NULL, envir = .GlobalEnv)
-	}
-	
-	#get current value of arrName
-	arr <- eval(parse(text=arrName))
-	
-	#bind vec to the arr with column name = colName
-	arr <- cbind(arr, `colnames<-`(cbind(vec), colName))
-	
-	#keep meta attribute
-	attr(arr, "meta") <- attr(vec, "meta")	
-	
-	#save to arrName
-	assign(arrName, arr, envir = .GlobalEnv)
-}
-
-collapseZdim <- function (xarray) {
-	#collapse the Z dimension of a 3D array into cols in a 2D array
-	#eg: xarray <- runs.all.mean$all.base$o.gptotvis
-	#eg: xarray <- runs.all.mean$all.by.gender.base$o.gptotvis
-	#eg: collapseZdim(runs.all.mean$all.base$o.gptotvis)
-	#eg: collapseZdim(runs.all.mean$all.by.gender.base$o.gptotvis)
-	
-	result <- apply(xarray, ZDIM, function(x) {x})
-	
-	#copy names, dimnames, and meta attribute to the result
-	rows <- dim(xarray)[ROW]
-	cols <- dim(xarray)[COL]
-	zdims <- dim(xarray)[ZDIM]
-	dim(result) <- c(rows, cols*zdims)
-	dimnames(result)[[ROW]] <- dimnames(xarray)[[ROW]] 
-	dimnames(result)[[COL]] <- rep(dimnames(xarray)[[COL]], zdims)
-	names(dimnames(result)) <- names(dimnames(xarray))[-ZDIM] 
-	attr(result, "meta") <- attr(xarray, "meta")
-	
-	result
-}
-
 #' Push row/col headers (ie: names of the rownames and colnames) into the rownames and colnames.
 #' 
 #' @param mx
 #'  matrix
 #' 
+#' @export 
 #' @examples
 #'  mx <- matrix(1:4, nrow=2, ncol=2, dimnames=list(gender=c("M","F"), SES=c("Low","High")))
 #'  mx <- matrix(1:4, nrow=2, ncol=2, dimnames=list(c("M","F"), SES=c("Low","High")))
@@ -373,13 +294,14 @@ dimnames.prepend.header <- function(mx) {
 #'  NB: matrices can have different dimensions and are aligned first within a list, and then between the lists.
 #'  @seealso align.by.name.list.mx
 #' 
+#' @export
 #' @examples
 #'  
-#' lol.mx <- .$runs$freqs$all.by.ethnicity$z1msmokeLvl1
+#' #lol.mx <- .$runs$freqs$all.by.ethnicity$z1msmokeLvl1
 #' lol.mx <- structure(list(year1 = structure(list(`1` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), '2'= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = 1:2), year2 = structure(list(`1` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `2` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("1", "2"))))
 #' 
 #' flatten.lolmx(lol.mx)
-#' 
+#' \dontrun{
 #' , , year1
 #' 
 #'   1 0 1 1 2 0 2 1 3 0 3 1
@@ -391,7 +313,7 @@ dimnames.prepend.header <- function(mx) {
 #'   1 0 1 1 2 0 2 1 3 0 3 1
 #' 1  31  32  33  34  35  36
 #' 2  41  42  43  44  45  46
-#'
+#' }
 flatten.lolmx <- function(lol.mx) {
 	
 	# flatten each matrix into a single row then align and return each list of matrices as a single matrix
@@ -420,8 +342,10 @@ flatten.lolmx <- function(lol.mx) {
 #'    meta = meta of listmx[[1]]
 #'    rownames = names of listmx 
 #' 
+#' @export
 #' @examples
 #'  listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
+#' flatten.listmx(listmx)
 flatten.listmx <- function(listmx) {
 	
 	# flatten each matrix into a single row 
@@ -460,6 +384,7 @@ flatten.listmx <- function(listmx) {
 #' @return
 #'  a single row matrix (1,c)
 #' 
+#' @export
 #' @examples
 #' 
 #' # 2 x 3 matrix
@@ -516,10 +441,11 @@ flatten.mx <- function (mx, row.names.first = FALSE) {
 #' @param rows row names, or a numeric scalar for the number of rows
 #' @param cols columns names, or a numeric scalar for the number of cols
 #' 
+#' @export
 #' @examples
 #' cols <- 2 ; rows <- 5
-#' cols <- names(codings$smoke); rows <- 5
-#' cols <- names(codings$smoke); rows <- paste("Year", 1:5)
+#' cols <- c("Male","Female"); rows <- 5
+#' cols <- c("Male","Female"); rows <- paste("Year", 1:5)
 #' 
 #' namedMatrix(rows, cols)
 namedMatrix <- function (rows, cols) {
@@ -535,17 +461,25 @@ namedMatrix <- function (rows, cols) {
 #' Takes any number of 2D matrices, each with the same number of cols but with 
 #' any set of named rows. Every col 1 of the matrices are combined into a new 
 #' matrix, as are every col 2,3 etc.
+#' @param ...
+#'  matrices, or a list of matrices
+#' @seealso merge.list.mx.by.rows
 merge.list.mx.by.cols <- function(...) {
-	merge.list.mx.by.rows(lapply(listmx, t))
+	xlistm <- if (nargs() > 1) list(...) else (...)
+	merge.list.mx.by.rows(lapply(xlistm, t))
 }
 
 #' Takes any number of 2D matrices, each with the same number of rows but with 
 #' any set of named cols. Every row 1 of the matrices are combined into a new 
 #' matrix, as are every row 2,3 etc.
 #'
+#' @param ...
+#'  matrices, or a list of matrices
 #' @examples
 #'  	xlistm <- list(matrix(c(1,5,2,6,3,7,4,8),nrow=2,dimnames=list(c(),c("a","b","c","d"))),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c(),c("a","d","e"))),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c(),c("c","e","f"))))
 #'		xlistm
+#' \dontrun{
+#' 
 #'		[[1]]
 #'		a b c d
 #'		[1,] 1 2 3 4
@@ -560,7 +494,7 @@ merge.list.mx.by.cols <- function(...) {
 #'		c  e  f
 #'		[1,] 13 30 40
 #'		[2,] 17 31 41
-#'		
+#' 	
 #' (matrices = 3, cols = x*, rows = 2)
 #' 
 #' Cols in the matrices are joined on column name to produce a list of y matrices, with z cols, and a unique merged
@@ -577,9 +511,9 @@ merge.list.mx.by.cols <- function(...) {
 #' [1,]  5  6  7  8 NA NA
 #' [2,] 15 NA NA 18 21 NA
 #' [3,] NA NA 17 NA 31 41
-#' 
-#' Another example:	
-#' xlistm <- runs.all.cfreq$gpmorb
+#' }
+#' # Another example:	
+#' #xlistm <- runs.all.cfreq$gpmorb
 #' xlistm <- list(first=matrix(1:6, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))), second=matrix(11:16, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))))
 #' merge.list.mx.by.rows(xlistm)
 merge.list.mx.by.rows <- function(...) {
@@ -651,15 +585,17 @@ merge.list.mx.by.rows <- function(...) {
 #'  source rows and cols as specified by newrows and newcols.
 #'  If the source matrix is a table then will also return a table.
 #' 
+#' @export
 #' @examples
 #' mx <- matrix(c(10,20,30,40,50,60), nrow = 3, ncol = 2, dimnames = list(c("a","b","c"), c(2:1)))
 #' mx <- as.table(mx)
+#' \dontrun{
 #' > mx
 #'    2  1
 #' a 10 40
 #' b 20 50
 #' c 30 60
-#'
+#' 
 #' newcols <- c(2,1,NA)
 #' newrows <- c(1,2,3,NA,NA,NA)
 #' dim.names <- list(c(LETTERS[1:6]),1:3)
@@ -672,7 +608,7 @@ merge.list.mx.by.rows <- function(...) {
 #' D NA NA NA
 #' E NA NA NA
 #' F NA NA NA
-#'
+#' }
 #' mx <- listmx[[1]]
 #'
 #' # mx as a table 
@@ -722,9 +658,12 @@ redim.mx <- function(mx, newrows, newcols, dim.names) {
 #' 
 #' @param mxlist
 #'  list of matrices
+#' @param rownum
+#'  row number to select
 #' @param na.rm
 #'  if TRUE, then do not return any selected row that contains a NA
 #' 
+#' @export
 #' @examples 
 #'  mxlist <- list(mx1=matrix(1:10, nrow=2), mx2=matrix(c(1,2,NA,4), nrow=2))
 #'  mxlist <- list(mx1=matrix(1:10, nrow=2)) 
@@ -744,11 +683,3 @@ select.row.list.mx <- function(mxlist, rownum, na.rm = T) {
 	result
 	
 }
-
-
-toArray <- function (mylist) {
-	## convert list of vectors to an array
-	t(array(unlist(mylist), dim=c(length(mylist[[1]]),length(mylist))))
-}
-
-

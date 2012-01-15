@@ -5,7 +5,13 @@
   as.csv.string(x, title = NULL, row.names = T)
 }
 \arguments{
+  \item{x}{object}
+
   \item{title}{optional title to prepend to output}
+
+  \item{row.names}{either a logical value indicating
+  whether the row names of x are to be written along with
+  x, or a character vector of row names to be written}
 }
 \description{
   Produces a csv string from x, returned as a length 1 chr

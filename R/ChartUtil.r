@@ -11,9 +11,6 @@
 #' @param title
 #'  chart title. Also used in navigator node name.
 #' 
-#' @param group.title
-#'  group title. Used as navigator folder.
-#' 
 #' @param xlab
 #'  x axis label. 
 #' 
@@ -103,13 +100,11 @@ chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row
 #'  vector/matrix of y values. Each row of matrix is a separate series.
 #' @param y.err
 #'  amount above and below y to draw error bar
-#' @param col
-#'   a vector of colors for the bars or bar components. By default, grey is used if height is a vector, 
-#'   and a gamma-corrected grey palette if height is a matrix.
 #' @param legend.text
 #'  vector of text to appear in legend
 #' @param col
-#'  colours used for bars
+#'   a vector of colors for the bars or bar components. By default, grey is used if height is a vector, 
+#'   and a gamma-corrected grey palette if height is a matrix.
 #' @param ...
 #'  additional params to pass to barplot
 #' 

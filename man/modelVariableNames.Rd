@@ -7,7 +7,7 @@ as well as disaggregates squared variables}
   modelVariableNames(model, strip.Lvl = TRUE)
 }
 \arguments{
-  \item{xterms}{terms}
+  \item{model}{a glm model}
 
   \item{strip.Lvl}{strip the LvlX from names. Defaults to
   TRUE.}

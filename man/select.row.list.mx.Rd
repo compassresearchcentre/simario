@@ -8,6 +8,8 @@ and return a list of row vectors.}
 \arguments{
   \item{mxlist}{list of matrices}
 
+  \item{rownum}{row number to select}
+
   \item{na.rm}{if TRUE, then do not return any selected row
   that contains a NA}
 }
