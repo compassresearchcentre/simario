@@ -14,10 +14,10 @@ Description: Framework for executing multi-run dynamic micro-simulation and
     aggregating results across all runs
 License: GPL
 Collate:
-    'CalcListMatrix.r'
     'ChartUtil.r'
     'Dictionary.r'
     'ListUtil.r'
+    'MatrixStats.r'
     'MatrixUtil.r'
     'modifyProps.r'
     'Simenv.r'

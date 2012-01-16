@@ -20,14 +20,14 @@
   there may be multiple simulation runs.
 
   Each Simmodule has a distinct set of outcomes (i.e:
-  outputs). A run measure is a calculation performed at the
-  end of the run for an outcomes across all iterations. A
-  run measure can include means, frequences, summaries,
-  quantiles. All that required is a R function that takes a
+  outputs). A run stat is a calculation performed at the
+  end of the run for an outcome across all iterations.
+  Example run stats include mean, frequency, summary, and
+  quantile. All that required is a R function that takes a
   matrix.
 
-  Run measures can be averaged across multiple runs to get
-  a final simulation result.
+  Run stats are averaged across multiple runs to get a
+  final simulation result.
 
   Final results can be displayed in tables or graphs, and
   can be compared across scenarios.

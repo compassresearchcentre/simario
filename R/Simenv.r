@@ -306,7 +306,7 @@ expr = {
 								simmodule$outcomes <- simmodule$simulateOutcomes(simenv=.)  ))
 			
 			# append module run results
-			invisible(lapply(.$modules, function(simmodule) simmodule$appendRunResults()))
+			invisible(lapply(.$modules, function(simmodule) simmodule$appendRunStats()))
 		}
 		
 		# calc final results

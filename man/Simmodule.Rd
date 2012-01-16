@@ -1,9 +1,7 @@
 \docType{data}
 \name{Simmodule}
 \alias{Simmodule}
-\title{Simulation module object. Contains a user-specified function that generates outcomes.
-Run results are generated from outcomes at the end of the run, and final simulation
-results are generated from all runs at the end of the simulation.}
+\title{Simulation module object. Contains a user-specified function that generates outcomes.}
 \format{proto object 
  $ runs            :List of 5 
  $ class           :function (.)   
@@ -11,20 +9,18 @@ results are generated from all runs at the end of the simulation.}
  $ outcomes        : list() 
  $ clone           :function (.)   
  $ name            : NULL 
- $ appendRunResults:function (.)   
  $ result          : list() 
  $ calcFinalResults:function (., simenv)   
  $ new             :function (., name, freqvars, cfreqvars, meanvars, freqs.args,  
-    means.args)}
+    means.args)   
+ $ appendRunStats  :function (.)}
 \usage{
   Simmodule
 }
 \description{
-  Simulation module object. Contains a user-specified
-  function that generates outcomes. Run results are
-  generated from outcomes at the end of the run, and final
-  simulation results are generated from all runs at the end
-  of the simulation.
+  Run stats are generated from outcomes at the end of the
+  run, and final simulation results are generated from all
+  runs at the end of the simulation.
 }
 \keyword{datasets}
 

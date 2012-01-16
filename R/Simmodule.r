@@ -1,7 +1,8 @@
 library(proto)
 
 #' Simulation module object. Contains a user-specified function that generates outcomes.
-#' Run results are generated from outcomes at the end of the run, and final simulation
+#' 
+#' Run stats are generated from outcomes at the end of the run, and final simulation
 #' results are generated from all runs at the end of the simulation.
 #' 
 Simmodule <- proto(
@@ -10,8 +11,8 @@ expr = {
 	name <- NULL 
 	outcomes <- list()
 			
-	#' Run results:
-	#' frequencies, continuous frequencies, means, summaries, quantiles
+	#' Run stats:
+	#' frequencies, continuous frequencies, means, summaries, quantiles etc.
 	runs <- list(freqs = list(), 
 				cfreqs = list(), 
 				means = list(), 
@@ -102,7 +103,7 @@ expr = {
 		
 	}
 	
-	#' Calculate and append run results, based on the values in outcomes.
+	#' Calculate and append run stats, based on the values in outcomes.
 	#' Called at the end of each run.
 	#' 
 	#' @param .
@@ -113,8 +114,8 @@ expr = {
 	#' . <- env.base$modules$years1_5
 	#' . <- env.base$modules$years6_13
 	#' 
-	#' appendRunResults (.)
-	appendRunResults <- function (.) {
+	#' appendRunStats (.)
+	appendRunStats <- function (.) {
 		
 		cat(gettextf("Generating run results for %s\n", .$name))
 		
@@ -145,7 +146,7 @@ expr = {
 		return()
 	}
 	
-	#' Calculate and store mean of values across all runs (i.e: final results).
+	#' Calculate and store final results, i.e: mean of values across all runs.
 	#' Called at the end of the simulation.
 	#' 
 	#' @param .
