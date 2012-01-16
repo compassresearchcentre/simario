@@ -25,6 +25,7 @@
   the results as a list.
 }
 \examples{
+\dontrun{
 X <- env.base$years1_5$outcomes
 indices <- names(env.base$years1_5$runs$cfreqs)
 .FUN <- wtdtablecols
@@ -42,5 +43,6 @@ results <- lapply.subset (X, indices, .FUN, grpby.tag="r1stchildethn")
 lapply.subset (X, indices, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)
 
 results <- lapply.subset (X, indices, .FUN)
+}
 }
 

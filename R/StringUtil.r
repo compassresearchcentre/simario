@@ -7,6 +7,7 @@
 #' 
 #' @param x
 #'  character vector
+#' @export
 #' @examples 
 #' 
 #' x <- c("1 (%)", "-2 (%)", "2.102 (%)", "10 (%)")
@@ -20,6 +21,7 @@ strip.alpha <- function(x) {
 #' 
 #' @param x
 #'  character vector
+#' @export
 #' @examples 
 #' 
 #' x <- c("1 (%)", "-2 (%)", "2.102 (%)", "10 (%)")
@@ -33,6 +35,7 @@ strip.numeric <- function(x) {
 #' 
 #' @param mx
 #'  matrix 
+#' @export
 #' @examples 
 #' 
 #' mx <- matrix(c(1:4), nrow=2, ncol=2, dimnames=list(c("0 (%)", "1 (%)"), c("0 (%)", "1 (%)")))
@@ -45,11 +48,14 @@ strip.alpha.mx <- function(mx) {
 }
 
 
+#' Remove leading and trailing spaces from a string
+#' 
+#' @param string
+#'  character vector
+#' @export
 trim <- function (string) {
-	#remove leading and trailing spaces from a string
+	#
 	gsub("^\\s+|\\s+$", "", string)
 }
-
-
 
 

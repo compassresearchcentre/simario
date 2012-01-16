@@ -35,9 +35,5 @@ func <- function() {
 
 args <- list()
 data <- withinfunc(data, func)
-
-data <- base
-func <- setupOutputs
-args <- list()
 }
 

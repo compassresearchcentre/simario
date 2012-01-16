@@ -24,23 +24,23 @@ variable.}
   variables into one variable.
 }
 \examples{
-binlevel1 <- c(1,0,0)
-binlevel2 <- c(0,1,0)
-binlevel3 <- c(0,0,1)
+level1 <- c(1,0,0)
+level2 <- c(0,1,0)
+level3 <- c(0,0,1)
 levelvalues <- c(1,2,3)
-binary.levels.combine(binlevel1, binlevel2, binlevel3)   # [1] 1 2 3
+binary.levels.combine(level1, level2, level3)   # [1] 1 2 3
 
-binary.levels.combine(list(binlevel1, binlevel2, binlevel3)) # [1] 1 2 3
+binary.levels.combine(list(level1, level2, level3)) # [1] 1 2 3
 
-level1 <- env.scenario$simframe$SESBTHLvl1
-level2 <- env.scenario$simframe$SESBTHLvl2
-level3 <- env.scenario$simframe$SESBTHLvl3
+#level1 <- env.scenario$simframe$SESBTHLvl1
+#level2 <- env.scenario$simframe$SESBTHLvl2
+#level3 <- env.scenario$simframe$SESBTHLvl3
 
 binary.levels.combine(level1, level2, level3)
 binary.levels.combine(list(level1, level2, level3))
 levelvalues <- c(1,2,3)
 binlevels <- list(level1, level2, level3)
-binlevels <- simframe[c("z1chparLvl0", "z1chparLvl1")] ; levelvalues = c(0,1)
+#binlevels <- simframe[c("z1chparLvl0", "z1chparLvl1")] ; levelvalues = c(0,1)
 binary.levels.combine (binlevels, levelvalues = levelvalues)
 }
 

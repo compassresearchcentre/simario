@@ -21,9 +21,9 @@
   Frequency table, with option to group results.
 }
 \examples{
-x <- env.base$years1_5$outcomes$z1accomLvl1[,1]
-grpby <- env.base$years1_5$outcomes$z1gender
-grpby.tag <- "z1gender"
+#x <- env.base$years1_5$outcomes$z1accomLvl1[,1]
+#grpby <- env.base$years1_5$outcomes$z1gender
+#grpby.tag <- "z1gender"
 
 
 x <- rep(0,1075)
@@ -32,6 +32,6 @@ grpby <- c('M','M','F','F','F','F')
 grpby.tag <- "gender"
 
 table.grpby(x)
-table.grpby(x, grpby, grpby.tag)
+table.grpby(x, grpby)
 }
 

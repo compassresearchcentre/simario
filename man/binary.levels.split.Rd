@@ -26,7 +26,7 @@ is equal to that factor or not.}
 x <- c(1,2,3,2,1)
 f <- c(1,2,3)
 
-binary.levels.split (x, f):
+binary.levels.split (x, f)
 
 \dontrun{
 $`1`
@@ -37,10 +37,11 @@ $`2`
 
 $`3`
 [1] 0 0 1 0 0
-}
+
 
 x <- adjcatvar
 f=sort(unique(x))
 binary.levels.split(x)
+}
 }
 

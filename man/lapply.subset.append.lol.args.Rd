@@ -33,6 +33,7 @@ the parallel list lol.args and the function .FUN.}
   function .FUN.
 }
 \examples{
+\dontrun{
 X <- outcomes_wtotals
 lol <- .$runs$means
 lol.args <- attr(lol, "args.list")
@@ -50,5 +51,6 @@ attr(lol, "args.list") <- lol.args
 .FUN <- wtdmeancols.lbl
 
 lapply.subset.append.lol.args(X, lol, lol.args, simplify=T, .FUN)
+}
 }
 

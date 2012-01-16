@@ -17,9 +17,11 @@
   Load and create a GLM from a csv file.
 }
 \examples{
+\dontrun{
 filedir <- "D:/workspace.sim/MELC/CHDS/models/"
 filename <- "Burt9_10.csv"
 
 loadGLMCSV(filedir , filename)
+}
 }
 

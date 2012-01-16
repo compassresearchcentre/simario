@@ -22,6 +22,7 @@
   specified varname.
 }
 \examples{
+\dontrun{
 x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
 x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
 
@@ -32,5 +33,6 @@ x <- env.base$modules$years1_5$results$means$all.by.gender$gptotvis
 varname=attr(x, "meta")["grpby.tag"]
 dict <- dict.MELC
 labelColumnCodes(x, dict, varname)
+}
 }
 

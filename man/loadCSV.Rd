@@ -17,6 +17,8 @@
   Helper function that loads a CSV file.
 }
 \examples{
+\dontrun{
 loadCSV(propensityfiledir, "accom_Propens.csv")
+}
 }
 

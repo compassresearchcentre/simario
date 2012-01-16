@@ -28,6 +28,7 @@
   Creates a set of run outputs.
 }
 \examples{
+\dontrun{
 catvars <- NULL
 convars <- NULL
 means.args <- NULL
@@ -41,5 +42,6 @@ means.args <- list(	all = list(), males = list(logiset=childsets$males),	females
 
 freqvars <- catvars
 runs <- createRunOutputs(catvars, convars, means.args, mean.grouped.spec)
+}
 }
 

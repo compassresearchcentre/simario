@@ -13,10 +13,13 @@ silently exit.}
   otherwise silently exit.
 }
 \examples{
-foo <- c(1,NA,3)
+\dontrun{
+	foo <- c(1,NA,3)
  names(foo) <- c("a","b","c")
  xlist <- foo
+
 	checkNAs(foo)
 	checkNAs(mpropens)
+}
 }
 

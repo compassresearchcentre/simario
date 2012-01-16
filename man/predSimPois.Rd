@@ -20,7 +20,9 @@
   Predict and simulate continuous value from poisson model
 }
 \examples{
-model.glm <- models$hadmtot
+\dontrun{
+ model.glm <- models$hadmtot
 	newdata <- simvalues
+}
 }
 

@@ -66,7 +66,6 @@ D NA NA NA
 E NA NA NA
 F NA NA NA
 }
-mx <- listmx[[1]]
 
 # mx as a table
 mx <- structure(c(1L, 15L, 3L, 27L, 1029L), .Dim = c(5L, 1L), .Dimnames = structure(list(c("1", "2", "3", "4", "5"), NULL), .Names = c("", "")), class = "table")

@@ -34,6 +34,7 @@ an existing list.}
   the results into an existing list.
 }
 \examples{
+\dontrun{
 X <- env.base$years6_13$outcomes
 results.list <- env.base$years6_13$runs$summaries
 lapply.subset.append (results.list, X, .FUN=summary.mx)
@@ -66,5 +67,6 @@ lapply.subset.append (runs$freqs$all.by.ethnicity, outcomes, simplify = FALSE, .
 
 results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = wtdmeancols.lbl2
 lapply.subset.append (results.list, X, indices, simplify, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)
+}
 }
 

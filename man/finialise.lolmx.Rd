@@ -39,6 +39,7 @@
   columns and calculate mean across all matrices
 }
 \examples{
+\dontrun{
 varname = "z1singleLvl1" ; varname = "gptotvis"
 lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
 lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
@@ -54,6 +55,7 @@ asPercentages = T; removeZeroCategory = T; CI = F
 removeZeroCategory = F
 finialise.lolmx(lol.mx)
 finialise.lolmx(lol.mx, asPercentages, removeZeroCategory, CI)
+}
 }
 \seealso{
   align.by.name.list.mx

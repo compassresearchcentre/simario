@@ -20,8 +20,10 @@ list.}
   elements of list.
 }
 \examples{
+\dontrun{
 xlist <- env.base$years6_13$outcomes
 indices <- names(env.base$years6_13$runs$means$all)
 summary.mx.list(xlist, indices)
+}
 }
 

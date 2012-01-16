@@ -29,7 +29,7 @@
   amounts as seperate vectors in a matrix or list.
 }
 \examples{
-eg:
+\dontrun{
 
 result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
 \dontrun{
@@ -55,5 +55,6 @@ result.row <- envs$`Scenario 1`$years1_5$results$quantiles$kids["Total",]
 result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
 
 result.as.means.and.errs(result.row)
+}
 }
 

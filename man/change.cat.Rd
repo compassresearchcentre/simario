@@ -17,7 +17,9 @@
   \item{new.all.dat}{the data you are working on and want
   modified}
 
-  \item{n.change}{}
+  \item{n.change}{the number of observations that need
+  moving into or out of each category to get the requested
+  proportions}
 }
 \description{
   Change values in a categorical vector to a lower or

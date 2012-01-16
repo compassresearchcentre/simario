@@ -1,6 +1,6 @@
 \name{incByFactor}
 \alias{incByFactor}
-\title{increments x by factor}
+\title{Increments x by factor}
 \usage{
   incByFactor(x, factoredx, factorincrements)
 }
@@ -16,9 +16,10 @@
   x incremented by the factor increments
 }
 \description{
-  increments x by factor
+  Increments x by factor
 }
 \examples{
+\dontrun{
 x <- children$bwkg
 xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0,0))
 table(bin(x, 0.5))
@@ -29,5 +30,6 @@ factoredx <- bin(x, binbreaks$INTERACT, breaklast=NULL)
 factorincrements <- rep(0,9)
 r <- incByFactor(x, factoredx, factorincrements)
 table(r, useNA="always")
+}
 }
 

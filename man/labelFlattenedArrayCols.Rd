@@ -33,6 +33,7 @@
   colnames.
 }
 \examples{
+\dontrun{
 xa <- lol.mx.array
 
 lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
@@ -46,5 +47,6 @@ removeZeroCategory = F
 xa <- r$all.by.gender$householdsize
 
 labelFlattenedArrayCols(xa, dict=dict, removeZeroCategory=removeZeroCategory)
+}
 }
 

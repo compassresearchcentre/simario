@@ -21,6 +21,6 @@
 #' @docType package
 #' @name simar
 #' @aliases simar package-simar
-#' @import abind plyr xlsx
+#' @import abind plyr xlsx proto
 NULL
 

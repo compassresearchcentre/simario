@@ -31,8 +31,9 @@ y <- rnorm(500, mean=1)
 y <- matrix(y,100,5)
 y.means <- apply(y,2,mean)
 y.sd <- apply(y,2,sd)
+y.err <- 1.96*y.sd/10
 barx <- barplot(y.means, names.arg=1:5,ylim=c(0,1.5), col="blue", axis.lty=1, xlab="Replicates", ylab="Value (arbitrary units)")
-error.bar(barx, y.means, 1.96*y.sd/10)
+error.bar(barx, y.means, y.err)
 
 error.bar(barx, y.means, y.err)
 x = barx; y = y.means

@@ -1,10 +1,14 @@
-# Simenv object - a simulation environment.
-# 
-# Author: oman002
-###############################################################################
-
 library(proto)
 
+#' Simenv object - a simulation environment.
+#'
+#' Contains a simframe, one or more simulation modules, and adjustments required to test scenarios.
+#' This class will be subclassed by specific simulation problems which will provide their own simframe,
+#' Simmodules and adjustments.  
+#'  
+#' Typically 1 Simenv will be created and used to run a base simulation, and additional Simenvs will be
+#' created to test different scenarios.
+#' 
 Simenv <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
 expr = {  

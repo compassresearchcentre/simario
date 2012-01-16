@@ -35,7 +35,7 @@ colmeans.list <- function (xlistm) {
 #'  a matrix of means across the Z dimension
 #' 
 #' @examples 
-#' 
+#' \dontrun{
 #' xa <- env.base$years1_5$runs$means$all$gpmorb
 #' xa <- env.base$years6_13$runs$means$all$burt
 #' xa <- env.base$years1_5$runs$means$all.by.SESBTH.2cat$gpmorb
@@ -46,6 +46,7 @@ colmeans.list <- function (xlistm) {
 #' xa <- env.base$years1_5$runs$means$all.by.gender$gptotvis
 #' 
 #' mean.array.z(xa)
+#' }
 mean.array.z <- function (xa, CI = TRUE) {
 	result <- apply(xa, c(1,2), mean)
 	numRuns <- dim(xa)[3]
@@ -92,6 +93,7 @@ mean.array.z <- function (xa, CI = TRUE) {
 #' @return 
 #'  mean of each matrix element across all list elements 
 #' 
+#' @export
 #' @examples 
 #'
 #' # list of 2 2x3 matrices 
@@ -135,20 +137,20 @@ mean.array.z <- function (xa, CI = TRUE) {
 #' listmx <- listmx9
 #' listmx <- listmx10
 #'
-#' test <- lapply(list(listmx1,listmx2,listmx3,listmx4, listmx5, listmx6, listmx7, listmx8, listmx9, listmx10), mean.list.mx)
+#' test <- lapply(list(listmx1,listmx2,listmx3,listmx4, listmx5, listmx6, listmx7, listmx8, listmx9, listmx10), mean_list_mx)
 #'  
-#' mean.list.mx(listmx)
-#' mean.list.mx(listmx1)
-#' mean.list.mx(listmx2)
-#' mean.list.mx(listmx3)
-#' mean.list.mx(listmx4)     
-#' mean.list.mx(listmx5)
-#' mean.list.mx(listmx6)
-#' mean.list.mx(listmx7)
-#' mean.list.mx(listmx8)
-#' mean.list.mx(listmx9)
-#' mean.list.mx(listmx10)
-mean.list.mx <- function(listmx) {
+#' mean_list_mx(listmx)
+#' mean_list_mx(listmx1)
+#' mean_list_mx(listmx2)
+#' mean_list_mx(listmx3)
+#' mean_list_mx(listmx4)     
+#' mean_list_mx(listmx5)
+#' mean_list_mx(listmx6)
+#' mean_list_mx(listmx7)
+#' mean_list_mx(listmx8)
+#' mean_list_mx(listmx9)
+#' mean_list_mx(listmx10)
+mean_list_mx <- function(listmx) {
 	# only 1 element, so just return that element
 	if (is.list(listmx) && length(listmx) == 1) {
 		return(listmx[[1]])
@@ -192,6 +194,7 @@ mean.list.mx <- function(listmx) {
 #' @return 
 #'  vector of proportions, calculated according to group
 #' 
+#' @export
 #' @examples
 #' 
 #' x <- 1:6
@@ -218,7 +221,7 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE) {
 #'  quantile of each column returned as a row
 #' 
 #' @examples 
-#'  
+#' \dontrun{ 
 #' mx <- years6_13$outcomes[["cond"]]
 #' mx <- env.base$modules$years1_5$outcomes[["hadmtot"]]
 #' mx <- env.base$modules$years6_13$outcomes[["cond"]]
@@ -227,6 +230,7 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE) {
 #' quantile.mx(mx, probs=seq(0, 1, 0.2), na.rm = TRUE)
 #' quantile.mx(mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0, 1, 0.2), na.rm = TRUE)
 #' quantile.mx(mx, probs=seq(0, 1, 0.02), na.rm = TRUE)
+#' }
 quantile.mx <- function (mx, new.names=NULL, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	result <- t(apply(mx, COL, function (x) {
@@ -238,6 +242,66 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 					}))
 	
 	structure(result, meta=c(varname=attr(mx, "varname")))
+}
+
+#' Execute summary on the columns of a matrix.
+#' 
+#' @param mx
+#'  matrix
+#' 
+#' @return
+#'  summary of each column, returned as a row
+#' 
+#' @examples
+#' \dontrun{
+#' mxc <- env.base$years6_13$outcomes[["cond"]]
+#' mx <- env.base$years1_5$outcomes[["gptotvis"]]
+#' summary.mx(mxc)
+#' summary.mx(mx)
+#' }
+summary.mx <- function (mx) {
+	sm <- apply(mx, COL, summary)
+	
+	if(is.list(sm)) {
+		# a list was returned which means 
+		# we have vectors of different lengths.
+		# this is because some have an NA's column
+		# and some not.
+		#
+		# add "NA's" value if it doesn't exist,
+		# simplify to matrix,
+		# and rotate so iterations are rows
+		t(sapply(sm, function(s) {
+							if(is.na(s["NA's"])) c(s, "NA's"=0) else s
+						}))
+	} else {
+		# add NA's row if it doesn't exist
+		if (!("NA's" %in% rownames(sm))) {
+			sm <- rbind(sm, "NA's" = 0)	
+		}
+		t(sm)
+	}
+}
+
+#' Convience method to apply summary.mx to a subset of elements of 
+#' list.
+#' 
+#' @param xlist
+#'  a list of matrices
+#' @param indices
+#'  indices, either numeric or names, of elements in x for which to apply summary.mx,
+#'  or NULL to apply to all elements of x
+#' @return 
+#'  list of summaries
+#' 
+#' @examples
+#' \dontrun{
+#' xlist <- env.base$years6_13$outcomes
+#' indices <- names(env.base$years6_13$runs$means$all)
+#' summary.mx.list(xlist, indices)
+#' } 
+summary.mx.list <- function (xlist, indices) {
+	lapply.subset(xlist, indices, summary.mx)
 }
 
 #' Frequency table, with option to group results.
@@ -252,11 +316,12 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 #'  with columns that are the group by and rows the categories. 
 #'  If grpby = NULL then a 2D table with 1 column and rows as categories.
 #' 
+#' @export
 #' @examples
 #' 
-#' x <- env.base$years1_5$outcomes$z1accomLvl1[,1]
-#' grpby <- env.base$years1_5$outcomes$z1gender
-#' grpby.tag <- "z1gender"
+#' #x <- env.base$years1_5$outcomes$z1accomLvl1[,1]
+#' #grpby <- env.base$years1_5$outcomes$z1gender
+#' #grpby.tag <- "z1gender"
 #' 
 #' 
 #' x <- rep(0,1075)
@@ -265,7 +330,7 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 #' grpby.tag <- "gender"
 #' 
 #' table.grpby(x)
-#' table.grpby(x, grpby, grpby.tag)
+#' table.grpby(x, grpby)
 table.grpby <- function (x, grpby = NULL) {
 	if (is.null(grpby)) {
 		t(t(table(x, useNA = "ifany", deparse.level = 0)))
@@ -297,16 +362,18 @@ table.grpby <- function (x, grpby = NULL) {
 #'  each element is a 2D matrix where columns are the group by
 #'  and rows the categories. If grpby = NULL then 
 #'  a 1D matrix with columns as categories is returned.
-#' 
+#'
+#' @export 
 #' @examples
-#' mx <- env.base$years1_5$outcomes$z1accomLvl1
-#' grpby <- env.base$years1_5$outcomes$z1gender
-#' r0 <- table.grpby.mx.cols(mx, grpby)
-#'  
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' grpby <- c('M','F','F','M')
-#' r1 <- table.grpby.mx.cols(mx, grpby)
+#' table.grpby.mx.cols(mx, grpby)
 #' 
+#' \dontrun{
+#' mx <- env.base$years1_5$outcomes$z1accomLvl1
+#' grpby <- env.base$years1_5$outcomes$z1gender
+#' r1 <- table.grpby.mx.cols(mx, grpby)
+#'  
 #' mx <- outcomes[[1]]
 #' grpby=children$r1stchildethn ; grpby.tag="r1stchildethn"
 #' r2 <- table.grpby.mx.cols(mx, grpby, grpby.tag)
@@ -314,6 +381,7 @@ table.grpby <- function (x, grpby = NULL) {
 #' mx <- env.base$modules$years1_5$outcomes$z1kidsLvl1
 #' grpby = NULL
 #' r3 <- table.grpby.mx.cols(mx)
+#' }
 table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL) {
 	
 	# if no column names, number them off
@@ -372,6 +440,7 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL) {
 #'  logical. Should missing values be removed?  
 #' 
 #' @examples
+#' \dontrun{
 #' 	mx <- children$o.gptotvis
 #' 	wgts <- children$weight
 #' 	by <- children$z1gender
@@ -396,6 +465,7 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL) {
 #' mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpby = NULL; grpby.tag = NULL
 #' 
 #' wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = F)
+#' }
 wtdmeancols <- function (mx, logiset=NULL, wgts = NULL, grpby=NULL, grpby.tag = NULL, na.rm = F) {
 	
 	if (is.null(wgts)) wgts <- rep(1, nrow(mx))  #can't make this default param for some reason need to set here

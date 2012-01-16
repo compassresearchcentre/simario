@@ -27,12 +27,13 @@
   Apply a function to the inner element of a list of lists.
 }
 \examples{
-lol <- env.base$years6_13$runs$means
+\dontrun{
 lol <- env.base$years6_13$runs$means
 lol <- env.base$years1_5$runs$means
 lol <- env.base$years1_5$runs$means
 lol <- env.base$years6_13$runs$summaries
 lol <- years1_5$runs$summaries
 lapply.inner(lol, mean.array.z)
+}
 }
 

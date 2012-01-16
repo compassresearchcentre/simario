@@ -24,8 +24,10 @@ where alpha is specified in the model.}
   size=1/alpha where alpha is specified in the model.
 }
 \examples{
+\dontrun{
 model.glm <- models$houtptot
 newdata <- simvalues
 predSimNBinom (model.glm, newdata)
+}
 }
 

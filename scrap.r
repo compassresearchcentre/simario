@@ -24,4 +24,4 @@ list(
 			file.path("~/workspace", x)
 		})
 
-		
+assert(c(T, T))

@@ -19,6 +19,6 @@
   Predict and simulate binary value from logistic model
 }
 \examples{
-model.glm <- models$z1msmokeLvl1
+#model.glm <- models$z1msmokeLvl1
 }
 

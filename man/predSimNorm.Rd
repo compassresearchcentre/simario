@@ -22,7 +22,9 @@ distribution of specified standard deviation}
   distribution of specified standard deviation
 }
 \examples{
+\dontrun{
 model.glm <- models$gpprev12
 newdata <- simvalues
+}
 }
 

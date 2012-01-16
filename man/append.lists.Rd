@@ -38,33 +38,33 @@
   NB: attributes of list.dest are replaced by list.src.
 }
 \examples{
-list.dest <- results.list; list.src <- results
-list.dest <- years1_5$results$means
-list.src <- years6_13$results$means
-by.name = TRUE
-r <- append.lists(list.dest, list.src, by.name)
+#list.dest <- results.list; list.src <- results
+#list.dest <- years1_5$results$means
+#list.src <- years6_13$results$means
+#by.name = TRUE
+#r <- append.lists(list.dest, list.src, by.name)
 
 #Test first three cases:
 
-ml0 <- namedList("msmoke", "fsmoke")
-x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table.grpby.mx.cols
-list.src <- lapply.subset(x, indices, .FUN)
+#ml0 <- namedList("msmoke", "fsmoke")
+#x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table.grpby.mx.cols
+#list.src <- lapply.subset(x, indices, .FUN)
 
-ml0 <- namedList("gptotvis", "hadmtot")
-x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=wtdtablecols
-list.src <- lapply.subset(x, indices, .FUN)
+#ml0 <- namedList("gptotvis", "hadmtot")
+#x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=wtdtablecols
+#list.src <- lapply.subset(x, indices, .FUN)
 
-ml1 <- append.lists(ml0, list.src)
-ml2 <- append.lists(ml1, list.src)
-ml3 <- append.lists(ml2, list.src)
+#ml1 <- append.lists(ml0, list.src)
+#ml2 <- append.lists(ml1, list.src)
+#ml3 <- append.lists(ml2, list.src)
 
-list.dest <- ml0
-list.dest <- ml1
+#list.dest <- ml0
+#list.dest <- ml1
 
 #Test with lists with differently named items.
 
-list.dest <- list(foo=matrix(1:4)) ; list.dest <- years1_5$results$quantiles
-list.src <- list(bar=matrix(5:10)) ; list.src <- years6_13$results$quantiles
+list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$results$quantiles
+list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$results$quantiles
 
 by.name = TRUE; flatten.src = TRUE
 list.result <- append.lists(list.dest , list.src, by.name = TRUE, flatten.src = TRUE)

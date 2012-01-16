@@ -1,14 +1,11 @@
-# Dictionary object.
-# This object holds:
-#  * a mapping of variable names to descriptions
-#  * codings (i.e: category names) for categorical variables
-# 
-# Author: oman002
-###############################################################################
-
 library(proto)
 library(xlsx)
 
+#' Dictionary object.
+#' This object holds:
+#'  * a mapping of variable names to descriptions
+#'  * codings (i.e: category names) for categorical variables
+#' 
 Dictionary <- proto(expr = {
 	
 	#' Vector of variable desciptions.

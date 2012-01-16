@@ -18,6 +18,6 @@
   in simframe.
 }
 \examples{
-checkOutcomeVars(createMELCfoutcomes(children),simframe) #outcomes <- createMELCfoutcomes(children)
+#checkOutcomeVars(createMELCfoutcomes(children),simframe) #outcomes <- createMELCfoutcomes(children)
 }
 

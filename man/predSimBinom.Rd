@@ -22,7 +22,9 @@ distribution with probability}
   distribution with probability
 }
 \examples{
+\dontrun{
 model.glm <- models$houtptot
 newdata <- simvalues
+}
 }
 

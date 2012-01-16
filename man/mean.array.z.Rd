@@ -19,6 +19,7 @@ Preserves meta atrribute.}
   atrribute.
 }
 \examples{
+\dontrun{
 xa <- env.base$years1_5$runs$means$all$gpmorb
 xa <- env.base$years6_13$runs$means$all$burt
 xa <- env.base$years1_5$runs$means$all.by.SESBTH.2cat$gpmorb
@@ -29,5 +30,6 @@ xa <- env.base$years1_5$runs$means$all.by.ethnicity$gptotvis
 xa <- env.base$years1_5$runs$means$all.by.gender$gptotvis
 
 mean.array.z(xa)
+}
 }
 

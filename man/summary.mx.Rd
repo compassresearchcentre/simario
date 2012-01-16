@@ -14,9 +14,11 @@
   Execute summary on the columns of a matrix.
 }
 \examples{
+\dontrun{
 mxc <- env.base$years6_13$outcomes[["cond"]]
 mx <- env.base$years1_5$outcomes[["gptotvis"]]
 summary.mx(mxc)
 summary.mx(mx)
+}
 }
 

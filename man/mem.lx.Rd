@@ -16,8 +16,10 @@ element of a list}
   of a list
 }
 \examples{
+\dontrun{
 mem.lx(env.base)
 prettyNum(sum(mem.lx(env.base)), big.mark=",")
 mem.lx(env.base$years1_5)
+}
 }
 

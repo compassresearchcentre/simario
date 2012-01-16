@@ -22,9 +22,11 @@ Attachs a meta attribute with varname}
   varname
 }
 \examples{
+\dontrun{
 x <- env.scenario$simframe$bwkg
 breaks <- binbreaks$bwkg
 
 table.contvar(env.scenario$simframe$bwkg, binbreaks$bwkg, "bwkg")
+}
 }
 

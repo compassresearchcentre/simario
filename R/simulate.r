@@ -14,8 +14,8 @@
 #'  the simframe
 #' 
 #' @examples
-#' simframe <- simframe.start
-#' checkModelVars(models, simframe)
+#' #simframe <- simframe.start
+#' #checkModelVars(models, simframe)
 checkModelVars <- function (models, simframe) {
 	# try a predict on each model
 	predtest <- lapply(models, function (model) try({
@@ -41,7 +41,7 @@ checkModelVars <- function (models, simframe) {
 #' @param simframe simframe to test for presence of varname
 #' @return nothing if successful, otherwise errors
 #' @examples
-#' checkOutcomeVars(createMELCfoutcomes(children),simframe) #outcomes <- createMELCfoutcomes(children) 
+#' #checkOutcomeVars(createMELCfoutcomes(children),simframe) #outcomes <- createMELCfoutcomes(children) 
 checkOutcomeVars <- function(outcomes, simframe) {
 	#check varname specified on outcome var exists in simframe
 	srcvar <- unlist(lapply(outcomes, attr, "varname"))
@@ -71,7 +71,7 @@ checkOutcomeVars <- function(outcomes, simframe) {
 #' 
 #' @examples 
 #' 
-#' m.glm <- createGLM(model_msmoke) 
+#' #m.glm <- createGLM(model_msmoke) 
 createGLM <- function (modeldf) {
 	
 	#extract model components from dataframe
@@ -147,6 +147,7 @@ createGLM <- function (modeldf) {
 #' same name as the name outcome matrix.
 #' 
 #' @examples
+#' \dontrun{
 #' simframe <- simframe.start
 #' simframe <- env.base$simframe
 #' outcomeSetName <- "years1_5"
@@ -154,6 +155,7 @@ createGLM <- function (modeldf) {
 #' iterations <- 8
 #' iterations <- c(6:13)
 #' outcomes <- createOutcomeMatrices(simframe, outcomeSetName, iterations)
+#' }
 createOutcomeMatrices <- function (simframe, outcomeSetName, iterations) {
 	setVars <- getOutcomeVars(simframe, select_outcome_set=outcomeSetName, sorted=TRUE)
 	
@@ -162,7 +164,7 @@ createOutcomeMatrices <- function (simframe, outcomeSetName, iterations) {
 						iterations) )
 	
 	#convert list to dataframe 
-	as.data.frame.list.as.is(outcomes, row.names(simframe))
+	as_data_frame_list_as_is(outcomes, row.names(simframe))
 }
 
 #' Create a matrix of NA with specified col/row names/lengths.
@@ -177,10 +179,12 @@ createOutcomeMatrices <- function (simframe, outcomeSetName, iterations) {
 #' a matrix with the "varname" attribute set to simvarname
 #' 
 #' @examples 
+#' \dontrun{
 #' rows <- length(children$z1msmoke1)
 #' cols <- 5
 #' simvarname <- "z1msmokeLvl1"
 #' createOutputMatrix(simvarname, nrows, ncols)
+#' }
 createOutputMatrix <- function (simvarname, rows, cols) {
 	structure(namedMatrix(rows, cols), varname = simvarname)
 }
@@ -203,7 +207,7 @@ createOutputMatrix <- function (simvarname, rows, cols) {
 #' 		into sets (mean.grouped and mean.sets) or listed straight.
 #' 
 #' @examples 
-#'
+#' \dontrun{
 #' catvars <- NULL
 #' convars <- NULL
 #' means.args <- NULL
@@ -217,6 +221,7 @@ createOutputMatrix <- function (simvarname, rows, cols) {
 #' 
 #' freqvars <- catvars
 #' runs <- createRunOutputs(catvars, convars, means.args, mean.grouped.spec)
+#' }
 createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.args) {
 	# Frequency tables for categorical variables
 	freqslist <- namedList(freqvars)
@@ -241,10 +246,6 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 	)
 	
 }
-
-
-
-
 
 #' Prepare run results for display by:
 #'  flattening into a 3D array
@@ -277,6 +278,7 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 #'  a matrix of means
 #' 
 #' @examples
+#' \dontrun{
 #' varname = "z1singleLvl1" ; varname = "gptotvis"
 #' lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
 #' lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
@@ -292,6 +294,7 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 #' removeZeroCategory = F
 #' finialise.lolmx(lol.mx)
 #' finialise.lolmx(lol.mx, asPercentages, removeZeroCategory, CI)
+#' }
 finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T, CI = F) {
 	# flatten into 3D array
 	lol.mx.array <- flatten.lolmx(lol.mx)
@@ -322,7 +325,6 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 	result
 }
 
-
 #' Get a set of outcome variables from the simframe.
 #' 
 #' @param simframe
@@ -338,7 +340,7 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 #'  a vector of simframe variables (with names the same as the vector value)
 #' 
 #' @examples 
-#' 
+#' \dontrun{
 #' select_outcome_set = "years1_5"
 #' select_outcome_set = c("years1_5", "years6_13")
 #' select_outcome_set = NULL
@@ -349,6 +351,7 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 #' sorted = TRUE
 #' 
 #' getOutcomeVars(simframe, select_outcome_type, select_outcome_set, sorted)
+#' }
 getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_set=NULL, sorted=FALSE) {
 	
 	df.outcome.vars <- attr(simframe, "df.outcome.vars")
@@ -382,6 +385,7 @@ getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_se
 #'  3D array with relabled columns and dropped zero category (if requested)
 #' 
 #' @examples
+#' \dontrun{
 #' xa <- lol.mx.array
 #' 
 #' lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1  
@@ -395,6 +399,7 @@ getOutcomeVars <- function(simframe, select_outcome_type=NULL, select_outcome_se
 #' xa <- r$all.by.gender$householdsize
 #' 
 #' labelFlattenedArrayCols(xa, dict=dict, removeZeroCategory=removeZeroCategory)
+#' }
 labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"], 
 		grpby.tag=attr(xa, "meta")["grpby.tag"], removeZeroCategory = T) {
 	
@@ -430,6 +435,7 @@ labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"
 #'  that is the decsription of varname.
 #' 
 #' @examples
+#' \dontrun{
 #' x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
 #' x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
 #' 
@@ -440,6 +446,7 @@ labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"
 #' varname=attr(x, "meta")["grpby.tag"]
 #' dict <- dict.MELC
 #' labelColumnCodes(x, dict, varname)
+#' }
 labelColumnCodes <- function(x, dict, varname) {
 
 	if (is.null(varname) || is.na(varname)) {
@@ -477,10 +484,12 @@ library(xlsx)
 #'  a glm model object
 #' 
 #' @examples
+#' \dontrun{
 #' filedir <- "D:/workspace.sim/MELC/CHDS/models/"
 #' filename <- "gptotvis.xlsx" ; filename <- "paddhsbetas.xlsx"
 #' 
 #' loadGLMXLS(filedir, filename)
+#' }
 loadGLMXLS <- function (filedir, filename) {
 	modeldf <- readXLSSheet1(filedir, filename)
 	tryCatch(	createGLM(modeldf), 
@@ -499,10 +508,12 @@ loadGLMXLS <- function (filedir, filename) {
 #'  a glm model object
 #'  
 #' @examples
+#' \dontrun{
 #' filedir <- "D:/workspace.sim/MELC/CHDS/models/"
 #' filename <- "Burt9_10.csv"
 #' 
 #' loadGLMCSV(filedir , filename)
+#' }
 loadGLMCSV <- function (filedir, filename) {
 	modeldf <- read.csv(paste(filedir, filename, sep=""),stringsAsFactors = FALSE)
 	tryCatch(	createGLM(modeldf), 
@@ -520,8 +531,10 @@ loadGLMCSV <- function (filedir, filename) {
 #' @return 
 #'  a data frame containing the file
 #' 
-#' @examples 
+#' @examples
+#' \dontrun{
 #' loadCSV(propensityfiledir, "accom_Propens.csv")
+#' }
 loadCSV <- function(filedir, filename) {
 	read.csv(paste(filedir, filename, sep=""),stringsAsFactors = FALSE)
 }
@@ -571,12 +584,13 @@ loadCSV <- function(filedir, filename) {
 #' 				remain.
 #' 
 #' @examples 
-#' 
+#' \dontrun{
 #' bf <- children
 #' basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
 #' sfdef <- readXLSSheet1(basefiledir, "simframedef.xlsx")
 #' simframe.start <- loadSimFrame(bf, sfdef)
 #' simframe <- loadSimFrame(bf, sfdef)
+#' }
 loadSimFrame <- function (bf, sfdef) {
 	
 	#remove empty variables, generally these are blank lines
@@ -655,6 +669,7 @@ loadSimFrame <- function (bf, sfdef) {
 #'   chr named vector of coefficients
 #' 
 #' @examples
+#' \dontrun{
 #' model <- models$z1homeownLvl1
 #' model <- c(coef(models$logit_gp0totvis), coef(models$gptotvis))
 #' model <- models.to.show$burt 
@@ -664,6 +679,7 @@ loadSimFrame <- function (bf, sfdef) {
 #' combineMultipleLevels = TRUE; ignoreMultiplicativeTerms = TRUE; directionOnly = TRUE
 #' modelVariableCoefs(model) 
 #' modelVariableCoefs(model, strip.Lvl = FALSE)
+#' }
 modelVariableCoefs <- function (model, combineMultipleLevels = TRUE, ignoreMultiplicativeTerms = TRUE, directionOnly = TRUE) {
 	
 	cls <- match.arg(class(model)[1], c("glm","numeric")) 
@@ -713,9 +729,11 @@ modelVariableCoefs <- function (model, combineMultipleLevels = TRUE, ignoreMulti
 #'   chr vector of variable names
 #' 
 #' @examples
+#' \dontrun{
 #' model <- models$z1accomLvl1
 #' modelVariableNames(model) 
 #' modelVariableNames(model, strip.Lvl = FALSE)
+#' }
 modelVariableNames <- function (model, strip.Lvl = TRUE) {
 
 	l <- labels(terms(model))
@@ -760,9 +778,11 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 #'  subset logical expression indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
 #' 
-#' @examples 
+#' @examples
+#' \dontrun{
 #'  model <- model.glm
 #'  model <- models$gptotvis ; set <- c(T, rep(F, 1074))
+#' }
 predict <- function(model, envir = parent.frame(), set = NULL) {
 	
 	# get vars from model
@@ -800,7 +820,7 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 #'  all elements returned by evaluated model variables
 #'  
 #' @examples
-#'  model.glm <- models$z1msmokeLvl1
+#'  #model.glm <- models$z1msmokeLvl1
 predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	#determine predicted values
@@ -826,8 +846,10 @@ predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  all elements returned by evaluated model variables
 #'  
 #' @examples
+#' \dontrun{
 #' model.glm <- models$houtptot
 #' newdata <- simvalues
+#' }
 predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	#determine predicted values
@@ -850,9 +872,11 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  subset logical expression indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
 #' 
-#' @examples 
+#' @examples
+#' \dontrun{
 #'  model.glm <- models$hadmtot
 #' 	newdata <- simvalues
+#' }
 predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 	#determine predicted values
 	predicted_logs <- predict(model.glm, envir, set)
@@ -876,10 +900,12 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  subset logical expression indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
 #'  
-#' @examples 
+#' @examples
+#' \dontrun{
 #' model.glm <- models$houtptot
 #' newdata <- simvalues
 #' predSimNBinom (model.glm, newdata)
+#' }
 predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	#determine predicted values
@@ -906,8 +932,10 @@ predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  all elements returned by evaluated model variables
 #'  
 #' @examples
+#' \dontrun{
 #' model.glm <- models$gpprev12
 #' newdata <- simvalues
+#' }
 predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 	#determine predicted values
 	predicted <- predict(model.glm, envir, set)
@@ -930,6 +958,7 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' @return
 #'  xa as proportions
 #' @examples
+#' \dontrun{
 #' lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1 
 #' lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
 #' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
@@ -943,6 +972,7 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' xa <- lol.mx.array
 #' codings <- dict.MELC$codings
 #' prop.table.grpby.array.zdim(xa,codings)
+#' }
 prop.table.grpby.array.zdim <- function (xa, numgrps) {
 	  
 	grpsize <- ncol(xa) / numgrps
@@ -984,8 +1014,7 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 #'  second row/errs vector is the difference between each mean and it's lower value.
 #' 
 #' @examples
-#' 
-#' eg:
+#' \dontrun{
 #' 
 #' result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
 #' \dontrun{
@@ -1011,6 +1040,7 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 #' result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
 #' 
 #' result.as.means.and.errs(result.row)
+#' }
 result.as.means.and.errs <- function(result.row, simplify = T) {
 	ind.means <- grep("Mean", names(result.row))
 	ind.lowers <- grep("Lower", names(result.row))
@@ -1034,20 +1064,6 @@ result.as.means.and.errs <- function(result.row, simplify = T) {
 	}
 }	
 
-#' Convience method for saving environment to
-#' an Rdata file for debugging.
-#' 
-#' @param env
-#'  environment to save, defaults to env.scenario
-#' @param file
-#'  file name, defaults to "env.rdata"
-#' 
-#' @examples
-#'  save.env()
-save.env <- function(env=env.scenario, file="env.rdata") {
-	save(env, file=file)
-}
-
 #' Produce a proportioned table for x, using
 #' the specified coding as names and 
 #' setting the "meta" attribute to "varname"
@@ -1061,10 +1077,11 @@ save.env <- function(env=env.scenario, file="env.rdata") {
 #' @return 
 #'  a table (proportions) with names specified by coding 
 #' @examples
-#' 
+#' \dontrun{
 #' table.catvar(children$SESBTH, codings$SESBTH)
 #' x <- simframe$z1singleLvl1 ; coding <- codings$z1singleLvl1
 #' table.catvar(simframe$z1singleLvl1, codings$z1singleLvl1)
+#' }
 table.catvar <- function (x, coding) {
 	
 	varname <- attr(coding, "varname")
@@ -1097,11 +1114,12 @@ table.catvar <- function (x, coding) {
 #'  added as a tag on the meta attribute
 #' 
 #' @examples
-#' 
+#' \dontrun{
 #' x <- env.scenario$simframe$bwkg
 #' breaks <- binbreaks$bwkg
 #' 
 #' table.contvar(env.scenario$simframe$bwkg, binbreaks$bwkg, "bwkg")
+#' }
 table.contvar <- function (x, breaks, varname) {
 	tbl <- prop.table(table(bin(x, breaks, breaklast=NULL), useNA='ifany')) * 100
 	attr(tbl, "meta") <- c("varname" = varname)

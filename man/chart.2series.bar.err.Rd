@@ -34,42 +34,44 @@ error bars on the current device.}
   Draw a 2-series (base & scenario) side-by-side bar graph
   with error bars on the current device.
 }
+\examples{
+\dontrun{
+varname <- "kids"
+result.row.base <- env.base$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All Years",]
+scenario.name <- "Scenario 1"
+title <- paste(dictLookup(varname), "all years")
+xlab="Ethnicity"
+ylab=paste("Mean")
+
+varname <- "cond"
+result.row.base <- env.base$modules$years6_13$results$means$all.by.SESBTH[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years6_13$results$means$all.by.SESBTH[[varname]]["All Years",]
+scenario.name <- "Scenario 1"
+title <- paste(dictLookup(varname), "all years")
+xlab="SES at Birth"
+ylab=paste("Mean")
+
+varname <- "gptotvis"
+result.row.base <- env.base$modules$years1_5$results$histo[[varname]]
+result.row.scenario <- envs$`Scenario 1`$modules$years1_5$results$histo[[varname]]
+scenario.name <- "Scenario 1"
+title <- paste(dictLookup(varname), "all years")
+xlab="Value"
+ylab="Freq"
+
+varname <- "cond"
+result.row.base <- env.base$modules$years6_13$results$histo[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years6_13$results$histo[[varname]]["All Years",]
+scenario.name <- "Scenario 1"
+title <- paste(dictLookup(varname), "all years")
+xlab="Value"
+ylab="Freq"
+
+chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name)
+}
+}
 \seealso{
   result.as.means.and.errs
-
-  varname <- "kids" result.row.base <-
-  env.base$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All
-  Years",] result.row.scenario <- envs$`Scenario
-  1`$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All
-  Years",] scenario.name <- "Scenario 1" title <-
-  paste(dictLookup(varname), "all years") xlab="Ethnicity"
-  ylab=paste("Mean")
-
-  varname <- "cond" result.row.base <-
-  env.base$modules$years6_13$results$means$all.by.SESBTH[[varname]]["All
-  Years",] result.row.scenario <- envs$`Scenario
-  1`$modules$years6_13$results$means$all.by.SESBTH[[varname]]["All
-  Years",] scenario.name <- "Scenario 1" title <-
-  paste(dictLookup(varname), "all years") xlab="SES at
-  Birth" ylab=paste("Mean")
-
-  varname <- "gptotvis" result.row.base <-
-  env.base$modules$years1_5$results$histo[[varname]]
-  result.row.scenario <- envs$`Scenario
-  1`$modules$years1_5$results$histo[[varname]]
-  scenario.name <- "Scenario 1" title <-
-  paste(dictLookup(varname), "all years") xlab="Value"
-  ylab="Freq"
-
-  varname <- "cond" result.row.base <-
-  env.base$modules$years6_13$results$histo[[varname]]["All
-  Years",] result.row.scenario <- envs$`Scenario
-  1`$modules$years6_13$results$histo[[varname]]["All
-  Years",] scenario.name <- "Scenario 1" title <-
-  paste(dictLookup(varname), "all years") xlab="Value"
-  ylab="Freq"
-
-  chart.2series.bar.err(title, xlab, ylab, result.row.base,
-  result.row.scenario, scenario.name)
 }
 

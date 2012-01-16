@@ -1,12 +1,9 @@
-# Simulation module object. Contains a user-specified function that generates outcomes.
-# Run results are generated from outcomes at the end of the run, and final simulation
-# results are generated from all runs at the end of the simulation.
-# 
-# Author: oman002
-###############################################################################
-
 library(proto)
 
+#' Simulation module object. Contains a user-specified function that generates outcomes.
+#' Run results are generated from outcomes at the end of the run, and final simulation
+#' results are generated from all runs at the end of the simulation.
+#' 
 Simmodule <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace
 expr = {

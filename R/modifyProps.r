@@ -2,16 +2,17 @@
 #' 
 #' @param num
 #'  the number of categories above you want to steal from
-#'   if you are giving and not stealing, you always give to the category  
-#'   directly above  and num=1   
+#'  if you are giving and not stealing, you always give to the category  
+#'  directly above  and num=1   
 #' @param rank.col
 #'   the colum in which the rankings will be
 #' @param i
 #'   the interation you are up to in the while/for loop
 #' @param new.all.dat
-#'    the data you are working on and want modified
+#'   the data you are working on and want modified
 #' @param n.change
-#'  
+#'   the number of observations that need moving into or out of each 
+#'   category to get the requested proportions  
 #' @seealso This function is called by the function \code{\link{modifyProps}}
 change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	if (sign(n.change[i])==1) {
@@ -91,6 +92,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' @seealso This function calls \code{\link{change.cat}}
 #' 
 #' @examples
+#' \dontrun{
 #' default.vec <- children$SESBTH
 #' props <- c(0.1,0.1,0.8)
 #' propens <- propens.all$SESBTH
@@ -105,6 +107,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' 
 #' prop.table(table(default.vec))
 #' prop.table(table(modifyProps(default.vec, props, propens)))
+#' }
 modifyProps <- function(default.vec, props, propens=NULL) {
   if (is.null(props) || any(is.na(props))) {
 	#no props, silently do nothing	  
@@ -290,6 +293,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
 #'  same list of vectors, but with proportions modified
 #' 
 #' @examples
+#' \dontrun{
 #' level1 <- env.scenario$simframe$SESBTHLvl1
 #' level2 <- env.scenario$simframe$SESBTHLvl2
 #' level3 <- env.scenario$simframe$SESBTHLvl3
@@ -303,6 +307,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
 #' vecs.list <- list(level0=level0, level1=level1) ; vecs.list <- list(level0, level1)  
 #' vecs.list <- simframe[binLevelVarnames]
 #' r <- modifyPropsAsBinLevels(vecs.list, desiredProps = desiredProps, propens = propens)
+#' }
 modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 	
 	#catvar <- binary.levels.combine(simframe[binLevelVarnames])

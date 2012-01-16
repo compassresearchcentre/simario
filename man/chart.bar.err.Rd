@@ -25,10 +25,12 @@ of the plot on the current device.}
   to the right of the plot on the current device.
 }
 \examples{
+\dontrun{
 y <- me$means
 y.err <- me$errs
 col <- c("cornflowerblue", "chocolate1")
 legend.text <- c("Base", "Scenario 1")
 chart.bar.err(y, y.err, legend.text, col)
+}
 }
 

@@ -23,8 +23,10 @@ of coding.}
   "varname" of coding.
 }
 \examples{
+\dontrun{
 table.catvar(children$SESBTH, codings$SESBTH)
 x <- simframe$z1singleLvl1 ; coding <- codings$z1singleLvl1
 table.catvar(simframe$z1singleLvl1, codings$z1singleLvl1)
+}
 }
 

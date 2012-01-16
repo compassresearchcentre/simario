@@ -34,7 +34,11 @@
 #'  name of scenario. Used to great navigator node path and label series.
 #'
 #' @seealso result.as.means.and.errs
+#' 
+#' @export
+#' @examples
 #'  
+#' \dontrun{
 #' varname <- "kids"
 #' result.row.base <- env.base$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All Years",]
 #' result.row.scenario <- envs$`Scenario 1`$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All Years",]
@@ -66,9 +70,9 @@
 #' title <- paste(dictLookup(varname), "all years")
 #' xlab="Value"
 #' ylab="Freq"
-#'  
-#'    
+#'   
 #' chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name)
+#' }
 chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
 	
 	# remove NAs
@@ -78,7 +82,7 @@ chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row
 	me.base <- result.as.means.and.errs(result.row.base)
 	me.scenario <- result.as.means.and.errs(result.row.scenario)
 	
-	me <- merge.list.mx.by.rows(me.base, me.scenario)
+	me <- merge_list_mx.by.rows(me.base, me.scenario)
 	
 	#replace NAs with zeros
 	me <- lapply(me, function(x) {
@@ -108,12 +112,15 @@ chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row
 #' @param ...
 #'  additional params to pass to barplot
 #' 
+#' @export
 #' @examples
+#' \dontrun{
 #' y <- me$means
 #' y.err <- me$errs
 #' col <- c("cornflowerblue", "chocolate1") 
 #' legend.text <- c("Base", "Scenario 1")
 #' chart.bar.err(y, y.err, legend.text, col)
+#' }
 chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 	# default margins
 	mar.default <- c(5, 4, 4, 2) + 0.1
@@ -149,14 +156,16 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 #' @param ...
 #'   any other parameters to arrows
 #' 
+#' @export
 #' @examples
 #' 
 #' y <- rnorm(500, mean=1)
 #' y <- matrix(y,100,5)
 #' y.means <- apply(y,2,mean)
 #' y.sd <- apply(y,2,sd)
+#' y.err <- 1.96*y.sd/10
 #' barx <- barplot(y.means, names.arg=1:5,ylim=c(0,1.5), col="blue", axis.lty=1, xlab="Replicates", ylab="Value (arbitrary units)")
-#' error.bar(barx, y.means, 1.96*y.sd/10)
+#' error.bar(barx, y.means, y.err)
 #' 
 #' error.bar(barx, y.means, y.err)
 #' x = barx; y = y.means

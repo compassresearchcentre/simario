@@ -15,7 +15,7 @@ exist in simvalues, if not generate stop}
   in simvalues, if not generate stop
 }
 \examples{
-simframe <- simframe.start
-checkModelVars(models, simframe)
+#simframe <- simframe.start
+#checkModelVars(models, simframe)
 }
 

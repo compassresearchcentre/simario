@@ -26,6 +26,7 @@
   Return the coefficients used in the supplied model.
 }
 \examples{
+\dontrun{
 model <- models$z1homeownLvl1
 model <- c(coef(models$logit_gp0totvis), coef(models$gptotvis))
 model <- models.to.show$burt
@@ -35,5 +36,6 @@ model <- models$welfareLvl1
 combineMultipleLevels = TRUE; ignoreMultiplicativeTerms = TRUE; directionOnly = TRUE
 modelVariableCoefs(model)
 modelVariableCoefs(model, strip.Lvl = FALSE)
+}
 }
 

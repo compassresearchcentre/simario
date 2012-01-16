@@ -21,8 +21,10 @@ as well as disaggregates squared variables}
   disaggregates squared variables
 }
 \examples{
+\dontrun{
 model <- models$z1accomLvl1
 modelVariableNames(model)
 modelVariableNames(model, strip.Lvl = FALSE)
+}
 }
 

@@ -29,7 +29,8 @@ optionally subsetting first and grouping by another (equal length) variable.}
   another (equal length) variable.
 }
 \examples{
-mx <- children$o.gptotvis
+\dontrun{
+	mx <- children$o.gptotvis
 	wgts <- children$weight
 	by <- children$z1gender
 
@@ -53,5 +54,6 @@ mx <- env.base$modules$years1_5$outcomes$gptotvis ; logiset = childsets$males
 mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpby = NULL; grpby.tag = NULL
 
 wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = F)
+}
 }
 

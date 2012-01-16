@@ -3,28 +3,22 @@
 # Author: Oliver Mannion
 ###############################################################################
 
+#' ROW constant = 1.
+#' 
+#' @export
 ROW <- 1
+
+#' COL constant = 2.
+#'
+#' @export
 COL <- 2
+
+#' ZDIM constant = 3.
+#' 
+#' @export
 ZDIM <- 3
 
 library(xlsx)
-
-addRowPercents <- function (counts) {
-	#adds row percentages to a set of counts
-	#eg: addRowPercents(yearlyFreq(children$sol, "sol"))
-	pcents <- prop.table(counts,1) * 100
-	
-	# add (%) to the end of column headings
-	dimnames(pcents)[[2]] <- sapply(dimnames(pcents)[[2]], paste, "(%)")
-	
-	combined <- cbind(counts, pcents)
-	names(dimnames(combined)) <- names(dimnames(counts))
-	
-	#keep meta attribute
-	attr(combined, "meta") <- attr(counts, "meta")
-	
-	combined
-}
 
 #' Produces a csv string from x, returned as a length 1 chr vector.
 #' 
@@ -35,7 +29,8 @@ addRowPercents <- function (counts) {
 #' @param row.names
 #'  either a logical value indicating whether the row names of x are to be written along with x, 
 #'  or a character vector of row names to be written
-#' 
+#'
+#' @export 
 #' @examples
 #' x <- matrix(c(2,3,4,5,6,7,8,9),nrow=2)
 #' cat(as.csv.string(x))
@@ -43,7 +38,7 @@ addRowPercents <- function (counts) {
 #' str(as.csv.string(x))
 #' length(as.csv.string(x))
 #' 
-#' cat(as.csv.string(t.runs.mean.cfreq.prop.base$o.gpprev, "o.gpprev")) 
+#' #cat(as.csv.string(t.runs.mean.cfreq.prop.base$o.gpprev, "o.gpprev")) 
 as.csv.string <- function(x, title = NULL, row.names = T) {
 	if (!(is.null(title))) title <- dQuote(title) 
 	
@@ -58,9 +53,17 @@ as.csv.string <- function(x, title = NULL, row.names = T) {
 	paste(result,"\n")
 }
 
+#' Apply to a list using the names from the list
+#' @param xlist
+#'  list
+#' @param row.names
+#'  either a logical value indicating whether the row names of x are to be written along with x, 
+#'  or a character vector of row names to be written
+#' 
+#' @export 
+#' @examples
+#' #cat(as.csv.string.list(t.runs.mean.cfreq.base))
 as.csv.string.list <- function(xlist, row.names = T) {
-	#apply to a list using the names from the list
-	#eg: cat(as.csv.string.list(t.runs.mean.cfreq.base))
 	mapply(function (x, name) {
 						as.csv.string(x,name, row.names = row.names)
 					}, xlist, names(xlist))
@@ -71,9 +74,11 @@ as.csv.string.list <- function(xlist, row.names = T) {
 #' 
 #' @param xvec
 #'  logical vector
+#' 
+#' @export
 #' @examples
-#' assert(c(T,T))
-#' assert(c(T,F))
+#' assert(c(TRUE,TRUE))
+#' #assert(c(TRUE,FALSE))
 assert <- function(xvec) {
 	if (!all(xvec)) {
 		if (is.null(names(xvec))) names(xvec) <- paste("[",seq(length(xvec)),"]",sep="")
@@ -83,7 +88,7 @@ assert <- function(xvec) {
 	}
 }
 
-#' divides x into bins specified by breaks or a bin size
+#' Divides x into bins specified by breaks or a bin size
 #' 
 #' @param x numeric vector to be binned
 #' @param breaks either a numeric vector of two or more cut 
@@ -100,7 +105,9 @@ assert <- function(xvec) {
 #' specified then this is the position of the last break
 #' @return the values of x factored into bins 
 #' 
-#' @examples 
+#' @export
+#' @examples
+#' \dontrun{ 
 #' table(bin(env.scenario$simframe$bwkg, binbreaks$bwkg)) 
 #' table(bin(children$bwkg, 0.5)) # x <- children$bwkg; breaks <- 0.5
 #' table(bin(children$ga, 1, breaklast=37)) #x <- children$ga; breaks = 1; breaklast = 37
@@ -123,6 +130,7 @@ assert <- function(xvec) {
 #' blabels <- names(breaks)
 #' breaklast=NULL
 #' table(bin(x, breaks, breaklast=NULL), useNA="always")
+#' }
 bin <- function (x, breaks, blabels = names(breaks), breaklast=NULL) {
 	if (length(breaks) == 1L) {
 		# breaks is a binsize. calculate actual breaks
@@ -165,24 +173,25 @@ bin <- function (x, breaks, blabels = names(breaks), breaklast=NULL) {
 #' @return
 #'  a single vector
 #' 
+#' @export
 #' @examples 
-#' binlevel1 <- c(1,0,0)
-#' binlevel2 <- c(0,1,0)
-#' binlevel3 <- c(0,0,1)
+#' level1 <- c(1,0,0)
+#' level2 <- c(0,1,0)
+#' level3 <- c(0,0,1)
 #' levelvalues <- c(1,2,3)
-#' binary.levels.combine(binlevel1, binlevel2, binlevel3)   # [1] 1 2 3
+#' binary.levels.combine(level1, level2, level3)   # [1] 1 2 3
 #' 
-#' binary.levels.combine(list(binlevel1, binlevel2, binlevel3)) # [1] 1 2 3
+#' binary.levels.combine(list(level1, level2, level3)) # [1] 1 2 3
 #' 
-#' level1 <- env.scenario$simframe$SESBTHLvl1
-#' level2 <- env.scenario$simframe$SESBTHLvl2
-#' level3 <- env.scenario$simframe$SESBTHLvl3
+#' #level1 <- env.scenario$simframe$SESBTHLvl1
+#' #level2 <- env.scenario$simframe$SESBTHLvl2
+#' #level3 <- env.scenario$simframe$SESBTHLvl3
 #' 
 #' binary.levels.combine(level1, level2, level3)
 #' binary.levels.combine(list(level1, level2, level3))
 #' levelvalues <- c(1,2,3)
 #' binlevels <- list(level1, level2, level3)
-#' binlevels <- simframe[c("z1chparLvl0", "z1chparLvl1")] ; levelvalues = c(0,1)
+#' #binlevels <- simframe[c("z1chparLvl0", "z1chparLvl1")] ; levelvalues = c(0,1)
 #' binary.levels.combine (binlevels, levelvalues = levelvalues)
 binary.levels.combine  <- function (..., levelvalues = NULL) {
 	
@@ -216,11 +225,12 @@ binary.levels.combine  <- function (..., levelvalues = NULL) {
 #'  factors. Defaults to the unique set of values in x.
 #' @return 
 #'  list of binary levels
+#' @export
 #' @examples
 #' x <- c(1,2,3,2,1)
 #' f <- c(1,2,3)
 #' 
-#' binary.levels.split (x, f):
+#' binary.levels.split (x, f)
 #' 
 #' \dontrun{ 
 #' $`1`
@@ -231,24 +241,27 @@ binary.levels.combine  <- function (..., levelvalues = NULL) {
 #' 
 #' $`3`
 #' [1] 0 0 1 0 0
-#' }
+#' 
 #' 
 #' x <- adjcatvar
 #' f=sort(unique(x))
 #' binary.levels.split(x)
+#' }
 binary.levels.split <- function(x, f=sort(unique(x))) {
 	if (is.null(names(f))) names(f) <- f 
 	lapply(f, function(fac) { as.integer(x == fac) } )
 }
 
-#' increments x by factor
+#' Increments x by factor
 #' 
 #' @param x numeric vector to be incremented
 #' @param factoredx x factored
 #' @param factorincrements amounts to increment each factor of factoredx by
 #' @return x incremented by the factor increments
 #' 
+#' @export
 #' @examples
+#' \dontrun{
 #' x <- children$bwkg
 #' xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0,0))
 #' table(bin(x, 0.5))
@@ -259,6 +272,7 @@ binary.levels.split <- function(x, f=sort(unique(x))) {
 #' factorincrements <- rep(0,9)
 #' r <- incByFactor(x, factoredx, factorincrements)
 #' table(r, useNA="always")
+#' }
 incByFactor <- function(x, factoredx, factorincrements) {
 	if (nlevels(factoredx) != length(factorincrements)) {
 		stop("factor increments must be of length ", nlevels(factoredx))
@@ -269,34 +283,12 @@ incByFactor <- function(x, factoredx, factorincrements) {
 }
 
 
-#' Check a list for any NAs, producing error if they exist, otherwise
-#' silently exit.
-#' 
-#' @param xlist
-#'  list to check
-#' @examples
-#' 	foo <- c(1,NA,3)
-#'  names(foo) <- c("a","b","c")
-#'  xlist <- foo
-#' 	checkNAs(foo)
-#' 	checkNAs(mpropens)
-checkNAs <- function (xlist) {
-
-	nas <- sapply(xlist, function(x) { any(is.na(x)) })
-	
-	if (any(nas)) {
-		if (is.null(names(nas))) names(nas) <- paste("[",seq(length(nas)),"]",sep="")
-		firstParamName <- as.character(sys.call())[2]
-		stop(gettextf("NAs in %s for %s", firstParamName, 
-						paste(names(nas[nas]),collapse=", ")))
-	}
-}
-
 #' Detach an environment and return it.
 #' NB: the returned environment contains the contents of the attached environment but is
 #' actually a newly created different environment object from the original.
 #' @param envname
-#'  name of the attached environment 
+#'  name of the attached environment
+#' @export 
 detachReturn <- function(envname) {
 	#store modified env
 	#env <- updatelist(env, as.list(as.environment(envname)))
@@ -318,10 +310,14 @@ detachReturn <- function(envname) {
 	env
 }
 
+#' Calc the 95\% error from the t Distribution.
+#' 
+#' @param x
+#'  vector
+#' 
+#' @export
 err <- function (x) {
-	## calc the 95% error from the t Distribution
 	## see http://www.cyclismo.org/tutorial/R/confidence.html
-	## used by meanOfRuns
 	if (length(x) < 2) {
 		return(NA)
 	}
@@ -335,10 +331,13 @@ err <- function (x) {
 #' @param envir environment to evaluate in, defaults to global environment.
 #' @param allowEmptyExpr allow expressions to return no value, defaults to FALSE
 #' 
+#' @export
 #' @examples
+#' \dontrun{
 #' exprlist <- initial_value
 #' envir <- bf
 #' eval.list(exprlist, bf)
+#' }
 eval.list <- function (exprlist, envir = .GlobalEnv, allowEmptyExpr = FALSE) {
 	
 	#evaluate list of strings as expressions.
@@ -371,63 +370,40 @@ eval.list <- function (exprlist, envir = .GlobalEnv, allowEmptyExpr = FALSE) {
 	values
 }
 
-
-factorWeights <- function (xvecfactors, desiredProp) {
-	#generates a weighting for each factor in xvecfactors such that 
-	#prop.table(wtdtable(xvecfactors, factorWeights(xvecfactors, desiredProp))) == desiredProp
-	#
-	#eg: xvecfactors = children$SESBTH
-	#eg: desiredProp <- c(0.2,0.3,0.5)
-	#eg: factorWeights(children$SESBTH,c(0.2,0.3,0.5)) 
-	
-	# get existing proportions of factor levels
-	baseProp <- prop.table(table(xvecfactors))
-	
-	# weight for each factor level is desiredProp/baseProp
-	weight <- desiredProp/baseProp
-	
-	# get position of each factor level (each xvecfactors) in weight names
-	weightPos <- match(xvecfactors, names(weight))
-	
-	# get weight for xvecfactors
-	result <- sapply(weightPos, function (x) weight[x], USE.NAMES = FALSE )
-	names(result) <- NULL
-	result
-}
-
-
-
-
-freq <- function(variable, varname) {
-	# frequency table with percent
-	# v = variable
-	#
-	# eg: freq(a(children$z1msmokeLvl1)[,1], "msmoke")
-	# eg: freq(a(children$z1msmokeLvl1)[,2], "msmoke")
-	tbl <- as.data.frame( table(variable, dnn = varname), responseName = "Frequency")
-	tbl$Percent <- prop.table(tbl$Frequency) * 100
-	tbl$"Cumulative Percent" <- cumsum (tbl$Percent) 
-	tbl
-}
-
+#' Ssave x into global variable, ie: top frame, not just this function
+#' using the supplied varname
+#' @param varname
+#'  variable name
+#' @param x
+#'  value
+#' @param pos
+#'  environment to save into. Defaults to global environment.
+#' 
+#' @export
 globalNamed <- function (varname, x, pos = 1) {
-	#save x into global variable, ie: top frame, not just this function
-	#using the supplied varname
 	assign(varname, x, pos = pos)	
 }
 
+#' Save x into global variable as it's own name.
+#' @param x
+#'  value
+#' @param pos
+#'  environment to save into. Defaults to global environment.
+#' 
+#' @export
 global <- function (x, pos = 1) {
-	#save x into global variable as it's own name
+	
 	param1Name <- as.character(sys.call())[2]
 	globalNamed(param1Name, x, pos)
 }
 
 #' Returns whether x is a scalar (i.e. length 1)
 #' and numeric.
-#' 
+#'
+#' @export 
 #' @param x
 #'  object
-is.numeric.scalar <- function (x) {
+is_numeric_scalar <- function (x) {
 	length(x) == 1 && is.numeric(x)
 }
 
@@ -457,11 +433,14 @@ labelColTitleFromList <- function(xnamedlist) {
 #'  if TRUE, then naming will only occur if the xlist item 
 #'  has no existing colnames
 #' 
+#' @export 
 #' @examples
+#' \dontrun{
 #' xlist <- env.base$years1_5$results$means$all
 #' xlist <- results$means$all
 #' x <- xlist$gptotvis
 #' labelCols.list(xlist, "Mean")
+#' }
 labelCols.list <- function(xlist, xlabels = names(xlist), onlyIfNull = TRUE) {
 	
 	mapply(function(x, label) {
@@ -507,14 +486,19 @@ labelseq <- function(xm, along, title) {
 
 #' Return amount of memory, in bytes, used by each
 #' element of a list
+#' 
 #' @param lx
 #'  list
 #' @return
 #'  num vector of bytes per element
+#' 
+#' @export
 #' @examples
+#' \dontrun{
 #' mem.lx(env.base)
 #' prettyNum(sum(mem.lx(env.base)), big.mark=",")
 #' mem.lx(env.base$years1_5)
+#' }
 mem.lx <- function(lx) {
 	sapply(lx, object.size)
 }
@@ -534,6 +518,7 @@ mem.lx <- function(lx) {
 #' @return 
 #'  x with "meta" attribute
 #' 
+#' @export
 #' @examples
 #' 
 #' x <- 1:3
@@ -567,6 +552,7 @@ meta.add <- function(x, new.meta) {
 #'  xlist with the corresponding varname append to the meta
 #'  attribute of each xlist element.
 #' 
+#' @export
 #' @examples
 #' xlist <- list(gpmorb = 1:3, hadmtot = 10:13)
 #' xlist <- list(1:3, 10:13)
@@ -598,6 +584,7 @@ meta.add.list.varname <- function(xlist, varnames = names(xlist)) {
 #' 
 #' @seealso sort
 #' 
+#' @export
 #' @examples
 #'  
 #' x <- c("1 (%)", "-2 (%)", "2 (%)", "10 (%)")
@@ -632,70 +619,17 @@ nsort <- function (x, stripAlpha = TRUE, ...) {
 	result
 }
 
-
-
-prependRowMeanInfo <- function (xm) {
-	#prepend mean, err, left & right CI to each row of matrix 
-	#
-	#input: a matrix/dataframe containing columns of values
-	#       to calculate mean info for, eg:
-	#
-	#          Run 1        Run 2
-	#1  0.0039392527 4.189704e-03
-	#2  0.0052892006 5.554406e-03
-	#3  0.0500477200 4.921984e-02
-	#4  0.0061327012 6.273054e-03
-	#
-	#output: the original values plus the additional variables: 
-	#Mean, Err, Left, Right prepended to the start of each row
-	#
-	#eg: xm <- ymo.gptotvis
-	#eg: prependRowMeanInfo(ymo.gptotvis)
-	
-	#calculate mean of each row
-	meanRuns <- apply(xm,ROW,mean)
-	
-	#calculate error of each row
-	errRuns <- apply(xm,ROW,err)
-	
-	#calculate left CI
-	leftRuns <- meanRuns - errRuns
-	
-	#calculate right CI
-	rightRuns <- meanRuns + errRuns
-	
-	#return with mean, error, and confidence intervals prepended
-	result <- cbind(Mean = meanRuns, Err = errRuns, 
-			Left = leftRuns, Right = rightRuns, xm)
-	
-	names(dimnames(result)) <- names(dimnames(xm))
-	
-	#keep meta attribute
-	attr(result, "meta") <- attr(xm, "meta")
-	
-	result
-}
-
-
-
+#' Returns first sheet of XLS as dataframe
+#' @param filedir
+#'  file dir, including trailing slash
+#' @param filename
+#'  file name
+#' @export
 readXLSSheet1 <- function (filedir, filename) {
-	#returns first sheet of XLS as dataframe
 	oldOpt <- options(stringsAsFactors = FALSE)
 	on.exit(options(oldOpt))
 	read.xlsx2(paste(filedir, filename, sep=""), sheetIndex = 1)
 } 
-
-#' Identify columns will all NAs, then remove
-#' 
-#' @param mx
-#'  matrix
-#' @examples
-#' mx <- matrix(c(1:4, NA, NA), nrow=2)
-#' remove.NA.cols(mx)
-remove.NA.cols <- function(mx) {
-	col.is.na <- colSums(is.na(mx)) == nrow(mx)
-	structure(mx[,!col.is.na], meta=attr(mx,"meta"))
-}
 
 removeObs <- function(xframe, indices) {
 	#remove observations (ie. rows) of 
@@ -710,52 +644,11 @@ removeObs <- function(xframe, indices) {
 	xframe[invlogi, ]
 }
 
-#' Remove cols by name.
-#' 
-#' @param mx
-#'  matrix
-#' @param cnames
-#'  vector of colnames
-#' @examples
-#' 
-#' mx <- matrix(1:4, dimnames=list(NULL, c("A","NA (%)")), nrow = 2)
-#' mx <- matrix(1:4, dimnames=list(NULL, c("A","B")), nrow = 2)
-#' cnames <- "NA (%)"
-#' remove.cols(mx, cnames)
-remove.cols <- function(mx, cnames) {
-	matched <- match(cnames, colnames(mx))
-	if (is.na(matched)) {
-		mx
-	} else {
-		mx[,-matched, drop = FALSE]
-	}
-}
-
-#' Remove rows by name.
-#' 
-#' @param mx
-#'  matrix
-#' @param rnames
-#'  vector of rownames
-#' @examples
-#'
-#' mx <- matrix(1:4, dimnames=list(c("A","NA (%)"), NULL), nrow = 2)
-#' mx <- matrix(1:4, dimnames=list(c("A","B"), NULL), nrow = 2)
-#' rnames <- "NA (%)"
-#' remove.rows(mx, rnames)
-remove.rows <- function(mx, rnames) {
-	matched <- match(rnames, rownames(mx))
-	if (is.na(matched)) {
-		mx
-	} else {
-		mx[-matched,, drop = FALSE]
-	}
-}
-
 #' Remove all objects in global environment.
 #' 
 #' @param exceptions
 #' 	names of vars not to remove
+#' @export
 #' @examples
 #' 
 #' exceptions <- c("ov")
@@ -787,6 +680,7 @@ stripClass <- function (x) {
 #'  object
 #' @return
 #'  x without "meta" attribute
+#' @export
 stripMeta <- function (x) {
 	`attr<-`(x, "meta", NULL)
 }
@@ -797,83 +691,18 @@ stripMeta <- function (x) {
 #'  list
 #' @return
 #'  xlist with elements without a "meta" attribute
+#' @export
 stripMeta.list <- function (xlist) {
 	lapply(xlist, stripMeta)	
 }
 
-#' Execute summary on the columns of a matrix.
-#' 
-#' @param mx
-#'  matrix
-#' 
-#' @return
-#'  summary of each column, returned as a row
-#' 
-#' @examples
-#' 
-#' mxc <- env.base$years6_13$outcomes[["cond"]]
-#' mx <- env.base$years1_5$outcomes[["gptotvis"]]
-#' summary.mx(mxc)
-#' summary.mx(mx)
-summary.mx <- function (mx) {
-	sm <- apply(mx, COL, summary)
-	
-	if(is.list(sm)) {
-		# a list was returned which means 
-		# we have vectors of different lengths.
-		# this is because some have an NA's column
-		# and some not.
-		#
-		# add "NA's" value if it doesn't exist,
-		# simplify to matrix,
-		# and rotate so iterations are rows
-		t(sapply(sm, function(s) {
-							if(is.na(s["NA's"])) c(s, "NA's"=0) else s
-						}))
-	} else {
-		# add NA's row if it doesn't exist
-		if (!("NA's" %in% rownames(sm))) {
-			sm <- rbind(sm, "NA's" = 0)	
-		}
-		t(sm)
-	}
-}
 
-#' Convience method to apply summary.mx to a subset of elements of 
-#' list.
-#' 
+#' Return the messages of any element that is a try-error
 #' @param xlist
-#'  a list of matrices
-#' @param indices
-#'  indices, either numeric or names, of elements in x for which to apply summary.mx,
-#'  or NULL to apply to all elements of x
-#' @return 
-#'  list of summaries
-#' 
-#' @examples
-#' 
-#' xlist <- env.base$years6_13$outcomes
-#' indices <- names(env.base$years6_13$runs$means$all)
-#' summary.mx.list(xlist, indices) 
-summary.mx.list <- function (xlist, indices) {
-	lapply.subset(xlist, indices, summary.mx)
-}
-
-
+#'  list
+#' @export 
 tryerrorMsgs <- function (xlist) {
-	# return the messages of any element that is a try-error 
 	unlist(sapply(xlist, function (x) if (class(x)=="try-error") { stripClass(x) }))
-}
-
-
-updateScenarioWeights <- function(bf, varnamefactor, desiredProp) {
-	#return the bf with an updated weightScenario variable
-	#based on the factor "varnamefactor" and the desired proportions
-	#"desiredProp"
-	#eg: children <- updateScenarioWeights(children, "SESBTH", c(0.2,0.3,0.5))
-	#prop.table(wtdtable(children$SESBTH, children$weightScenario))
-	bf$weightScenario <- factorWeights(bf[[varnamefactor]], desiredProp)
-	bf
 }
 
 #' Same as within, but the expr executed is a function.
@@ -885,6 +714,7 @@ updateScenarioWeights <- function(bf, varnamefactor, desiredProp) {
 #' @param func function to evaluate in data
 #' @param ... arguments to pass to func
 #' @return data modified
+#' @export
 #' @examples
 #' myvar <- "globalenv"
 #' data <- list(myvar="dataenv") 
@@ -896,9 +726,6 @@ updateScenarioWeights <- function(bf, varnamefactor, desiredProp) {
 #' args <- list() 
 #' data <- withinfunc(data, func)
 #' 
-#' data <- base
-#' func <- setupOutputs
-#' args <- list()
 withinfunc <- function(data, func, ...) {
 	# create environment from base that has
 	# parent environment that is the environment 

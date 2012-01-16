@@ -63,10 +63,12 @@ definition.}
   the initial values specified by the simframe definition.
 }
 \examples{
+\dontrun{
 bf <- children
 basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
 sfdef <- readXLSSheet1(basefiledir, "simframedef.xlsx")
 simframe.start <- loadSimFrame(bf, sfdef)
 simframe <- loadSimFrame(bf, sfdef)
+}
 }
 

@@ -18,9 +18,11 @@
   file.
 }
 \examples{
+\dontrun{
 filedir <- "D:/workspace.sim/MELC/CHDS/models/"
 filename <- "gptotvis.xlsx" ; filename <- "paddhsbetas.xlsx"
 
 loadGLMXLS(filedir, filename)
+}
 }
 

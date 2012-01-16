@@ -33,10 +33,12 @@ the combination of each inner element from each outer list.}
   with A2,B2, and then A3,B3
 }
 \examples{
+\dontrun{
 lol <- env.base$years1_5$runs$freqs$all2$z1msmokeLvl1
 lol <- env.base$years1_5$runs$freqs$all3$z1msmokeLvl1
 lol <- list.var.run.mx[[1]]
 lol <- list.var.run.mx$typeofchange
-lol.c <- lapply.inner.combination(lol, .FUN=mean.list.mx)
+lol.c <- lapply.inner.combination(lol, .FUN=mean_list_mx)
+}
 }
 

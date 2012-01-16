@@ -30,6 +30,7 @@ The variables to create are those from the outcome set specified by "outcomeSetN
   from the outcome set specified by "outcomeSetName".
 }
 \examples{
+\dontrun{
 simframe <- simframe.start
 simframe <- env.base$simframe
 outcomeSetName <- "years1_5"
@@ -37,5 +38,6 @@ outcomeSetName <- "years6_13"
 iterations <- 8
 iterations <- c(6:13)
 outcomes <- createOutcomeMatrices(simframe, outcomeSetName, iterations)
+}
 }
 

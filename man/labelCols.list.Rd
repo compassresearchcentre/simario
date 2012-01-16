@@ -19,9 +19,11 @@
   Set the colnames on each object in a list.
 }
 \examples{
+\dontrun{
 xlist <- env.base$years1_5$results$means$all
 xlist <- results$means$all
 x <- xlist$gptotvis
 labelCols.list(xlist, "Mean")
+}
 }
 

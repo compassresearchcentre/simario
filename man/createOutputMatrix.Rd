@@ -24,9 +24,11 @@
   names/lengths.
 }
 \examples{
+\dontrun{
 rows <- length(children$z1msmoke1)
 cols <- 5
 simvarname <- "z1msmokeLvl1"
 createOutputMatrix(simvarname, nrows, ncols)
+}
 }
 

@@ -25,6 +25,7 @@
   Get a set of outcome variables from the simframe.
 }
 \examples{
+\dontrun{
 select_outcome_set = "years1_5"
 select_outcome_set = c("years1_5", "years6_13")
 select_outcome_set = NULL
@@ -35,5 +36,6 @@ select_outcome_type = NULL
 sorted = TRUE
 
 getOutcomeVars(simframe, select_outcome_type, select_outcome_set, sorted)
+}
 }
 

@@ -34,17 +34,15 @@ the corresponding element of listmx.dest in the specified dimension.}
   in the specified dimension.
 }
 \examples{
-#listmx.dest <- mxlist
-#listmx.src <- results
-append.list.mx(listmx.dest, listmx.src)
-
 listmx.dest <- list(a=c(1:3), b=c(1:2))
 listmx.src <- list(a=c(11:13), b=c(11:12))
-
 into.dim=ROW
+
 result <- append.list.mx(listmx.dest, listmx.src, into.dim)
 result <- append.list.mx(result, listmx.src, into.dim)
 
+#listmx.dest <- mxlist
+#listmx.src <- results
 #listmx.dest <- me.base
 #listmx.src <- me.scenario
 into.dim=ROW

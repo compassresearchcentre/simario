@@ -1,6 +1,6 @@
 \name{bin}
 \alias{bin}
-\title{divides x into bins specified by breaks or a bin size}
+\title{Divides x into bins specified by breaks or a bin size}
 \usage{
   bin(x, breaks, blabels = names(breaks), breaklast = NULL)
 }
@@ -27,9 +27,10 @@
   the values of x factored into bins
 }
 \description{
-  divides x into bins specified by breaks or a bin size
+  Divides x into bins specified by breaks or a bin size
 }
 \examples{
+\dontrun{
 table(bin(env.scenario$simframe$bwkg, binbreaks$bwkg))
 table(bin(children$bwkg, 0.5)) # x <- children$bwkg; breaks <- 0.5
 table(bin(children$ga, 1, breaklast=37)) #x <- children$ga; breaks = 1; breaklast = 37
@@ -52,5 +53,6 @@ breaks <- binbreaks$INTERACT
 blabels <- names(breaks)
 breaklast=NULL
 table(bin(x, breaks, breaklast=NULL), useNA="always")
+}
 }
 

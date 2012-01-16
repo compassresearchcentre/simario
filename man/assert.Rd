@@ -11,7 +11,7 @@
   Stops and displays indices of any element that is FALSE.
 }
 \examples{
-assert(c(T,T))
-assert(c(T,F))
+assert(c(TRUE,TRUE))
+#assert(c(TRUE,FALSE))
 }
 

@@ -23,12 +23,13 @@
   Executes table.grpby on the cols of a matrix.
 }
 \examples{
-mx <- env.base$years1_5$outcomes$z1accomLvl1
-grpby <- env.base$years1_5$outcomes$z1gender
-r0 <- table.grpby.mx.cols(mx, grpby)
-
 mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 grpby <- c('M','F','F','M')
+table.grpby.mx.cols(mx, grpby)
+
+\dontrun{
+mx <- env.base$years1_5$outcomes$z1accomLvl1
+grpby <- env.base$years1_5$outcomes$z1gender
 r1 <- table.grpby.mx.cols(mx, grpby)
 
 mx <- outcomes[[1]]
@@ -38,5 +39,6 @@ r2 <- table.grpby.mx.cols(mx, grpby, grpby.tag)
 mx <- env.base$modules$years1_5$outcomes$z1kidsLvl1
 grpby = NULL
 r3 <- table.grpby.mx.cols(mx)
+}
 }
 

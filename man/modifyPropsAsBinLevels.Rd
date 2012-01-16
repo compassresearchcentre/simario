@@ -24,6 +24,7 @@ binary level variables.}
   result as a list of modified binary level variables.
 }
 \examples{
+\dontrun{
 level1 <- env.scenario$simframe$SESBTHLvl1
 level2 <- env.scenario$simframe$SESBTHLvl2
 level3 <- env.scenario$simframe$SESBTHLvl3
@@ -37,5 +38,6 @@ desiredProps <- c(0,1)
 vecs.list <- list(level0=level0, level1=level1) ; vecs.list <- list(level0, level1)
 vecs.list <- simframe[binLevelVarnames]
 r <- modifyPropsAsBinLevels(vecs.list, desiredProps = desiredProps, propens = propens)
+}
 }
 

@@ -20,8 +20,10 @@ Errors if expressions cannot be evaluated.}
   if expressions cannot be evaluated.
 }
 \examples{
+\dontrun{
 exprlist <- initial_value
 envir <- bf
 eval.list(exprlist, bf)
+}
 }
 

@@ -38,7 +38,9 @@ by each variable and summs the results.}
   summs the results.
 }
 \examples{
-model <- model.glm
+\dontrun{
+ model <- model.glm
  model <- models$gptotvis ; set <- c(T, rep(F, 1074))
+}
 }
 

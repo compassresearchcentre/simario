@@ -57,6 +57,7 @@ propensity scores are generated.}
   that same child's value of the variable in default.vec.
 }
 \examples{
+\dontrun{
 default.vec <- children$SESBTH
 props <- c(0.1,0.1,0.8)
 propens <- propens.all$SESBTH
@@ -71,6 +72,7 @@ propens <- NULL
 
 prop.table(table(default.vec))
 prop.table(table(modifyProps(default.vec, props, propens)))
+}
 }
 \seealso{
   This function calls \code{\link{change.cat}}
