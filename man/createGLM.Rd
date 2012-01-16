@@ -27,6 +27,6 @@ NB: the variable "_sd" will not be added to the model formula
   component m.glm$sd
 }
 \examples{
-#m.glm <- createGLM(model_msmoke)
+#m.glm <- createGLM(modeldf)
 }
 

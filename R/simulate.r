@@ -71,7 +71,7 @@ checkOutcomeVars <- function(outcomes, simframe) {
 #' 
 #' @examples 
 #' 
-#' #m.glm <- createGLM(model_msmoke) 
+#' #m.glm <- createGLM(modeldf) 
 createGLM <- function (modeldf) {
 	
 	#extract model components from dataframe
@@ -91,7 +91,7 @@ createGLM <- function (modeldf) {
 	sdIndex <- which(varnames == "_sd")
 	if (length(sdIndex) > 0)
 	{
-		sd <- mcoef[sdIndex]
+		sd_ <- mcoef[sdIndex]
 		varnames <- varnames[-sdIndex]
 		varlevels <- varlevels[-sdIndex]
 		mcoef <- mcoef[-sdIndex]
@@ -104,10 +104,15 @@ createGLM <- function (modeldf) {
 	
 	names(mcoef) <- vars
 	
-	#construct formula from vars (except first var, ie: Intercept) and get terms
-	#wrap varnames in I() so that terms like MAGE*MAGE will work as expected
-	#when submitted to model.frame and model.matrix during prediction
-	fmla <- as.formula(paste("y ~ ", paste("I(",vars[-1],")", sep="", collapse= "+")))
+	if (length(vars) == 1) {
+		#no vars, only an Intercept
+		fmla <- as.formula("y ~ 0")
+	} else {
+		#construct formula from vars (except first var, ie: Intercept) and get terms
+		#wrap varnames in I() so that terms like MAGE*MAGE will work as expected
+		#when submitted to model.frame and model.matrix during prediction
+		fmla <- as.formula(paste("y ~ ", paste("I(",vars[-1],")", sep="", collapse= "+")))
+	}
 	mterms <- terms(fmla)
 	
 	#create glm
@@ -121,8 +126,8 @@ createGLM <- function (modeldf) {
 		m.glm$alpha <- alpha
 	}
 
-	if (exists("sd")) {
-		m.glm$sd <- sd
+	if (exists("sd_")) {
+		m.glm$sd <- sd_
 	}
 	
 	class(m.glm) <- c("glm","lm") 
@@ -757,6 +762,9 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 #' 
 #' @param model
 #'  model with terms and coefficiens
+#'  NB: In order to know how many values to predict, there needs to be at least
+#'  one variable in the model. If you wish to create a intercept only model,
+#'  this create a model with a single variable and a zero coefficient.
 #' @param envir
 #'  an environment in which model variables are evaluated. May also be NULL, a list, 
 #'  a data frame, a pairlist or an integer as specified to sys.call.
@@ -860,6 +868,62 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	sapply(predicted_probabilities , function (x) rbinom(1, size=1, prob=x)) 
 }
 
+#' Predict and simulate binary value from 2 binomial models.
+#' 
+#' @param select
+#'  a logical vector, or vector of 0s and 1s, which determine
+#'  when to use model0 and when to use model1, i.e:
+#'  when select == 0, then result is predSimBinom using model0
+#'  when select == 1, then result is 1 - predSimBinom using model1
+#' @param model0
+#'  model0
+#' @param model1
+#'  model1
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @examples
+#' \dontrun{
+#' 	select <- z1single_previousLvl1
+#' 	model0 <- models$z1singlePrev0 ; model1 <- models$z1singlePrev1
+#' 	predSimBinDualBinom(select, model0, model1)
+#' }
+predSimBinDualBinom <- function(select, model0, model1, envir=parent.frame()) {
+	select0 <- select == 0
+	select1 <- select == 1
+	result <- rep(NA, length(select))
+	result[select0] <- predSimBinom(model0, envir, set=select0)
+	result[select1] <- 1 - predSimBinom(model1, envir, set=select1)
+	result
+}
+
+#' Predict and simulate value from 3 normal models.
+#' 
+#' @param select
+#'  a logical vector, or vector of 0s and 1s, which determine
+#'  when to use model0 and when to use model1, i.e:
+#'  when select == 0, then result is predSimBinom using model0
+#'  when select == 1, then result is 1 - predSimBinom using model1
+#' @param model1
+#'  model 1
+#' @param model2
+#'  model 2
+#' @param model3
+#'  model 3
+#' @param envir
+#'  environment in which to evaluate model variables.
+predSimNormsSelect <- function(select, model1, model2, model3, envir=parent.frame()) {
+	select1 <- select == 1
+	select2 <- select == 2
+	select3 <- select == 3
+	result <- rep(NA, length(select))
+	result[select1] <- predSimNorm(model1, envir, set=select1)
+	result[select2] <- predSimNorm(model2, envir, set=select2)
+	result[select3] <- predSimNorm(model3, envir, set=select3)
+	result
+}
+
+
 #' Predict and simulate continuous value from poisson model
 #' 
 #' @param model.glm
@@ -914,6 +978,8 @@ predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	alpha <- model.glm$alpha
 	
+	if (is.null(alpha)) stop("Model missing alpha value")
+	
 	#simulate
 	sapply(predicted_means, function (x) rnbinom(1, size=1/alpha, mu=x)) 
 }
@@ -941,6 +1007,8 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 	predicted <- predict(model.glm, envir, set)
 	
 	sd <- model.glm$sd
+	
+	if (is.null(sd)) stop("Model missing sd value")
 	
 	#simulate
 	sapply(predicted, function (x) rnorm(1, mean=x, sd=sd)) 

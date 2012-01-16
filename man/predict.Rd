@@ -6,7 +6,11 @@ by each variable and summs the results.}
   predict(model, envir = parent.frame(), set = NULL)
 }
 \arguments{
-  \item{model}{model with terms and coefficiens}
+  \item{model}{model with terms and coefficiens NB: In
+  order to know how many values to predict, there needs to
+  be at least one variable in the model. If you wish to
+  create a intercept only model, this create a model with a
+  single variable and a zero coefficient.}
 
   \item{envir}{an environment in which model variables are
   evaluated. May also be NULL, a list, a data frame, a
