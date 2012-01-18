@@ -621,11 +621,12 @@ nsort <- function (x, stripAlpha = TRUE, ...) {
 
 #' Returns first sheet of XLS as dataframe
 #' @param filedir
-#'  file dir, including trailing slash
+#'  file directory, with or without trailing slash
 #' @param filename
 #'  file name
 #' @export
 readXLSSheet1 <- function (filedir, filename) {
+	filedir <- add_trailing_slash(filedir)		
 	oldOpt <- options(stringsAsFactors = FALSE)
 	on.exit(options(oldOpt))
 	read.xlsx2(paste(filedir, filename, sep=""), sheetIndex = 1)

@@ -49,8 +49,8 @@ expr = {
 	#' freqvars <- c("msmoke", "fsmoke", "single", "kids", "householdsize", "welfare", "mhrswrk", "fhrswrk", "accom", "homeown", "bedrooms",	"chpar", "chres")
 	#' meanvars <- c("gptotvis", "hadmtot", "houtptot", "gpresp", "gpmorb", "gpprev")
 	#'  
-	#' freqvars <- getOutcomeVars(simframe.start, select_outcome_type="categorical", select_outcome_set="years1_5")
-	#' meanvars <- getOutcomeVars(simframe.start, select_outcome_type="continuous", select_outcome_set="years1_5")
+	#' freqvars <- getOutcomeVars(simframe.start, select_outcome_type="categorical", select_outcome_module="years1_5")
+	#' meanvars <- getOutcomeVars(simframe.start, select_outcome_type="continuous", select_outcome_module="years1_5")
 	#' 
 	#' freqs.args <- list( by.ethnicity = list(grpbycoding=codings$r1stchildethn) )
 	#' means.args <- list(	all = list(), males = list(logiset=childsets$males),	females = list(logiset=childsets$females),pacific = list(logiset=childsets$pacific),	maori = list(logiset=childsets$maori))

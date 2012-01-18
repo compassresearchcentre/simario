@@ -21,6 +21,7 @@ Collate:
     'MatrixUtil.r'
     'modifyProps.r'
     'Simenv.r'
+    'simframe.r'
     'Simmodule.r'
     'simulate.r'
     'StringUtil.r'

@@ -3,6 +3,27 @@
 # Author: oman002
 ###############################################################################
 
+#' Adds a trailing slash, if required, to character vector
+#' 
+#' @param x
+#'  character vector
+#' @return
+#'  x with a trailing slash, if required
+#' 
+#' @export
+#' @examples
+#' x <- "d:/workspace"
+#' x <- "d:/workspace/"
+#' add_trailing_slash("d:/workspace")
+#' add_trailing_slash("d:/workspace/")
+add_trailing_slash <- function(x) {
+	if(grepl("/$", x)) {
+		x
+	} else {
+		paste(x, "/", sep="")
+	}
+}
+
 #' Remove any alpha from character vector, leaving only numbers.
 #' 
 #' @param x

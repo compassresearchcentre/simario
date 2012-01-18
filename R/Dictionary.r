@@ -3,8 +3,8 @@ library(xlsx)
 
 #' Dictionary object.
 #' This object holds:
-#'  * a mapping of variable names to descriptions
-#'  * codings (i.e: category names) for categorical variables
+#'  * vardesc: a mapping of variable names to descriptions
+#'  * codings: category names for categorical variables
 #' 
 Dictionary <- proto(expr = {
 	
@@ -221,7 +221,7 @@ Dictionary <- proto(expr = {
 	#'  file name for codings, eg: "myfile.xls".
 	#' @param codings_filename
  	#'  file name for dictionary, eg: "myfile.xls". Can be same file as 
-	#'  codings_filename
+	#'  dict_filename or NULL to not load any codings.
 	#' 
 	#' @seealso Uses \code{\link{loadCodingsXLS}, \link{loadDictionaryXLS}} 
 	#' 
@@ -230,9 +230,13 @@ Dictionary <- proto(expr = {
 	#' filename = "CHDS data dictionary.xlsx"
 	#' 
 	#' codings <- Dictionary$new_from_XLS(filedir, filename, filename)
-	new_from_XLS <- function (., filedir, dict_filename, codings_filename) {
+	new_from_XLS <- function (., filedir, dict_filename, codings_filename = NULL) {
 		vardesc <- loadDictionaryXLS(filedir, dict_filename)
-		codings <- loadCodingsXLS(filedir, codings_filename)
+		if (is.null(codings_filename)) {
+			codings <- NULL
+		} else {
+			codings <- loadCodingsXLS(filedir, codings_filename)
+		}
 		
 		# return new object
 		proto(.,
@@ -245,7 +249,7 @@ Dictionary <- proto(expr = {
 	#' @param .
 	#'  this
 	#' @param filedir
-	#'  file directory, ending with "/", eg: "d:/workspace/"
+	#'  file directory, with or without trailing slash
 	#' @param filename
 	#'  file name, eg: "myfile.xls". 
 	#' The codings file must contain 2 columns:
@@ -284,10 +288,12 @@ Dictionary <- proto(expr = {
 	#' Load dictionary xls file and return dictionary vector.
 	#'
 	#' @param filedir
-	#'  file directory, ending with "/", eg: "d:/workspace/"
+	#'  file directory, with or without trailing slash
 	#' @param filename
-	#'  file name, eg: "myfile.xls". Must contain a column called
-	#'  "Description" and a column called "Varname".
+	#'  file name, eg: "myfile.xls". 
+	#'  Must contain the columns: 
+	#'  "Varname"
+	#'  "Description" 
 	#' 
 	#' @return 
 	#'  a vector with values = Description column and names = Varname column
