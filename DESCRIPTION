@@ -14,6 +14,7 @@ Description: Framework for executing multi-run dynamic micro-simulation and
     aggregating results across all runs
 License: GPL
 Collate:
+	'CategoricalAdjustment.r'
     'ChartUtil.r'
     'Dictionary.r'
     'ListUtil.r'
