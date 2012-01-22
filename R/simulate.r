@@ -499,12 +499,13 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 
 #' Predict. Looks in envir for variables specified by model, then multiples the coefficients
 #' by each variable and summs the results.
-#' 
+#'
+#' NB: In order to know how many values to predict, there needs to be at least
+#' one variable in the model. If you wish to create a intercept only model,
+#' then create a model with a single variable and a zero coefficient.
+#'  
 #' @param model
 #'  model with terms and coefficiens
-#'  NB: In order to know how many values to predict, there needs to be at least
-#'  one variable in the model. If you wish to create a intercept only model,
-#'  this create a model with a single variable and a zero coefficient.
 #' @param envir
 #'  an environment in which model variables are evaluated. May also be NULL, a list, 
 #'  a data frame, a pairlist or an integer as specified to sys.call.
@@ -529,9 +530,20 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 #' @examples
 #' \dontrun{
 #'  model <- model.glm
-#'  model <- models$gptotvis ; set <- c(T, rep(F, 1074))
+#'  model <- models$gptotvis3_6 ; set <- c(T, T, rep(F, 1073))
+#'  model <- models$gptotvis2
+#'  set <- rep(F, 1075)
+#'  envir = .GlobalEnv
+#'  predict(model, envir, set)
+#'  set = NULL
 #' }
 predict <- function(model, envir = parent.frame(), set = NULL) {
+	
+	set_all_false <- !is.null(set) && all(!set) 
+	if (set_all_false) {
+		zero_length_vector <- vector(mode="numeric")
+		return(zero_length_vector)
+	}
 	
 	# get vars from model
 	vars <- attr(delete.response(terms(model)), "variables")
@@ -545,7 +557,7 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 	
 	#subset
 	if (!is.null(set)) {
-		vars.evaluated.mx <- subset(vars.evaluated.mx, set) 
+		vars.evaluated.mx <- vars.evaluated.mx[set, ,drop = F]
 	}
 	
 	#add intercept of 1 
@@ -604,65 +616,11 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	predicted_logits <- predict(model.glm, envir, set)
 	predicted_probabilities <- exp(predicted_logits)/(1+exp(predicted_logits))
 	
+	if(length(predicted_probabilities) == 0) return(predicted_probabilities)
+	
 	#simulate
 	sapply(predicted_probabilities , function (x) rbinom(1, size=1, prob=x)) 
 }
-
-#' Predict and simulate binary value from 2 binomial models.
-#' 
-#' @param select
-#'  a logical vector, or vector of 0s and 1s, which determine
-#'  when to use model0 and when to use model1, i.e:
-#'  when select == 0, then result is predSimBinom using model0
-#'  when select == 1, then result is 1 - predSimBinom using model1
-#' @param model0
-#'  model0
-#' @param model1
-#'  model1
-#' @param envir
-#'  environment in which to evaluate model variables.
-#' 
-#' @examples
-#' \dontrun{
-#' 	select <- z1single_previousLvl1
-#' 	model0 <- models$z1singlePrev0 ; model1 <- models$z1singlePrev1
-#' 	predSimBinDualBinom(select, model0, model1)
-#' }
-predSimBinDualBinom <- function(select, model0, model1, envir=parent.frame()) {
-	select0 <- select == 0
-	select1 <- select == 1
-	result <- rep(NA, length(select))
-	result[select0] <- predSimBinom(model0, envir, set=select0)
-	result[select1] <- 1 - predSimBinom(model1, envir, set=select1)
-	result
-}
-
-#' Predict and simulate value from 3 normal models.
-#' 
-#' @param select
-#'  a logical vector, or vector of 0s and 1s, which determine
-#'  when to use model0 and when to use model1, i.e:
-#'  when select == 0, then result is predSimBinom using model0
-#'  when select == 1, then result is 1 - predSimBinom using model1
-#' @param model1
-#'  model 1
-#' @param model2
-#'  model 2
-#' @param model3
-#'  model 3
-#' @param envir
-#'  environment in which to evaluate model variables.
-predSimNormsSelect <- function(select, model1, model2, model3, envir=parent.frame()) {
-	select1 <- select == 1
-	select2 <- select == 2
-	select3 <- select == 3
-	result <- rep(NA, length(select))
-	result[select1] <- predSimNorm(model1, envir, set=select1)
-	result[select2] <- predSimNorm(model2, envir, set=select2)
-	result[select3] <- predSimNorm(model3, envir, set=select3)
-	result
-}
-
 
 #' Predict and simulate continuous value from poisson model
 #' 
@@ -686,6 +644,8 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 	predicted_logs <- predict(model.glm, envir, set)
 	predicted_means <- exp(predicted_logs)
 	
+	if(length(predicted_logs) == 0) return(predicted_logs)
+	
 	#simulate
 	sapply(predicted_means, function (x) rpois(1, x)) 
 }
@@ -703,6 +663,8 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' @param set
 #'  subset logical expression indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
+#' @param alpha
+#'  if supplied, use this value for alpha rather than the value in the model
 #'  
 #' @examples
 #' \dontrun{
@@ -710,15 +672,17 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' newdata <- simvalues
 #' predSimNBinom (model.glm, newdata)
 #' }
-predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
+predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL, alpha=NULL) {
 	
 	#determine predicted values
 	predicted_logs <- predict(model.glm, envir, set)
 	predicted_means <- exp(predicted_logs)
 	
-	alpha <- model.glm$alpha
+	if(length(predicted_logs) == 0) return(predicted_logs)
 	
-	if (is.null(alpha)) stop("Model missing alpha value")
+	if (is.null(alpha))	alpha <- model.glm$alpha
+	
+	if (is.null(alpha)) stop("Missing alpha value")
 	
 	#simulate
 	sapply(predicted_means, function (x) rnbinom(1, size=1/alpha, mu=x)) 
@@ -741,10 +705,13 @@ predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' \dontrun{
 #' model.glm <- models$gpprev12
 #' newdata <- simvalues
+#' model.glm <- model2
 #' }
 predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 	#determine predicted values
 	predicted <- predict(model.glm, envir, set)
+	
+	if(length(predicted) == 0) return(predicted)
 	
 	sd <- model.glm$sd
 	

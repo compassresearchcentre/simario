@@ -20,6 +20,29 @@ ZDIM <- 3
 
 library(xlsx)
 
+
+# setup previous vars with values from current vars, 
+# eg: z1msmoke_previousLvl1 will be assigned the value in z1msmokeLvl1
+
+#' Assign the values of variables (specifed by name in a source character vector)
+#' to another set of variables (specifed by name in a dest character vector).
+#' Will modify variables in enclosing environments.
+#' 
+#' @param dest_var_names
+#'  a character vector of variable names to be assigned
+#' @param src_var_names
+#'  a parallel character vector of variable names supplying the values to
+#' @examples
+#' d1 <- 1; d2 <- 2; s1 <- 10; s2 <- 20
+#' assign_values(c("d1","d2"), c("s1","s2"))
+#' d1; d2
+assign_values <- function(dest_var_names, src_var_names) {
+	invisible(mapply(function(dest_var_name, src_var_name) {
+						assign(dest_var_name, get(src_var_name), inherits=T)
+					}, dest_var_names, src_var_names))
+}
+environment(assign_values) <- .GlobalEnv
+
 #' Produces a csv string from x, returned as a length 1 chr vector.
 #' 
 #' @param x
