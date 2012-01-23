@@ -18,12 +18,6 @@ COL <- 2
 #' @export
 ZDIM <- 3
 
-library(xlsx)
-
-
-# setup previous vars with values from current vars, 
-# eg: z1msmoke_previousLvl1 will be assigned the value in z1msmokeLvl1
-
 #' Assign the values of variables (specifed by name in a source character vector)
 #' to another set of variables (specifed by name in a dest character vector).
 #' Will modify variables in enclosing environments.
@@ -641,19 +635,6 @@ nsort <- function (x, stripAlpha = TRUE, ...) {
 	
 	result
 }
-
-#' Returns first sheet of XLS as dataframe
-#' @param filedir
-#'  file directory, with or without trailing slash
-#' @param filename
-#'  file name
-#' @export
-readXLSSheet1 <- function (filedir, filename) {
-	filedir <- add_trailing_slash(filedir)		
-	oldOpt <- options(stringsAsFactors = FALSE)
-	on.exit(options(oldOpt))
-	read.xlsx2(paste(filedir, filename, sep=""), sheetIndex = 1)
-} 
 
 removeObs <- function(xframe, indices) {
 	#remove observations (ie. rows) of 

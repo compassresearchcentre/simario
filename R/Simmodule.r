@@ -56,7 +56,7 @@ expr = {
 	#' means.args <- list(	all = list(), males = list(logiset=childsets$males),	females = list(logiset=childsets$females),pacific = list(logiset=childsets$pacific),	maori = list(logiset=childsets$maori))
 	#' 
 	#' cfreqvars <- meanvars
-	#' outputs <- Simmodule$new(freqvars, meanvars, meanvars, freqs.args, means.args)
+	#' outputs <- Simmodule$new(name, freqvars, cfreqvars, meanvars, freqs.args, means.args)
 	new <- function(., name, freqvars, cfreqvars, meanvars, freqs.args, means.args) {
 		# Frequency tables for categorical variables
 		freqslist <- namedList(freqvars)
@@ -73,8 +73,8 @@ expr = {
 		means <- lapply(means.args, function(x) meanslist)
 		attr(means, "args.list") <- means.args
 
-		runs <- list(freqs = freqs, 
-				cfreqs = cfreqs, 
+		runs <- list(cfreqs = cfreqs,
+				freqs = freqs, 
 				means = means, 
 				summaries = meanslist,
 				quantiles = meanslist
@@ -118,11 +118,7 @@ expr = {
 	appendRunStats <- function (.) {
 		
 		cat(gettextf("Generating run results for %s\n", .$name))
-		
-		.$runs$freqs <- lapply.subset.append.lol.args(.$outcomes, .$runs$freqs, simplify = FALSE, .FUN=table.grpby.mx.cols)
-		
-		.$runs$summaries <- lapply.subset.append (.$runs$summaries, .$outcomes, .FUN=summary.mx) 
-		
+
 		# add additional "all years" row totals to continuous vars
 		# used in means, quantiles, and cfreqs
 		convars <- unique(c(names(.$runs$means[[1]]), names(.$runs$quantiles)))
@@ -132,9 +128,14 @@ expr = {
 					structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
 				})
 		
-		.$runs$means <- lapply.subset.append.lol.args(outcomes_wtotals, .$runs$means, .FUN= wtdmeancols)
 
 		.$runs$cfreqs <- lapply.subset.append (.$runs$cfreqs, outcomes_wtotals, simplify = FALSE, .FUN=table.grpby.mx.cols)
+		
+		.$runs$freqs <- lapply.subset.append.lol.args(.$outcomes, .$runs$freqs, simplify = FALSE, .FUN=table.grpby.mx.cols)
+		
+		.$runs$means <- lapply.subset.append.lol.args(outcomes_wtotals, .$runs$means, .FUN= wtdmeancols)
+		
+		.$runs$summaries <- lapply.subset.append (.$runs$summaries, .$outcomes, .FUN=summary.mx) 
 		
 		#.$runs$quantiles <- lapply.subset.append (.$runs$quantiles, outcomes_wtotals, .FUN=quantile.mx, 
 		#		probs=seq(0, 1, 0.02), na.rm = TRUE)
@@ -163,23 +164,25 @@ expr = {
 		cat(gettextf("Generating final results for %s\n", .$name))
 		
 		.$results <- list()
+
+		#.$results$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
+		.$results$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
 		
 		#.$results$freqs <- lapply(.$runs$freqs, mean.list.var.run.mx)
 		.$results$freqs <- lapply.inner(.$runs$freqs, finialise.lolmx, dict = simenv$dict)
-		
-		#.$results$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
-		.$results$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
-		.$results$histo <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
-		
+
 		.$results$means <- lapply.inner(.$runs$means, mean.array.z)
-		.$results$summaries <- lapply(.$runs$summaries, mean.array.z)
-		.$results$quantiles <- lapply(.$runs$quantiles, mean.array.z)
 		
 		.$results$means  <- lapply.inner(.$results$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
 		
 		# set non-existant colnames to "Mean"
 		.$results$means <- lapply(.$results$means, function(x) labelCols.list(x, "Mean"))
 		
+		.$results$summaries <- lapply(.$runs$summaries, mean.array.z)
+		
+		.$results$quantiles <- lapply(.$runs$quantiles, mean.array.z)
+
+		.$results$histo <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
 		
 		return()
 	}

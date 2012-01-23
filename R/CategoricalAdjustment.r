@@ -19,18 +19,19 @@
 #' 
 #' @examples
 #' dict <- dict.MELC
-#' cat.var.names <- c("z1homeownLvl1", "catpregsmk2") 
+#' cat.varnames <- c("z1homeownLvl1", "catpregsmk2") 
 #' rows = 5
 #' 
 #' dict <- dict_demo
-#' cat.var.names  <- "sex"
+#' cat.varnames  <- c("sex","age_grp", "alive")
 #' rows = 100
-#' createEmptyCatAdjs(cat.varnames, dict, rows)
+#' 
+#' createAdjustmentMatrices(cat.varnames, dict, rows)
 createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 	
 	catadjs <- lapply(cat.varnames, function (varname) {
 				coding <- dict$codings[[varname]]
-				if (is.null(coding)) stop(gettextf("No codings for %s", name))
+				if (is.null(coding)) stop(gettextf("No codings for %s", varname))
 				
 				createAdjustmentMatrix(varname, coding, rows)
 			})

@@ -17,6 +17,7 @@ Collate:
 	'CategoricalAdjustment.r'
     'ChartUtil.r'
     'Dictionary.r'
+    'FileUtil.r'
     'ListUtil.r'
     'MatrixStats.r'
     'MatrixUtil.r'

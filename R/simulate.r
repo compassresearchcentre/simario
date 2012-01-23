@@ -328,6 +328,23 @@ labelColumnCodes <- function(x, dict, varname) {
 	x
 }
 
+#' Helper function that loads a CSV file.
+#' 
+#' @param filedir
+#'  file directory, ending with "/", eg: "d:/workspace/"
+#' @param filename
+#'  file name, eg: "myfile.csv"
+#' @return 
+#'  a data frame containing the file
+#' 
+#' @examples
+#' \dontrun{
+#' loadCSV(propensityfiledir, "accom_Propens.csv")
+#' }
+loadCSV <- function(filedir, filename) {
+	read.csv(paste(filedir, filename, sep=""),stringsAsFactors = FALSE)
+}
+
 library(xlsx)
 
 #' Load and create a GLM from the first sheet in an xlsx file.
@@ -377,26 +394,6 @@ loadGLMCSV <- function (filedir, filename) {
 			warning = function(e) stop(paste(filename, e$message), call. = FALSE)
 	)
 }
-
-#' Helper function that loads a CSV file.
-#' 
-#' @param filedir
-#'  file directory, ending with "/", eg: "d:/workspace/"
-#' @param filename
-#'  file name, eg: "myfile.csv"
-#' @return 
-#'  a data frame containing the file
-#' 
-#' @examples
-#' \dontrun{
-#' loadCSV(propensityfiledir, "accom_Propens.csv")
-#' }
-loadCSV <- function(filedir, filename) {
-	read.csv(paste(filedir, filename, sep=""),stringsAsFactors = FALSE)
-}
-
-
-
 
 #' Return the coefficients used in the supplied model.
 #' 
