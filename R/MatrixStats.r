@@ -426,7 +426,6 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 }
 
 
-
 #' Calculates the weighted mean for each column of the matrix
 #' optionally subsetting first and grouping by another (equal length) variable.
 #' 
@@ -448,6 +447,10 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 #' @param na.rm
 #'  logical. Should missing values be removed?  
 #' 
+#' @return 
+#'  if grpby is NULL, vector of means for each column
+#'  if grpby is specified, a matrix of means for each column grouped
+#' 
 #' @examples
 #' \dontrun{
 #' 	mx <- children$o.gptotvis
@@ -462,19 +465,21 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 #' na.rm = T
 #' wtdmeancols(mx)
 #' wtdmeancols(mx,wgts, grpby)
-#' 
-#' mx <- matrix (c(1:10), ncol = 2)
-#' mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) ; logiset=NULL
-#' grpby <- c("A","A","A","B","B") ; grpby.tag = "AB" 
-#' grpby = NULL
-#' wgts = rep(1, nrow(mx))
-#' na.rm = T ; na.rm = F
-#' 
+#'
 #' mx <- env.base$modules$years1_5$outcomes$gptotvis ; logiset = childsets$males
 #' mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpby = NULL; grpby.tag = NULL
 #' 
-#' wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = F)
 #' }
+#' mx <- matrix (c(1:10), ncol = 2)
+#' mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) ; logiset=NULL
+#' grpby = NULL
+#' grpby <- c("A","A","A","B","B") ; grpby.tag = "AB" 
+#' wgts = rep(1, nrow(mx))
+#' na.rm = FALSE ; na.rm = TRUE
+#' 
+#' 
+#' wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
+#' 
 wtdmeancols <- function (mx, logiset=NULL, wgts = NULL, grpby=NULL, grpby.tag = NULL, na.rm = F) {
 	
 	if (is.null(wgts)) wgts <- rep(1, nrow(mx))  #can't make this default param for some reason need to set here

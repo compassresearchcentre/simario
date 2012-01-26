@@ -100,22 +100,22 @@ createOutcomeMatrices <- function (simframe, outcome_module_name, iterations) {
 #' 
 #' @param cols columns names, or a numeric scalar for the number of cols
 #' @param rows row names, or a numeric scalar for the number of rows
-#' @param simvarname 
-#' 		simframe source var. stored in the "simvar" attribute.
+#' @param varname 
+#' 		simframe source var. stored in the "varname" attribute.
 #'      of the matrix. This is the name of the variable in the
 #' 		simframe that will be used to fill this matrix during simulation
 #' @return
-#' a matrix with the "varname" attribute set to simvarname
+#' a matrix with the "varname" attribute set to varname
 #' 
 #' @examples 
 #' \dontrun{
 #' rows <- length(children$z1msmoke1)
 #' cols <- 5
-#' simvarname <- "z1msmokeLvl1"
-#' createOutputMatrix(simvarname, nrows, ncols)
+#' varname <- "z1msmokeLvl1"
+#' createOutputMatrix(varname, nrows, ncols)
 #' }
-createOutputMatrix <- function (simvarname, rows, cols) {
-	structure(namedMatrix(rows, cols), varname = simvarname)
+createOutputMatrix <- function (varname, rows, cols) {
+	structure(namedMatrix(rows, cols), varname = varname)
 }
 
 
@@ -148,13 +148,13 @@ createOutputMatrix <- function (simvarname, rows, cols) {
 #' }
 getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_name=NULL, sorted=FALSE) {
 	
-	df.outcome.vars <- attr(simframe, "df.outcome.vars")
-	outcomeSet <- df.outcome.vars[with(df.outcome.vars, 
-					(is.null(outcome_module_name) | outcome_module %in% outcome_module_name)
-							& (is.null(outcome_type_select) | outcome_type %in% outcome_type_select )),]
+	outcome_vars <- attr(simframe, "outcome_vars")
+	outcomeSet <- outcome_vars[with(outcome_vars, 
+					(is.null(outcome_module_name) | Outcome_module %in% outcome_module_name)
+							& (is.null(outcome_type_select) | Outcome_type %in% outcome_type_select )),]
 	
-	setVars <- outcomeSet$simvarname
-	names(setVars) <- outcomeSet$simvarname
+	setVars <- outcomeSet$Varname
+	names(setVars) <- outcomeSet$Varname
 	if (sorted)	setVars <- setVars[sort(names(setVars))]
 	setVars
 }
@@ -164,27 +164,30 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' a simulation. During simulation the simulation frame will contain the
 #' current iteration's set of variables being used in the simulation.
 #' This function establishes the values of the simulation frame at the start 
-#' prior to simulation using the initial values specified by the simframe
-#' definition.
+#' prior to simulation by evaluating the initial value expression specified by 
+#' the simframe definition.
 #' 
-#' @param envir  
-#'  environment to evaluate initial_value in, defaults to global environment. 
-#' @param sfdef
-#'   simframe definition. A dataframe of variables that make up the simframe, 
-#'   defined as follows:
-#'       $simvarname - the name of the variable in the simframe
-#'       $previous_var - (if any) the name in which to store the variable value in at the beginning
-#'                       of each iteration (i.e: before its transformed), for models that require 
-#'  					 previous state
-#'       $initial_value - an expression that generates the initial value of the variable.
-#'                        The expression is evaluated in the context of the base file, and
-#'                        if not found then in the context of the calling frame.
+#' @param simframe_defn
+#'   simframe definition. A dataframe of variables that define the simframe: 
+#'       $Varname - the name of a variable in the simframe
+#'       $Previous_var - the name of a variable in which to store the current value in at the beginning
+#'                       of each iteration (i.e: before it's transformed). 
+#' 						 Optional - for models that require previous state.
+#'       $Initial_value - an expression that generates the initial value of the variable.
+#'                        The expression is evaluated in the context of envir.
 #'					      If empty then an initial numeric value of NA is used.
-#' 		 $outcome_type - if this is an outcome variable, it's tpype, one of "categorical" or "continuous"
-#' 		 $outcome_module - if an outcome variable, the module it belongs to
+#' 		 $Outcome_type - if specified, indicates this is an outcome variable and indicates 
+#' 						its type which is one of “categorical” or “continuous”
+#' 		 $Outcome_module - if specified, indicates the Simmmodule this outcome variable belongs to
 #'
+#' @param envir  
+#'  environment to evaluate initial_value in. Typically this will be a
+#'  dataframe loaded from a base file. Initial_value can not only
+#'  reference values in envir, but also values in the calling frame.
+#'  Defaults to global environment.
+#' 
 #' @return
-#'  the simulation frame. The simulation frame contains the variables in sfdef with
+#'  the simulation frame. The simulation frame contains the variables in simframe_defn with
 #'  their inital_value evaluated. Each variable contains a set of observations. Each
 #'  observation represents a case in the basefile.
 #'  
@@ -193,13 +196,10 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'  that return a singular NA. These remain as a vector containing NA for 
 #'  as each observation.
 #'   
-#'  The frame has same rownames as basefile. This is useful during investigation 
-#'  or debugging.
-#' 
 #' 	The simulation frame object has the following attributes:
 #' 
 #' 	"previous" - variables that represent values in the previous iteration
-#'  "df.outcome.vars" - a dataframe of simvarname, outcome_type, and outcome_module
+#'  "outcome_vars" - a dataframe of Varname, Outcome_type, and Outcome_module
 #'	"na.omit" - an omit variable that indicates the observations that were removed
 #' 				because their were NA. Initial_values that returned a singular NA
 #' 				remain.
@@ -210,68 +210,67 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' envir <- people
 #' basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
 #' basefiledir <- "D:/workspace.sim/simar/demo/"
-#' sfdef <- readXLSSheet1(basefiledir, "simframedef.xlsx")
-#' simframe.start <- loadSimFrame(envir, sfdef)
-#' simframe <- loadSimFrame(envir, sfdef)
+#' simframe_defn <- readXLSSheet1(basefiledir, "simframedef.xlsx")
+#' simframe.start <- loadSimFrame(envir, simframe_defn)
+#' simframe <- loadSimFrame(envir, simframe_defn)
 #' }
-loadSimFrame <- function (envir = .GlobalEnv, sfdef) {
+loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {
 	
-	#remove empty variables, generally these are blank lines
-	#at the end of the file
-	sfdef <- sfdef[!sfdef$simvarname=="", ]
+	#remove empty rows
+	#(generally these are blank lines at the end of the file)
+	empty_rows <- simframe_defn$Varname==""
+	simframe_defn <- simframe_defn[!empty_rows, ]
 	
-	#check for duplicated simvarnames
-	dups <- which(duplicated(sfdef$simvarname))
-	
-	if(length(dups) > 1) {
-		stop(paste("Simframe varname duplicate:", sfdef$simvarname[dups], "\n"))
+	#check for duplicated varnames
+	duplicates <- which(duplicated(simframe_defn$Varname))
+	if(length(duplicates) > 1) {
+		stop(paste("Simframe varname duplicate:", simframe_defn$Varname[duplicates], "\n"))
 	}
 	
-	#load initial_value for evaluation
-	initial_value_all <- sfdef$initial_value
-	names(initial_value_all) <- sfdef$simvarname
+	initial_value_exprs <- simframe_defn$Initial_value
+	names(initial_value_exprs) <- simframe_defn$Varname
 	
 	#replace empty intial_value with numeric NA
-	initial_value_all[(initial_value_all == "")] <- as.numeric(NA)
+	empty_exprs <- (initial_value_exprs == "")
+	initial_value_exprs[empty_exprs] <- NA_real_
 	
 	#evaluate "initial_value" column. Any objects in the exprs must exist 
 	#in envir or if not then in the global environment
-	sfvalues  <- eval.list(initial_value_all, envir)
+	initial_values  <- eval.list(initial_value_exprs, envir)
 	
 	# convert non NA values to data.frame
 	# this repeats any inital values that are singular
-	sfvalues.df <- data.frame(sfvalues[!is.na(sfvalues)])
+	simframe <- data.frame(initial_values[!is.na(initial_values)])
 	
 	#remove obs. that have NAs in one of their values
-	sfvalues.df <- na.omit(sfvalues.df)
-	nas <- attr(sfvalues.df, "na.action")
+	simframe <- na.omit(simframe)
+	nas <- attr(simframe, "na.action")
 	
 	# add singular NA values back to data.frame
-	if (any(is.na(sfvalues))) {
-		sfvalues.df  <- cbind(sfvalues.df, 
-				as.list(sfvalues[is.na(sfvalues)]), stringsAsFactors=FALSE)
+	if (any(is.na(simframe))) {
+		simframe  <- cbind(simframe, 
+			as.list(initial_values[is.na(initial_values)]), stringsAsFactors=FALSE)
 	}
 	
-	# setup sfprevious
-	# sfprevious = the names of the variables that represent values in the previous iteration
-	# names(sfprevious) = the source value for the previous variable
-	sfprevious <- as.character(sfdef$previous_var)
-	names(sfprevious) <- sfdef$simvarname
-	sfprevious <- stripEmpty(sfprevious)
+	# previous = the names of the variables that represent values in the previous iteration
+	# names(previous) = the source value for the previous variable
+	previous <- as.character(simframe_defn$Previous_var)
+	names(previous) <- simframe_defn$Varname
+	previous <- stripEmpty(previous)
 	
-	#check previous values exist in simvarname
-	nonexistent_previous <- !(sfprevious %in% sfdef$simvarname)
+	#check previous values exist in varname
+	nonexistent_previous <- !(previous %in% simframe_defn$Varname)
 	if (any(nonexistent_previous)) {
 		stop(gettextf("previous variable(s) %s: not in simframe", 
-						paste(sfprevious[nonexistent_previous],collapse=", ")))
+						paste(previous[nonexistent_previous],collapse=", ")))
 	}
 	
 	#data frame of outcome var mappings, types and set
-	df.outcome.vars <- with(sfdef, sfdef[outcome_module != "", c("simvarname", "outcome_type", "outcome_module")])
+	outcome_vars <- with(simframe_defn, simframe_defn[Outcome_module != "", c("Varname", "Outcome_type", "Outcome_module")])
 	
 	#return
-	structure(sfvalues.df, previous=sfprevious,
-			df.outcome.vars = df.outcome.vars,
+	structure(simframe, previous=previous,
+			outcome_vars = outcome_vars,
 			na.actions=nas)
 }
 

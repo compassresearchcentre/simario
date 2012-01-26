@@ -15,7 +15,7 @@
 #' occur based on transition probabilities, or generated via logistic, binomial, poission
 #' negative binomial, or normal models.
 #'   
-#' At the end of each iteration the current value of each variable for all mirco-units is stored as an outcome.
+#' At the end of each iteration the current value of each variable for all micro-units is stored as an outcome.
 #' At the end of all iterations, the outcome list consists of a matrix for each variable giving its value
 #' for each micro-unit at each iteration.
 #' 
