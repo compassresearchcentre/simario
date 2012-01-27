@@ -111,8 +111,8 @@ expr = {
 	#'   	
 	#' @examples
 	#' 
-	#' . <- env.base$modules$years1_5
-	#' . <- env.base$modules$years6_13
+	#' . <- env.base$modules[[1]]
+	#' . <- env.base$modules[[2]]
 	#' 
 	#' appendRunStats (.)
 	appendRunStats <- function (.) {

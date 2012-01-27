@@ -207,7 +207,9 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' @examples 
 #' \dontrun{
 #' envir <- children
+#' envir <- people
 #' basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
+#' basefiledir <- "D:/workspace.sim/simar/demo/"
 #' sfdef <- readXLSSheet1(basefiledir, "simframedef.xlsx")
 #' simframe.start <- loadSimFrame(envir, sfdef)
 #' simframe <- loadSimFrame(envir, sfdef)
@@ -245,8 +247,10 @@ loadSimFrame <- function (envir = .GlobalEnv, sfdef) {
 	nas <- attr(sfvalues.df, "na.action")
 	
 	# add singular NA values back to data.frame
-	sfvalues.df  <- cbind(sfvalues.df, 
-			as.list(sfvalues[is.na(sfvalues)]), stringsAsFactors=FALSE)
+	if (any(is.na(sfvalues))) {
+		sfvalues.df  <- cbind(sfvalues.df, 
+				as.list(sfvalues[is.na(sfvalues)]), stringsAsFactors=FALSE)
+	}
 	
 	# setup sfprevious
 	# sfprevious = the names of the variables that represent values in the previous iteration

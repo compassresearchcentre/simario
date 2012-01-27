@@ -447,14 +447,25 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' lol.args <- attr(lol, "args.list")
 #' .FUN <- wtdmeancols.lbl
 #' 
-#' X <- env.base$years1_5$outcomes
+#' X <- env.base$modules[[1]]$outcomes
 #' lol <- list(all=namedList("gptotvis", "hadmtot"), females.by.ethnicity=namedList("gptotvis", "hadmtot")) 
 #' lol.args <- list(all=NULL, females.by.ethnicity=list(logiset=childsets$females, grpby=children$r1stchildethn, grpby.tag="r1stchildethn"))
 #' attr(lol, "args.list") <- lol.args
 #' .FUN <- wtdmeancols.lbl
-#'   
-#' lapply.subset.append.lol.args(X, lol, lol.args, simplify=T, .FUN)
 #' }
+#' 
+#' outcome1 <- structure(matrix(1:8, ncol=2), varname="outcome1")
+#' outcome2 <- structure(matrix(11:18, ncol=2), varname="outcome2")
+#' X <- list(outcome1=outcome1, outcome2=outcome2)
+#' lol <- list(all=namedList("outcome1", "outcome2"), females.by.ethnicity=namedList("outcome1", "outcome2"))
+#' lol.args <- list(all=NULL, females.by.ethnicity=list(logiset=c(T,T,T,F), grpby=c("E","E","O","O"), grpby.tag="ethn"))
+#' simplify = TRUE
+#' attr(lol, "args.list") <- lol.args
+#' .FUN <- wtdmeancols
+#'    
+#' lapply.subset.append.lol.args(X, lol, lol.args, simplify=simplify, .FUN)
+#' wtdmeancols(outcome1)
+#' wtdmeancols(outcome1, logiset=lol.args$females.by.ethnicity$logiset, grpby=lol.args$females.by.ethnicity$grpby, grpby.tag="ethn")
 lapply.subset.append.lol.args <- function(X, lol, lol.args = attr(lol, "args.list"), simplify=TRUE, .FUN) {
 	
 	result <- mapply(function(lol.x,lol.a) {
@@ -463,7 +474,8 @@ lapply.subset.append.lol.args <- function(X, lol, lol.args = attr(lol, "args.lis
 				# lol.x <- lol[[6]] ; lol.a <- lol.args[[6]]
 				# lol.x <- lol[[10]] ; lol.a <- lol.args[[10]]
 				
-				# lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset) 
+				# lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN) 
+				# lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset, grpby=lol.a$grpby, grpby.tag=lol.a$grpby.tag)
 				do.call(lapply.subset.append, 
 						args=c(list(
 										results.list=lol.x,

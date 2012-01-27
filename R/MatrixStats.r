@@ -351,12 +351,15 @@ table.grpby <- function (x, grpby = NULL) {
 #'  matrix
 #' 
 #' @param grpby
-#'  elements to group by, or NULL or unspecified to do no grouping
+#'  a vector of elements to group by, or NULL or unspecified to do no grouping
 #' 
 #' @param grpby.tag
-#'  if specified this value with be attached as the
+#'  a character vector. If specified this value with be attached as the
 #'  meta attribute "grpby.tag"
-#'  
+#'
+#' @param logiset
+#'  logical vector indicating which rows to include, or NULL to include all.
+#'   
 #' @return
 #'  list, each element of the list represents a year, 
 #'  each element is a 2D matrix where columns are the group by
@@ -368,6 +371,8 @@ table.grpby <- function (x, grpby = NULL) {
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' grpby <- c('M','F','F','M')
 #' table.grpby.mx.cols(mx, grpby)
+#' logiset <- c(FALSE, TRUE, FALSE, TRUE)
+#' table.grpby.mx.cols(mx, grpby = grpby, logiset = logiset)
 #' 
 #' \dontrun{
 #' mx <- env.base$years1_5$outcomes$z1accomLvl1
@@ -382,7 +387,11 @@ table.grpby <- function (x, grpby = NULL) {
 #' grpby = NULL
 #' r3 <- table.grpby.mx.cols(mx)
 #' }
-table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL) {
+table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL) {
+	
+	# subset
+	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
+	if (!is.null(logiset)) grpby <- grpby[logiset]
 	
 	# if no column names, number them off
 	if (is.null(dimnames(mx)[[COL]])) {
@@ -412,7 +421,7 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL) {
 	names(results.by.col) <- dimnames(mx)[[COL]]
 	
 	# return with meta
-	structure(results.by.col, meta=c(varname=attr(mx, "varname"), grpby.tag = grpby.tag))
+	structure(results.by.col, meta=c(varname=attr(mx, "varname"), grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 	
 }
 
