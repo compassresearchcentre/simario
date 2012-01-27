@@ -21,7 +21,7 @@
 #'  the simframe
 #' 
 #' @examples
-#' #simframe <- simframe.start
+#' #simframe <- simframe.master
 #' #checkModelVars(models, simframe)
 checkModelVars <- function (models, simframe) {
 	# try a predict on each model
@@ -77,7 +77,7 @@ checkOutcomeVars <- function(outcomes, simframe) {
 #' 
 #' @examples
 #' \dontrun{
-#' simframe <- simframe.start
+#' simframe <- simframe.master
 #' simframe <- env.base$simframe
 #' outcome_module_name <- "years1_5"
 #' outcome_module_name <- "years6_13"
@@ -211,7 +211,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
 #' basefiledir <- "D:/workspace.sim/simar/demo/"
 #' simframe_defn <- readXLSSheet1(basefiledir, "simframedef.xlsx")
-#' simframe.start <- loadSimFrame(envir, simframe_defn)
+#' simframe.master <- loadSimFrame(envir, simframe_defn)
 #' simframe <- loadSimFrame(envir, simframe_defn)
 #' }
 loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {

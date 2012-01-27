@@ -52,7 +52,7 @@ expr = {
 	#'  categorical adjustments
 	#' 
 	#' @examples
-	#' env <- Simenv$new(name = "Base", simframe=simframe.start)
+	#' env <- Simenv$new(name = "Base", simframe=simframe.master)
 	new <- function (., name, simframe, dict, catadjs=list(level.vars=list(), nonlevel.vars=list())) {
 		proto(.,
 				simframe=simframe,
