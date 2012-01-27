@@ -345,7 +345,10 @@ err <- function (x) {
 #' Errors if expressions cannot be evaluated.
 #' 
 #' @param exprlist list/vector of strings to evaluate
-#' @param envir environment to evaluate in, defaults to global environment.
+#' @param envir environment to evaluate in, defaults to global environment. If this is a
+#'  list/dataframe then the enclosing environment will become the calling frame.
+#'  This means values not found in the list/dataframe will be evaluated in the
+#'  caller's environment
 #' @param allowEmptyExpr allow expressions to return no value, defaults to FALSE
 #' 
 #' @export

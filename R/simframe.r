@@ -227,29 +227,26 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {
 		stop(paste("Simframe varname duplicate:", simframe_defn$Varname[duplicates], "\n"))
 	}
 	
-	initial_value_exprs <- simframe_defn$Initial_value
-	names(initial_value_exprs) <- simframe_defn$Varname
+	initial_value_exprs <- structure(simframe_defn$Initial_value, .Names=simframe_defn$Varname)
 	
-	#replace empty intial_value with numeric NA
 	empty_exprs <- (initial_value_exprs == "")
 	initial_value_exprs[empty_exprs] <- NA_real_
 	
-	#evaluate "initial_value" column. Any objects in the exprs must exist 
-	#in envir or if not then in the global environment
 	initial_values  <- eval.list(initial_value_exprs, envir)
+	initial_value_is_NA <- is.na(initial_values)
 	
 	# convert non NA values to data.frame
 	# this repeats any inital values that are singular
-	simframe <- data.frame(initial_values[!is.na(initial_values)])
+	simframe <- data.frame(initial_values[!initial_value_is_NA])
 	
 	#remove obs. that have NAs in one of their values
 	simframe <- na.omit(simframe)
 	nas <- attr(simframe, "na.action")
 	
 	# add singular NA values back to data.frame
-	if (any(is.na(simframe))) {
+	if (any(initial_value_is_NA)) {
 		simframe  <- cbind(simframe, 
-			as.list(initial_values[is.na(initial_values)]), stringsAsFactors=FALSE)
+			as.list(initial_values[initial_value_is_NA]), stringsAsFactors=FALSE)
 	}
 	
 	# previous = the names of the variables that represent values in the previous iteration
