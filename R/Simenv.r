@@ -17,7 +17,7 @@ library(proto)
 Simenv <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
 expr = {  
-	envName <- NULL
+	name <- NULL
 	runs_simulated <- 0L
 	simframe <- NULL
 	base.tables <- list()
@@ -56,7 +56,7 @@ expr = {
 	#' env <- Simenv$new(name = "Base", simframe=simframe.master)
 	new <- function (., name, simframe, dict, catadjs=list(level.vars=list(), nonlevel.vars=list())) {
 		proto(.,
-				envName=name,
+				name=name,
 				runs_simulated <- 0L,
 				simframe=simframe,
 				base.tables=list(),
@@ -234,7 +234,7 @@ expr = {
 	simulate <- function(., total_runs=1) {
 		pt.start <- proc.time()
 		
-		cat(gettextf("Simulating %s\n", .$envName))
+		cat(gettextf("Simulating %s\n", .$name))
 		
 		.$applyCatAdjustmentsToSimframe(1, propens.all)
 		
