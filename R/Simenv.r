@@ -17,12 +17,13 @@ library(proto)
 Simenv <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
 expr = {  
-	numCases <- NULL
-	numRuns <- 0L
 	envName <- NULL
+	runs_simulated <- 0L
 	simframe <- NULL
-	dict <- NULL
 	base.tables <- list()
+	catadjs <- list()
+	modules <- list()
+	dict <- NULL
 
 	#' Categorical variable adjustment matrices.
 	#' 
@@ -55,14 +56,13 @@ expr = {
 	#' env <- Simenv$new(name = "Base", simframe=simframe.master)
 	new <- function (., name, simframe, dict, catadjs=list(level.vars=list(), nonlevel.vars=list())) {
 		proto(.,
-				simframe=simframe,
-				dict=dict,
-				numCases=dim(simframe)[1],
-				numRuns <- 0L,
 				envName=name,
+				runs_simulated <- 0L,
+				simframe=simframe,
 				base.tables=list(),
 				catadjs=catadjs,
-				modules=list()
+				modules=list(),
+				dict=dict
 		)
 	}
 	
@@ -224,14 +224,14 @@ expr = {
 	#' 
 	#' @param .
 	#'  Simenv receiving object
-	#' @param numrums
-	#'  number of simulation runs
+	#' @param total_runs
+	#'  total number of runs to simulate
 	#' @return 
 	#'  NULL
 	#' @examples 
 	#'  . <- env.base
 	#'  env.base$simulate()
-	simulate <- function(., numruns=1) {
+	simulate <- function(., total_runs=1) {
 		pt.start <- proc.time()
 		
 		cat(gettextf("Simulating %s\n", .$envName))
@@ -245,10 +245,10 @@ expr = {
 			return()
 		}
 		
-		for (i in 1:numruns) {
-			cat("Run",i,"of",numruns,"\n")
+		for (i in 1:total_runs) {
+			cat("Run",i,"of",total_runs,"\n")
 
-			.$numRuns <- .$numRuns + 1
+			.$runs_simulated <- .$runs_simulated + 1
 
 			# simulate module outcomes
 			
@@ -268,4 +268,7 @@ expr = {
 		
 	}
 	
+	numberOfUnits <- function(.) {
+		dim(.$simframe)[1]
+	}
 })
