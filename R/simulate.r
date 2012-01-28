@@ -322,7 +322,7 @@ labelColumnCodes <- function(x, dict, varname) {
 	dimnames(x)[[COL]] <- paste(cnames_numeric_desc, cnames_alpha, sep = "")	
 	
 	# add varname desc
-	desc <- dict$vardesc[[varname]]
+	desc <- dict$descriptions[[varname]]
 	names(dimnames(x))[[COL]] <- desc
 	
 	x

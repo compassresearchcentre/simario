@@ -4,9 +4,6 @@
 ###############################################################################
 
 
-
-
-
 #' Create empty categorical variable adjustment matrices for specified number of iterations.
 #' Initial matrix values are NA (i.e: no adjustment).
 #'

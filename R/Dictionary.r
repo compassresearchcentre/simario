@@ -3,14 +3,14 @@ library(xlsx)
 
 #' Dictionary object.
 #' This object holds:
-#'  * vardesc: a mapping of variable names to descriptions
+#'  * descriptions: a mapping of variable names to descriptions
 #'  * codings: category names for categorical variables
 #' 
 Dictionary <- proto(expr = {
 	
 	#' Vector of variable desciptions.
-	#' names(dict) are the variable names.
-	vardesc <- NULL
+	#' names(descriptions) are the variable names.
+	descriptions <- NULL
 	
 	#' List of codings.
 	#' names(codings) are the variable names.
@@ -176,11 +176,11 @@ Dictionary <- proto(expr = {
 		}
 		
 		#lookup name in dictionary
-		if (!name %in% names(.$vardesc)) {
+		if (!name %in% names(.$descriptions)) {
 			stop(gettextf("'%s' does not exist in the data dictionary", name))
 		}
 		
-		desc <- .$vardesc[[name]]
+		desc <- .$descriptions[[name]]
 		
 		if (is.null(desc)) {
 			stop(gettextf("variable named '%s' does not exist in data dictionary", name))
@@ -231,7 +231,7 @@ Dictionary <- proto(expr = {
 	#' 
 	#' codings <- Dictionary$new_from_XLS(filedir, filename, filename)
 	new_from_XLS <- function (., filedir, dict_filename, codings_filename = NULL) {
-		vardesc <- loadDictionaryXLS(filedir, dict_filename)
+		descriptions <- loadDictionaryXLS(filedir, dict_filename)
 		if (is.null(codings_filename)) {
 			codings <- NULL
 		} else {
@@ -240,7 +240,7 @@ Dictionary <- proto(expr = {
 		
 		# return new object
 		proto(.,
-			 vardesc = vardesc,
+			 descriptions = descriptions,
 			 codings = codings)
 	}
 
