@@ -10,6 +10,8 @@ library(proto)
 #' - one or more simulation modules (Simmodule). A Simmodule contains outcomes, run stats, and results for a simulation
 #'   as well as the code to generate them.
 #' 
+#' Uses the global environment list variable propens.all when performing categorical adjustment  
+#' 
 #' This class will be subclassed by specific simulation problems which will provide their own simframe,
 #' Simmodules and adjustments.  
 #'  
