@@ -29,15 +29,15 @@
 #' createAdjustmentMatrices(cat.varnames, dict, rows)
 createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 	
-	catadjs <- lapply(cat.varnames, function (varname) {
+	cat.adjustments <- lapply(cat.varnames, function (varname) {
 				coding <- dict$codings[[varname]]
 				if (is.null(coding)) stop(gettextf("No codings for %s", varname))
 				
 				createAdjustmentMatrix(varname, coding, rows)
 			})
-	names(catadjs) <- cat.varnames			
+	names(cat.adjustments) <- cat.varnames			
 	
-	catadjs 
+	cat.adjustments 
 }
 
 #' Creates an empty adjustment matrix of NAs. An adjustment matrix contains cells

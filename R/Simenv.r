@@ -18,10 +18,10 @@ Simenv <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
 expr = {  
 	name <- NULL
-	runs_simulated <- 0L
+	runs_simulated <- 0L		
 	simframe <- NULL
 	base.tables <- list()
-	catadjs <- list()
+	cat.adjustments <- list()
 	modules <- list()
 	dict <- NULL
 
@@ -39,7 +39,7 @@ expr = {
 	#' Values in subsequent rows can be used during the simulation to set the required proportion
 	#' during the specified iteration (eg: iteration 2 if a value is specified in Year 2).
 	#' The variables in the simframe to adjust are specified by the varnames attribute.
-	catadjs <- list()
+	cat.adjustments <- list()
 			
 	modules <- list()
 
@@ -49,18 +49,18 @@ expr = {
 	#'  simulation name
 	#' @param simframe
 	#'  simframe
-	#' @param catadjs
+	#' @param cat.adjustments
 	#'  categorical adjustments
 	#' 
 	#' @examples
 	#' env <- Simenv$new(name = "Base", simframe=simframe.master)
-	new <- function (., name, simframe, dict, catadjs=list(level.vars=list(), nonlevel.vars=list())) {
+	new <- function (., name, simframe, dict, cat.adjustments=list(level.vars=list(), nonlevel.vars=list())) {
 		proto(.,
 				name=name,
 				runs_simulated <- 0L,
 				simframe=simframe,
 				base.tables=list(),
-				catadjs=catadjs,
+				cat.adjustments=cat.adjustments,
 				modules=list(),
 				dict=dict
 		)
@@ -76,7 +76,7 @@ expr = {
 	#'  simenv receiving object. .$simframe is modified.  
 	#' 
 	#' @param propens.all
-	#' 		named list of propensities for the catadjs
+	#' 		named list of propensities for the cat.adjustments
 	#' @param printAdj
 	#' 		if TRUE will print new proportions of modified simframe vars
 	#'
@@ -87,9 +87,9 @@ expr = {
 	#'  . <- env.scenario
 	#' iteration = 1 ; print_adj = TRUE
 	#' 
-	#' 	.$catadjs$z1accomLvl1[1,] <- c(0.5,0.5)
-	#'  .$catadjs$SESBTH[1,] <- c(0.1,0.1,0.8)
-	#'  .$catadjs$catpregsmk2[1,] <- c(0.01,0.02,0.03,0.04,0.90)
+	#' 	.$cat.adjustments$z1accomLvl1[1,] <- c(0.5,0.5)
+	#'  .$cat.adjustments$SESBTH[1,] <- c(0.1,0.1,0.8)
+	#'  .$cat.adjustments$catpregsmk2[1,] <- c(0.01,0.02,0.03,0.04,0.90)
 	#' 
 	#'  print(prop.table(table(.$simframe$z1accomLvl1)),digits=3)
 	#'  print(prop.table(table(binary.levels.combine(.$simframe$SESBTHLvl1 , .$simframe$SESBTHLvl2, .$simframe$SESBTHLvl3))),digits=3)
@@ -98,9 +98,9 @@ expr = {
 	#' .$applyCatAdjustmentsToSimframe(iteration, propens.all, print_adj)
 	applyCatAdjustmentsToSimframe <- function(., iteration, propens.all, print_adj = TRUE) {
 
-		invisible(lapply(.$catadjs, function (catadj) {
-			#catadj <- .$catadjs$SESBTH
-			#catadj <- .$catadjs$catpregsmk2
+		invisible(lapply(.$cat.adjustments, function (catadj) {
+			#catadj <- .$cat.adjustments$SESBTH
+			#catadj <- .$cat.adjustments$catpregsmk2
 			cat_adj_vector <- catadj[iteration, ]
 			
 			if (!any(is.na(cat_adj_vector))) {
@@ -212,7 +212,9 @@ expr = {
 		}
 	}
 	
-	#' Generate base tables after adjust but before simulation begins.
+	#' Generate base tables after adjustment but before simulation begins.
+	#' 
+	#' Typically these will be descriptive statistics of input variables that don’t change eg: gender, ethnicity
 	#' 
 	#' Sub-classes override this function.
 	#' 
@@ -232,7 +234,7 @@ expr = {
 	#'  . <- env.base
 	#'  env.base$simulate()
 	simulate <- function(., total_runs=1) {
-		pt.start <- proc.time()
+		start_time <- proc.time()
 		
 		cat(gettextf("Simulating %s\n", .$name))
 		
@@ -250,21 +252,17 @@ expr = {
 
 			.$runs_simulated <- .$runs_simulated + 1
 
-			# simulate module outcomes
-			
 			invisible(lapply(.$modules, function(simmodule) #simmodule <- .$modules[[1]] 
 								simmodule$outcomes <- simmodule$simulateRun(simenv=.)  ))
 			
-			# append module run results
 			invisible(lapply(.$modules, function(simmodule) simmodule$appendRunStats()))
 		}
 		
-		# calc final results
 		invisible(lapply(.$modules, function(simmodule) simmodule$calcFinalResults(simenv=.)))
 
-		pt.end <- proc.time()
+		end_time <- proc.time()
 		
-		return(pt.end - pt.start)
+		return(end_time - start_time)
 		
 	}
 	
