@@ -20,7 +20,7 @@ expr = {
 	name <- NULL
 	runs_simulated <- 0L		
 	simframe <- NULL
-	base.tables <- list()
+	presim.stats <- list()
 	cat.adjustments <- list()
 	modules <- list()
 	dict <- NULL
@@ -59,7 +59,7 @@ expr = {
 				name=name,
 				runs_simulated <- 0L,
 				simframe=simframe,
-				base.tables=list(),
+				presim.stats=list(),
 				cat.adjustments=cat.adjustments,
 				modules=list(),
 				dict=dict
@@ -212,13 +212,13 @@ expr = {
 		}
 	}
 	
-	#' Generate base tables after adjustment but before simulation begins.
+	#' Generate pre simulation stats after adjustment but before simulation begins.
 	#' 
 	#' Typically these will be descriptive statistics of input variables that don’t change eg: gender, ethnicity
 	#' 
 	#' Sub-classes override this function.
 	#' 
-	baseTablesGenerate <- function(., simframe) {
+	generatePreSimulationStats <- function(., simframe) {
 		
 	}
 	
@@ -240,7 +240,7 @@ expr = {
 		
 		.$applyCatAdjustmentsToSimframe(1, propens.all)
 		
-		.$base.tables <- .$baseTablesGenerate(.$simframe)
+		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
 		
 		if (exists(".DEBUG")) {
 			cat("DEBUG: Stopping to allow manual execution\n")
