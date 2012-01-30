@@ -108,6 +108,9 @@ expr = {
 			if (!any(is.na(cat_adj_vector))) {
 				
 				varnames <- attr(catadj, "varnames")
+				if (is.null(varnames)) {
+					stop(gettextf("Missing varnames attribute"))
+				}
 				is_single_variable_to_adjust <- length(varnames) == 1
 				
 				if (is_single_variable_to_adjust) {
