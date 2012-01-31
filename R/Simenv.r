@@ -10,7 +10,7 @@ library(proto)
 #' - one or more simulation modules (Simmodule). A Simmodule contains outcomes, run stats, and results for a simulation
 #'   as well as the code to generate them.
 #' 
-#' Uses the global environment list variable propens.all when performing categorical adjustment  
+#' Uses the global environment list variable propensities when performing categorical adjustment  
 #' 
 #' This class will be subclassed by specific simulation problems which will provide their own simframe,
 #' Simmodules and adjustments.  
@@ -77,7 +77,7 @@ expr = {
 	#' @param .
 	#'  simenv receiving object. .$simframe is modified.  
 	#' 
-	#' @param propens.all
+	#' @param propensities
 	#' 		named list of propensities for the cat.adjustments
 	#' @param printAdj
 	#' 		if TRUE will print new proportions of modified simframe vars
@@ -97,8 +97,8 @@ expr = {
 	#'  print(prop.table(table(binary.levels.combine(.$simframe$SESBTHLvl1 , .$simframe$SESBTHLvl2, .$simframe$SESBTHLvl3))),digits=3)
 	#'  print(prop.table(table(.$simframe$catpregsmk2)),digits=3)	
 	#' 
-	#' .$applyCatAdjustmentsToSimframe(iteration, propens.all, print_adj)
-	applyCatAdjustmentsToSimframe <- function(., iteration, propens.all, print_adj = TRUE) {
+	#' .$applyCatAdjustmentsToSimframe(iteration, propensities, print_adj)
+	applyCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE) {
 
 		invisible(lapply(.$cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments$SESBTH
@@ -114,10 +114,10 @@ expr = {
 				is_single_variable_to_adjust <- length(varnames) == 1
 				
 				if (is_single_variable_to_adjust) {
-					propens <- propens.all[[varnames]][,,iteration]
+					propens <- propensities[[varnames]][,,iteration]
 					.$applyCatAdjustmentsToSimframeVarSingle(varnames, cat_adj_vector, propens, print_adj)
 				} else {
-					propens <- propens.all[[strip_lvl_suffix(varnames[1])]][,,iteration]
+					propens <- propensities[[strip_lvl_suffix(varnames[1])]][,,iteration]
 					.$applyCatAdjustmentsToSimframeVarMultipleBinary(varnames, cat_adj_vector, propens, print_adj)	
 				}
 			}
@@ -180,10 +180,10 @@ expr = {
 	#' . <- env.scenario
 	#' binLevelVarnames <- c("SESBTHLvl1","SESBTHLvl2", "SESBTHLvl3") 
 	#' desiredProps=c(0.1,0.1,0.8)
-	#' propens=propens.all$SESBTH[,,1]
+	#' propens=propensities$SESBTH[,,1]
 	#' 
 	#' binLevelVarnames <- c("z1single0Lvl0","z1single0Lvl1")
-	#' binLevelVarnames <- c("z1accomLvl0","z1accomLvl1") ; propens <- propens.all$z1accom[,1]
+	#' binLevelVarnames <- c("z1accomLvl0","z1accomLvl1") ; propens <- propensities$z1accom[,1]
 	#' desiredProps <- c(0,1) ; desiredProps <- c(0.5,0.5)  
 	#' propens <- NULL 
 	#' 
@@ -243,7 +243,7 @@ expr = {
 		
 		cat(gettextf("Simulating %s\n", .$name))
 		
-		.$applyCatAdjustmentsToSimframe(1, propens.all)
+		.$applyCatAdjustmentsToSimframe(1, propensities)
 		
 		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
 		

@@ -1,0 +1,29 @@
+\name{mergeAndRemoveKeyColumn}
+\alias{mergeAndRemoveKeyColumn}
+\title{Merges (ie: join) on a key column and returns merged rows, minus
+the key column. Merging means selecting rows from key_column_name
+that are in selected_keys, erroring if a row cannot be found.}
+\usage{
+  mergeAndRemoveKeyColumn(df, key_column_name,
+    selected_keys)
+}
+\arguments{
+  \item{key_column_name}{column to merge on}
+
+  \item{selected_keys}{values of keys in key_column_name to
+  select}
+
+  \item{df}{dataframe}
+}
+\description{
+  Merges (ie: join) on a key column and returns merged
+  rows, minus the key column. Merging means selecting rows
+  from key_column_name that are in selected_keys, erroring
+  if a row cannot be found.
+}
+\examples{
+df <- data.frame(key=1:5, value=LETTERS[1:5]); key_column_name <- "key"; selected_keys <- c(2,3)
+ mergeAndRemoveKeyColumn(df, key_column_name, selected_keys)
+ selected_keys <- c(1:6)
+}
+

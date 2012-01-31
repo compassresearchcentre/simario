@@ -1,0 +1,48 @@
+\name{createAdjustmentMatrix}
+\alias{createAdjustmentMatrix}
+\title{Creates an empty adjustment matrix of NAs. An adjustment matrix contains cells
+for each categorical value across a supplied number of rows. Each row
+represents an iteration.}
+\usage{
+  createAdjustmentMatrix(varname, coding, rows,
+    is_level_var = grepl("Lvl.$", varname))
+}
+\arguments{
+  \item{varname}{variable name. This can be a standard
+  variable name, eg: "catpregsmk2" or a level variable
+  name, eg: "z1homeownLvl1".}
+
+  \item{coding}{codings for the variable, eg: c('0'='Own
+  home','1'='Not owned')}
+
+  \item{rows}{row names, or a numeric scalar for the number
+  of rows in which case the rows will be labelled "Year 1",
+  "Year 2"... up to rows.}
+
+  \item{is_level_var}{is this a binary level variable? i.e:
+  are the values for this variable stored in multiple
+  binary variables, eg: SESBTHLvl1, SESBTHLvl2, SESBTHLvl3?
+  Defaults to testing whether varname ends in LvlX.}
+}
+\value{
+  a matrix of NAs with columns specified by codings, and
+  rows specified by rows and a "varnames" attribute which
+  specifies the variables that need to be adjusted. If
+  varname is a level variable then this will contain all
+  the individual binary level varnames, eg:
+  "z1homeownLvl0", "z1homeownLvl1" otherwise it will just
+  varname.
+}
+\description{
+  Creates an empty adjustment matrix of NAs. An adjustment
+  matrix contains cells for each categorical value across a
+  supplied number of rows. Each row represents an
+  iteration.
+}
+\examples{
+varname = "z1homeownLvl1"; coding <- c('Own home'=0,'Not owned'=1)
+varname = "catpregsmk2"; coding <- c('0'=0, '1-5'=3, '6-10'=8, '11-20'=16, '>20'=27)
+rows = 5
+createAdjustmentMatrix(varname, coding, rows)
+}
+

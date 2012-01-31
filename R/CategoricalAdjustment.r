@@ -9,7 +9,7 @@
 #' A desired proportion of NA will leave the variable unchanged
 #' If propensities are supplied they will be used to select which micro-units to adjust, otherwise the 
 #' selection will be random
-#' Propensities are specified via the global list variable propens.all
+#' Propensities are specified via the global list variable propensities
 
 
 #' Create empty categorical variable adjustment matrices for specified number of iterations.

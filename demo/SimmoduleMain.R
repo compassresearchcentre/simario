@@ -55,7 +55,7 @@ SimmoduleMain <- proto(. = Simmodule, expr = {
 		#' @param x
 		#'  categorical values to adjust
 		#' @param varname
-		#'  varname, used a lookup into cat.adjustments and propens.all
+		#'  varname, used a lookup into cat.adjustments and propensities
 		adjustCatVar <- function(x, varname) {
 			cat.adjustments <- simenv$cat.adjustments
 			
@@ -69,7 +69,7 @@ SimmoduleMain <- proto(. = Simmodule, expr = {
 			
 			cat("Adjusting", varname, ": ", desiredProps, "\n")
 			
-			modifyProps(x, desiredProps, propens.all[[varname]][,,iteration])
+			modifyProps(x, desiredProps, propensities[[varname]][,,iteration])
 		}
 		
 		store_current_values_in_outcomes <- function(xcol) {

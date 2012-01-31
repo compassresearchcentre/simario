@@ -1,0 +1,35 @@
+\name{read_file}
+\alias{read_file}
+\title{Read a file and return a dataframe.}
+\usage{
+  read_file(filedir, filename,
+    filetype = file_extension(filename),
+    stringsAsFactors = FALSE, ...)
+}
+\arguments{
+  \item{filedir}{file directory, with or without trailing
+  slash}
+
+  \item{filename}{file name}
+
+  \item{filetype}{"csv", "xls", or "xlsx". Defaults to the
+  extension of filename}
+
+  \item{stringsAsFactors}{logical: should character vectors
+  be converted to factors?}
+
+  \item{...}{additional parameters to read_csv or
+  read.xlsx2}
+}
+\description{
+  Read a file and return a dataframe.
+}
+\examples{
+\dontrun{
+filedir <- "D:/workspace.sim/simar/demo"
+filename <- "Disability state transition probabilities.xlsx"
+filetype = file_extension(filename)
+read_file(filedir, filename, filetype)
+}
+}
+

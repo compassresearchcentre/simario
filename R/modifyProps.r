@@ -95,11 +95,11 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' \dontrun{
 #' default.vec <- children$SESBTH
 #' props <- c(0.1,0.1,0.8)
-#' propens <- propens.all$SESBTH
+#' propens <- propensities$SESBTH
 #' 
 #' default.vec <- env.scenario$simframe$z1fsmokeLvl1
 #' props <- c(0.1,0.9)
-#' propens <- propens.all$z1fsmokeLvl1[,1]
+#' propens <- propensities$z1fsmokeLvl1[,1]
 #' 
 #' default.vec <- env.scenario$simframe$catpregsmk2
 #' props <- c(0.1, 0.1, 0.1, 0.5, 0.2)
@@ -299,7 +299,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
 #' level3 <- env.scenario$simframe$SESBTHLvl3
 #' vecs.list <- list(level1=level1, level2=level2, level3=level3) ; vecs.list <- list(level1, level2, level3)
 #' desiredProps <- c(0.1,0.1,0.8)
-#' propens <- propens.all$SESBTH[,,1]
+#' propens <- propensities$SESBTH[,,1]
 #' r <- modifyPropsAsBinLevels(vecs.list, desiredProps = desiredProps, propens = propens)
 #' 
 #' level0 <- simframe$z1chparLvl0; level1 <- simframe$z1chparLvl1
