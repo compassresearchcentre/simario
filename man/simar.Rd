@@ -3,28 +3,42 @@
 \alias{package-simar}
 \alias{simar}
 \alias{simar-package}
-\title{Framework for executing multi-run dynamic micro-simulations including under different scenarios.}
+\title{simar is a framework for executing multi-run dynamic micro-simulations, including under different scenarios, and
+taking measurements of the results.}
 \description{
-  A simulation can consist of multiple modules (Simmodule).
+  Each simulation establishes (via a parameter file) the
+  set of variables (the simframe) used throughout the
+  simulation. A simframe is a dataframe of multiple
+  variables with observations (or values) for each
+  micro-unit.
 }
 \details{
-  Each simulation establishes (via a parameter file) the
-  set of variables (the simframe) used by all modules
-  during the simulation.
+  Variables in the simframe, both categorical or
+  continuous, can be modified before or during the
+  simulation to test different scenarios.
 
-  This variables, both categorical or continuous, can be
-  modified before or during the simulation to test
-  different scenarios.
+  A simulation consists of one or more modules called
+  Simmodules.
 
-  A simulation run consists of multiple iterations, and
-  there may be multiple simulation runs.
+  A Simmodule contains user supplied R code to transform
+  the simframe. Typically, transformations will move
+  variables for micro-units in the simframe through
+  multiple iterations (or time steps). Transformations
+  occur based on transition probabilities, or generated via
+  logistic, binomial, poission negative binomial, or normal
+  models.
 
-  Each Simmodule has a distinct set of outcomes (i.e:
-  outputs). A run stat is a calculation performed at the
-  end of the run for an outcome across all iterations.
-  Example run stats include mean, frequency, summary, and
-  quantile. All that required is a R function that takes a
-  matrix.
+  At the end of each iteration the current value of each
+  variable for all micro-units is stored as an outcome. At
+  the end of all iterations, the outcome list consists of a
+  matrix for each variable giving its value for each
+  micro-unit at each iteration.
+
+  At the end of each run a series of run stats is
+  calculated on outcomes. A run stat is essentially a
+  function that takes a matrix of outcomes across multiple
+  iterations and produces an aggregate value. Example run
+  stats include mean, frequency, summary, and quantile.
 
   Run stats are averaged across multiple runs to get a
   final simulation result.

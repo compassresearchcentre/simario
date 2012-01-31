@@ -27,9 +27,11 @@ ZDIM <- 3
 #' @param src_var_names
 #'  a parallel character vector of variable names supplying the values to
 #' @examples
+#' \dontrun{
 #' d1 <- 1; d2 <- 2; s1 <- 10; s2 <- 20
 #' assign_values(c("d1","d2"), c("s1","s2"))
 #' d1; d2
+#' }
 assign_values <- function(dest_var_names, src_var_names) {
 	invisible(mapply(function(dest_var_name, src_var_name) {
 						assign(dest_var_name, get(src_var_name), inherits=T)

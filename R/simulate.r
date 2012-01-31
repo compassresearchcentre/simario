@@ -395,6 +395,38 @@ loadGLMCSV <- function (filedir, filename) {
 	)
 }
 
+
+#' Loads and merges a CSV/XLS file with the supplied values (keys). ie:
+#' returns a dataframe (excluding key_column_name) for the supplied 
+#' values that exist in key_column_name of the file 
+#' 
+#' @param filedir
+#'  file directory, with or without trailing slash
+#' @param filename
+#'  file name. File type is determined from the file extension, eg: ".csv", ".xls", ".xlsx" 
+#' @param  key_column_name 
+#'  a column in the propensity files to merge on, and select
+#'  those values that appear in selected_keys
+#' 
+#' @param selected_keys
+#'  a vector of selected keys that are to be retained in the propensities
+#' 
+#' @return 
+#' a dataframe
+#' 
+#' @examples
+#' \dontrun{
+#' selected_keys <- children$A0
+#' key_column_name <- "A0"
+#' filedir <- "D:/workspace.sim/MELC/CHDS/propensityFiles/"
+#' loadMergedFile(key_column_name, selected_keys, propensityfiledir)
+#' }
+loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
+	dataframe <- read_file(filedir, filename)
+	mergeAndRemoveKeyColumn(dataframe, key_column_name, selected_keys)
+}
+
+
 #' Return the coefficients used in the supplied model.
 #' 
 #' @param model

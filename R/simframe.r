@@ -177,7 +177,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'                        The expression is evaluated in the context of envir.
 #'					      If empty then an initial numeric value of NA is used.
 #' 		 $Outcome_type - if specified, indicates this is an outcome variable and indicates 
-#' 						its type which is one of “categorical” or “continuous”
+#' 						its type which is one of "categorical" or "continuous"
 #' 		 $Outcome_module - if specified, indicates the Simmmodule this outcome variable belongs to
 #'
 #' @param envir  

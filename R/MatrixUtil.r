@@ -680,31 +680,33 @@ remove.NA.cols <- function(mx) {
 
 #' Remove cols by name.
 #' 
-#' @param mx
-#'  matrix
+#' @param x
+#'  matrix or dataframe
 #' @param cnames
 #'  vector of colnames
 #' 
 #' @export
 #' @examples
 #' 
-#' mx <- matrix(1:4, dimnames=list(NULL, c("A","NA (%)")), nrow = 2)
-#' mx <- matrix(1:4, dimnames=list(NULL, c("A","B")), nrow = 2)
+#' x <- matrix(1:4, dimnames=list(NULL, c("A","NA (%)")), nrow = 2)
+#' x <- matrix(1:4, dimnames=list(NULL, c("A","B")), nrow = 2)
 #' cnames <- "NA (%)"
-#' remove.cols(mx, cnames)
-remove.cols <- function(mx, cnames) {
-	matched <- match(cnames, colnames(mx))
+#' remove.cols(x, cnames)
+#' data(mtcars); x <- cars; cnames <- "dist"
+#' remove.cols(x, cnames)
+remove.cols <- function(x, cnames) {
+	matched <- match(cnames, colnames(x))
 	if (is.na(matched)) {
-		mx
+		x
 	} else {
-		mx[,-matched, drop = FALSE]
+		x[,-matched, drop = FALSE]
 	}
 }
 
 #' Remove rows by name.
 #' 
 #' @param mx
-#'  matrix
+#'  matrix or dataframe
 #' @param rnames
 #'  vector of rownames
 #' @export

@@ -1,16 +1,16 @@
 \name{createOutcomeMatrices}
 \alias{createOutcomeMatrices}
 \title{Create a list of empty outcome matrix variables for a specified outcome set.
-The variables to create are those from the outcome set specified by "outcomeSetName".}
+The variables to create are those from the outcome set specified by "outcome_module_name".}
 \usage{
-  createOutcomeMatrices(simframe, outcomeSetName,
+  createOutcomeMatrices(simframe, outcome_module_name,
     iterations)
 }
 \arguments{
   \item{simframe}{simulation frame}
 
-  \item{outcomeSetName}{name of the outcomeset to create
-  variables for}
+  \item{outcome_module_name}{name of the outcomeset to
+  create variables for}
 
   \item{iterations}{either a vector of names for each
   iteration, eg: ("Year 5", "Year 6" ...) or a scalar
@@ -27,17 +27,17 @@ The variables to create are those from the outcome set specified by "outcomeSetN
 \description{
   Create a list of empty outcome matrix variables for a
   specified outcome set. The variables to create are those
-  from the outcome set specified by "outcomeSetName".
+  from the outcome set specified by "outcome_module_name".
 }
 \examples{
 \dontrun{
-simframe <- simframe.start
+simframe <- simframe.master
 simframe <- env.base$simframe
-outcomeSetName <- "years1_5"
-outcomeSetName <- "years6_13"
+outcome_module_name <- "years1_5"
+outcome_module_name <- "years6_13"
 iterations <- 8
 iterations <- c(6:13)
-outcomes <- createOutcomeMatrices(simframe, outcomeSetName, iterations)
+outcomes <- createOutcomeMatrices(simframe, outcome_module_name, iterations)
 }
 }
 

@@ -2,17 +2,17 @@
 \alias{getOutcomeVars}
 \title{Get a set of outcome variables from the simframe.}
 \usage{
-  getOutcomeVars(simframe, select_outcome_type = NULL,
-    select_outcome_set = NULL, sorted = FALSE)
+  getOutcomeVars(simframe, outcome_type_select = NULL,
+    outcome_module_name = NULL, sorted = FALSE)
 }
 \arguments{
   \item{simframe}{simframe}
 
-  \item{select_outcome_type}{a vector of outcome_types, or
+  \item{outcome_type_select}{a vector of outcome_types, or
   NULL to select all types.}
 
-  \item{select_outcome_set}{a vector of outcome_set, , or
-  NULL to select all sets.}
+  \item{outcome_module_name}{a vector of outcome_module, ,
+  or NULL to select all sets.}
 
   \item{sorted}{return outcome variables sorted by outcome
   name?}
@@ -26,16 +26,16 @@
 }
 \examples{
 \dontrun{
-select_outcome_set = "years1_5"
-select_outcome_set = c("years1_5", "years6_13")
-select_outcome_set = NULL
+outcome_module_name = "years1_5"
+outcome_module_name = c("years1_5", "years6_13")
+outcome_module_name = NULL
 
-select_outcome_type = "categorical"
-select_outcome_type = "continuous"
-select_outcome_type = NULL
+outcome_type_select = "categorical"
+outcome_type_select = "continuous"
+outcome_type_select = NULL
 sorted = TRUE
 
-getOutcomeVars(simframe, select_outcome_type, select_outcome_set, sorted)
+getOutcomeVars(simframe, outcome_type_select, outcome_module_name, sorted)
 }
 }
 

@@ -458,7 +458,7 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' outcome2 <- structure(matrix(11:18, ncol=2), varname="outcome2")
 #' X <- list(outcome1=outcome1, outcome2=outcome2)
 #' lol <- list(all=namedList("outcome1", "outcome2"), females.by.ethnicity=namedList("outcome1", "outcome2"))
-#' lol.args <- list(all=NULL, females.by.ethnicity=list(logiset=c(T,T,T,F), grpby=c("E","E","O","O"), grpby.tag="ethn"))
+#' lol.args <- list(all=NULL, females.by.ethnicity=list(logiset=c(TRUE,TRUE,TRUE,FALSE), grpby=c("E","E","O","O"), grpby.tag="ethn"))
 #' simplify = TRUE
 #' attr(lol, "args.list") <- lol.args
 #' .FUN <- wtdmeancols

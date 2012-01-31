@@ -34,6 +34,7 @@ colmeans.list <- function (xlistm) {
 #' @return
 #'  a matrix of means across the Z dimension
 #' 
+#' @export
 #' @examples 
 #' \dontrun{
 #' xa <- env.base$years1_5$runs$means$all$gpmorb
@@ -220,6 +221,7 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE) {
 #' @return
 #'  quantile of each column returned as a row
 #' 
+#' @export
 #' @examples 
 #' \dontrun{ 
 #' mx <- years6_13$outcomes[["cond"]]
@@ -252,6 +254,7 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 #' @return
 #'  summary of each column, returned as a row
 #' 
+#' @export
 #' @examples
 #' \dontrun{
 #' mxc <- env.base$years6_13$outcomes[["cond"]]
@@ -294,6 +297,7 @@ summary.mx <- function (mx) {
 #' @return 
 #'  list of summaries
 #' 
+#' @export
 #' @examples
 #' \dontrun{
 #' xlist <- env.base$years6_13$outcomes
@@ -451,6 +455,7 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 #'  if grpby is NULL, vector of means for each column
 #'  if grpby is specified, a matrix of means for each column grouped
 #' 
+#' @export
 #' @examples
 #' \dontrun{
 #' 	mx <- children$o.gptotvis

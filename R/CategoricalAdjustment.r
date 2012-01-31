@@ -22,7 +22,9 @@
 #' @param rows row names, or a numeric scalar for the number of rows
 #'  number of iterations to create
 #' 
+#' @export
 #' @examples
+#' \dontrun{
 #' dict <- dict.MELC
 #' cat.varnames <- c("z1homeownLvl1", "catpregsmk2") 
 #' rows = 5
@@ -32,6 +34,7 @@
 #' rows = 100
 #' 
 #' createAdjustmentMatrices(cat.varnames, dict, rows)
+#' }
 createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 	
 	cat.adjustments <- lapply(cat.varnames, function (varname) {
@@ -89,7 +92,66 @@ createAdjustmentMatrix <- function(varname, coding, rows, is_level_var = grepl("
 	structure(namedMatrix(rows, paste(names(coding),"(%)")), varnames=varnames)
 }
 
+
+#' Create a propensity array from a dataframe, for a variable with only 2 categories 
+#' across multiple iterations.
+#' 
+#' @param df
+#'  dataframe containing 1 column per iteration.
+#'  This column represents the propensity to change from the 1st category to the 2nd category.
+#'  
+#' @return propensity array with
+#' rows - the values for each individual micro-unit
+#' cols - propensity to change from the 1st category to the 2nd category.
+#' z dim - iterations/years
+#' @export
+#' @examples
+#' df <- data.frame(year1 = 1:10/100, year2 = 11:20/100)
+#' create2CategoryPropensityArray(df)
+create2CategoryPropensityArray <- function(df) {
+	#convert dataframe to array with
+	#rows = obs, cols = "Level 1", z = vars 
+	array(as.matrix(df), dim=c(nrow(df), 1, ncol(df)), 
+			dimnames=list(rownames(df), "1st to 2nd category propensity", colnames(df))  )
+}
+
+
+#' Create a propensity array from a dataframe, for only a single iteration.
+#' 
+#' @param df
+#'  dataframe containing 1 column per iteration.
+#'  This column represents the propensity to change from the 1st category to the 2nd category.
+#' @param iteration_name
+#'  used to label the single iteration in the z dim  
+#'
+#' @return propensity array with
+#' rows - the values for each individual micro-unit
+#' cols - propensity to change from the 1st category to the 2nd category.
+#' z dim - iterations/years. Only 1 iteration.
+#' 
+#' @export
+#' @examples
+#' df <- data.frame(year1_cat1 = 1:10/100, year1_cat2 = 11:20/100)
+#' iteration_name <- "Year 1" 
+#' createSingleIterationPropensityArray(df, iteration_name)
+createSingleIterationPropensityArray <- function(df, iteration_name) {
+	#convert dataframe to array with
+	#rows = obs, cols = cols, z = "At Birth"
+	array(as.matrix(df), dim=c(nrow(df), ncol(df), 1), 
+			dimnames=list(rownames(df), colnames(df), iteration_name)  )
+}
+
+#' Remove trailing "LvlX" (if any) where X is any character
+#' 
+#' @param varname
+#'  character vector to strip
+#' @examples
+#' \dontrun{
+#' varname <- "fooLvl1"
 #' strip_lvl_suffix(varname)
+#' varname <- "bar"
+#' strip_lvl_suffix(varname)
+#' }
 strip_lvl_suffix <- function(varname) {
 	gsub("Lvl.$", "", varname)
 }

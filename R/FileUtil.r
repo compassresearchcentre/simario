@@ -54,10 +54,12 @@ read_csv <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 #'  additional parameters to read_csv or read.xlsx2
 #' @export
 #' @examples 
+#' \dontrun{
 #' filedir <- "D:/workspace.sim/simar/demo"
 #' filename <- "Disability state transition probabilities.xlsx"
 #' filetype = file_extension(filename)
 #' read_file(filedir, filename, filetype)
+#' }
 read_file <- function (filedir, filename, filetype = file_extension(filename), stringsAsFactors = FALSE, ...) {
 	switch(filetype,
 		csv = read_csv(filedir, filename, stringsAsFactors = stringsAsFactors, ...),

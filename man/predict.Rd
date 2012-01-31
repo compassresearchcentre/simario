@@ -6,11 +6,7 @@ by each variable and summs the results.}
   predict(model, envir = parent.frame(), set = NULL)
 }
 \arguments{
-  \item{model}{model with terms and coefficiens NB: In
-  order to know how many values to predict, there needs to
-  be at least one variable in the model. If you wish to
-  create a intercept only model, this create a model with a
-  single variable and a zero coefficient.}
+  \item{model}{model with terms and coefficiens}
 
   \item{envir}{an environment in which model variables are
   evaluated. May also be NULL, a list, a data frame, a
@@ -37,14 +33,20 @@ by each variable and summs the results.}
   evaluated model variables}
 }
 \description{
-  Predict. Looks in envir for variables specified by model,
-  then multiples the coefficients by each variable and
-  summs the results.
+  NB: In order to know how many values to predict, there
+  needs to be at least one variable in the model. If you
+  wish to create a intercept only model, then create a
+  model with a single variable and a zero coefficient.
 }
 \examples{
 \dontrun{
  model <- model.glm
- model <- models$gptotvis ; set <- c(T, rep(F, 1074))
+ model <- models$gptotvis3_6 ; set <- c(T, T, rep(F, 1073))
+ model <- models$gptotvis2
+ set <- rep(F, 1075)
+ envir = .GlobalEnv
+ predict(model, envir, set)
+ set = NULL
 }
 }
 

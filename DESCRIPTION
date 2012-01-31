@@ -14,7 +14,7 @@ Description: Framework for executing multi-run dynamic micro-simulation and
     aggregating results across all runs
 License: GPL
 Collate:
-	'CategoricalAdjustment.r'
+    'CategoricalAdjustment.r'
     'ChartUtil.r'
     'Dictionary.r'
     'FileUtil.r'
@@ -29,3 +29,4 @@ Collate:
     'StringUtil.r'
     'support.r'
     'simar-package.r'
+    'DataframeUtil.r.R'

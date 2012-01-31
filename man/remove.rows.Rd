@@ -5,7 +5,7 @@
   remove.rows(mx, rnames)
 }
 \arguments{
-  \item{mx}{matrix}
+  \item{mx}{matrix or dataframe}
 
   \item{rnames}{vector of rownames}
 }

@@ -11,7 +11,7 @@ library(proto)
 #' 
 #' outcomes - a list of all outcome matrices for the Simmodule.
 #' 
-#' each Simmodule has a \link{simulateRun} method which transforms the simframe. Typically, transformations will 
+#' each Simmodule has a \code{simulateRun} method which transforms the simframe. Typically, transformations will 
 #' move variables for micro-units in the simframe through multiple iterations (or time steps).  
 #' At the end of each iteration, for outcome variables (as defined in the simframe), the current values 
 #' for all micro-units are stored in an outcome matrix.

@@ -5,7 +5,7 @@ distribution with mean = exp(predicted) and size=1/alpha
 where alpha is specified in the model.}
 \usage{
   predSimNBinom(model.glm, envir = parent.frame(),
-    set = NULL)
+    set = NULL, alpha = NULL)
 }
 \arguments{
   \item{model.glm}{model specifying variables to evaluate
@@ -17,6 +17,9 @@ where alpha is specified in the model.}
   \item{set}{subset logical expression indicating elements
   or rows to keep, or NULL to use all elements returned by
   evaluated model variables}
+
+  \item{alpha}{if supplied, use this value for alpha rather
+  than the value in the model}
 }
 \description{
   Predict and simulate continuous value from negative

@@ -11,11 +11,10 @@ library(devtools)
 rmall()
 detach("package:simar")
 
+document("simar", clean = T)
+
 document("simar")
 
-
-
-document("simar", clean = T)
 
 check("simar")
 

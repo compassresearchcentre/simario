@@ -25,6 +25,7 @@ distribution of specified standard deviation}
 \dontrun{
 model.glm <- models$gpprev12
 newdata <- simvalues
+model.glm <- model2
 }
 }
 
