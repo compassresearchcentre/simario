@@ -4,8 +4,6 @@ library(proto)
 #' 
 #' A simulation module is really the core of a simulation. It contains the code and output for a distinct set 
 #' of results generated, eg: health outcomes for years 1 - 10. 
-#' 
-#' 
 #'  
 #' It contains the following key elements:
 #' 

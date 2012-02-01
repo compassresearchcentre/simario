@@ -314,6 +314,9 @@ summary.mx.list <- function (xlist, indices) {
 #'  vector of values which can be interpreted as factors 
 #' @param grpby
 #'  elements to group by, or NULL to do no grouping
+#' @param useNA
+#'  whether to include extra NA levels in the table.
+#'  one of c("no", "ifany", "always"). Defaults to "ifany".
 #' 
 #' @return
 #'  a table. If grpby is specified this will be a 2D table
@@ -335,9 +338,9 @@ summary.mx.list <- function (xlist, indices) {
 #' 
 #' table.grpby(x)
 #' table.grpby(x, grpby)
-table.grpby <- function (x, grpby = NULL) {
+table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 	if (is.null(grpby)) {
-		t(t(table(x, useNA = "ifany", deparse.level = 0)))
+		t(t(table(x, useNA = useNA, deparse.level = 0)))
 	} else {
 		
 		if(length(x) != length(grpby)) {
@@ -345,7 +348,7 @@ table.grpby <- function (x, grpby = NULL) {
 							as.character(sys.call())[2], as.character(sys.call())[3]))
 		}
 		
-		table(x, grpby, useNA = "ifany", deparse.level = 0)
+		table(x, grpby, useNA = useNA, deparse.level = 0)
 	}
 }
 
@@ -363,7 +366,11 @@ table.grpby <- function (x, grpby = NULL) {
 #'
 #' @param logiset
 #'  logical vector indicating which rows to include, or NULL to include all.
-#'   
+#'
+#' @param useNA
+#'  whether to include extra NA levels in the table.
+#'  one of c("no", "ifany", "always"). Defaults to "ifany".
+#' 
 #' @return
 #'  list, each element of the list represents a year, 
 #'  each element is a 2D matrix where columns are the group by
@@ -391,7 +398,7 @@ table.grpby <- function (x, grpby = NULL) {
 #' grpby = NULL
 #' r3 <- table.grpby.mx.cols(mx)
 #' }
-table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL) {
+table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, useNA = "ifany") {
 	
 	# subset
 	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
@@ -418,7 +425,7 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 	#use lapply instead of alply so we don't have the split attributes
 	results.by.col <- lapply(1:ncol(mx), function (i) {
 				#i <- 1
-				table.grpby(mx[,i], grpby)
+				table.grpby(mx[,i], grpby, useNA = useNA)
 			})
 	
 	# add names 

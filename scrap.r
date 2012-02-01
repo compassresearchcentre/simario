@@ -20,6 +20,10 @@ check("simar")
 
 has_devel()
 
+#installing
+install.packages("s:/Symonds Group/soc/Sociology Research Group/Projects/FRST - MEL-C/deploy/simar_1.0.tar.gz",repos=NULL, type="source")
+R CMD INSTALL s:\Symonds Group\soc\Sociology Research Group\Projects\FRST - MEL-C\deploy\simar_1.0.tar.gz
+install.packages("d:\\eclipse-rcp-indigo-SR1-win32\\simar_1.0.tar.gz", repos=NULL, type="source")
 
 #.Rpackages
 s <- Sys.getenv()

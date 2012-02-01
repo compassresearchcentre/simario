@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="de.walware.statet.r.launchConfigurationTypes.RCmdTool">
+<stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.cmd" value="CMD check"/>
+<stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.options" value=""/>
+<stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.resource" value="${workspace_loc:/simar}"/>
+<stringAttribute key="de.walware.statet.r.debug/REnv/REnvSetting" value="default-workbench;"/>
+<stringAttribute key="de.walware.statet.r/renv/REnvCode" value="default-workbench;"/>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="R_KEEP_PKG_SOURCE" value="yes"/>
+</mapAttribute>
+</launchConfiguration>
