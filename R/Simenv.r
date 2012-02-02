@@ -20,7 +20,7 @@ Simenv <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
 expr = {  
 	name <- NULL
-	runs_simulated <- 0L		
+	num_runs_simulated <- 0L		
 	simframe <- NULL
 	presim.stats <- list()
 	cat.adjustments <- list()
@@ -59,7 +59,7 @@ expr = {
 	new <- function (., name, simframe, dict, cat.adjustments=list(level.vars=list(), nonlevel.vars=list())) {
 		proto(.,
 				name=name,
-				runs_simulated <- 0L,
+				num_runs_simulated <- 0L,
 				simframe=simframe,
 				presim.stats=list(),
 				cat.adjustments=cat.adjustments,
@@ -255,7 +255,7 @@ expr = {
 		for (i in 1:total_runs) {
 			cat("Run",i,"of",total_runs,"\n")
 
-			.$runs_simulated <- .$runs_simulated + 1
+			.$num_runs_simulated <- .$num_runs_simulated + 1
 
 			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
 								module$outcomes <- module$simulateRun(simenv=.)  ))
