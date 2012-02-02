@@ -56,14 +56,14 @@ expr = {
 	#' 
 	#' @examples
 	#' env <- Simenv$new(name = "Base", simframe=simframe.master)
-	new <- function (., name, simframe, dict, cat.adjustments=list(level.vars=list(), nonlevel.vars=list())) {
+	new <- function (., name, simframe, dict, cat.adjustments=list(), modules=list()) {
 		proto(.,
 				name=name,
 				num_runs_simulated <- 0L,
 				simframe=simframe,
 				presim.stats=list(),
 				cat.adjustments=cat.adjustments,
-				modules=list(),
+				modules=modules,
 				dict=dict
 		)
 	}

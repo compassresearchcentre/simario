@@ -19,18 +19,16 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' env.scenario <- SimenvDemo$new(name = "My Scenario")
 	new <- function(., name=NULL, simframe=simframe.master, dict=dict_demo) {
 		
-		cat.adjustments <- 	createEmptycat.adjustments(simframe, dict)
+		cat.adjustments <- createEmptyCatAdjustments(simframe, dict)
 		
-		siml <- .super$new(.,
+		modules <- list(demo = SimmoduleDemo$new(simframe))
+		
+		.super$new(.,
 				name = name, 
 				simframe = simframe,
 				dict = dict,
-				cat.adjustments = cat.adjustments)
-		
-		siml$modules <- list(main = SimmoduleDemo$new(simframe))
-		
-		siml
-		
+				cat.adjustments = cat.adjustments,
+				modules = modules)
 	}
 	
 	#' Create base tables.
@@ -55,8 +53,8 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' @examples
 	#' simframe <- simframe.master
 	#' dict <- dict_demo
-	#' cat.adjustments <- createEmptycat.adjustments(simframe, dict)
-	createEmptycat.adjustments <- function(simframe, dict) {
+	#' cat.adjustments <- createEmptyCatAdjustments(simframe, dict)
+	createEmptyCatAdjustments <- function(simframe, dict) {
 		
 		catvars <- getOutcomeVars(simframe, "categorical")
 		

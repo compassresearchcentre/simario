@@ -3,19 +3,19 @@
 # A disability state is either no disability, or mild, moderate or severe disability. 
 # The disability state of each individual influences their earning capacity, which is the key output of the model.
 
-
-#if devtools installed we are in a development environment so load simar using load_all
-if (length(find.package("devtools", quiet = T)) > 0) {
-	library(devtools)
-	load_all("simar", reset = T)
-} else {
-	library(simar)
+clearWorkspace <- function() {
+	rmall <- function (exceptions = NULL) {
+		vars <- ls(".GlobalEnv", all.names=TRUE)
+		if (!is.null(exceptions)) {
+			vars <- vars[!vars %in% exceptions]
+		}
+		rm(pos = ".GlobalEnv", list = vars)
+	}
+	
+	rmall(exceptions=c(".DEBUG",".USELIB"))
 }
 
-rmall(exceptions=".DEBUG")
-setwd("D:/workspace.sim/simar/demo/")
-source("SimenvDemo.R")
-source("SimmoduleDemo.R")
+clearWorkspace()
 
 #' Create logical arrays of certain people subsets
 #' 
@@ -33,15 +33,14 @@ createSets <- function(people, codings) {
 	sets
 }
 
-
 #' Initialise models, basefile, simframe.
 #' Perform base simulation.
 #' 
 #' @examples
 #' data_dir <- getwd()
-#' data_dir <- "D:/workspace.sim/simar/demo/"
+#' data_dir <- "D:/workspace.sim/simar/demo/resource"
 #' initDemo(data_dir)
-initDemo <- function(data_dir=getwd()) {
+initDemo <- function(data_dir=paste(getwd(), "/resource/", sep="")) {
 	DICT_FILENAME <- "Data dictionary.xlsx"
 	dict_demo <<- Dictionary$new_from_XLS(data_dir, DICT_FILENAME, DICT_FILENAME)
 	
@@ -65,19 +64,21 @@ initDemo <- function(data_dir=getwd()) {
 	
 }
 
-#' Create a unique integer index vector given the supplied values.
-#' This index can then be used to lookup a row in the disability
-#' transition probability dataframe.
-#' 
-#' @param sex
-#'  a factor vector with 2 levels: "F" = 1, "M" = 2 
-#' @param age_grp
-#'  an integer vector with the values 1,2,3
-#' @param disability_state
-#'  an integer vector with the values 1,2,3,4
-index_sex_age_grp_disability_state <- function(sex, age_grp, disability_state) {
-	as.integer(sex) * 100 + age_grp * 10 + disability_state
+loadSimar <- function() {
+	.devtools_installed <- length(find.package("devtools", quiet = T)) > 0
+	if (.devtools_installed & !exists(".USELIB")) {
+		#load the pre-installed development version using load_all
+		library(devtools)
+		load_all("simar", reset = T)
+	} else {
+		library(simar)
+	}
 }
+
+#setwd("D:/workspace.sim/simar/demo/")
+loadSimar()
+source("SimenvDemo.R")
+source("SimmoduleDemo.R")
 
 initDemo()
 
@@ -91,5 +92,3 @@ if (!exists("env.base")) {
 	
 	print(env.base$simulate(total_runs=2))
 }
-
-

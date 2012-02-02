@@ -89,15 +89,14 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		# simenv <- env.base
 						
 		attach(simenv$simframe, name="simframe")
+		
 		NUM_ITERATIONS <- 100
 		num_people <- length(sex)
+		MAX_AGE <- 99		
 		
 		outcomes <- createOutcomeMatrices(simenv$simframe, "main", c(1:NUM_ITERATIONS))
 		previous <- attr(simenv$simframe, "previous")
 		
-		#pre_simulation_setup()
-		MAX_AGE <- 99		
-
 		for (iteration in 1:NUM_ITERATIONS) {
 			#iteration = 1
 			cat("Run", simenv$num_runs_simulated, "year", iteration, "\n")
@@ -128,3 +127,18 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	}
 	
 })
+
+
+#' Create a unique integer index vector given the supplied values.
+#' This index can then be used to lookup a row in the disability
+#' transition probability dataframe.
+#' 
+#' @param sex
+#'  a factor vector with 2 levels: "F" = 1, "M" = 2 
+#' @param age_grp
+#'  an integer vector with the values 1,2,3
+#' @param disability_state
+#'  an integer vector with the values 1,2,3,4
+index_sex_age_grp_disability_state <- function(sex, age_grp, disability_state) {
+	as.integer(sex) * 100 + age_grp * 10 + disability_state
+}
