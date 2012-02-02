@@ -15,7 +15,7 @@ if (length(find.package("devtools", quiet = T)) > 0) {
 rmall(exceptions=".DEBUG")
 setwd("D:/workspace.sim/simar/demo/")
 source("SimenvDemo.R")
-source("SimmoduleMain.R")
+source("SimmoduleDemo.R")
 
 #' Create logical arrays of certain people subsets
 #' 

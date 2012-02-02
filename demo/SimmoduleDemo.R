@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-SimmoduleMain <- proto(. = Simmodule, expr = {
+SimmoduleDemo <- proto(. = Simmodule, expr = {
 			
 	#' Create new object.
 	#' 
@@ -12,7 +12,7 @@ SimmoduleMain <- proto(. = Simmodule, expr = {
 	#' 
 	#' @examples 
 	#' simframe <- simframe.master
-	#' SimmoduleMain$new(simframe) 
+	#' SimmoduleDemo$new(simframe) 
 	new <- function(., simframe) {
 		catvars <- getOutcomeVars(simframe, "categorical", "main")
 		convars <- getOutcomeVars(simframe, "continuous", "main")

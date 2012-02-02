@@ -27,7 +27,7 @@ SimenvDemo <- proto(. = Simenv, expr = {
 				dict = dict,
 				cat.adjustments = cat.adjustments)
 		
-		siml$modules <- list(main = SimmoduleMain$new(simframe))
+		siml$modules <- list(main = SimmoduleDemo$new(simframe))
 		
 		siml
 		
