@@ -15,12 +15,12 @@ library(proto)
 #' for all micro-units are stored in an outcome matrix.
 #' An outcome matrix contains the set of values for each micro-unit during each iteration.
 #' 
-#' At the end of each run a series of run stats is calculated on outcomes. A run stat is essentially a function that takes
+#' At the end of each run a set of run stats is calculated for outcomes. A run stat is essentially a function that takes
 #' an outcome matrix and produces an aggregate value for each iteration. 
 #' This aggregate value may be a single value (eg: mean), a vector (eg: frequencies, quantiles, summary), 
 #' or a matrix (eg: 2 way table). 
 #' 
-#' Run stats are averaged across multiple runs to get a final simulation result.
+#' Run stats are averaged across multiple runs by calcFinalResults to get a final simulation result.
 #' 
 Simmodule <- proto(
 . = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace
@@ -102,7 +102,7 @@ expr = {
 				name=name,
 				outcomes=list(),
 				runs=runs,
-				results=list()
+				runs.averaged=list()
 		)
 	}
 
@@ -180,26 +180,26 @@ expr = {
 	calcFinalResults <- function(., simenv) {
 		cat(gettextf("Generating final results for %s\n", .$name))
 		
-		.$results <- list()
+		.$runs.averaged <- list()
 
-		#.$results$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
-		.$results$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
+		#.$runs.averaged$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
+		.$runs.averaged$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
 		
-		#.$results$freqs <- lapply(.$runs$freqs, mean.list.var.run.mx)
-		.$results$freqs <- lapply.inner(.$runs$freqs, finialise.lolmx, dict = simenv$dict)
+		#.$runs.averaged$freqs <- lapply(.$runs$freqs, mean.list.var.run.mx)
+		.$runs.averaged$freqs <- lapply.inner(.$runs$freqs, finialise.lolmx, dict = simenv$dict)
 
-		.$results$means <- lapply.inner(.$runs$means, mean.array.z)
+		.$runs.averaged$means <- lapply.inner(.$runs$means, mean.array.z)
 		
-		.$results$means  <- lapply.inner(.$results$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
+		.$runs.averaged$means  <- lapply.inner(.$runs.averaged$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
 		
 		# set non-existant colnames to "Mean"
-		.$results$means <- lapply(.$results$means, function(x) labelCols.list(x, "Mean"))
+		.$runs.averaged$means <- lapply(.$runs.averaged$means, function(x) labelCols.list(x, "Mean"))
 		
-		.$results$summaries <- lapply(.$runs$summaries, mean.array.z)
+		.$runs.averaged$summaries <- lapply(.$runs$summaries, mean.array.z)
 		
-		.$results$quantiles <- lapply(.$runs$quantiles, mean.array.z)
+		.$runs.averaged$quantiles <- lapply(.$runs$quantiles, mean.array.z)
 
-		.$results$histo <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
+		.$runs.averaged$histo <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
 		
 		return()
 	}

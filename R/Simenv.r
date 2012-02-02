@@ -7,7 +7,7 @@ library(proto)
 #'
 #' A Simenv consists of a:
 #' - a simframe (possibly with adjustments to test a scenario)  
-#' - one or more simulation modules (Simmodule). A Simmodule contains outcomes, run stats, and results for a simulation
+#' - one or more simulation modules (Simmodule). A Simmodule contains outcomes, run stats, and runs.averaged for a simulation
 #'   as well as the code to generate them.
 #' 
 #' Uses the global environment list variable propensities when performing categorical adjustment  
@@ -257,13 +257,13 @@ expr = {
 
 			.$runs_simulated <- .$runs_simulated + 1
 
-			invisible(lapply(.$modules, function(simmodule) #simmodule <- .$modules[[1]] 
-								simmodule$outcomes <- simmodule$simulateRun(simenv=.)  ))
+			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
+								module$outcomes <- module$simulateRun(simenv=.)  ))
 			
-			invisible(lapply(.$modules, function(simmodule) simmodule$appendRunStats()))
+			invisible(lapply(.$modules, function(module) module$appendRunStats()))
 		}
 		
-		invisible(lapply(.$modules, function(simmodule) simmodule$calcFinalResults(simenv=.)))
+		invisible(lapply(.$modules, function(module) module$calcFinalResults(simenv=.)))
 
 		end_time <- proc.time()
 		

@@ -125,8 +125,8 @@ Dictionary <- proto(expr = {
 	#' 
 	#' @examples
 	#' . <- dict.MELC
-	#' x <- env.base$modules$years1_5$results$means$all$kids
-	#' x <- env.base$modules$years1_5$results$means$all.by.ethnicity$kids
+	#' x <- env.base$modules$years1_5$runs.averaged$means$all$kids
+	#' x <- env.base$modules$years1_5$runs.averaged$means$all.by.ethnicity$kids
 	#' .$dlookup(x)
 	#' .$dlookup("burt")
 	#' .$dlookup(c(1,2))
