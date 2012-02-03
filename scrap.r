@@ -25,12 +25,23 @@ install.packages("s:/Symonds Group/soc/Sociology Research Group/Projects/FRST - 
 R CMD INSTALL s:\Symonds Group\soc\Sociology Research Group\Projects\FRST - MEL-C\deploy\simar_1.0.tar.gz
 install.packages("d:\\eclipse-rcp-indigo-SR1-win32\\simar_1.0.tar.gz", repos=NULL, type="source")
 
-#.Rpackages
+#Sys.getenv("HOME") will be the R_USER environment variable if specified, otherwise will be the 
+#directory in which R is started
 s <- Sys.getenv()
-Sys.getenv("HOME")
+user_home_dir <- Sys.getenv("HOME")
 Sys.setenv("HOME"="d:/workspace.sim")
-path.expand("~/.Rpackages")
+config_path <- path.expand("~/.Rpackages")
+if (!file.exists(config_path)) {
+	
+}
+
 x <- "simar"
+
+devtools:::find_package
+
+
+
+#.Rpackages
 list(
 		default = function(x) {
 			file.path("d:/workspace.sim", x)
