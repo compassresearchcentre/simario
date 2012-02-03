@@ -19,9 +19,11 @@ check_devtools_config_file_path <- function() {
 					)"
 		}
 		
-		# NB: ~ expands to Sys.getenv('HOME')
+		# NB: ~ expands to Sys.getenv('HOME') and packages will be looked for under ~
 		# Sys.getenv('HOME') will be the R_USER environment variable, if specified, 
 		# otherwise will be the directory in which R is started
+		# When working in Eclipse the R_USER environment variable should 
+		# point to the workspace and may be specified via a Run configuration.
 		config_file_path <- "~\\.Rpackages"
 		cat("Writing", path.expand(config_file_path),"\n")
 		cat(config_file_contents(), file=config_file_path)
