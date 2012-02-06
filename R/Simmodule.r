@@ -21,9 +21,9 @@ library(proto)
 #' or a matrix (eg: 2 way table). 
 #' 
 #' Run stats are averaged across multiple runs by calcFinalResults to get a final simulation result.
-#' 
+#'
+#' @export 
 Simmodule <- proto(
-. = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace
 expr = {
 	name <- NULL 
 	outcomes <- list()

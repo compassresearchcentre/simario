@@ -27,7 +27,7 @@
   propensities are supplied they will be used to select
   which micro-units to adjust, otherwise the selection will
   be random Propensities are specified via the global list
-  variable propens.all Create empty categorical variable
+  variable propensities Create empty categorical variable
   adjustment matrices for specified number of iterations.
   Initial matrix values are NA (i.e: no adjustment).
 }

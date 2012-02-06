@@ -9,7 +9,7 @@ install.packages("roxygen2")
 library(devtools)
 
 rmall()
-detach("package:simar")
+
 
 document("simar", clean = T)
 
@@ -19,6 +19,14 @@ as.packages("simar")
 check("simar")
 
 has_devel()
+
+#test loading as library
+load_all("simar")
+if ("simar" %in% loadedNamespaces()) unloadNamespace("simar")
+if ("package:simar" %in% search()) detach("package:simar", unload = T)
+library("simar")
+Simenv
+simar:::Simenv
 
 #installing
 install.packages("s:/Symonds Group/soc/Sociology Research Group/Projects/FRST - MEL-C/deploy/simar_1.0.tar.gz",repos=NULL, type="source")

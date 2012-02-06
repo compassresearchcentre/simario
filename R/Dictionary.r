@@ -6,6 +6,7 @@ library(xlsx)
 #'  * descriptions: a mapping of variable names to descriptions
 #'  * codings: category names for categorical variables
 #' 
+#' @export
 Dictionary <- proto(expr = {
 	
 	#' Vector of variable desciptions.

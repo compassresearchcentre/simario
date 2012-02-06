@@ -1,6 +1,6 @@
 \name{finialise.lolmx}
 \alias{finialise.lolmx}
-\title{Prepare run results for display by:
+\title{Prepare run runs.averaged for display by:
  flattening into a 3D array
  calculate percentages
  remove zero category
@@ -34,9 +34,9 @@
   a matrix of means
 }
 \description{
-  Prepare run results for display by: flattening into a 3D
-  array calculate percentages remove zero category label
-  columns and calculate mean across all matrices
+  Prepare run runs.averaged for display by: flattening into
+  a 3D array calculate percentages remove zero category
+  label columns and calculate mean across all matrices
 }
 \examples{
 \dontrun{

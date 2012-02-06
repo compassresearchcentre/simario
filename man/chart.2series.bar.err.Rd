@@ -18,8 +18,8 @@ error bars on the current device.}
   with values named Mean and Lower eg:
 
   > envs$`Scenario
-  1`$years1_5$results$means$all$kids["Total",] Mean Lower
-  Upper 10.99488 10.62256 11.36721
+  1`$years1_5$runs.averaged$means$all$kids["Total",] Mean
+  Lower Upper 10.99488 10.62256 11.36721
 
   if there are no values named Mean, then it will be
   assumed that all values are Means and that Lower is 0.}
@@ -37,32 +37,32 @@ error bars on the current device.}
 \examples{
 \dontrun{
 varname <- "kids"
-result.row.base <- env.base$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All Years",]
-result.row.scenario <- envs$`Scenario 1`$modules$years1_5$results$means$all.by.ethnicity[[varname]]["All Years",]
+result.row.base <- env.base$modules$years1_5$runs.averaged$means$all.by.ethnicity[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years1_5$runs.averaged$means$all.by.ethnicity[[varname]]["All Years",]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="Ethnicity"
 ylab=paste("Mean")
 
 varname <- "cond"
-result.row.base <- env.base$modules$years6_13$results$means$all.by.SESBTH[[varname]]["All Years",]
-result.row.scenario <- envs$`Scenario 1`$modules$years6_13$results$means$all.by.SESBTH[[varname]]["All Years",]
+result.row.base <- env.base$modules$years6_13$runs.averaged$means$all.by.SESBTH[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years6_13$runs.averaged$means$all.by.SESBTH[[varname]]["All Years",]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="SES at Birth"
 ylab=paste("Mean")
 
 varname <- "gptotvis"
-result.row.base <- env.base$modules$years1_5$results$histo[[varname]]
-result.row.scenario <- envs$`Scenario 1`$modules$years1_5$results$histo[[varname]]
+result.row.base <- env.base$modules$years1_5$runs.averaged$histo[[varname]]
+result.row.scenario <- envs$`Scenario 1`$modules$years1_5$runs.averaged$histo[[varname]]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="Value"
 ylab="Freq"
 
 varname <- "cond"
-result.row.base <- env.base$modules$years6_13$results$histo[[varname]]["All Years",]
-result.row.scenario <- envs$`Scenario 1`$modules$years6_13$results$histo[[varname]]["All Years",]
+result.row.base <- env.base$modules$years6_13$runs.averaged$histo[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years6_13$runs.averaged$histo[[varname]]["All Years",]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="Value"

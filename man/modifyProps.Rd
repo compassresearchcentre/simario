@@ -60,11 +60,11 @@ propensity scores are generated.}
 \dontrun{
 default.vec <- children$SESBTH
 props <- c(0.1,0.1,0.8)
-propens <- propens.all$SESBTH
+propens <- propensities$SESBTH
 
 default.vec <- env.scenario$simframe$z1fsmokeLvl1
 props <- c(0.1,0.9)
-propens <- propens.all$z1fsmokeLvl1[,1]
+propens <- propensities$z1fsmokeLvl1[,1]
 
 default.vec <- env.scenario$simframe$catpregsmk2
 props <- c(0.1, 0.1, 0.1, 0.5, 0.2)

@@ -3,7 +3,7 @@
 \title{Executes table.grpby on the cols of a matrix.}
 \usage{
   table.grpby.mx.cols(mx, grpby = NULL, grpby.tag = NULL,
-    logiset = NULL)
+    logiset = NULL, useNA = "ifany")
 }
 \arguments{
   \item{mx}{matrix}
@@ -16,6 +16,10 @@
 
   \item{logiset}{logical vector indicating which rows to
   include, or NULL to include all.}
+
+  \item{useNA}{whether to include extra NA levels in the
+  table.  one of c("no", "ifany", "always"). Defaults to
+  "ifany".}
 }
 \value{
   list, each element of the list represents a year, each

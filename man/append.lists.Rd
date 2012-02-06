@@ -39,8 +39,8 @@
 }
 \examples{
 #list.dest <- results.list; list.src <- results
-#list.dest <- years1_5$results$means
-#list.src <- years6_13$results$means
+#list.dest <- years1_5$runs.averaged$means
+#list.src <- years6_13$runs.averaged$means
 #by.name = TRUE
 #r <- append.lists(list.dest, list.src, by.name)
 
@@ -63,8 +63,8 @@
 
 #Test with lists with differently named items.
 
-list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$results$quantiles
-list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$results$quantiles
+list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$runs.averaged$quantiles
+list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$runs.averaged$quantiles
 
 by.name = TRUE; flatten.src = TRUE
 list.result <- append.lists(list.dest , list.src, by.name = TRUE, flatten.src = TRUE)

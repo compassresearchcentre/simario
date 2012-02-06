@@ -10,14 +10,13 @@ library(proto)
 #' - one or more simulation modules (Simmodule). A Simmodule contains outcomes, run stats, and runs.averaged for a simulation
 #'   as well as the code to generate them.
 #' 
-#' Uses the global environment list variable propensities when performing categorical adjustment  
+#' Uses the global environment list variable "propensities" when performing categorical adjustment  
 #' 
 #' This class will be subclassed by specific simulation problems which will provide their own simframe,
 #' Simmodules and adjustments.  
 #'  
-#' 
+#' @export 
 Simenv <- proto(
-. = .GlobalEnv,  # parent environment is .GlobalEnv, rather than the package namespace 
 expr = {  
 	name <- NULL
 	num_runs_simulated <- 0L		

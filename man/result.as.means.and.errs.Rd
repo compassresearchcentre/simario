@@ -9,8 +9,8 @@
   named Mean and Lower eg:
 
   > envs$`Scenario
-  1`$years1_5$results$means$all$kids["Total",] Mean Lower
-  Upper 10.99488 10.62256 11.36721
+  1`$years1_5$runs.averaged$means$all$kids["Total",] Mean
+  Lower Upper 10.99488 10.62256 11.36721
 
   if there are no values named Mean, then it will be
   assumed that all values are Means and that Lower is 0.}
@@ -31,7 +31,7 @@
 \examples{
 \dontrun{
 
-result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
+result.row <- envs$`Scenario 1`$years1_5$runs.averaged$means$all$kids["Total",]
 \dontrun{
 > result.row
     Mean    Lower    Upper
@@ -50,9 +50,9 @@ $errs
 result.row <- c("0\%"=5,"20\%"=5,"40\%"=9,"60\%"=11,"80\%"=15,"100\%"=50)
 result.row <- structure(c(5, 5, 5, 5, 5, 5, 9, 9, 9, 11, 11, 11, 15, 15, 15,50.5, 6.02828342338857, 94.9717165766114), .Names = c("0\% Mean","0\% Lower", "0\% Upper", "20\% Mean", "20\% Lower", "20\% Upper","40\% Mean", "40\% Lower", "40\% Upper", "60\% Mean", "60\% Lower","60\% Upper", "80\% Mean", "80\% Lower", "80\% Upper", "100\% Mean","100\% Lower", "100\% Upper"))
 
-result.row <- env.base$years1_5$results$quantiles$kids["Total",]
-result.row <- envs$`Scenario 1`$years1_5$results$quantiles$kids["Total",]
-result.row <- envs$`Scenario 1`$years1_5$results$means$all$kids["Total",]
+result.row <- env.base$years1_5$runs.averaged$quantiles$kids["Total",]
+result.row <- envs$`Scenario 1`$years1_5$runs.averaged$quantiles$kids["Total",]
+result.row <- envs$`Scenario 1`$years1_5$runs.averaged$means$all$kids["Total",]
 
 result.as.means.and.errs(result.row)
 }

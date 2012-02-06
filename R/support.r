@@ -641,18 +641,6 @@ nsort <- function (x, stripAlpha = TRUE, ...) {
 	result
 }
 
-removeObs <- function(xframe, indices) {
-	#remove observations (ie. rows) of 
-	#xframe specified by indices
-	#eg: DF <- data.frame(x = c(1, 2, 3), y = c(0, 10, NA))
-	#removeObs(DF, c(1,3))
-	
-	#create inverted logical array of nas
-	invlogi <- rep(TRUE, dim(xframe)[1])
-	invlogi[indices] = FALSE
-	
-	xframe[invlogi, ]
-}
 
 #' Remove all objects in global environment.
 #' 

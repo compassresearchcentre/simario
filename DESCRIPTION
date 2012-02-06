@@ -21,6 +21,7 @@ Collate:
     'ListUtil.r'
     'MatrixStats.r'
     'MatrixUtil.r'
+    'Models.R'
     'modifyProps.r'
     'Simenv.r'
     'simframe.r'
@@ -29,4 +30,4 @@ Collate:
     'StringUtil.r'
     'support.r'
     'simar-package.r'
-    'DataframeUtil.r.R'
+    'DataframeUtil.r'

@@ -2,7 +2,7 @@
 \alias{table.grpby}
 \title{Frequency table, with option to group results.}
 \usage{
-  table.grpby(x, grpby = NULL)
+  table.grpby(x, grpby = NULL, useNA = "ifany")
 }
 \arguments{
   \item{x}{vector of values which can be interpreted as
@@ -10,6 +10,10 @@
 
   \item{grpby}{elements to group by, or NULL to do no
   grouping}
+
+  \item{useNA}{whether to include extra NA levels in the
+  table.  one of c("no", "ifany", "always"). Defaults to
+  "ifany".}
 }
 \value{
   a table. If grpby is specified this will be a 2D table

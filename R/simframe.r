@@ -20,6 +20,7 @@
 #' @param simframe
 #'  the simframe
 #' 
+#' @export
 #' @examples
 #' #simframe <- simframe.master
 #' #checkModelVars(models, simframe)
@@ -47,6 +48,8 @@ checkModelVars <- function (models, simframe) {
 #' @param outcomes list of outcome variables with a varname attribute.
 #' @param simframe simframe to test for presence of varname
 #' @return nothing if successful, otherwise errors
+#' 
+#' @export
 #' @examples
 #' #checkOutcomeVars(createMELCfoutcomes(children),simframe) #outcomes <- createMELCfoutcomes(children) 
 checkOutcomeVars <- function(outcomes, simframe) {
@@ -75,6 +78,7 @@ checkOutcomeVars <- function(outcomes, simframe) {
 #' during simulation to fill the matrix. This source variable is the
 #' same name as the name outcome matrix.
 #' 
+#' @export
 #' @examples
 #' \dontrun{
 #' simframe <- simframe.master
@@ -107,6 +111,7 @@ createOutcomeMatrices <- function (simframe, outcome_module_name, iterations) {
 #' @return
 #' a matrix with the "varname" attribute set to varname
 #' 
+#' @export
 #' @examples 
 #' \dontrun{
 #' rows <- length(children$z1msmoke1)
@@ -133,6 +138,7 @@ createOutputMatrix <- function (varname, rows, cols) {
 #' @return
 #'  a vector of simframe variables (with names the same as the vector value)
 #' 
+#' @export
 #' @examples 
 #' \dontrun{
 #' outcome_module_name = "years1_5"
@@ -204,6 +210,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' 				because their were NA. Initial_values that returned a singular NA
 #' 				remain.
 #' 
+#' @export
 #' @examples 
 #' \dontrun{
 #' envir <- children

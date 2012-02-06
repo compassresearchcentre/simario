@@ -30,7 +30,7 @@ level2 <- env.scenario$simframe$SESBTHLvl2
 level3 <- env.scenario$simframe$SESBTHLvl3
 vecs.list <- list(level1=level1, level2=level2, level3=level3) ; vecs.list <- list(level1, level2, level3)
 desiredProps <- c(0.1,0.1,0.8)
-propens <- propens.all$SESBTH[,,1]
+propens <- propensities$SESBTH[,,1]
 r <- modifyPropsAsBinLevels(vecs.list, desiredProps = desiredProps, propens = propens)
 
 level0 <- simframe$z1chparLvl0; level1 <- simframe$z1chparLvl1
