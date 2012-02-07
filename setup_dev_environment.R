@@ -1,20 +1,10 @@
-install.packages.not.installed <- function(package_names) {
-	if (length(not_already_installed(package_names)) > 0) {
-		install.packages(not_already_installed(package_names))
-	}
-}
-
-not_already_installed <- function(package_names) {
-	setdiff(package_names, row.names(installed.packages()))	
-}
-
-check_devtools_config_file_path <- function() {
+check_devtools_config_file <- function() {
 	
 	create_devtools_config_file <- function() {
 		config_file_contents <- function() {
 			"list(
 					default = function(x) {
-					file.path('~', x)
+					file.path('~', x, 'src')
 					}
 					)"
 		}
@@ -37,7 +27,8 @@ check_devtools_config_file_path <- function() {
 	
 }
 
-check_environment <- function() {
+test_dev_environment <- function() {
+	cat("R_USER (home) directory", Sys.getenv("R_USER"),"\n")
 	library(devtools)
 	
 	if(length(as.package("simar"))>1) {
@@ -45,12 +36,28 @@ check_environment <- function() {
 	}	
 }
 
-# install simar required packages
-install.packages.not.installed(c("abind", "plyr", "xlsx", "proto"))
+install.packages.not.installed <- function(package_names) {
+	not_already_installed <- function(package_names) {
+		setdiff(package_names, row.names(installed.packages()))	
+	}
+	
+	if (length(not_already_installed(package_names)) > 0) {
+		install.packages(not_already_installed(package_names))
+	}
+}
 
-# install development tools
-install.packages.not.installed(c("devtools", "roxygen2"))
+install_simar_required_packages <- function() {
+	install.packages.not.installed(c("abind", "plyr", "xlsx", "proto"))	
+}
 
-check_devtools_config_file_path()
+install_development_tools <- function() {
+	install.packages.not.installed(c("devtools", "roxygen2"))
+}
 
-check_environment()
+install_simar_required_packages()
+
+install_development_tools()
+
+check_devtools_config_file()
+
+test_dev_environment()

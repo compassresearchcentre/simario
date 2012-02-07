@@ -3,7 +3,7 @@
 <stringAttribute key="bad_container_name" value="\simar\BUILD simar"/>
 <stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.cmd" value="CMD build"/>
 <stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.options" value=""/>
-<stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.resource" value="${workspace_loc:/simar}"/>
+<stringAttribute key="de.walware.statet.r.debug/RCmd/arguments.resource" value="${workspace_loc:/simar}/src"/>
 <stringAttribute key="de.walware.statet.r.debug/REnv/REnvSetting" value="default-workbench;"/>
 <stringAttribute key="de.walware.statet.r/renv/REnvCode" value="default-workbench;"/>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
