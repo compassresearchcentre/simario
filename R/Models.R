@@ -133,6 +133,29 @@ loadGLMCSV <- function (filedir, filename) {
 	)
 }
 
+#' Get the unique set of names of model coefs for the 
+#' supplied list of models
+#' 
+#' @param models_list
+#'  list of models
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' 	unique.names.model.coefs(models)
+#' }
+unique.names.model.coefs <- function(models_list) {
+	names.all.coefs <- unlist(lapply(models_list, function(model) {
+				names(modelVariableCoefs(model))
+			}), use.names = F)
+
+	names.all.coefs.unique <- unique(names.all.coefs)
+	
+	names.all.coefs.unique.is.previous <- grepl("_previous$", names.all.coefs.unique)
+	
+	names.all.coefs.unique[!names.all.coefs.unique.is.previous]
+}
+
 #' Return the coefficients used in the supplied model.
 #' 
 #' @param model

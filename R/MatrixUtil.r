@@ -725,7 +725,6 @@ remove.rows <- function(mx, rnames) {
 	}
 }
 
-
 #' Select only the specified row from each matrix in a list,
 #' and return a list of row vectors.
 #' 

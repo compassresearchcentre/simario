@@ -5,11 +5,19 @@
   createAdjustmentMatrices(cat.varnames, dict, rows)
 }
 \arguments{
-  \item{cat.varnames}{names of level vars to create
-  adjustment matrices for}
+  \item{cat.varnames}{names of vars to create adjustment
+  matrices for. This can be a name of a single variable,
+  eg: "catpregsmk2" or the name of a multi-level binary
+  variable that eg: "z1accomLvl1". A multi-level binary
+  variable will be part of a set eg: c("z1accomLvl0",
+  "z1accomLvl1") of variables. Only one of the multi-level
+  binary variables in the set need be specified.  The
+  others will be determined from the dictionary codings.}
 
-  \item{dict}{Dictionary object. Used to lookup codings for
-  cat.varnames}
+  \item{dict}{Dictionary object. Used to name the columns
+  of the adjustment matrices and also to determine the set
+  of variables when a multi-level binary variable is
+  supplied via cat.varnames.}
 
   \item{rows}{row names, or a numeric scalar for the number
   of rows number of iterations to create}

@@ -5,7 +5,7 @@ for each categorical value across a supplied number of rows. Each row
 represents an iteration.}
 \usage{
   createAdjustmentMatrix(varname, coding, rows,
-    is_level_var = grepl("Lvl.$", varname))
+    is_a_level_var = is_level_var(varname))
 }
 \arguments{
   \item{varname}{variable name. This can be a standard
@@ -19,10 +19,11 @@ represents an iteration.}
   of rows in which case the rows will be labelled "Year 1",
   "Year 2"... up to rows.}
 
-  \item{is_level_var}{is this a binary level variable? i.e:
-  are the values for this variable stored in multiple
-  binary variables, eg: SESBTHLvl1, SESBTHLvl2, SESBTHLvl3?
-  Defaults to testing whether varname ends in LvlX.}
+  \item{is_a_level_var}{is this a multi-level binary
+  variable? i.e: are the values for this variable stored in
+  multiple binary variables, eg: SESBTHLvl1, SESBTHLvl2,
+  SESBTHLvl3?  Defaults to testing whether varname ends in
+  LvlX.}
 }
 \value{
   a matrix of NAs with columns specified by codings, and

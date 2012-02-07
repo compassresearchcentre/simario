@@ -508,6 +508,30 @@ namedList <- function(...) {
 	nlist
 }
 
+#' Remove named elements from list
+#' 
+#' @param xlist
+#'  list
+#' @param names_of_elements_to_remove
+#'  character vector
+#' 
+#' @export
+#' @examples
+#' xlist <- list(a=1,b=2,c=3,d=4)
+#' names_of_elements_to_remove <- c("c","b")
+#' names_of_elements_to_remove <- c("e")
+#' names_of_elements_to_remove <- c("e","a")
+#' remove.elements(xlist, names_of_elements_to_remove)
+remove.elements <- function(xlist, names_of_elements_to_remove) {
+	matched <- match(names_of_elements_to_remove, names(xlist))
+	matched <- matched[!is.na(matched)]
+	if (length(matched) == 0) {
+		xlist
+	} else {
+		xlist[-matched]
+	}
+}
+
 #' Update dest with the values in src, removing any values from dest that don't exist in src.
 #' 
 #' Use this to update a dest list when the ordering of src is different from dest and you
