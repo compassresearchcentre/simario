@@ -96,8 +96,8 @@ expr = {
 	#'  print(prop.table(table(binary.levels.combine(.$simframe$SESBTHLvl1 , .$simframe$SESBTHLvl2, .$simframe$SESBTHLvl3))),digits=3)
 	#'  print(prop.table(table(.$simframe$catpregsmk2)),digits=3)	
 	#' 
-	#' .$applyCatAdjustmentsToSimframe(iteration, propensities, print_adj)
-	applyCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE) {
+	#' .$applyAllCatAdjustmentsToSimframe(iteration, propensities, print_adj)
+	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE) {
 
 		invisible(lapply(.$cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments$SESBTH
@@ -110,21 +110,42 @@ expr = {
 				if (is.null(varnames)) {
 					stop(gettextf("Missing varnames attribute"))
 				}
-				is_single_variable_to_adjust <- length(varnames) == 1
-				
-				if (is_single_variable_to_adjust) {
-					propens <- propensities[[varnames]][,,iteration]
-					.$applyCatAdjustmentsToSimframeVarSingle(varnames, cat_adj_vector, propens, print_adj)
-				} else {
-					propens <- propensities[[strip_lvl_suffix(varnames[1])]][,,iteration]
-					.$applyCatAdjustmentsToSimframeVarMultipleBinary(varnames, cat_adj_vector, propens, print_adj)	
-				}
+				.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
 			}
 			
 		}))
 
 	}
-	
+
+	#' Apply categorical adjustments to simframe.
+	#' 
+	#' @param .
+	#'  simenv receiving object. .$simframe is modified.  
+	#' @param varnames
+	#'  varname(s) of variable(s) to adjust, eg: "catpregsmk2" or c("z1msmokeLvl0","z1msmokeLvl1")
+	#' @param desired_props
+	#'  a vector of desired proportions, eg: c(0.1, 0.1, 0.8)
+	#' @param propensities
+	#' 		named list of propensities for the cat.adjustments
+	#' @param printAdj
+	#' 		if TRUE will print new proportions of modified simframe vars
+	#'
+	#' @return 
+	#'  NULL. simframe in receiving object is modified directly.
+	#'   
+	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE) {
+		is_single_variable_to_adjust <- length(varnames) == 1
+		
+		if (is_single_variable_to_adjust) {
+			propens <- propensities[[varnames]][,,iteration]
+			.$applyCatAdjustmentToSimframeVarSingle(varnames, desired_props, propens, print_adj)
+		} else {
+			propens <- propensities[[strip_lvl_suffix(varnames[1])]][,,iteration]
+			.$applyCatAdjustmentToSimframeVarMultipleBinary(varnames, desired_props, propens, print_adj)	
+		}
+		
+	}
+
 	#' Adjust the proportions of a single simframe variable.
 	#' 
 	#' @param .
@@ -147,8 +168,8 @@ expr = {
 	#' desired_props <- c(0.01,0.02,0.03,0.04,0.90)
 	#' propens <- NULL
 	#' print_adj = T
-	#' applyCatAdjustmentsToSimframeVarSingle(., varname, desired_props, propens, print_adj)
-	applyCatAdjustmentsToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T) {
+	#' applyCatAdjustmentToSimframeVarSingle(., varname, desired_props, propens, print_adj)
+	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T) {
 		if (print_adj) cat(varname,"\n")
 		
 		.$simframe[varname] <- modifyProps(.$simframe[[varname]], desired_props, propens)
@@ -186,8 +207,8 @@ expr = {
 	#' desiredProps <- c(0,1) ; desiredProps <- c(0.5,0.5)  
 	#' propens <- NULL 
 	#' 
-	#' .$applyCatAdjustmentsToSimframeVarMultipleBinary(binLevelVarnames, desiredProps, propens, TRUE)
-	applyCatAdjustmentsToSimframeVarMultipleBinary <- function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE) {
+	#' .$applyCatAdjustmentToSimframeVarMultipleBinary(binLevelVarnames, desiredProps, propens, TRUE)
+	applyCatAdjustmentToSimframeVarMultipleBinary <- function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE) {
 		#NB: simframe may not always contain Lvl0 var. So we construct one if this is 2 level var.
 		is2Level <- length(binLevelVarnames) == 2
 		varnames <- intersect(binLevelVarnames, names(.$simframe))
@@ -242,7 +263,7 @@ expr = {
 		
 		cat(gettextf("Simulating %s\n", .$name))
 		
-		.$applyCatAdjustmentsToSimframe(1, propensities)
+		.$applyAllCatAdjustmentsToSimframe(1, propensities)
 		
 		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
 		

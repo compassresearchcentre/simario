@@ -16,9 +16,16 @@
 #' Initial matrix values are NA (i.e: no adjustment).
 #'
 #' @param cat.varnames
-#'  names of level vars to create adjustment matrices for
+#'  names of vars to create adjustment matrices for. This can be a name of
+#'  a single variable, eg: "catpregsmk2" or the name of a multi-level binary 
+#'  variable that eg: "z1accomLvl1". A multi-level binary variable will be
+#'  part of a set eg: c("z1accomLvl0", "z1accomLvl1") of variables. Only
+#'  one of the multi-level binary variables in the set need be specified.
+#'  The others will be determined from the dictionary codings. 
 #' @param dict 
-#'  Dictionary object. Used to lookup codings for cat.varnames
+#'  Dictionary object. Used to name the columns of the adjustment matrices
+#'  and also to determine the set of variables when a multi-level binary
+#'  variable is supplied via cat.varnames.
 #' @param rows row names, or a numeric scalar for the number of rows
 #'  number of iterations to create
 #' 
@@ -43,7 +50,10 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 				
 				createAdjustmentMatrix(varname, coding, rows)
 			})
-	names(cat.adjustments) <- cat.varnames			
+	
+	names(cat.adjustments) <- sapply(cat.varnames, function (varname) {
+				if (is_level_var(varname)) strip_lvl_suffix(varname) else varname
+			})
 	
 	cat.adjustments 
 }
@@ -59,8 +69,8 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #'  codings for the variable, eg: c('0'='Own home','1'='Not owned')
 #' @param rows row names, or a numeric scalar for the number of rows in 
 #'  which case the rows will be labelled "Year 1", "Year 2"... up to rows.
-#' @param is_level_var
-#'  is this a binary level variable? i.e: are the values for this variable
+#' @param is_a_level_var
+#'  is this a multi-level binary variable? i.e: are the values for this variable
 #'  stored in multiple binary variables, eg: SESBTHLvl1, SESBTHLvl2, SESBTHLvl3?
 #'  Defaults to testing whether varname ends in LvlX.
 #' 
@@ -77,13 +87,13 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #' varname = "catpregsmk2"; coding <- c('0'=0, '1-5'=3, '6-10'=8, '11-20'=16, '>20'=27)
 #' rows = 5
 #' createAdjustmentMatrix(varname, coding, rows)
-createAdjustmentMatrix <- function(varname, coding, rows, is_level_var = grepl("Lvl.$", varname)) {
+createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_level_var(varname)) {
 	
 	if (is_numeric_scalar(rows)) {
 		rows <- paste("Year", seq(rows))
 	}
 	
-	if (is_level_var) {
+	if (is_a_level_var) {
 		varnames <- paste(strip_lvl_suffix(varname), "Lvl", coding, sep="")	
 	} else {
 		varnames <- varname
@@ -139,6 +149,10 @@ createSingleIterationPropensityArray <- function(df, iteration_name) {
 	#rows = obs, cols = cols, z = "At Birth"
 	array(as.matrix(df), dim=c(nrow(df), ncol(df), 1), 
 			dimnames=list(rownames(df), colnames(df), iteration_name)  )
+}
+
+is_level_var <- function(varname) {
+	grepl("Lvl.$", varname)
 }
 
 #' Remove trailing "LvlX" (if any) where X is any character
