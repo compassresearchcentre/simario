@@ -1,9 +1,11 @@
 Package: simar
-Imports:
-    abind,
+Depends:
     plyr,
     xlsx,
     proto
+Imports:
+    abind,
+    plyr
 Type: Package
 Title: Dynamic micro-simulation framework for R
 Version: 1.0

@@ -15,7 +15,7 @@ document("simar", clean = T)
 
 document("simar")
 
-as.packages("simar")
+as.package("simar")
 check("simar")
 
 has_devel()
