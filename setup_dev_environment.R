@@ -36,28 +36,14 @@ test_dev_environment <- function() {
 	}	
 }
 
-install.packages.not.installed <- function(package_names) {
-	not_already_installed <- function(package_names) {
-		setdiff(package_names, row.names(installed.packages()))	
-	}
-	
-	if (length(not_already_installed(package_names)) > 0) {
-		install.packages(not_already_installed(package_names))
-	}
-}
-
-install_simar_required_packages <- function() {
-	install.packages.not.installed(c("abind", "plyr", "xlsx", "proto"))	
-}
-
 install_development_tools <- function() {
 	install.packages.not.installed(c("devtools", "roxygen2"))
 }
-
-install_simar_required_packages()
 
 install_development_tools()
 
 check_devtools_config_file()
 
 test_dev_environment()
+
+cat("NB: if you wish to run R CMD CHECK, pdflatex is required. This is available for download from http://miktex.org/\n")

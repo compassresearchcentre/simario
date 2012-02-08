@@ -29,6 +29,11 @@ Simenv
 simar:::Simenv
 
 #installing
-install.packages("s:/Symonds Group/soc/Sociology Research Group/Projects/FRST - MEL-C/deploy/simar_1.0.tar.gz",repos=NULL, type="source")
-R CMD INSTALL s:\Symonds Group\soc\Sociology Research Group\Projects\FRST - MEL-C\deploy\simar_1.0.tar.gz
-install.packages("d:\\eclipse-rcp-indigo-SR1-win32\\simar_1.0.tar.gz", repos=NULL, type="source")
+package_path <- "~/simar/simar_1.0.tar.gz"
+package_path <- "D:\\workspace.sim\\simar\\simar_1.0.tar.gz"
+install.packages(package_path, repos=NULL, type="source")
+
+install("simar")
+build("simar", "~/simar/build")
+reload
+build("simar", binary = T)
