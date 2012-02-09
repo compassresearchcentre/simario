@@ -36,6 +36,24 @@ test_dev_environment <- function() {
 	}	
 }
 
+install.packages.not.installed <- function(package_names) {
+	not_already_installed <- function(package_names) {
+		setdiff(package_names, row.names(installed.packages()))	
+	}
+	
+	already_installed <- function(package_names) {
+		intersect(package_names, row.names(installed.packages()))	
+	}
+	
+	if (length(already_installed(package_names)) > 0) {
+		cat("Already installed:", already_installed(package_names),"\n")
+	}
+	
+	if (length(not_already_installed(package_names)) > 0) {
+		install.packages(not_already_installed(package_names))
+	}
+}
+
 install_development_tools <- function() {
 	install.packages.not.installed(c("devtools", "roxygen2"))
 }

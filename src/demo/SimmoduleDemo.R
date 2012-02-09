@@ -79,6 +79,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 		
 		store_current_values_in_previous <- function() {
+			previous <- attr(simenv$simframe, "previous")
 			invisible(mapply(function(var.prev, var.current) {
 								assign(var.prev, get(var.current), inherits=T)
 								
@@ -95,7 +96,6 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		MAX_AGE <- 99		
 		
 		outcomes <- createOutcomeMatrices(simenv$simframe, "main", c(1:NUM_ITERATIONS))
-		previous <- attr(simenv$simframe, "previous")
 		
 		for (iteration in 1:NUM_ITERATIONS) {
 			#iteration = 1
@@ -106,7 +106,11 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			alive[age > MAX_AGE] <- F
 			
 			disability_transition_index <- index_sex_age_grp_disability_state(sex, age_grp, disability_state)
-				
+			disability_transition_row <- match(disability_transition_index, transition_probabilities$disability_state$index)  
+			disability_transition_probs <- transition_probabilities$disability_state$probs[disability_transition_row, ]
+			
+			sample(1:4, size = 1, replace = T, prob=c(0.0045, 0.0098-0.0045, 0.0272-0.0098, 1-0.0272))
+			
 #			for (i in 1:num_people) {
 		
 #				as.integer (probs$disability_transition$Sex)

@@ -13,6 +13,8 @@ clearWorkspace <- function() {
 	}
 	
 	rmall(exceptions=c(".DEBUG",".USELIB"))
+	
+	if ("package:simar" %in% search()) detach("package:simar", unload = T)
 }
 
 clearWorkspace()
@@ -38,44 +40,64 @@ createSets <- function(people, codings) {
 #' 
 #' @examples
 #' data_dir <- getwd()
-#' data_dir <- "D:/workspace.sim/simar/demo/resource"
+#' data_dir <- paste(getwd(), "/data/", sep="")
 #' initDemo(data_dir)
-initDemo <- function(data_dir=paste(getwd(), "/resource/", sep="")) {
+initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
+	base_dir <- file.path(data_dir, "base")
+	
 	DICT_FILENAME <- "Data dictionary.xlsx"
-	dict_demo <<- Dictionary$new_from_XLS(data_dir, DICT_FILENAME, DICT_FILENAME)
+	dict_demo <<- Dictionary$new_from_XLS(base_dir, DICT_FILENAME, DICT_FILENAME)
 	
 	#load initial basefile
-	people <<- readXLSSheet1(data_dir, "Base file (people).xlsx")
+	people <<- read_csv(base_dir, "Base file (people).csv")
 	
 	#create simframe
-	sfdef <- readXLSSheet1(data_dir, "simframedef.xlsx")
-	simframe.master <<- loadSimFrame(people, sfdef)
+	sfdef <- read_csv(base_dir, "simframedef.csv")
+	simframe.master <<- loadSimFrame(sfdef, people)
 	
 	people_sets <<- createSets(people, dict_demo$codings)
 	
-	probs <<- list()
-	probs$disability_transition <<- read_csv(data_dir, "Disability state transition probabilities.csv", stringsAsFactors=T)
-	probs$disability_transition$index <<- with(probs$disability_transition, 
-			index_sex_age_grp_disability_state(Sex, Agegrp, Current.disability.state))
+	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
+	transition_probabilities <<- loadTransitionProbabilities(transition_probabilities_dir)
 	
-	probs$death <<- read_csv(data_dir, "Disability state transition probabilities.csv")
+	earnings_scale <<- read_csv(data_dir, "Annual earnings scale by disability status.csv")
 	
 	cat ("Demo initialised")
 	
 }
 
+loadTransitionProbabilities <- function(dir) {
+	transition_probabilities <- list()
+	
+	transition_probabilities$disability_state <- read_csv(dir, "Disability state transition probabilities.csv", stringsAsFactors=T)
+	transition_probabilities$disability_state$index <- with(transition_probabilities$disability_state, 
+			index_sex_age_grp_disability_state(Sex, Agegrp, Current.disability.state))
+	transition_probabilities$disability_state$probs <- 
+			as.matrix(transition_probabilities$disability_state[c("No.Disability", "Mild.Disability", "Moderate.Disability", "Severe.Disability")])
+	
+	transition_probabilities$death <- read_csv(dir, "Probabilities of male and female death by age and sex.csv")
+	
+	transition_probabilities
+}
+
 loadSimar <- function() {
 	.devtools_installed <- length(find.package("devtools", quiet = T)) > 0
 	if (.devtools_installed & !exists(".USELIB")) {
-		#load the pre-installed development version using load_all
+		cat("loadSimar: loading pre-installed development version using load_all\n")
+		
 		library(devtools)
 		load_all("simar", reset = T)
+		
+		#workaround for devtools issue https://github.com/hadley/devtools/issues/38
+		Simenv$.super <- .GlobalEnv
+		Simmodule$.super <- .GlobalEnv
 	} else {
+		cat("loadSimar: loading installed library")
 		library(simar)
 	}
 }
 
-#setwd("D:/workspace.sim/simar/demo/")
+#setwd(file.path(Sys.getenv("R_USER"), "simar/src/demo/"))
 loadSimar()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
