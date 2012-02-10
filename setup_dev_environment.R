@@ -32,7 +32,7 @@ test_dev_environment <- function() {
 	library(devtools)
 	
 	if(length(as.package("simar"))>1) {
-		cat("simar development environment setup")
+		cat("simar development environment setup OK\n")
 	}	
 }
 
@@ -58,10 +58,11 @@ install_development_tools <- function() {
 	install.packages.not.installed(c("devtools", "roxygen2"))
 }
 
+cat("NB: if you wish to run R CMD CHECK, pdflatex is required. This is available for download from http://miktex.org/\n")
+
 install_development_tools()
 
 check_devtools_config_file()
 
 test_dev_environment()
 
-cat("NB: if you wish to run R CMD CHECK, pdflatex is required. This is available for download from http://miktex.org/\n")
