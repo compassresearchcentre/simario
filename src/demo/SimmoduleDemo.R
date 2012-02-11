@@ -72,9 +72,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			modifyProps(x, desiredProps, propensities[[varname]][,,iteration])
 		}
 		
-		store_current_values_in_outcomes <- function(xcol) {
+		store_current_values_in_outcomes <- function(iteration) {
 			outcomes <<- lapply(outcomes, function(x) {
-						x[,xcol] <- get(attr(x,"varname"));x 
+						x[,iteration] <- get(attr(x,"varname"));x 
 					}) 
 		}
 		
