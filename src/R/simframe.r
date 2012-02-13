@@ -92,6 +92,10 @@ checkOutcomeVars <- function(outcomes, simframe) {
 createOutcomeMatrices <- function (simframe, outcome_module_name, iterations) {
 	setVars <- getOutcomeVars(simframe, outcome_module_name=outcome_module_name, sorted=TRUE)
 	
+	if (length(setVars) == 0) {
+		stop(gettextf("No outcome variables in simframe where Outcome_module=%s", outcome_module_name))
+	}
+	
 	outcomes <- lapply(setVars, function (var) 
 				createOutputMatrix(var, length(simframe[[var]]), 
 						iterations) )

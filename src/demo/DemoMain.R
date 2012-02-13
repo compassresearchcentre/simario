@@ -15,6 +15,8 @@ clearWorkspace <- function() {
 	rmall(exceptions=c(".DEBUG",".USELIB"))
 	
 	if ("package:simar" %in% search()) detach("package:simar", unload = T)
+	
+	while("simframe" %in% search()) detach("simframe")
 }
 
 clearWorkspace()
@@ -60,10 +62,20 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
 	transition_probabilities <<- loadTransitionProbabilities(transition_probabilities_dir)
 	
-	earnings_scale <<- read_csv(data_dir, "Annual earnings scale by disability status.csv")
+	earnings_scale <<- loadEarningsScale(data_dir)
 	
-	cat ("Demo initialised")
+	breaks_age_grp <<- 	c(-1, 59, 79, 99)
+	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
 	
+	cat ("Demo initialised\n")
+	
+}
+
+#' dir <- data_dir
+loadEarningsScale <- function(dir) {
+	earnings_scale_dataframe <- read_csv(dir, "Annual earnings scale by disability status.csv")
+	earnings_scale <- structure(earnings_scale_dataframe$Earnings, .Names=earnings_scale_dataframe$Disability.state)
+	earnings_scale
 }
 
 loadTransitionProbabilities <- function(dir) {

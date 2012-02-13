@@ -40,6 +40,8 @@ labelColTitleFromList <- function(xnamedlist) {
 #' }
 labelCols.list <- function(xlist, xlabels = names(xlist), onlyIfNull = TRUE) {
 	
+	if (length(xlist) == 0) return(xlist)
+	
 	mapply(function(x, label) {
 				if (!onlyIfNull || is.null(colnames(x))) {
 					colnames(x) <- label

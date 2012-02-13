@@ -115,10 +115,18 @@ assert <- function(xvec) {
 #' which case x is divided in bins of size breaks.
 #' NB: if cut points are specified, note that the cut point
 #' value is not included in the bin (ie: include.lowest = FALSE)
-#' Therefore the very first cut point must be less than min(x)
+#' Therefore the very first cut point must be less than min(x).
+#' Subsequent cut points are the closed right bound,
+#' and the final cut point should be max(x), eg: breaks of 
+#'      c(0, 34, 35, 36, 37, 44)
+#' will cut into the following bins
+#'    (0,34] (34,35] (35,36] (36,37] (37,44] 
+#' 
 #' @param blabels labels for the levels of the resulting category. 
 #' If NULL, labels are constructed using "(a,b]" interval notation.
-#' If specified, NAs are removed first.
+#' If specified, NAs are removed first. If breaks is specified,
+#' the the first cut point must be less than min(x) and its name
+#' (ie: the first value in blabels) should be NA.
 #' If unspecified, names(breaks) is used.
 #' @param breaklast if breaks is a bin size and breaklast is
 #' specified then this is the position of the last break

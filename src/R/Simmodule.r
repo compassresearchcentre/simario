@@ -141,7 +141,7 @@ expr = {
 		convars <- unique(c(names(.$runs$means[[1]]), names(.$runs$quantiles)))
 		
 		outcomes_wtotals <- lapply.subset(.$outcomes, convars, function(x) {
-					#x <- .$outcomes$gpmorb
+					#x <- .$outcomes[[convars[1]]] 
 					structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
 				})
 		
@@ -171,9 +171,9 @@ expr = {
 	#'  Simmodule receiving object. .$runs is modified.
 	#' @examples
 	#' 
-	#' . <- env.base$modules$years1_5
-	#' . <- env.base$modules$years6_13
-	#' . <- env.scenario$modules$years1_5
+	#' . <- env.base$modules[[1]]
+	#' . <- env.base$modules[[2]]
+	#' . <- env.scenario$modules[[1]]
 	#' simenv <- env.base
 	#' simenv <- env.scenario
 	#' .$calcFinalResults(simenv) 

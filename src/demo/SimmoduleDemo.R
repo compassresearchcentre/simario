@@ -14,8 +14,8 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' simframe <- simframe.master
 	#' SimmoduleDemo$new(simframe) 
 	new <- function(., simframe) {
-		catvars <- getOutcomeVars(simframe, "categorical", "main")
-		convars <- getOutcomeVars(simframe, "continuous", "main")
+		catvars <- getOutcomeVars(simframe, "categorical", "demo")
+		convars <- getOutcomeVars(simframe, "continuous", "demo")
 		
 		mean.spec <- list(
 				all = list(),
@@ -31,7 +31,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				all.by.gender = list(grpby=people$sex, grpby.tag="sex")
 		)
 		
-		.super$new(., "Main", catvars, convars, convars, freqs.spec, mean.spec)
+		.super$new(., "Demo", catvars, convars, convars, freqs.spec, mean.spec)
 	}
 	
 	#' Simulate outcomes.
@@ -85,6 +85,28 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 								
 							}, previous, names(previous)))
 		}
+
+		
+		lookup_disability_transition_probs <- function(sex, age_grp, current_disability_state) {
+			disability_transition_index <- index_sex_age_grp_disability_state(sex, age_grp, current_disability_state)
+			disability_transition_row <- match(disability_transition_index, transition_probabilities$disability_state$index)  
+			disability_transition_probs <- transition_probabilities$disability_state$probs[disability_transition_row, ]
+			disability_transition_probs
+		}
+
+		lookup_death_transition_probs <- function(sex, age) {
+			death_transition_probs <- rep(NA, length(sex))
+			
+			males <- sex == "M"
+			females <- sex == "F"
+			
+			age_males <- age[males]
+			age_females <- age[females]
+			
+			death_transition_probs[males] <- transition_probabilities$death$Male[age_males-1] 
+			death_transition_probs[females] <- transition_probabilities$death$Female[age_females-1]
+			death_transition_probs
+		}
 		
 		# SIMULATION STARTS HERE
 		# simenv <- env.base
@@ -95,7 +117,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		num_people <- length(sex)
 		MAX_AGE <- 99		
 		
-		outcomes <- createOutcomeMatrices(simenv$simframe, "main", c(1:NUM_ITERATIONS))
+		outcomes <- createOutcomeMatrices(simenv$simframe, "demo", c(1:NUM_ITERATIONS))
 		
 		for (iteration in 1:NUM_ITERATIONS) {
 			#iteration = 1
@@ -105,22 +127,28 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			
 			alive[age > MAX_AGE] <- F
 			
-			disability_transition_index <- index_sex_age_grp_disability_state(sex, age_grp, disability_state)
-			disability_transition_row <- match(disability_transition_index, transition_probabilities$disability_state$index)  
-			disability_transition_probs <- transition_probabilities$disability_state$probs[disability_transition_row, ]
+			if (any(alive)) {
 			
-			sample(1:4, size = 1, replace = T, prob=c(0.0045, 0.0098-0.0045, 0.0272-0.0098, 1-0.0272))
-			
-#			for (i in 1:num_people) {
-		
-#				as.integer (probs$disability_transition$Sex)
+				disability_transition_probs <- lookup_disability_transition_probs(sex[alive], age_grp[alive], disability_state[alive])
 				
-#				str(probs$disability_transition)
+				disability_state[alive] <- apply(disability_transition_probs, ROW, function(prob) {
+							#prob <- disability_transition_probs[1,]
+							sample(1:4, size = 1, replace = T, prob=prob)	
+						})
 				
+				earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
 				
-#			}
-						 
-			#sample(1:4, size = num_two_parent_family, replace = T, prob=c(0.0045, 0.0098-0.0045, 0.0272-0.0098, 1-0.0272))
+				age[alive] <- age[alive] + 1
+				
+				age_grp[alive] <- bin(age[alive], breaks_age_grp)
+				
+				death_transition_probs <- lookup_death_transition_probs(sex[alive], age[alive])
+	
+				now_dead <- runif(length(death_transition_probs)) <= death_transition_probs
+				
+				alive[alive] <- !now_dead
+				
+			}
 			
 			store_current_values_in_outcomes(iteration)
 		}
@@ -144,5 +172,5 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 #' @param disability_state
 #'  an integer vector with the values 1,2,3,4
 index_sex_age_grp_disability_state <- function(sex, age_grp, disability_state) {
-	as.integer(sex) * 100 + age_grp * 10 + disability_state
+	as.integer(sex) * 100 + as.integer(age_grp) * 10 + as.integer(disability_state)
 }
