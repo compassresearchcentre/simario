@@ -70,10 +70,9 @@ the simframe definition.}
 envir <- children
 envir <- people
 basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
-basefiledir <- "D:/workspace.sim/simar/demo/"
+basefiledir <- "D:/workspace.sim/simar/src/demo/resource"
 simframe_defn <- readXLSSheet1(basefiledir, "simframedef.xlsx")
-simframe.master <- loadSimFrame(envir, simframe_defn)
-simframe <- loadSimFrame(envir, simframe_defn)
+simframe.master <- loadSimFrame(simframe_defn, envir)
 }
 }
 
