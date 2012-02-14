@@ -89,6 +89,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		lookup_disability_transition_probs <- function(sex, age_grp, current_disability_state) {
 			disability_transition_index <- index_sex_age_grp_disability_state(sex, age_grp, current_disability_state)
+			#disability_transition_index is vector of 1000 or however many people
+			#transition_probabilities$disability_state$index is a vector of posisble combinations of age,gender, disability status
+			#match does a look up of the vector of people indices, in the vector of possible indices
+			# ie 'disability_transition_row' gives the appropraite row numbers (for the combo of sex, age_grp, current_disability_state) to refer to in the probablity matrix (transition_probabilities$disability_state$probs)
 			disability_transition_row <- match(disability_transition_index, transition_probabilities$disability_state$index)  
 			disability_transition_probs <- transition_probabilities$disability_state$probs[disability_transition_row, ]
 			disability_transition_probs
@@ -102,9 +106,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			
 			age_males <- age[males]
 			age_females <- age[females]
-			
-			death_transition_probs[males] <- transition_probabilities$death$Male[age_males-1] 
-			death_transition_probs[females] <- transition_probabilities$death$Female[age_females-1]
+		
+			death_transition_probs[males] <- transition_probabilities$death$Male[age_males+1] 
+			death_transition_probs[females] <- transition_probabilities$death$Female[age_females+1]
 			death_transition_probs
 		}
 		
