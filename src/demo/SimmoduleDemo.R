@@ -103,8 +103,8 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			age_males <- age[males]
 			age_females <- age[females]
 			
-			death_transition_probs[males] <- transition_probabilities$death$Male[age_males-1] 
-			death_transition_probs[females] <- transition_probabilities$death$Female[age_females-1]
+			death_transition_probs[males] <- transition_probabilities$death$Male[age_males+1] 
+			death_transition_probs[females] <- transition_probabilities$death$Female[age_females+1]
 			death_transition_probs
 		}
 		

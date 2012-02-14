@@ -15,7 +15,7 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' 
 	#' @examples
 	#' 
-	#' . <- SimenvMELC
+	#' . <- SimenvDemo
 	#' env.scenario <- SimenvDemo$new(name = "My Scenario")
 	new <- function(., name=NULL, simframe=simframe.master, dict=dict_demo) {
 		
