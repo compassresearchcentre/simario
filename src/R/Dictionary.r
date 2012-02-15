@@ -212,71 +212,53 @@ Dictionary <- proto(expr = {
 		xlist[ordering]
 	}
 	
-	#' Load codings XLS file and return named list of codings.
+	#' Create a dictionary object.
 	#' 
-	#' @param .
-	#'  this
-	#' @param filedir
-	#'  file directory, ending with "/", eg: "d:/workspace/"
-	#' @param dict_filename
-	#'  file name for codings, eg: "myfile.xls".
-	#' @param codings_filename
- 	#'  file name for dictionary, eg: "myfile.xls". Can be same file as 
-	#'  dict_filename or NULL to not load any codings.
+	#' @param descriptions_dataframe
+	#'   a dataframe with the variables:
 	#' 
-	#' @seealso Uses \code{\link{loadCodingsXLS}, \link{loadDictionaryXLS}} 
+	#'   Varname = the variable name
+	#'   Description = a description of the variable.
+	#' 
+	#'   additional variables are ignored.
+	#' 
+	#' @param codings_dataframe
+	#'   a dataframe with the variables:
+	#'   Varname = the name of the categorical variable
+	#'   Codings_Expr = an expression which generates the codings, eg:
+	#'  				"c("Other"=1, "Pacific"=2, "Maori"=3)"
+	#'  			   NB: Codings must be specified in numeric order
+	#' 
+	#'   additional variables are ignored.
 	#' 
 	#' @examples
-	#' filedir = "D:/workspace.sim/MELC/CHDS/base/"
-	#' filename = "CHDS data dictionary.xlsx"
 	#' 
-	#' codings <- Dictionary$new_from_XLS(filedir, filename, filename)
-	new_from_XLS <- function (., filedir, dict_filename, codings_filename = NULL) {
-		descriptions <- loadDictionaryXLS(filedir, dict_filename)
-		if (is.null(codings_filename)) {
+	new <- function (., descriptions_dataframe, codings_dataframe = NULL) {
+		descriptions <- createDescriptions(descriptions_dataframe)
+		if (is.null(codings_dataframe)) {
 			codings <- NULL
 		} else {
-			codings <- loadCodingsXLS(filedir, codings_filename)
+			codings <- createCodings(codings_dataframe)
 		}
 		
 		# return new object
 		proto(.,
-			 descriptions = descriptions,
-			 codings = codings)
-	}
-
-	#' Load codings XLS file and return named list of codings.
-	#' 
-	#' @param .
-	#'  this
-	#' @param filedir
-	#'  file directory, with or without trailing slash
-	#' @param filename
-	#'  file name, eg: "myfile.xls". 
-	#' The codings file must contain 2 columns:
-	#'  Varname = the name of the categorical variable
-	#'  Codings_Expr = an expression which generates the codings, eg:
-	#'  				c("Other"=1, "Pacific"=2, "Maori"=3)
-	#'  			   NB: Codings must be specified in numeric order
-	#' 
-	#' @examples
-	#' filedir = "D:/workspace.sim/MELC/CHDS/base/"
-	#' filename = "CHDS data dictionary.xlsx"
-	#' 
-	#' codings <- loadCodingsXLS(filedir, filename)
-	loadCodingsXLS <- function (filedir, filename) {
-		codings.df <- readXLSSheet1(filedir, filename)
+				descriptions = descriptions,
+				codings = codings)
 		
+	}
+	
+	createCodings <- function (codings_dataframe) {
 		#remove empty variables, 
 		#these are blank lines at the end of the file or
 		#variables without any coding expr
-		codings.df  <- subset(codings.df, !(Varname==""))
-		codings.df  <- subset(codings.df, !(Codings_Expr==""))
+		codings_dataframe  <- subset(codings_dataframe, !(Varname==""))
+		codings_dataframe  <- subset(codings_dataframe, !(Codings_Expr==""))
 		
 		#evaluate "Codings_Expr" column in global environment
-		codings <- eval.list(codings.df$Codings_Expr)
+		codings <- eval.list(codings_dataframe$Codings_Expr)
 		
-		names(codings) <- codings.df$Varname
+		names(codings) <- codings_dataframe$Varname
 		
 		#add "varname" attribute for use with wtdmeancols.lbl function
 		codings <- mapply(function(coding, name) {
@@ -286,36 +268,16 @@ Dictionary <- proto(expr = {
 		codings
 	}
 	
-	#' Load dictionary xls file and return dictionary vector.
-	#'
-	#' @param filedir
-	#'  file directory, with or without trailing slash
-	#' @param filename
-	#'  file name, eg: "myfile.xls". 
-	#'  Must contain the columns: 
-	#'  "Varname"
-	#'  "Description" 
-	#' 
-	#' @return 
-	#'  a vector with values = Description column and names = Varname column
-	#'  of xls file.
-	#' 
-	#' @examples
-	#' filedir = "D:/workspace.sim/MELC/CHDS/base/"
-	#' filename = "CHDS data dictionary.xlsx"
-	#' 
-	#' loadDictionaryXLS(filedir, filename)
-	loadDictionaryXLS <- function (filedir, filename) {
-		dict_frame <- readXLSSheet1(filedir, filename)
+	createDescriptions <- function (descriptions_dataframe) {
+		#remove empty variables, 
+		#generally these are blank lines at the end of the file
+		descriptions_dataframe <- subset(descriptions_dataframe, !(Varname==""))
 		
-		#remove empty variables, generally these are blank lines
-		#at the end of the file
-		dict_frame <- subset(dict_frame, !(Varname==""))
-		
-		dict <- dict_frame$Description
-		names(dict) <- dict_frame$Varname
+		dict <- descriptions_dataframe$Description
+		names(dict) <- descriptions_dataframe$Varname
 		
 		dict
+		
 	}
 	
 })
