@@ -65,7 +65,7 @@
 #'
 #' varname <- "cond"
 #' result.row.base <- env.base$modules$years6_13$runs.averaged$histo[[varname]]["All Years",]
-#' result.row.scenario <- envs$`Scenario 1`$modules$years6_13$runs.averaged$histo[[varname]]["All Years",]
+#' result.row.scenario <- env.scenario$modules$years6_13$runs.averaged$histo[[varname]]["All Years",]
 #' scenario.name <- "Scenario 1" 
 #' title <- paste(dictLookup(varname), "all years")
 #' xlab="Value"

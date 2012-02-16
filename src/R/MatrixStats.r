@@ -30,6 +30,8 @@ colmeans.list <- function (xlistm) {
 #'  an array with a Z dimension
 #' @param CI
 #'  if TRUE, lower and upper confidence intervals are also returned
+#' @param NA.as.zero
+#'  if TRUE (default), treat NAs as if they are zeros
 #' 
 #' @return
 #'  a matrix of means across the Z dimension
@@ -42,22 +44,24 @@ colmeans.list <- function (xlistm) {
 #' xa <- env.base$years1_5$runs$means$all.by.SESBTH.2cat$gpmorb
 #' xa <- years1_5$runs$means$all.by.gender$gptotvis
 #' 
-#' xa <- lol.mx.array.lbl
+#' xa <- flatten.lolmx(env.scenario$modules$years6_13$runs$cfreqs[["cond"]])
 #' 
 #' xa <- env.base$years1_5$runs$means$all.by.ethnicity$gptotvis
 #' xa <- env.base$years1_5$runs$means$all.by.gender$gptotvis
 #' 
-#' mean.array.z(xa)
+#' result <- mean.array.z(xa)
 #' }
-mean.array.z <- function (xa, CI = TRUE) {
-	result <- apply(xa, c(1,2), mean, na.rm = T)
-	numRuns <- dim(xa)[3]
+mean.array.z <- function (xa, CI = TRUE, NA.as.zero = T) {
+	if (NA.as.zero) xa[is.na(xa)] <- 0
+	
+	result <- apply(xa, c(ROW,COL), mean)
+	numRuns <- dim(xa)[ZDIM]
 	
 	# CIs only make sense if more than 1 run
 	if (CI && numRuns > 1) {
 		
 		#calculate error of each row
-		errRuns <- apply(xa,c(1,2),err)
+		errRuns <- apply(xa,c(ROW,COL),err)
 		
 		#calculate left CI
 		leftRuns <- result - errRuns
@@ -71,7 +75,7 @@ mean.array.z <- function (xa, CI = TRUE) {
 		#dimnames(result)[[2]] <- c("Mean", "Lower", "Upper")
 		
 		# reorder so that lower and upper is next to the mean of each grouping
-		numGroups <- dim(xa)[2]
+		numGroups <- dim(xa)[COL]
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
 		

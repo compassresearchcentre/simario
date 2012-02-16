@@ -343,6 +343,10 @@ detachReturn <- function(envname) {
 #'  vector
 #' 
 #' @export
+#' @examples
+#' err(x=2)
+#' err(x=1:10)
+#' err(x=c(4,NA))
 err <- function (x) {
 	## see http://www.cyclismo.org/tutorial/R/confidence.html
 	if (length(x) < 2) {
