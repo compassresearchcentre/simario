@@ -42,6 +42,7 @@ colmeans.list <- function (xlistm) {
 #' xa <- env.base$years1_5$runs$means$all.by.SESBTH.2cat$gpmorb
 #' xa <- years1_5$runs$means$all.by.gender$gptotvis
 #' 
+#' xa <- lol.mx.array.lbl
 #' 
 #' xa <- env.base$years1_5$runs$means$all.by.ethnicity$gptotvis
 #' xa <- env.base$years1_5$runs$means$all.by.gender$gptotvis
@@ -49,7 +50,7 @@ colmeans.list <- function (xlistm) {
 #' mean.array.z(xa)
 #' }
 mean.array.z <- function (xa, CI = TRUE) {
-	result <- apply(xa, c(1,2), mean)
+	result <- apply(xa, c(1,2), mean, na.rm = T)
 	numRuns <- dim(xa)[3]
 	
 	# CIs only make sense if more than 1 run
