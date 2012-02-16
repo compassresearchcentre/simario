@@ -180,6 +180,8 @@ expr = {
 	calcFinalResults <- function(., simenv) {
 		cat(gettextf("Averaging run stats across all runs for %s\n", .$name))
 		
+		#TODO: split out labelling & mean taking functions
+		
 		.$runs.averaged <- list()
 
 		#.$runs.averaged$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)

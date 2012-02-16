@@ -104,12 +104,14 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 #'  
 #' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$z1singleLvl1 
 #' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$gptotvis
+#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$houtptot
+#' 
+#' dict <- dict.MELC
 #' 
 #' asPercentages = T; removeZeroCategory = T; CI = F
 #' removeZeroCategory = F
 #' finialise.lolmx(lol.mx)
-#' finialise.lolmx(lol.mx, asPercentages, removeZeroCategory, CI)
+#' finialise.lolmx(lol.mx, dict, asPercentages, removeZeroCategory, CI)
 #' }
 finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T, CI = F) {
 	# flatten into 3D array
@@ -297,14 +299,16 @@ loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
 #' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
 #' 
 #' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$sptype
+#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$houtptot
+#' 
 #' xa <- flatten.lolmx(lol.mx)
 #' 
 #' xa <- array(c(1:5, rep(0,5)), dim=c(5,1,2), dimnames=list(LETTERS[1:5],c("Col")))
 #' xa <- array(c(1:5, 9,8,7,6,5), dim=c(5,2,1), dimnames=list(LETTERS[1:5], c("Col 1", "Col 2")))
 #' 
 #' xa <- lol.mx.array
-#' codings <- dict.MELC$codings
-#' prop.table.grpby.array.zdim(xa,codings)
+#' numgrps <- 1
+#' prop.table.grpby.array.zdim(xa, numgrps)
 #' }
 prop.table.grpby.array.zdim <- function (xa, numgrps) {
 	  
