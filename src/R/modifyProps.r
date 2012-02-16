@@ -143,7 +143,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
   n = length(default.vec)
   
   #if propensity scores not provided then create them
-  if (length(propens)==0) {
+  if (length(propens)==0 || any(is.na(propens))) {
 	  
     note2 = "Note: No propensity scores available so random propensity scores were created\n"
     cat(note2)
