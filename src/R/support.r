@@ -535,7 +535,10 @@ meta.add.list.varname <- function(xlist, varnames = names(xlist)) {
 #' @param x
 #'  object to sort
 #' @param stripAlpha
-#'  remove alpha characters before attempting sort
+#'  remove alpha characters before attempting sort, but retain them in the output
+#' @param sortAlphaOnlySeparately
+#'  if a value is purely alpha (ie: contains no numeric component) sort is separately
+#'  from the alpha-numeric values, and return it after any numerically sorted values
 #' @param ...
 #'  additional arguments passed to sort
 #' 
@@ -550,8 +553,10 @@ meta.add.list.varname <- function(xlist, varnames = names(xlist)) {
 #' x <- c("b","d","a","c")
 #' x <- c(1,4,3,2)
 #' x <- c("1", "2", "3", "4", "5", "6", "7", "8", "10", NA, "9", NA)
+#' x <- c("10", "11", "12", "13", "6", "7", "8", "9", "All Years")
+#' x <- c("10 (%)", "11 (%)", "12", "13", "6", "7", "8", "9", "All Years")
 #' nsort(x)
-nsort <- function (x, stripAlpha = TRUE, ...) {
+nsort <- function (x, stripAlpha = TRUE, sortAlphaOnlySeparately = TRUE, ...) {
 
 	# remove any NAs
 	index.nas <- is.na(x)
@@ -559,14 +564,27 @@ nsort <- function (x, stripAlpha = TRUE, ...) {
 		x <- x[!index.nas]
 	}
 	
-	if (stripAlpha) xs <- strip.alpha(x) else xs <- x
+	if (sortAlphaOnlySeparately) {
+		is_alpha_only <- is.alpha.only(x)
+		alpha_only <- x[is_alpha_only]
+		x_to_sort_numerically <- x[!is_alpha_only]
+	} else {
+		x_to_sort_numerically <- x
+	}
+	
+	if (stripAlpha) x_to_sort_numerically_striped <- strip.alpha(x_to_sort_numerically) else x_to_sort_numerically_striped <- x_to_sort_numerically
 	
 	# if can be converted via as.numeric without NAs, convert
-	if (!any(is.na(suppressWarnings(as.numeric(xs))))) {
-		result <- x[order(as.numeric(xs))]
+	if (!any(is.na(suppressWarnings(as.numeric(x_to_sort_numerically_striped))))) {
+		result <- x_to_sort_numerically[order(as.numeric(x_to_sort_numerically_striped))]
 	} else {
-		result <- sort(x, ...)	
+		result <- sort(x_to_sort_numerically, ...)	
 	} 
+	
+	# add back sorted alpha onlys
+	if (length(alpha_only) > 0) {
+		result <- c(result, sort(alpha_only, ...))
+	}
 	
 	# add back any NAs to end
 	if (any(index.nas)) {
