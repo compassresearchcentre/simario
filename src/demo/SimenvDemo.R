@@ -58,7 +58,9 @@ SimenvDemo <- proto(. = Simenv, expr = {
 		
 		catvars <- getOutcomeVars(simframe, "categorical")
 		
-		createAdjustmentMatrices(catvars, dict, 100)
+		NUM_ITERATIONS <- 100
+		
+		createAdjustmentMatrices(catvars, dict, NUM_ITERATIONS)
 	}
 	
 })
