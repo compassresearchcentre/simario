@@ -47,7 +47,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' 
 	#' simenv <- env.base
 	#' 
-	#' outcomes <- simulateRun(simenv) 
+	#' outcomes <- simulateRun(simenv=simenv) 
 	simulateRun <- function(., simenv) {
 		
 		#' Adjust categorical values to desired proportions in cat.adjustments (if any).
@@ -73,6 +73,11 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 		
 		store_current_values_in_outcomes <- function(iteration) {
+			#first outcomes is a new version of second outcoes which only
+					#exists in the outer function
+					#first outcomes would have just defined internally within
+					#store_current_values_in_outcomes, except that we have used
+					#the double arrow to define it externally
 			outcomes <<- lapply(outcomes, function(x) {
 						x[,iteration] <- get(attr(x,"varname"));x 
 					}) 

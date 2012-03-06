@@ -95,6 +95,7 @@ loadTransitionProbabilities <- function(dir) {
 loadSimar <- function() {
 	.devtools_installed <- length(find.package("devtools", quiet = T)) > 0
 	if (.devtools_installed & !exists(".USELIB")) {
+		#loads simar from the workspace folder (the R folder - simar/src/R))
 		cat("loadSimar: loading pre-installed development version using load_all\n")
 		
 		library(devtools)
@@ -104,6 +105,7 @@ loadSimar <- function() {
 		Simenv$.super <- .GlobalEnv
 		Simmodule$.super <- .GlobalEnv
 	} else {
+		#loads simar from a preexisting (on computer) R library folder - like C:/Program Files/R/R-2.14.1/library/simar
 		cat("loadSimar: loading installed library")
 		library(simar)
 	}
