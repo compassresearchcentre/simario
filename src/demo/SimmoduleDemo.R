@@ -136,6 +136,8 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 							sample(1:4, size = 1, replace = T, prob=prob)	
 						})
 				
+				disability_state <- adjustCatVar(disability_state, "disability_state")
+				
 				earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
 				
 				age[alive] <- age[alive] + 1

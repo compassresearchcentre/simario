@@ -100,6 +100,7 @@ expr = {
 	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE) {
 
 		invisible(lapply(.$cat.adjustments, function (catadj) {
+			#catadj <- .$cat.adjustments[[1]]
 			#catadj <- .$cat.adjustments$SESBTH
 			#catadj <- .$cat.adjustments$catpregsmk2
 			cat_adj_vector <- catadj[iteration, ]
@@ -132,7 +133,9 @@ expr = {
 	#'
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
-	#'   
+	#' 
+	#' @examples
+	#'  desired_props <- cat_adj_vector  
 	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE) {
 		is_single_variable_to_adjust <- length(varnames) == 1
 		
@@ -164,7 +167,7 @@ expr = {
 	#' 
 	#' @examples
 	#' . <- env.scenario
-	#' varname <- "catpregsmk2"
+	#' varname <- "catpregsmk2" ; varname <- varnames
 	#' desired_props <- c(0.01,0.02,0.03,0.04,0.90)
 	#' propens <- NULL
 	#' print_adj = T
@@ -247,7 +250,9 @@ expr = {
 		
 	}
 	
-	#' Perform a simulation of X runs
+	#' Perform a simulation of X runs.
+	#' 
+	#' NB: if it exists, uses propensities in global environment when doing adjustments for year 1
 	#' 
 	#' @param .
 	#'  Simenv receiving object
@@ -262,6 +267,8 @@ expr = {
 		start_time <- proc.time()
 		
 		cat(gettextf("Simulating %s\n", .$name))
+		
+		if (!exists("propensities")) propensities <- NULL
 		
 		.$applyAllCatAdjustmentsToSimframe(1, propensities)
 		

@@ -67,6 +67,8 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	breaks_age_grp <<- 	c(-1, 59, 79, 99)
 	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
 	
+	propensities <<- NULL		# referenced by adjustCatVar
+	
 	cat ("Demo initialised\n")
 	
 }
@@ -113,6 +115,7 @@ loadSimar <- function() {
 loadSimar()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
+source("Demo scenarios.R")
 
 initDemo()
 
