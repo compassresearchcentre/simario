@@ -24,6 +24,21 @@ add_trailing_slash <- function(x) {
 	}
 }
 
+
+#' TRUE for elements that only contain alpha characters, ie: have no numeric component.
+#' 
+#' @param x
+#'  character vector
+#' @export
+#' @examples 
+#' 
+#' x <- c("1", "1 (%)", "per cent")
+#' is.alpha.only(x)
+is.alpha.only <- function(x) {
+	grepl("^\\D*$", x)
+}
+
+
 #' Remove any alpha from character vector, leaving only numbers.
 #' 
 #' @param x

@@ -104,12 +104,15 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 #'  
 #' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$z1singleLvl1 
 #' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$gptotvis
+#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$houtptot
+#' lol.mx <- env.scenario$modules$years6_13$runs$cfreqs[["cond"]]
+#' 
+#' dict <- dict.MELC
 #' 
 #' asPercentages = T; removeZeroCategory = T; CI = F
 #' removeZeroCategory = F
 #' finialise.lolmx(lol.mx)
-#' finialise.lolmx(lol.mx, asPercentages, removeZeroCategory, CI)
+#' finialise.lolmx(lol.mx, dict, asPercentages, removeZeroCategory, CI)
 #' }
 finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T, CI = F) {
 	# flatten into 3D array
@@ -297,14 +300,16 @@ loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
 #' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
 #' 
 #' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$sptype
+#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$houtptot
+#' 
 #' xa <- flatten.lolmx(lol.mx)
 #' 
 #' xa <- array(c(1:5, rep(0,5)), dim=c(5,1,2), dimnames=list(LETTERS[1:5],c("Col")))
 #' xa <- array(c(1:5, 9,8,7,6,5), dim=c(5,2,1), dimnames=list(LETTERS[1:5], c("Col 1", "Col 2")))
 #' 
 #' xa <- lol.mx.array
-#' codings <- dict.MELC$codings
-#' prop.table.grpby.array.zdim(xa,codings)
+#' numgrps <- 1
+#' prop.table.grpby.array.zdim(xa, numgrps)
 #' }
 prop.table.grpby.array.zdim <- function (xa, numgrps) {
 	  
@@ -327,7 +332,7 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 }
 
 
-#' Takes a result row and returns the means and error amounts as seperate vectors in a matrix or list.
+#' Takes a result row and returns the means and error amounts as separate vectors in a matrix or list.
 #' 
 #' @param result.row
 #'  a result row, ie: a vector with values named Mean and Lower eg:
@@ -368,9 +373,12 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 #' result.row <- c("0%"=5,"20%"=5,"40%"=9,"60%"=11,"80%"=15,"100%"=50)
 #' result.row <- structure(c(5, 5, 5, 5, 5, 5, 9, 9, 9, 11, 11, 11, 15, 15, 15,50.5, 6.02828342338857, 94.9717165766114), .Names = c("0% Mean","0% Lower", "0% Upper", "20% Mean", "20% Lower", "20% Upper","40% Mean", "40% Lower", "40% Upper", "60% Mean", "60% Lower","60% Upper", "80% Mean", "80% Lower", "80% Upper", "100% Mean","100% Lower", "100% Upper"))
 #' 
-#' result.row <- env.base$years1_5$runs.averaged$quantiles$kids["Total",]
-#' result.row <- envs$`Scenario 1`$years1_5$runs.averaged$quantiles$kids["Total",]
-#' result.row <- envs$`Scenario 1`$years1_5$runs.averaged$means$all$kids["Total",]
+#' result.row <- env.base$modules$years1_5$runs.averaged$quantiles$kids["All Years",]
+#' result.row <- env.scenario$modules$years1_5$runs.averaged$quantiles$kids["All Years",]
+#' result.row <- env.scenario$modules$years1_5$runs.averaged$means$all$kids["All Years",]
+#' result.row <- na.omit(env.scenario$modules$years6_13$runs.averaged$histo[["cond"]]["All Years",])
+#' 
+#' result.as.means.and.errs(result.row.scenario)
 #' 
 #' result.as.means.and.errs(result.row)
 #' }
@@ -378,9 +386,10 @@ result.as.means.and.errs <- function(result.row, simplify = T) {
 	ind.means <- grep("Mean", names(result.row))
 	ind.lowers <- grep("Lower", names(result.row))
 	
-	#result.row.means <- c()
-	#result.row.err <- c()
-	if(!length(ind.means)) {
+	assert(length(ind.means) == length(ind.lowers))
+	
+	has_CIs <- length(ind.lowers) > 0
+	if(!has_CIs) {
 		result.row.means <- result.row
 		result.row.err <- structure(rep(0, length(result.row.means)), .Names = names(result.row.means))
 	} else {

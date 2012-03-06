@@ -134,7 +134,7 @@ expr = {
 	#' appendRunStats (.)
 	appendRunStats <- function (.) {
 		
-		cat(gettextf("Generating run results for %s\n", .$name))
+		cat(gettextf("Generating run stats for %s\n", .$name))
 
 		# add additional "all years" row totals to continuous vars
 		# used in means, quantiles, and cfreqs
@@ -178,7 +178,9 @@ expr = {
 	#' simenv <- env.scenario
 	#' .$calcFinalResults(simenv) 
 	calcFinalResults <- function(., simenv) {
-		cat(gettextf("Generating final results for %s\n", .$name))
+		cat(gettextf("Averaging run stats across all runs for %s\n", .$name))
+		
+		#TODO: split out labelling & mean taking functions
 		
 		.$runs.averaged <- list()
 

@@ -15,7 +15,7 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' 
 	#' @examples
 	#' 
-	#' . <- SimenvMELC
+	#' . <- SimenvDemo
 	#' env.scenario <- SimenvDemo$new(name = "My Scenario")
 	new <- function(., name=NULL, simframe=simframe.master, dict=dict_demo) {
 		
@@ -58,7 +58,9 @@ SimenvDemo <- proto(. = Simenv, expr = {
 		
 		catvars <- getOutcomeVars(simframe, "categorical")
 		
-		createAdjustmentMatrices(catvars, dict, 100)
+		NUM_ITERATIONS <- 100
+		
+		createAdjustmentMatrices(catvars, dict, NUM_ITERATIONS)
 	}
 	
 })

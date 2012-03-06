@@ -38,7 +38,6 @@ createSets <- function(people, codings) {
 }
 
 #' Initialise models, basefile, simframe.
-#' Perform base simulation.
 #' 
 #' @examples
 #' data_dir <- getwd()
@@ -47,8 +46,9 @@ createSets <- function(people, codings) {
 initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	base_dir <- file.path(data_dir, "base")
 	
-	DICT_FILENAME <- "Data dictionary.xlsx"
-	dict_demo <<- Dictionary$new_from_XLS(base_dir, DICT_FILENAME, DICT_FILENAME)
+	descriptions_dataframe <- read_file(base_dir, "Data dictionary.csv")
+	codings_dataframe <- descriptions_dataframe
+	dict_demo <<- Dictionary$new(descriptions_dataframe, codings_dataframe)
 	
 	#load initial basefile
 	people <<- read_csv(base_dir, "Base file (people).csv")
@@ -66,6 +66,8 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	
 	breaks_age_grp <<- 	c(-1, 59, 79, 99)
 	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
+	
+	propensities <<- NULL		# referenced by adjustCatVar
 	
 	cat ("Demo initialised\n")
 	
@@ -115,6 +117,7 @@ loadSimar <- function() {
 loadSimar()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
+source("Demo scenarios.R")
 
 initDemo()
 
