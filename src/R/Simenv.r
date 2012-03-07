@@ -290,7 +290,7 @@ expr = {
 			invisible(lapply(.$modules, function(module) module$appendRunStats()))
 		}
 		
-		invisible(lapply(.$modules, function(module) module$calcFinalResults(simenv=.)))
+		invisible(lapply(.$modules, function(module) module$collateRunStats(simenv=.)))
 
 		end_time <- proc.time()
 		

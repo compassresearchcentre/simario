@@ -36,7 +36,7 @@
 #' means.args <- list(	all = list(), males = list(logiset=childsets$males),	females = list(logiset=childsets$females),pacific = list(logiset=childsets$pacific),	maori = list(logiset=childsets$maori))
 #' 
 #' freqvars <- catvars
-#' runs <- createRunOutputs(catvars, convars, means.args, mean.grouped.spec)
+#' runstats <- createRunOutputs(catvars, convars, means.args, mean.grouped.spec)
 #' }
 createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.args) {
 	# Frequency tables for categorical variables
@@ -63,7 +63,7 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 	
 }
 
-#' Prepare run runs.averaged for display by:
+#' Prepare run runstats.collated for display by:
 #'  flattening into a 3D array
 #'  calculate percentages
 #'  remove zero category
@@ -96,16 +96,16 @@ createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.ar
 #' @examples
 #' \dontrun{
 #' varname = "z1singleLvl1" ; varname = "gptotvis"
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
 #'
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all$sptype
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$sptype
 #'  
-#' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$z1singleLvl1 
-#' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$houtptot
-#' lol.mx <- env.scenario$modules$years6_13$runs$cfreqs[["cond"]]
+#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$z1singleLvl1 
+#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+#' lol.mx <- env.scenario$modules$years1_5$runstats$cfreqs$houtptot
+#' lol.mx <- env.scenario$modules$years6_13$runstats$cfreqs[["cond"]]
 #' 
 #' dict <- dict.MELC
 #' 
@@ -167,10 +167,10 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 #' \dontrun{
 #' xa <- lol.mx.array
 #' 
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1  
-#' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$z1singleLvl1 
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1  
+#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$z1singleLvl1 
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
 #' xa <- flatten.lolmx(lol.mx) 
 #' dict <- dict.MELC
 #' removeZeroCategory = F
@@ -218,10 +218,10 @@ labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"
 #' x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
 #' x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
 #' 
-#' x <- env.base$modules$years1_5$runs.averaged$means$all.by.gender$kids
-#' x <- env.scenario$modules$years1_5$runs.averaged$means$all.by.gender$kids
-#' x <- env.base$modules$years1_5$runs.averaged$means$all$kids
-#' x <- env.base$modules$years1_5$runs.averaged$means$all.by.gender$gptotvis
+#' x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$kids
+#' x <- env.scenario$modules$years1_5$runstats.collated$means$all.by.gender$kids
+#' x <- env.base$modules$years1_5$runstats.collated$means$all$kids
+#' x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$gptotvis
 #' varname=attr(x, "meta")["grpby.tag"]
 #' dict <- dict.MELC
 #' labelColumnCodes(x, dict, varname)
@@ -295,12 +295,12 @@ loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
 #'  xa as proportions
 #' @examples
 #' \dontrun{
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1 
-#' lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1 
+#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
 #' 
-#' lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$sptype
-#' lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$houtptot
+#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$sptype
+#' lol.mx <- env.scenario$modules$years1_5$runstats$cfreqs$houtptot
 #' 
 #' xa <- flatten.lolmx(lol.mx)
 #' 
@@ -337,7 +337,7 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 #' @param result.row
 #'  a result row, ie: a vector with values named Mean and Lower eg:
 #' 
-#'>  envs$`Scenario 1`$years1_5$runs.averaged$means$all$kids["Total",]
+#'>  envs$`Scenario 1`$years1_5$runstats.collated$means$all$kids["Total",]
 #'     Mean    Lower    Upper 
 #' 10.99488 10.62256 11.36721 
 #' 
@@ -354,7 +354,7 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 #' @examples
 #' \dontrun{
 #' 
-#' result.row <- envs$`Scenario 1`$years1_5$runs.averaged$means$all$kids["Total",]
+#' result.row <- envs$`Scenario 1`$years1_5$runstats.collated$means$all$kids["Total",]
 #' \dontrun{
 #' > result.row
 #'     Mean    Lower    Upper 
@@ -373,10 +373,10 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 #' result.row <- c("0%"=5,"20%"=5,"40%"=9,"60%"=11,"80%"=15,"100%"=50)
 #' result.row <- structure(c(5, 5, 5, 5, 5, 5, 9, 9, 9, 11, 11, 11, 15, 15, 15,50.5, 6.02828342338857, 94.9717165766114), .Names = c("0% Mean","0% Lower", "0% Upper", "20% Mean", "20% Lower", "20% Upper","40% Mean", "40% Lower", "40% Upper", "60% Mean", "60% Lower","60% Upper", "80% Mean", "80% Lower", "80% Upper", "100% Mean","100% Lower", "100% Upper"))
 #' 
-#' result.row <- env.base$modules$years1_5$runs.averaged$quantiles$kids["All Years",]
-#' result.row <- env.scenario$modules$years1_5$runs.averaged$quantiles$kids["All Years",]
-#' result.row <- env.scenario$modules$years1_5$runs.averaged$means$all$kids["All Years",]
-#' result.row <- na.omit(env.scenario$modules$years6_13$runs.averaged$histo[["cond"]]["All Years",])
+#' result.row <- env.base$modules$years1_5$runstats.collated$quantiles$kids["All Years",]
+#' result.row <- env.scenario$modules$years1_5$runstats.collated$quantiles$kids["All Years",]
+#' result.row <- env.scenario$modules$years1_5$runstats.collated$means$all$kids["All Years",]
+#' result.row <- na.omit(env.scenario$modules$years6_13$runstats.collated$histo[["cond"]]["All Years",])
 #' 
 #' result.as.means.and.errs(result.row.scenario)
 #' 

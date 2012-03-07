@@ -20,7 +20,7 @@ library(proto)
 #' This aggregate value may be a single value (eg: mean), a vector (eg: frequencies, quantiles, summary), 
 #' or a matrix (eg: 2 way table). 
 #' 
-#' Run stats are averaged across multiple runs by calcFinalResults to get a final simulation result.
+#' Run stats are averaged across multiple runs by collateRunStats to get a final simulation result.
 #'
 #' @export 
 Simmodule <- proto(
@@ -30,7 +30,7 @@ expr = {
 			
 	#' Run stats:
 	#' frequencies, continuous frequencies, means, summaries, quantiles etc.
-	runs <- list(freqs = list(), 
+	runstats <- list(freqs = list(), 
 				cfreqs = list(), 
 				means = list(), 
 				summaries = list(),
@@ -90,7 +90,7 @@ expr = {
 		means <- lapply(means.args, function(x) meanslist)
 		attr(means, "args.list") <- means.args
 
-		runs <- list(cfreqs = cfreqs,
+		runstats <- list(cfreqs = cfreqs,
 				freqs = freqs, 
 				means = means, 
 				summaries = meanslist,
@@ -101,8 +101,8 @@ expr = {
 		proto(.,
 				name=name,
 				outcomes=list(),
-				runs=runs,
-				runs.averaged=list()
+				runstats=runstats,
+				runstats.collated=list()
 		)
 	}
 
@@ -124,7 +124,7 @@ expr = {
 	#' Called at the end of each run.
 	#' 
 	#' @param .
-	#'  Simmodule receiving object. .$runs is modified.
+	#'  Simmodule receiving object. .$runstats is modified.
 	#'   	
 	#' @examples
 	#' 
@@ -138,7 +138,7 @@ expr = {
 
 		# add additional "all years" row totals to continuous vars
 		# used in means, quantiles, and cfreqs
-		convars <- unique(c(names(.$runs$means[[1]]), names(.$runs$quantiles)))
+		convars <- unique(c(names(.$runstats$means[[1]]), names(.$runstats$quantiles)))
 		
 		outcomes_wtotals <- lapply.subset(.$outcomes, convars, function(x) {
 					#x <- .$outcomes[[convars[1]]] 
@@ -146,18 +146,18 @@ expr = {
 				})
 		
 
-		.$runs$cfreqs <- lapply.subset.append (.$runs$cfreqs, outcomes_wtotals, simplify = FALSE, .FUN=table.grpby.mx.cols)
+		.$runstats$cfreqs <- lapply.subset.append (.$runstats$cfreqs, outcomes_wtotals, simplify = FALSE, .FUN=table.grpby.mx.cols)
 		
-		.$runs$freqs <- lapply.subset.append.lol.args(.$outcomes, .$runs$freqs, simplify = FALSE, .FUN=table.grpby.mx.cols)
+		.$runstats$freqs <- lapply.subset.append.lol.args(.$outcomes, .$runstats$freqs, simplify = FALSE, .FUN=table.grpby.mx.cols)
 		
-		.$runs$means <- lapply.subset.append.lol.args(outcomes_wtotals, .$runs$means, .FUN= wtdmeancols)
+		.$runstats$means <- lapply.subset.append.lol.args(outcomes_wtotals, .$runstats$means, .FUN= wtdmeancols)
 		
-		.$runs$summaries <- lapply.subset.append (.$runs$summaries, .$outcomes, .FUN=summary.mx) 
+		.$runstats$summaries <- lapply.subset.append (.$runstats$summaries, .$outcomes, .FUN=summary.mx) 
 		
-		#.$runs$quantiles <- lapply.subset.append (.$runs$quantiles, outcomes_wtotals, .FUN=quantile.mx, 
+		#.$runstats$quantiles <- lapply.subset.append (.$runstats$quantiles, outcomes_wtotals, .FUN=quantile.mx, 
 		#		probs=seq(0, 1, 0.02), na.rm = TRUE)
 
-		.$runs$quantiles <- lapply.subset.append (.$runs$quantiles, outcomes_wtotals, .FUN=quantile.mx, 
+		.$runstats$quantiles <- lapply.subset.append (.$runstats$quantiles, outcomes_wtotals, .FUN=quantile.mx, 
 				new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
 		
 		
@@ -168,7 +168,7 @@ expr = {
 	#' Called at the end of the simulation.
 	#' 
 	#' @param .
-	#'  Simmodule receiving object. .$runs is modified.
+	#'  Simmodule receiving object. .$runstats is modified.
 	#' @examples
 	#' 
 	#' . <- env.base$modules[[1]]
@@ -176,32 +176,32 @@ expr = {
 	#' . <- env.scenario$modules[[1]]
 	#' simenv <- env.base
 	#' simenv <- env.scenario
-	#' .$calcFinalResults(simenv) 
-	calcFinalResults <- function(., simenv) {
-		cat(gettextf("Averaging run stats across all runs for %s\n", .$name))
+	#' .$collateRunStats(simenv) 
+	collateRunStats <- function(., simenv) {
+		cat(gettextf("Collating run stats across all runs for %s\n", .$name))
 		
 		#TODO: split out labelling & mean taking functions
 		
-		.$runs.averaged <- list()
+		.$runstats.collated <- list()
 
-		#.$runs.averaged$cfreqs <- mean.list.var.run.mx(.$runs$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
-		.$runs.averaged$cfreqs <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
+		#.$runstats.collated$cfreqs <- mean.list.var.run.mx(.$runstats$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
+		.$runstats.collated$cfreqs <- lapply(.$runstats$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
 		
-		#.$runs.averaged$freqs <- lapply(.$runs$freqs, mean.list.var.run.mx)
-		.$runs.averaged$freqs <- lapply.inner(.$runs$freqs, finialise.lolmx, dict = simenv$dict)
+		#.$runstats.collated$freqs <- lapply(.$runstats$freqs, mean.list.var.run.mx)
+		.$runstats.collated$freqs <- lapply.inner(.$runstats$freqs, finialise.lolmx, dict = simenv$dict)
 
-		.$runs.averaged$means <- lapply.inner(.$runs$means, mean.array.z)
+		.$runstats.collated$means <- lapply.inner(.$runstats$means, mean.array.z)
 		
-		.$runs.averaged$means  <- lapply.inner(.$runs.averaged$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
+		.$runstats.collated$means  <- lapply.inner(.$runstats.collated$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
 		
 		# set non-existant colnames to "Mean"
-		.$runs.averaged$means <- lapply(.$runs.averaged$means, function(x) labelCols.list(x, "Mean"))
+		.$runstats.collated$means <- lapply(.$runstats.collated$means, function(x) labelCols.list(x, "Mean"))
 		
-		.$runs.averaged$summaries <- lapply(.$runs$summaries, mean.array.z)
+		.$runstats.collated$summaries <- lapply(.$runstats$summaries, mean.array.z)
 		
-		.$runs.averaged$quantiles <- lapply(.$runs$quantiles, mean.array.z)
+		.$runstats.collated$quantiles <- lapply(.$runstats$quantiles, mean.array.z)
 
-		.$runs.averaged$histo <- lapply(.$runs$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
+		.$runstats.collated$histo <- lapply(.$runstats$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
 		
 		return()
 	}
