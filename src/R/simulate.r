@@ -5,7 +5,7 @@
 # Author: Oliver Mannion
 ###############################################################################
 
-#' Creates a set of run outputs. 
+#' Creates an empty set of run stats. 
 #' 
 #' @param freqvars
 #' 			frequency variable names, or NULL
@@ -36,9 +36,9 @@
 #' means.args <- list(	all = list(), males = list(logiset=childsets$males),	females = list(logiset=childsets$females),pacific = list(logiset=childsets$pacific),	maori = list(logiset=childsets$maori))
 #' 
 #' freqvars <- catvars
-#' runstats <- createRunOutputs(catvars, convars, means.args, mean.grouped.spec)
+#' runstats <- createEmptyRunStats(catvars, convars, means.args, mean.grouped.spec)
 #' }
-createRunOutputs <- function(freqvars, cfreqvars, meanvars, freqs.args, means.args) {
+createEmptyRunStats <- function(freqvars, cfreqvars, meanvars, freqs.args, means.args) {
 	# Frequency tables for categorical variables
 	freqslist <- namedList(freqvars)
 	
