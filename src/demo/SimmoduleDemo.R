@@ -50,12 +50,13 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' outcomes <- simulateRun(simenv=simenv) 
 	simulateRun <- function(., simenv) {
 		
-		#' Adjust categorical values to desired proportions in cat.adjustments (if any).
+		#' Adjust categorical values to desired proportions for current iteration
+		#' in cat.adjustments (if any).
 		#' 
 		#' @param x
-		#'  categorical values to adjust
+		#'  vector of categorical values from which a new adjusted vector is returned 
 		#' @param varname
-		#'  varname, used a lookup into cat.adjustments and propensities
+		#'  varname, used to lookup in cat.adjustments and propensities
 		adjustCatVar <- function(x, varname) {
 			cat.adjustments <- simenv$cat.adjustments
 			
