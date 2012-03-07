@@ -4,12 +4,11 @@
 ###############################################################################
 
 
-#' Prepare run runstats.collated for display by:
+#' Prepare frequency runstats for display by:
 #'  flattening into a 3D array
 #'  calculate percentages
 #'  remove zero category
 #'  label columns
-#'  and calculate mean across all matrices
 #' 
 #' @param lol.mx
 #'  a list of lists of matrices, eg:
@@ -29,14 +28,13 @@
 #'  convert values to percentages of their grouping (if any)
 #' @param removeZeroCategory 
 #'  remove zero category
-#' @param CI
-#'  if TRUE, will produce confidence intervals on the means
 #' @return
-#'  a matrix of means
+#'  labelled and percentaged array, with z-dim = runs
 #' 
 #' @examples
 #' \dontrun{
 #' varname = "z1singleLvl1" ; varname = "gptotvis"
+#' lol.mx <- env.base$modules[[1]]$runstats$freqs$all[[1]]
 #' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1
 #' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
 #' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
@@ -49,13 +47,14 @@
 #' lol.mx <- env.scenario$modules$years6_13$runstats$cfreqs[["cond"]]
 #' 
 #' dict <- dict.MELC
+#' dict <- dict_demo
 #' 
 #' asPercentages = T; removeZeroCategory = T; CI = F
 #' removeZeroCategory = F
 #' finialise.lolmx(lol.mx)
 #' finialise.lolmx(lol.mx, dict, asPercentages, removeZeroCategory, CI)
 #' }
-finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T, CI = F) {
+finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T) {
 	# flatten into 3D array
 	lol.mx.array <- flatten.lolmx(lol.mx)
 	
@@ -76,13 +75,10 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 		colnames(lol.mx.array.lbl) <- paste(colnames(lol.mx.array.lbl), "(%)")
 	}
 	
-	# combine into a single matrix by taking mean across z dimension
-	result <- mean.array.z(lol.mx.array.lbl, CI = CI)
-	
 	# add year as a row label
-	names(dimnames(result)) <- c("Year","")
+	names(dimnames(lol.mx.array.lbl)) <- c("Year","")
 	
-	result
+	lol.mx.array.lbl
 }
 
 

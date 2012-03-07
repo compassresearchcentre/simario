@@ -180,28 +180,29 @@ expr = {
 	collateRunStats <- function(., simenv) {
 		cat(gettextf("Collating run stats across all runs for %s\n", .$name))
 		
-		#TODO: split out labelling & mean taking functions
-		
 		.$runstats.collated <- list()
 
-		#.$runstats.collated$cfreqs <- mean.list.var.run.mx(.$runstats$cfreqs, removeZeroCategory = FALSE, asPercentages = FALSE)
+		# finalise
 		.$runstats.collated$cfreqs <- lapply(.$runstats$cfreqs, finialise.lolmx, dict = simenv$dict, removeZeroCategory = FALSE)
-		
-		#.$runstats.collated$freqs <- lapply(.$runstats$freqs, mean.list.var.run.mx)
 		.$runstats.collated$freqs <- lapply.inner(.$runstats$freqs, finialise.lolmx, dict = simenv$dict)
+		.$runstats.collated$histo <- lapply(.$runstats$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE)
+		
+		# mean
+		.$runstats.collated$cfreqs <- lapply(.$runstats.collated$cfreqs, mean.array.z, CI = F)
+		
+		.$runstats.collated$freqs <- lapply.inner(.$runstats.collated$freqs, mean.array.z, CI = F)
 
 		.$runstats.collated$means <- lapply.inner(.$runstats$means, mean.array.z)
-		
-		.$runstats.collated$means  <- lapply.inner(.$runstats.collated$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
-		
-		# set non-existant colnames to "Mean"
-		.$runstats.collated$means <- lapply(.$runstats.collated$means, function(x) labelCols.list(x, "Mean"))
 		
 		.$runstats.collated$summaries <- lapply(.$runstats$summaries, mean.array.z)
 		
 		.$runstats.collated$quantiles <- lapply(.$runstats$quantiles, mean.array.z)
 
-		.$runstats.collated$histo <- lapply(.$runstats$cfreqs, finialise.lolmx, dict = simenv$dict, asPercentages = F, removeZeroCategory = FALSE, CI = T)
+		.$runstats.collated$histo <- lapply(.$runstats.collated$histo, mean.array.z, CI = T)
+
+		# label
+		.$runstats.collated$means  <- lapply.inner(.$runstats.collated$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
+		.$runstats.collated$means <- lapply(.$runstats.collated$means, function(x) labelCols.list(x, "Mean"))
 		
 		return()
 	}

@@ -19,7 +19,8 @@ labelColTitleFromList <- function(xnamedlist) {
 	mapply(labelCol, xnamedlist, names(xnamedlist), SIMPLIFY = FALSE)
 }
 
-#' Set the colnames on each object in a list.
+#' Set the colnames on each object in a list. By default
+#' will only set if no exiting colnames (see onlyIfNull param).
 #' 
 #' @param xlist
 #'  list
