@@ -43,8 +43,8 @@
 #' @examples
 #' 
 #' #list.dest <- results.list; list.src <- results
-#' #list.dest <- years1_5$runs.averaged$means
-#' #list.src <- years6_13$runs.averaged$means
+#' #list.dest <- years1_5$runstats.collated$means
+#' #list.src <- years6_13$runstats.collated$means
 #' #by.name = TRUE
 #' #r <- append.lists(list.dest, list.src, by.name)
 #' 
@@ -67,8 +67,8 @@
 #' 
 #' #Test with lists with differently named items.
 #' 
-#' list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$runs.averaged$quantiles
-#' list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$runs.averaged$quantiles
+#' list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$runstats.collated$quantiles
+#' list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$runstats.collated$quantiles
 #' 
 #' by.name = TRUE; flatten.src = TRUE
 #' list.result <- append.lists(list.dest , list.src, by.name = TRUE, flatten.src = TRUE)
@@ -202,11 +202,11 @@ isListOfNulls <- function(xlist) {
 #' @export
 #' @examples
 #' \dontrun{
-#' lol <- env.base$years6_13$runs$means
-#' lol <- env.base$years1_5$runs$means
-#' lol <- env.base$years1_5$runs$means
-#' lol <- env.base$years6_13$runs$summaries
-#' lol <- years1_5$runs$summaries
+#' lol <- env.base$years6_13$runstats$means
+#' lol <- env.base$years1_5$runstats$means
+#' lol <- env.base$years1_5$runstats$means
+#' lol <- env.base$years6_13$runstats$summaries
+#' lol <- years1_5$runstats$summaries
 #' lapply.inner(lol, mean.array.z)
 #' }
 lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
@@ -253,8 +253,8 @@ lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
 #' @export
 #' @examples
 #' \dontrun{
-#' lol <- env.base$years1_5$runs$freqs$all2$z1msmokeLvl1 
-#' lol <- env.base$years1_5$runs$freqs$all3$z1msmokeLvl1
+#' lol <- env.base$years1_5$runstats$freqs$all2$z1msmokeLvl1 
+#' lol <- env.base$years1_5$runstats$freqs$all3$z1msmokeLvl1
 #' lol <- list.var.run.mx[[1]]
 #' lol <- list.var.run.mx$typeofchange
 #' lol.c <- lapply.inner.combination(lol, .FUN=mean_list_mx)
@@ -303,16 +303,16 @@ lapply.inner.combination <- function (lol, .FUN, ...)  {
 #' 
 #' \dontrun{
 #' X <- env.base$years1_5$outcomes
-#' indices <- names(env.base$years1_5$runs$cfreqs)
+#' indices <- names(env.base$years1_5$runstats$cfreqs)
 #' .FUN <- wtdtablecols
 #'
 #' X <- env.base$years6_13$outcomes
-#' indices <- names(env.base$years6_13$runs$means$all)
+#' indices <- names(env.base$years6_13$runstats$means$all)
 #' .FUN <- summary.mx
 #'  
 #' 
 #' #' lapply.subset(X, indices, .FUN, ...)
-#' results.list <-  runs$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); .FUN=table.grpby.mx.cols
+#' results.list <-  runstats$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); .FUN=table.grpby.mx.cols
 #' results <- lapply.subset (X, indices, .FUN, grpby.tag="r1stchildethn")
 #' 
 #' 
@@ -362,13 +362,13 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #' @examples
 #' \dontrun{
 #' X <- env.base$years6_13$outcomes
-#' results.list <- env.base$years6_13$runs$summaries
+#' results.list <- env.base$years6_13$runstats$summaries
 #' lapply.subset.append (results.list, X, .FUN=summary.mx)
 #' 
 #' X <- env.base$years1_5$outcomes
-#' lol <- env.base$years1_5$runs$cfreqs
+#' lol <- env.base$years1_5$runstats$cfreqs
 #'
-#' lol <- env.base$years6_13$runs$summaries
+#' lol <- env.base$years6_13$runstats$summaries
 #' X <- env.base$years6_13$outcomes
 #' 
 #' X <- outcomes
@@ -379,17 +379,17 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #' 
 #' lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset)
 #' 
-#' results.list <- runs$freqs$all; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
-#' lapply.subset.append (runs$freqs$all, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
+#' results.list <- runstats$freqs$all; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
+#' lapply.subset.append (runstats$freqs$all, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
 #' 	
-#' results.list <- runs$cfreqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=wtdtablecols
-#' lapply.subset.append (runs$cfreqs, outcomes, simplify = FALSE, .FUN=wtdtablecols, wgts=outcomes[[wgtsname]])
+#' results.list <- runstats$cfreqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=wtdtablecols
+#' lapply.subset.append (runstats$cfreqs, outcomes, simplify = FALSE, .FUN=wtdtablecols, wgts=outcomes[[wgtsname]])
 #' 
-#' results.list <- runs$summaries; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=quantile.mx
-#' lapply.subset.append (runs$summaries, outcomes, .FUN=quantile.mx, probs=seq(0.2,1,0.2))
+#' results.list <- runstats$summaries; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=quantile.mx
+#' lapply.subset.append (runstats$summaries, outcomes, .FUN=quantile.mx, probs=seq(0.2,1,0.2))
 #' 
-#' results.list <-  runs$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
-#' lapply.subset.append (runs$freqs$all.by.ethnicity, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
+#' results.list <-  runstats$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
+#' lapply.subset.append (runstats$freqs$all.by.ethnicity, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
 #' 
 #' results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = wtdmeancols.lbl2
 #' lapply.subset.append (results.list, X, indices, simplify, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)
@@ -438,12 +438,12 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' @examples
 #' \dontrun{
 #' X <- outcomes_wtotals
-#' lol <- .$runs$means
+#' lol <- .$runstats$means
 #' lol.args <- attr(lol, "args.list")
 #' .FUN <- wtdmeancols
 #' 
 #' X <- env.base$years1_5$outcomes
-#' lol <- env.base$years1_5$runs$means
+#' lol <- env.base$years1_5$runstats$means
 #' lol.args <- attr(lol, "args.list")
 #' .FUN <- wtdmeancols.lbl
 #' 

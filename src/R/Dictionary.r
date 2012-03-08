@@ -113,7 +113,7 @@ Dictionary <- proto(expr = {
 	#' @examples
 	#' 
 	#' vars <- c("z1msmokeLvl1", "SESBTH") 
-	#' vars <- names(runs.mean.freq)
+	#' vars <- names(runstats.mean.freq)
 	#' . <- codings 
 	#' codings$cnamesLookup(vars)
 	cnamesLookup <- function(., vars) {
@@ -126,15 +126,15 @@ Dictionary <- proto(expr = {
 	#' 
 	#' @examples
 	#' . <- dict.MELC
-	#' x <- env.base$modules$years1_5$runs.averaged$means$all$kids
-	#' x <- env.base$modules$years1_5$runs.averaged$means$all.by.ethnicity$kids
+	#' x <- env.base$modules$years1_5$runstats.collated$means$all$kids
+	#' x <- env.base$modules$years1_5$runstats.collated$means$all.by.ethnicity$kids
 	#' .$dlookup(x)
 	#' .$dlookup("burt")
 	#' .$dlookup(c(1,2))
 	#' .$dlookup(freqSingle)
 	#' .$dlookup("single")
 	#' .$dlookup("don't exist")
-	#' .$dlookup(runs.mean.freq$base$o.chres)
+	#' .$dlookup(runstats.mean.freq$base$o.chres)
 	dlookup <- function(., x) {
 		
 		name <- c()

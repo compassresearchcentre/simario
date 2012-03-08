@@ -18,6 +18,7 @@ License: GPL
 Collate:
     'CategoricalAdjustment.r'
     'ChartUtil.r'
+    'Collate.r'
     'Dictionary.r'
     'FileUtil.r'
     'Label.r'

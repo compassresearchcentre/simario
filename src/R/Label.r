@@ -19,7 +19,8 @@ labelColTitleFromList <- function(xnamedlist) {
 	mapply(labelCol, xnamedlist, names(xnamedlist), SIMPLIFY = FALSE)
 }
 
-#' Set the colnames on each object in a list.
+#' Set the colnames on each object in a list. By default
+#' will only set if no exiting colnames (see onlyIfNull param).
 #' 
 #' @param xlist
 #'  list
@@ -33,8 +34,8 @@ labelColTitleFromList <- function(xnamedlist) {
 #' @export 
 #' @examples
 #' \dontrun{
-#' xlist <- env.base$years1_5$runs.averaged$means$all
-#' xlist <- runs.averaged$means$all
+#' xlist <- env.base$years1_5$runstats.collated$means$all
+#' xlist <- runstats.collated$means$all
 #' x <- xlist$gptotvis
 #' labelCols.list(xlist, "Mean")
 #' }

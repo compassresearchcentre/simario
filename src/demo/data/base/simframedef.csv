@@ -4,4 +4,4 @@ age_grp,,1,,demo
 sex,,sex,,
 alive,,T,,demo
 earnings,,0,continuous,demo
-disability_state,,1,,demo
+disability_state,,1,categorical,demo
