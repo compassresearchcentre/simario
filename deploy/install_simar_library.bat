@@ -1,6 +1,8 @@
 @REM Installs simar library using R CMD install. Automatically locates R via the registry.
 @echo off
 set SIMAR_FILE_NAME=simar*.tar.gz
+@REM Clearing R_USER environment variable to prevent Windows 7 attempting to install to Program Files.
+set R_USER=
 
 goto START
 
