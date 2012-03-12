@@ -1,6 +1,9 @@
 @REM Use Rscript.exe to run install_required_packages.R
 @echo off
 
+@REM Clearing R_USER environment variable to prevent Windows 7 attempting to install to Program Files.
+set R_USER=
+
 set SCRIPT_NAME=install_required_packages.R
 if [%1]==[] set SCRIPT_PATH="%CD%"\%SCRIPT_NAME%
 if not [%1]==[] set SCRIPT_PATH=%1\%SCRIPT_NAME%
