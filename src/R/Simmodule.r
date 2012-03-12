@@ -203,6 +203,9 @@ expr = {
 		# label
 		.$runstats.collated$means  <- lapply.inner(.$runstats.collated$means, function(x) labelColumnCodes(x, simenv$dict, attr(x, "meta")["grpby.tag"]) )
 		.$runstats.collated$means <- lapply(.$runstats.collated$means, function(x) labelCols.list(x, "Mean"))
+
+		# call garbage collector to release memory used during calculation (sometimes this is a lot)
+		gc()
 		
 		return()
 	}
