@@ -16,11 +16,11 @@ install.packages.not.installed <- function(package_names) {
 	}
 }
 
-install_simar_required_packages <- function() {
+install_simario_required_packages <- function() {
 	package_names <- c("abind", "plyr", "xlsx", "proto")
 	install.packages.not.installed(package_names)	
 }
 
 options(repos = c(CRAN = "http://cran.stat.auckland.ac.nz"))
 
-install_simar_required_packages()
+install_simario_required_packages()

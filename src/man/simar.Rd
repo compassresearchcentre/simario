@@ -1,9 +1,9 @@
 \docType{package}
-\name{simar}
-\alias{package-simar}
-\alias{simar}
-\alias{simar-package}
-\title{simar is a framework for executing multi-run dynamic micro-simulations, including under different scenarios, and
+\name{simario}
+\alias{package-simario}
+\alias{simario}
+\alias{simario-package}
+\title{simario is a framework for executing multi-run dynamic micro-simulations, including under different scenarios, and
 taking measurements of the results.}
 \description{
   Each simulation establishes (via a parameter file) the

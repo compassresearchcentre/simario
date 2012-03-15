@@ -1,4 +1,4 @@
-# A simple demonstration model showing the features of simar.
+# A simple demonstration model showing the features of simario.
 # This demo simulates the disability state of a population of males and females. 
 # A disability state is either no disability, or mild, moderate or severe disability. 
 # The disability state of each individual influences their earning capacity, which is the key output of the model.
@@ -14,7 +14,7 @@ clearWorkspace <- function() {
 	
 	rmall(exceptions=c(".DEBUG",".USELIB"))
 	
-	if ("package:simar" %in% search()) detach("package:simar", unload = T)
+	if ("package:simario" %in% search()) detach("package:simario", unload = T)
 	
 	while("simframe" %in% search()) detach("simframe")
 }
@@ -94,25 +94,25 @@ loadTransitionProbabilities <- function(dir) {
 	transition_probabilities
 }
 
-loadSimar <- function() {
+loadSimario <- function() {
 	.devtools_installed <- length(find.package("devtools", quiet = T)) > 0
 	if (.devtools_installed & !exists(".USELIB")) {
-		cat("loadSimar: loading pre-installed development version using load_all\n")
+		cat("loadSimario: loading pre-installed development version using load_all\n")
 		
 		library(devtools)
-		load_all("simar", reset = T)
+		load_all("simario", reset = T)
 		
 		#workaround for devtools issue https://github.com/hadley/devtools/issues/38
 		Simenv$.super <- .GlobalEnv
 		Simmodule$.super <- .GlobalEnv
 	} else {
-		cat("loadSimar: loading installed library")
-		library(simar)
+		cat("loadSimario: loading installed library")
+		library(simario)
 	}
 }
 
-#setwd(file.path(Sys.getenv("R_USER"), "simar/src/demo/"))
-loadSimar()
+#setwd(file.path(Sys.getenv("R_USER"), "simario/src/demo/"))
+loadSimario()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
 source("Demo scenarios.R")

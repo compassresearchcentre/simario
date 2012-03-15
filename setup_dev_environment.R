@@ -31,8 +31,8 @@ test_dev_environment <- function() {
 	cat("R_USER (home) directory", Sys.getenv("R_USER"),"\n")
 	library(devtools)
 	
-	if(length(as.package("simar"))>1) {
-		cat("simar development environment setup OK\n")
+	if(length(as.package("simario"))>1) {
+		cat("simario development environment setup OK\n")
 	}	
 }
 

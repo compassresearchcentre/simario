@@ -55,7 +55,7 @@ read_csv <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 #' @export
 #' @examples 
 #' \dontrun{
-#' filedir <- "D:/workspace.sim/simar/demo"
+#' filedir <- "D:/workspace.sim/simario/demo"
 #' filename <- "Disability state transition probabilities.xlsx"
 #' filetype = file_extension(filename)
 #' read_file(filedir, filename, filetype)
