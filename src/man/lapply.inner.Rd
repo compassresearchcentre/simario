@@ -28,11 +28,11 @@
 }
 \examples{
 \dontrun{
-lol <- env.base$years6_13$runs$means
-lol <- env.base$years1_5$runs$means
-lol <- env.base$years1_5$runs$means
-lol <- env.base$years6_13$runs$summaries
-lol <- years1_5$runs$summaries
+lol <- env.base$years6_13$runstats$means
+lol <- env.base$years1_5$runstats$means
+lol <- env.base$years1_5$runstats$means
+lol <- env.base$years6_13$runstats$summaries
+lol <- years1_5$runstats$summaries
 lapply.inner(lol, mean.array.z)
 }
 }

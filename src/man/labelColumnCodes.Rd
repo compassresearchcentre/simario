@@ -26,10 +26,10 @@
 x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
 x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
 
-x <- env.base$modules$years1_5$runs.averaged$means$all.by.gender$kids
-x <- env.scenario$modules$years1_5$runs.averaged$means$all.by.gender$kids
-x <- env.base$modules$years1_5$runs.averaged$means$all$kids
-x <- env.base$modules$years1_5$runs.averaged$means$all.by.gender$gptotvis
+x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$kids
+x <- env.scenario$modules$years1_5$runstats.collated$means$all.by.gender$kids
+x <- env.base$modules$years1_5$runstats.collated$means$all$kids
+x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$gptotvis
 varname=attr(x, "meta")["grpby.tag"]
 dict <- dict.MELC
 labelColumnCodes(x, dict, varname)

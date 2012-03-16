@@ -27,7 +27,7 @@ Preserves names and meta attribute.}
   Preserves names and meta attribute.
 }
 \examples{
-#lol.mx <- .$runs$freqs$all.by.ethnicity$z1msmokeLvl1
+#lol.mx <- .$runstats$freqs$all.by.ethnicity$z1msmokeLvl1
 lol.mx <- structure(list(year1 = structure(list(`1` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), '2'= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = 1:2), year2 = structure(list(`1` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `2` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("1", "2"))))
 
 flatten.lolmx(lol.mx)
@@ -44,6 +44,9 @@ flatten.lolmx(lol.mx)
 1  31  32  33  34  35  36
 2  41  42  43  44  45  46
 }
+
+lol.mx <- structure(list(year1 = structure(list(`2` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), `10`= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10")), year2 = structure(list(`2` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `10` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10"))))
+flatten.lolmx(lol.mx)
 }
 \seealso{
   align.by.name.list.mx

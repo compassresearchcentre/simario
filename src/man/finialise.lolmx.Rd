@@ -1,14 +1,13 @@
 \name{finialise.lolmx}
 \alias{finialise.lolmx}
-\title{Prepare run runs.averaged for display by:
+\title{Prepare frequency runstats for display by:
  flattening into a 3D array
  calculate percentages
  remove zero category
- label columns
- and calculate mean across all matrices}
+ label columns}
 \usage{
   finialise.lolmx(lol.mx, dict, asPercentages = T,
-    removeZeroCategory = T, CI = F)
+    removeZeroCategory = T)
 }
 \arguments{
   \item{lol.mx}{a list of lists of matrices, eg: List of 2
@@ -26,35 +25,37 @@
   their grouping (if any)}
 
   \item{removeZeroCategory}{remove zero category}
-
-  \item{CI}{if TRUE, will produce confidence intervals on
-  the means}
 }
 \value{
-  a matrix of means
+  labelled and percentaged array, with z-dim = runs
 }
 \description{
-  Prepare run runs.averaged for display by: flattening into
-  a 3D array calculate percentages remove zero category
-  label columns and calculate mean across all matrices
+  Prepare frequency runstats for display by: flattening
+  into a 3D array calculate percentages remove zero
+  category label columns
 }
 \examples{
 \dontrun{
 varname = "z1singleLvl1" ; varname = "gptotvis"
-lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
-lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
+lol.mx <- env.base$modules[[1]]$runstats$freqs$all[[1]]
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
 
-lol.mx <- env.base$modules$years1_5$runs$freqs$all$sptype
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all$sptype
 
-lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$z1singleLvl1
-lol.mx <- env.scenario$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-lol.mx <- env.scenario$modules$years1_5$runs$cfreqs$gptotvis
+lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$z1singleLvl1
+lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+lol.mx <- env.scenario$modules$years1_5$runstats$cfreqs$houtptot
+lol.mx <- env.scenario$modules$years6_13$runstats$cfreqs[["cond"]]
+
+dict <- dict.MELC
+dict <- dict_demo
 
 asPercentages = T; removeZeroCategory = T; CI = F
 removeZeroCategory = F
 finialise.lolmx(lol.mx)
-finialise.lolmx(lol.mx, asPercentages, removeZeroCategory, CI)
+finialise.lolmx(lol.mx, dict, asPercentages, removeZeroCategory, CI)
 }
 }
 \seealso{

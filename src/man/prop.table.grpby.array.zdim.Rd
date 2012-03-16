@@ -23,19 +23,21 @@ exist in the rows of the matrices in the ZDIM of xa}
 }
 \examples{
 \dontrun{
-lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
-lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
 
-lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$sptype
+lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$sptype
+lol.mx <- env.scenario$modules$years1_5$runstats$cfreqs$houtptot
+
 xa <- flatten.lolmx(lol.mx)
 
 xa <- array(c(1:5, rep(0,5)), dim=c(5,1,2), dimnames=list(LETTERS[1:5],c("Col")))
 xa <- array(c(1:5, 9,8,7,6,5), dim=c(5,2,1), dimnames=list(LETTERS[1:5], c("Col 1", "Col 2")))
 
 xa <- lol.mx.array
-codings <- dict.MELC$codings
-prop.table.grpby.array.zdim(xa,codings)
+numgrps <- 1
+prop.table.grpby.array.zdim(xa, numgrps)
 }
 }
 

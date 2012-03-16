@@ -15,6 +15,6 @@
   Apply to a list using the names from the list
 }
 \examples{
-#cat(as.csv.string.list(t.runs.mean.cfreq.base))
+#cat(as.csv.string.list(t.runstats.mean.cfreq.base))
 }
 

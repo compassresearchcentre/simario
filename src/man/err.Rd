@@ -10,4 +10,9 @@
 \description{
   Calc the 95\% error from the t Distribution.
 }
+\examples{
+err(x=2)
+err(x=1:10)
+err(x=c(4,NA))
+}
 

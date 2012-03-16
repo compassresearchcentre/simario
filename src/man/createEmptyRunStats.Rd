@@ -1,8 +1,8 @@
-\name{createRunOutputs}
-\alias{createRunOutputs}
-\title{Creates a set of run outputs.}
+\name{createEmptyRunStats}
+\alias{createEmptyRunStats}
+\title{Creates an empty set of run stats.}
 \usage{
-  createRunOutputs(freqvars, cfreqvars, meanvars,
+  createEmptyRunStats(freqvars, cfreqvars, meanvars,
     freqs.args, means.args)
 }
 \arguments{
@@ -25,7 +25,7 @@
   straight.
 }
 \description{
-  Creates a set of run outputs.
+  Creates an empty set of run stats.
 }
 \examples{
 \dontrun{
@@ -41,7 +41,7 @@ freqs.args <- list( by.ethnicity = list(grpbycoding=codings$r1stchildethn) )
 means.args <- list(	all = list(), males = list(logiset=childsets$males),	females = list(logiset=childsets$females),pacific = list(logiset=childsets$pacific),	maori = list(logiset=childsets$maori))
 
 freqvars <- catvars
-runs <- createRunOutputs(catvars, convars, means.args, mean.grouped.spec)
+runstats <- createEmptyRunStats(catvars, convars, means.args, mean.grouped.spec)
 }
 }
 

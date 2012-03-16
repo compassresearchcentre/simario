@@ -22,7 +22,7 @@ list.}
 \examples{
 \dontrun{
 xlist <- env.base$years6_13$outcomes
-indices <- names(env.base$years6_13$runs$means$all)
+indices <- names(env.base$years6_13$runstats$means$all)
 summary.mx.list(xlist, indices)
 }
 }
