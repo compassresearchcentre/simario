@@ -95,8 +95,8 @@ loadTransitionProbabilities <- function(dir) {
 }
 
 loadSimario <- function() {
-	.devtools_installed <- length(find.package("devtools", quiet = T)) > 0
-	if (.devtools_installed & !exists(".USELIB")) {
+	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0 & file.exists(path.expand("~/.Rpackages"))
+	if (.is_dev_environment & !exists(".USELIB")) {
 		cat("loadSimario: loading pre-installed development version using load_all\n")
 		
 		library(devtools)
@@ -106,8 +106,9 @@ loadSimario <- function() {
 		Simenv$.super <- .GlobalEnv
 		Simmodule$.super <- .GlobalEnv
 	} else {
-		cat("loadSimario: loading installed library")
+		cat("loadSimario: loading installed library\n")
 		library(simario)
+		cat("simario v", sessionInfo()$otherPkgs$simario$Version, "loaded\n")
 	}
 }
 

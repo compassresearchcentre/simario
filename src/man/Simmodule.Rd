@@ -5,26 +5,26 @@
 \format{proto object 
  $ class          :function (.)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 216 11 216 33 18 40 216 216 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
  $ collateRunStats:function (., simenv)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 180 21 211 2 28 9 180 211 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
  $ outcomes       : list() 
  $ clone          :function (.)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 214 11 214 57 18 64 214 214 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
  $ name           : NULL 
  $ result         : list() 
  $ simulateRun    :function (., simenv)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 119 17 121 2 24 9 119 121 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
  $ new            :function (., name, freqvars, cfreqvars, meanvars, freqs.args,  
     means.args)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 77 9 107 2 16 9 77 107 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
  $ appendRunStats :function (.)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 135 20 165 2 27 9 135 165 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
  $ runstats       :List of 5}
 \usage{
   Simmodule
