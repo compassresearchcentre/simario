@@ -36,10 +36,10 @@
 \dontrun{
 xa <- lol.mx.array
 
-lol.mx <- env.base$modules$years1_5$runs$freqs$all$z1singleLvl1
-lol.mx <- env.scenario$modules$years1_5$runs$freqs$all$z1singleLvl1
-lol.mx <- env.base$modules$years1_5$runs$freqs$all.by.ethnicity$z1singleLvl1
-lol.mx <- env.base$modules$years1_5$runs$cfreqs$gptotvis
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1
+lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$z1singleLvl1
+lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
+lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
 xa <- flatten.lolmx(lol.mx)
 dict <- dict.MELC
 removeZeroCategory = F

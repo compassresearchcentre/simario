@@ -27,16 +27,16 @@
 \examples{
 \dontrun{
 X <- env.base$years1_5$outcomes
-indices <- names(env.base$years1_5$runs$cfreqs)
+indices <- names(env.base$years1_5$runstats$cfreqs)
 .FUN <- wtdtablecols
 
 X <- env.base$years6_13$outcomes
-indices <- names(env.base$years6_13$runs$means$all)
+indices <- names(env.base$years6_13$runstats$means$all)
 .FUN <- summary.mx
 
 
 #' lapply.subset(X, indices, .FUN, ...)
-results.list <-  runs$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); .FUN=table.grpby.mx.cols
+results.list <-  runstats$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); .FUN=table.grpby.mx.cols
 results <- lapply.subset (X, indices, .FUN, grpby.tag="r1stchildethn")
 
 

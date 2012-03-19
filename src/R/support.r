@@ -57,7 +57,7 @@ environment(assign_values) <- .GlobalEnv
 #' str(as.csv.string(x))
 #' length(as.csv.string(x))
 #' 
-#' #cat(as.csv.string(t.runs.mean.cfreq.prop.base$o.gpprev, "o.gpprev")) 
+#' #cat(as.csv.string(t.runstats.mean.cfreq.prop.base$o.gpprev, "o.gpprev")) 
 as.csv.string <- function(x, title = NULL, row.names = T) {
 	if (!(is.null(title))) title <- dQuote(title) 
 	
@@ -81,7 +81,7 @@ as.csv.string <- function(x, title = NULL, row.names = T) {
 #' 
 #' @export 
 #' @examples
-#' #cat(as.csv.string.list(t.runs.mean.cfreq.base))
+#' #cat(as.csv.string.list(t.runstats.mean.cfreq.base))
 as.csv.string.list <- function(xlist, row.names = T) {
 	mapply(function (x, name) {
 						as.csv.string(x,name, row.names = row.names)

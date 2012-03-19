@@ -39,15 +39,15 @@ colmeans.list <- function (xlistm) {
 #' @export
 #' @examples 
 #' \dontrun{
-#' xa <- env.base$years1_5$runs$means$all$gpmorb
-#' xa <- env.base$years6_13$runs$means$all$burt
-#' xa <- env.base$years1_5$runs$means$all.by.SESBTH.2cat$gpmorb
-#' xa <- years1_5$runs$means$all.by.gender$gptotvis
+#' xa <- env.base$years1_5$runstats$means$all$gpmorb
+#' xa <- env.base$years6_13$runstats$means$all$burt
+#' xa <- env.base$years1_5$runstats$means$all.by.SESBTH.2cat$gpmorb
+#' xa <- years1_5$runstats$means$all.by.gender$gptotvis
 #' 
-#' xa <- flatten.lolmx(env.scenario$modules$years6_13$runs$cfreqs[["cond"]])
+#' xa <- flatten.lolmx(env.scenario$modules$years6_13$runstats$cfreqs[["cond"]])
 #' 
-#' xa <- env.base$years1_5$runs$means$all.by.ethnicity$gptotvis
-#' xa <- env.base$years1_5$runs$means$all.by.gender$gptotvis
+#' xa <- env.base$years1_5$runstats$means$all.by.ethnicity$gptotvis
+#' xa <- env.base$years1_5$runstats$means$all.by.gender$gptotvis
 #' 
 #' result <- mean.array.z(xa)
 #' }
@@ -306,7 +306,7 @@ summary.mx <- function (mx) {
 #' @examples
 #' \dontrun{
 #' xlist <- env.base$years6_13$outcomes
-#' indices <- names(env.base$years6_13$runs$means$all)
+#' indices <- names(env.base$years6_13$runstats$means$all)
 #' summary.mx.list(xlist, indices)
 #' } 
 summary.mx.list <- function (xlist, indices) {

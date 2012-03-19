@@ -35,12 +35,12 @@ the parallel list lol.args and the function .FUN.}
 \examples{
 \dontrun{
 X <- outcomes_wtotals
-lol <- .$runs$means
+lol <- .$runstats$means
 lol.args <- attr(lol, "args.list")
 .FUN <- wtdmeancols
 
 X <- env.base$years1_5$outcomes
-lol <- env.base$years1_5$runs$means
+lol <- env.base$years1_5$runstats$means
 lol.args <- attr(lol, "args.list")
 .FUN <- wtdmeancols.lbl
 

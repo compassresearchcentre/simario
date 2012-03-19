@@ -1,4 +1,4 @@
-#' simar is a framework for executing multi-run dynamic micro-simulations, including under different scenarios, and 
+#' simario is a framework for executing multi-run dynamic micro-simulations, including under different scenarios, and 
 #' taking measurements of the results.
 #' 
 #' Each simulation establishes (via a parameter file) the set of variables (the simframe) used 
@@ -28,8 +28,8 @@
 #' Final results can be displayed in tables or graphs, and can be compared across scenarios.
 #' 
 #' @docType package
-#' @name simar
-#' @aliases simar package-simar
+#' @name simario
+#' @aliases simario package-simario
 #' @import abind plyr xlsx proto
 NULL
 

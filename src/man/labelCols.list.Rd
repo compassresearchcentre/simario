@@ -1,6 +1,7 @@
 \name{labelCols.list}
 \alias{labelCols.list}
-\title{Set the colnames on each object in a list.}
+\title{Set the colnames on each object in a list. By default
+will only set if no exiting colnames (see onlyIfNull param).}
 \usage{
   labelCols.list(xlist, xlabels = names(xlist),
     onlyIfNull = TRUE)
@@ -16,12 +17,14 @@
   the xlist item has no existing colnames}
 }
 \description{
-  Set the colnames on each object in a list.
+  Set the colnames on each object in a list. By default
+  will only set if no exiting colnames (see onlyIfNull
+  param).
 }
 \examples{
 \dontrun{
-xlist <- env.base$years1_5$runs.averaged$means$all
-xlist <- runs.averaged$means$all
+xlist <- env.base$years1_5$runstats.collated$means$all
+xlist <- runstats.collated$means$all
 x <- xlist$gptotvis
 labelCols.list(xlist, "Mean")
 }

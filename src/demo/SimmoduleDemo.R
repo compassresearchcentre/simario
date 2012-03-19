@@ -11,6 +11,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' @param simframe
 	#' 
 	#' @examples 
+	#' . <- SimmoduleDemo
 	#' simframe <- simframe.master
 	#' SimmoduleDemo$new(simframe) 
 	new <- function(., simframe) {
@@ -30,8 +31,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				females = list(logiset=people_sets$females),
 				all.by.gender = list(grpby=people$sex, grpby.tag="sex")
 		)
-		
-		.super$new(., "Demo", catvars, convars, convars, freqs.spec, mean.spec)
+		#note: the . argument is SimmoduleDemo
+		.super$new(., name="Demo", freqvars=catvars, cfreqvars=convars, meanvars=convars, 
+				freqs.args=freqs.spec, means.args=mean.spec)
 	}
 	
 	#' Simulate outcomes.

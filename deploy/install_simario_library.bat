@@ -1,6 +1,8 @@
-@REM Installs simar library using R CMD install. Automatically locates R via the registry.
+@REM Installs simario library using R CMD install. Automatically locates R via the registry.
 @echo off
-set SIMAR_FILE_NAME=simar*.tar.gz
+set SIMARIO_FILE_NAME=simario*.tar.gz
+@REM Clearing R_USER environment variable to prevent Windows 7 attempting to install to Program Files.
+set R_USER=
 
 goto START
 
@@ -8,20 +10,20 @@ goto START
 echo.
 echo Usage:
 echo.
-echo %0 simar_path
+echo %0 simario_path
 echo.
-echo   simar_path         path to a folder containing a single file with the name  
-echo                      %SIMAR_FILE_NAME%. Defaults to the current directory.
+echo   simario_path         path to a folder containing a single file with the name  
+echo                      %SIMARIO_FILE_NAME%. Defaults to the current directory.
 pause
 exit /b 1
 
 :START
 
-if [%1]==[] set SIMAR_FOLDER="%CD%"
-if not [%1]==[] set SIMAR_FOLDER=%1
-set SIMAR_PATH=%SIMAR_FOLDER%\%SIMAR_FILE_NAME%
+if [%1]==[] set SIMARIO_FOLDER="%CD%"
+if not [%1]==[] set SIMARIO_FOLDER=%1
+set SIMARIO_PATH=%SIMARIO_FOLDER%\%SIMARIO_FILE_NAME%
 
-if not exist %SIMAR_PATH% (echo simar not found in %SIMAR_PATH% & goto USAGE)
+if not exist %SIMARIO_PATH% (echo simario not found in %SIMARIO_PATH% & goto USAGE)
 
 call :set_R_bin_dir
 if [%R_DIR%]==[] exit /b 1
@@ -29,7 +31,7 @@ if [%R_DIR%]==[] exit /b 1
 set R_EXE=%R_DIR%\R.exe
 if not exist %R_EXE% (echo Cannot find %R_EXE% & pause & exit /b 1)
 
-for %%s in (%SIMAR_PATH%) do (
+for %%s in (%SIMARIO_PATH%) do (
 echo Installing %%s
 %R_EXE% CMD INSTALL "%%s"
 )

@@ -22,7 +22,6 @@ expr = {
 	num_runs_simulated <- 0L		
 	simframe <- NULL
 	presim.stats <- list()
-	cat.adjustments <- list()
 	modules <- list()
 	dict <- NULL
 
@@ -34,7 +33,7 @@ expr = {
 	#'     Year 1             NA         NA
 	#'     Year 2             NA         NA
 	#' attr(,"varnames")
-	#' [1] "z1homeownLvl0" "z1homeownLvl1"
+	#' [1] "z1msmokeLvl0" "z1msmokeLvl1"
 	#' 
 	#' The values in the first row are used to make adjustments before the simulation begins.
 	#' Values in subsequent rows can be used during the simulation to set the required proportion
@@ -291,7 +290,7 @@ expr = {
 			invisible(lapply(.$modules, function(module) module$appendRunStats()))
 		}
 		
-		invisible(lapply(.$modules, function(module) module$calcFinalResults(simenv=.)))
+		invisible(lapply(.$modules, function(module) module$collateRunStats(simenv=.)))
 
 		end_time <- proc.time()
 		

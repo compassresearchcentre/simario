@@ -24,9 +24,9 @@ runScenario1 <- function() {
 	
 	# output
 	cat("Disability state: year 1\n")
-	print(stripMeta(env.scenario$modules$demo$runs.averaged$freqs$all$disability_state[1,]))
+	print(stripMeta(env.scenario$modules$demo$runstats.collated$freqs$all$disability_state[1,]))
 	cat("Disability state: year 50\n")
-	print(stripMeta(env.scenario$modules$demo$runs.averaged$freqs$all$disability_state[50,]))
+	print(stripMeta(env.scenario$modules$demo$runstats.collated$freqs$all$disability_state[50,]))
 	
 	#print(env.scenario$presim.stats$SESBTH)
 	

@@ -36,13 +36,13 @@ an existing list.}
 \examples{
 \dontrun{
 X <- env.base$years6_13$outcomes
-results.list <- env.base$years6_13$runs$summaries
+results.list <- env.base$years6_13$runstats$summaries
 lapply.subset.append (results.list, X, .FUN=summary.mx)
 
 X <- env.base$years1_5$outcomes
-lol <- env.base$years1_5$runs$cfreqs
+lol <- env.base$years1_5$runstats$cfreqs
 
-lol <- env.base$years6_13$runs$summaries
+lol <- env.base$years6_13$runstats$summaries
 X <- env.base$years6_13$outcomes
 
 X <- outcomes
@@ -53,17 +53,17 @@ lapply.subset.append (lol, X, simplify = FALSE, .FUN=wtdtablecols)
 
 lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset)
 
-results.list <- runs$freqs$all; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
-lapply.subset.append (runs$freqs$all, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
+results.list <- runstats$freqs$all; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
+lapply.subset.append (runstats$freqs$all, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
 
-results.list <- runs$cfreqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=wtdtablecols
-lapply.subset.append (runs$cfreqs, outcomes, simplify = FALSE, .FUN=wtdtablecols, wgts=outcomes[[wgtsname]])
+results.list <- runstats$cfreqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=wtdtablecols
+lapply.subset.append (runstats$cfreqs, outcomes, simplify = FALSE, .FUN=wtdtablecols, wgts=outcomes[[wgtsname]])
 
-results.list <- runs$summaries; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=quantile.mx
-lapply.subset.append (runs$summaries, outcomes, .FUN=quantile.mx, probs=seq(0.2,1,0.2))
+results.list <- runstats$summaries; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=quantile.mx
+lapply.subset.append (runstats$summaries, outcomes, .FUN=quantile.mx, probs=seq(0.2,1,0.2))
 
-results.list <-  runs$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
-lapply.subset.append (runs$freqs$all.by.ethnicity, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
+results.list <-  runstats$freqs$all.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
+lapply.subset.append (runstats$freqs$all.by.ethnicity, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
 
 results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = wtdmeancols.lbl2
 lapply.subset.append (results.list, X, indices, simplify, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)

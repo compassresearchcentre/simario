@@ -3,29 +3,29 @@
 \alias{Simmodule}
 \title{Simulation module object.}
 \format{proto object 
- $ runs            :List of 5 
- $ class           :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 210 11 210 33 18 40 210 210 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x071aa59c>  
- $ outcomes        : list() 
- $ clone           :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 208 11 208 57 18 64 208 208 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x071aa59c>  
- $ name            : NULL 
- $ result          : list() 
- $ calcFinalResults:function (., simenv)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 180 22 205 2 29 9 180 205 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x071aa59c>  
- $ simulateRun     :function (., simenv)   
+ $ class          :function (.)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 216 11 216 33 18 40 216 216 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+ $ collateRunStats:function (., simenv)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 180 21 211 2 28 9 180 211 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+ $ outcomes       : list() 
+ $ clone          :function (.)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 214 11 214 57 18 64 214 214 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+ $ name           : NULL 
+ $ result         : list() 
+ $ simulateRun    :function (., simenv)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 119 17 121 2 24 9 119 121 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x071aa59c>  
- $ new             :function (., name, freqvars, cfreqvars, meanvars, freqs.args,  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+ $ new            :function (., name, freqvars, cfreqvars, meanvars, freqs.args,  
     means.args)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 77 9 107 2 16 9 77 107 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x071aa59c>  
- $ appendRunStats  :function (.)   
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+ $ appendRunStats :function (.)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 135 20 165 2 27 9 135 165 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x071aa59c>}
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x00000000113915b0>  
+ $ runstats       :List of 5}
 \usage{
   Simmodule
 }
@@ -58,7 +58,7 @@
   summary), or a matrix (eg: 2 way table).
 
   Run stats are averaged across multiple runs by
-  calcFinalResults to get a final simulation result.
+  collateRunStats to get a final simulation result.
 }
 \keyword{datasets}
 
