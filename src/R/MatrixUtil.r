@@ -668,7 +668,34 @@ redim.mx <- function(mx, newrows, newcols, dim.names) {
 	structure(result, meta = attr(mx, "meta"))
 }
 
-#' Identify columns will all NAs, then remove
+#' Remove cols that contain all zeros.
+#' 
+#' @param mx
+#'  matrix
+#' @export
+#' @examples
+#' mx <- matrix(c(1:4, 0, 0), nrow=2)
+#' remove.zero.cols(mx)
+remove.zero.cols <- function(mx) {
+	col.is.non.zero <- !(colSums(mx) == 0)
+	structure(mx[, col.is.non.zero, drop = FALSE], meta=attr(mx,"meta"))
+}
+
+#' Remove rows that contain all zeros.
+#' 
+#' @param mx
+#'  matrix
+#' @export
+#' @examples
+#' mx <- matrix(c(1:3, 0, 0, 0), nrow=2, byrow = TRUE)
+#' remove.zero.rows(mx)
+remove.zero.rows <- function(mx) {
+	row.is.non.zero <- !(rowSums(mx) == 0)
+	structure(mx[row.is.non.zero, , drop = FALSE], meta=attr(mx,"meta"))
+}
+
+
+#' Remove columns that contain all NAs.
 #' 
 #' @param mx
 #'  matrix
@@ -678,7 +705,7 @@ redim.mx <- function(mx, newrows, newcols, dim.names) {
 #' remove.NA.cols(mx)
 remove.NA.cols <- function(mx) {
 	col.is.na <- colSums(is.na(mx)) == nrow(mx)
-	structure(mx[,!col.is.na], meta=attr(mx,"meta"))
+	structure(mx[,!col.is.na, drop = FALSE], meta=attr(mx,"meta"))
 }
 
 #' Remove cols by name.
