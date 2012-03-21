@@ -97,6 +97,7 @@ loadTransitionProbabilities <- function(dir) {
 loadSimario <- function() {
 	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0 & file.exists(path.expand("~/.Rpackages"))
 	if (.is_dev_environment & !exists(".USELIB")) {
+		#loads simario from the workspace folder (the R folder - simar/src/R))
 		cat("loadSimario: loading pre-installed development version using load_all\n")
 		
 		library(devtools)
@@ -106,6 +107,7 @@ loadSimario <- function() {
 		Simenv$.super <- .GlobalEnv
 		Simmodule$.super <- .GlobalEnv
 	} else {
+		#loads simario from a preexisting (on computer) R library folder - like C:/Program Files/R/R-2.14.1/library/simario
 		cat("loadSimario: loading installed library\n")
 		library(simario)
 		cat("simario v", sessionInfo()$otherPkgs$simario$Version, "loaded\n")

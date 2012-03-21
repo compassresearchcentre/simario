@@ -283,6 +283,7 @@ expr = {
 
 			.$num_runs_simulated <- .$num_runs_simulated + 1
 
+			#applying simulateRun to all modules (may only be one module)
 			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
 								module$outcomes <- module$simulateRun(simenv=.)  ))
 			

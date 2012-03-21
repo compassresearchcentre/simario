@@ -8,7 +8,9 @@
 runScenario1 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 1")
 	
-	env.scenario$simframe$disability_state <- sample(1:4, size=1000, replace=T)
+	#this is a work around to make the modifyprops function work
+	#modifyprops needs one of each category to work
+	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 997))
 	
 	# test changes at the beginning of the simulation
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)

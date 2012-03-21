@@ -162,7 +162,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 	outcomeSet <- outcome_vars[with(outcome_vars, 
 					(is.null(outcome_module_name) | Outcome_module %in% outcome_module_name)
 							& (is.null(outcome_type_select) | Outcome_type %in% outcome_type_select )),]
-	
+	#just saving the variable names of the rows of "outcome_vars" that we want/ have selected above
 	setVars <- outcomeSet$Varname
 	names(setVars) <- outcomeSet$Varname
 	if (sorted)	setVars <- setVars[sort(names(setVars))]
