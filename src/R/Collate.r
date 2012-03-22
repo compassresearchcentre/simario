@@ -240,7 +240,7 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 	
 }
 
-cfreqs_collator <- function (runs, dict) { 
+confreqs_collator <- function (runs, dict) { 
 	runs_f <- finialise.lolmx(runs, dict = dict, removeZeroCategory = FALSE)
 	mean.array.z(runs_f, CI=F)  
 }

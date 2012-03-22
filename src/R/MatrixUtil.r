@@ -288,10 +288,11 @@ dimnames_prepend_header <- function(mx) {
 	structure(mx, dimnames = list(new.row.names, new.col.names))
 }
 
-#' Takes a list of lists of matrices and converts to array, by:
-#'  flattens each matrix in a single row,
-#'  aligns then single rows within each list, then combines the rows into a single matrix per list
-#'  then aligns each single matrix and combines them in the z dimension of an array 
+#' Convert a list of lists of matrices to an array, as follows:
+#'  flatten each matrix into a single row,
+#'  align the single rows within each list, then combine the rows into a single matrix per list
+#'  align each single matrix and combine them into the z dimension of an array
+#'  
 #' Preserves names and meta attribute.
 #' 
 #' @param lol.mx
