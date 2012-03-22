@@ -76,11 +76,6 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 		
 		store_current_values_in_outcomes <- function(iteration) {
-			#first outcomes is a new version of second outcoes which only
-					#exists in the outer function
-					#first outcomes would have just defined internally within
-					#store_current_values_in_outcomes, except that we have used
-					#the double arrow to define it externally
 			outcomes <<- lapply(outcomes, function(x) {
 						x[,iteration] <- get(attr(x,"varname"));x 
 					}) 
@@ -170,6 +165,77 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		detach("simframe")
 		outcomes
 		
+	}
+	
+	#' 
+	#' @return 
+	#'  a list of run results. Each element E1 of run results is a list and is the set of results for a given 
+	#'  operation. In turn, each element of E1 may be a list, matrix or vector and is the result for
+	#'  the operation applied to an outcome variable (ie: an element in outcomes). eg:
+	#'  result
+	#'  result$freqs$disability_state (list)  
+	#'  result$freqs$num_children (list)
+	#'  result$means$earnings (matrix)
+	#'  result$quantiles$earnings (matrix)
+	#' @examples
+	#'  . <- env.base$modules$demo
+	#'  outcomes <- .$outcomes
+	map_outcomes_to_run_results <- function(., outcomes) {
+		
+		cat(gettextf("Generating run results for %s\n", .$name))
+		
+		catvars <- getOutcomeVars(simframe.master, "categorical", "demo")
+		convars <- getOutcomeVars(simframe.master, "continuous", "demo")
+		
+		# add additional "all years" row totals to continuous vars
+		outcomes_wtotals <- lapply(outcomes[convars], function(x) {
+						#x <- outcomes[[convars[1]]] 
+					structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
+				})
+		
+		run_results <- list()
+		
+		run_results$confreqs <- lapply(outcomes_wtotals[convars], table.grpby.mx.cols)
+		run_results$freqs <- lapply(outcomes[catvars], table.grpby.mx.cols)
+		run_results$freqs_males <- lapply(outcomes[catvars], table.grpby.mx.cols, logiset=people_sets$males)
+		run_results$freqs_females <- lapply(outcomes[catvars], table.grpby.mx.cols, logiset=people_sets$females)
+		run_results$freqs_by_sex <- lapply(outcomes[catvars], table.grpby.mx.cols, grpby=people$sex, grpby.tag="sex")
+		run_results$means <- lapply(outcomes_wtotals[convars], wtdmeancols)
+		run_results$means_males <- lapply(outcomes_wtotals[convars], wtdmeancols, logiset=people_sets$males)
+		run_results$means_females <- lapply(outcomes_wtotals[convars], wtdmeancols, logiset=people_sets$females)
+		run_results$means_by_sex <- lapply(outcomes_wtotals[convars], wtdmeancols, grpby=people$sex, grpby.tag="sex")
+		run_results$summaries <- lapply(outcomes_wtotals[convars], summary.mx)
+		run_results$quantiles <- lapply(outcomes_wtotals[convars], quantile.mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
+		
+		run_results 
+	}
+	
+	#' Collates (ie: reduces) all run results to averaged values and labels collated results.
+	#' 
+	#' . <- env.base$modules$demo
+	#' all_run_results <- .$run_results
+	collate_all_run_results <- function(., all_run_results) {
+		cat(gettextf("Collating all run results for %s\n", .$name))
+		
+		all_run_results_zipped <- lzip(all_run_results)
+		all_run_results_zipped <- lapply(all_run_results_zipped, lzip)
+	
+		collated_results <- list()
+		
+		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, confreqs_collator, dict = dict_demo)
+		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, histogram_collator, dict = dict_demo)
+		collated_results$freqs <- lapply(all_run_results_zipped$freqs, freqs_collator, dict = dict_demo)
+		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, freqs_collator, dict = dict_demo)
+		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, freqs_collator, dict = dict_demo)
+		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, freqs_collator, dict = dict_demo)
+		collated_results$means <- lapply(all_run_results_zipped$means, means_collator, dict = dict_demo)
+		collated_results$means_males <- lapply(all_run_results_zipped$means_males, means_collator, dict = dict_demo)
+		collated_results$means_females <- lapply(all_run_results_zipped$means_females, means_collator, dict = dict_demo)
+		collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, means_collator, dict = dict_demo)
+		collated_results$summaries <- lapply(all_run_results_zipped$summaries, basic_collator)
+		collated_results$quantiles <- lapply(all_run_results_zipped$quantiles, basic_collator)
+	
+		collated_results
 	}
 	
 })

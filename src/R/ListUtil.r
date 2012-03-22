@@ -219,22 +219,95 @@ lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
 			})
 }
 
+
+#' Takes a list of lists, and combines the corresponding elements of each list
+#' into a result list of lists. The first list of the result contain the first elements
+#' of the source lists, the second list of the result contains the second elements
+#' of the sources lists, and so on.
+#' 
+#' eg: str(lol)
+#' List of 2
+#'  $ A:List of 3
+#'   ..$ A1: chr "a1"
+#'   ..$ A2: chr "a2"
+#'   ..$ A3: chr "a3"
+#'  $ B:List of 3
+#'   ..$ B1: chr "b1"
+#'   ..$ B2: chr "b2"
+#'   ..$ B3: chr "b3"
+#' 
+#' The result of zip is:
+#' 
+#' List of 3
+#'  $ A1:List of 2
+#'   ..$ A: chr "a1"
+#'   ..$ B: chr "b1"
+#'  $ A2:List of 2
+#'   ..$ A: chr "a2"
+#'   ..$ B: chr "b2"
+#'  $ A3:List of 2
+#'   ..$ A: chr "a3"
+#'   ..$ B: chr "b3"
+#'
+#' zip is the same as the Lisp operation zip:
+#' 
+#' (zip '(a1 a2 a3) 
+#' 		'(b1 b2 b3)
+#' 		=> ((a1 b1) (a2 b2) (a3 b3))
+#'  
+#' @param lol
+#'  list of lists. Each inner list should have the same number of elements
+#' @return
+#'  the corresponding elements of lol combined
+#' 
+#' @export
+#' @examples
+#' lol <- list(A=list("A1"="a1","A2"="a2","A3"="a3"),B=list("B1"="b1","B2"="b2","B3"="b3"))
+#' lol.zipped <- lzip(lol)			
+#' lol.zip.list <- lisp::zip.list(lol$A, lol$B)                 # same as lol.zipped but without names on outer & inner elements
+#' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = F) 		# same as lol.zipped but only has names on outer elements
+#' lol.2d <- mapply(list, lol$A, lol$B) 						# creates 2D list [2,3]
+#' lol.2ds <- split(lol.2d, col(lol.2d))						# same as lol.zip.list
+#' lol.zwn <- lisp::zip.with.names(lol$A, lol$B)				# same as lol.zipped but only has names on inner elements
+lzip <- function(lol) {
+	lzipper(lol, c)
+}
+
 #' Takes a list of lists, and applies a function to 
 #' the combination of each inner element from each outer list.
 #' 
 #' eg: str(lol)
 #' List of 2
-#' $ A:List of 3
-#' ..$ 1: 'table' int [1:2(1d)] 721 354
-#' ..$ 2: 'table' int [1:2(1d)] 748 327
-#' ..$ 3: 'table' int [1:2(1d)] 756 319
-#' $ B:List of 3
-#' ..$ 1: 'table' int [1:2(1d)] 721 354
-#' ..$ 2: 'table' int [1:2(1d)] 736 339
-#' ..$ 3: 'table' int [1:2(1d)] 739 336
+#'  $ A:List of 3
+#'   ..$ A1: chr "a1"
+#'   ..$ A2: chr "a2"
+#'   ..$ A3: chr "a3"
+#'  $ B:List of 3
+#'   ..$ B1: chr "b1"
+#'   ..$ B2: chr "b2"
+#'   ..$ B3: chr "b3"
 #' 
 #' .FUN is supplied the elements A1,B1 and then called again with A2,B2, and then A3,B3
 #' 
+#' The result of zipper(lol, c) is:
+#' 
+#' List of 3
+#'  $ A1:List of 2
+#'   ..$ A: chr "a1"
+#'   ..$ B: chr "b1"
+#'  $ A2:List of 2
+#'   ..$ A: chr "a2"
+#'   ..$ B: chr "b2"
+#'  $ A3:List of 2
+#'   ..$ A: chr "a3"
+#'   ..$ B: chr "b3"
+#'
+#' zipper(lol, c) is the same as the Lisp operation zip:
+#' 
+#' (zip '(a1 a2 a3) 
+#' 		'(b1 b2 b3)
+#' 		=> ((a1 b1) (a2 b2) (a3 b3))
+#'  
 #' @param lol
 #'  list of lists. Each inner list should have the same number of elements
 #' @param .FUN
@@ -243,28 +316,26 @@ lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
 #'  additional arguments to .FUN
 #' @return
 #'  a list of the results from applying .FUN to each combination
-#' 
-#' eg:
-#' List of 3
-#' $ 1: 'table' int [1:2(1d)] 721 354
-#' $ 2: 'table' int [1:2(1d)] 748 327
-#' $ 3: 'table' int [1:2(1d)] 756 319
 #'  
 #' @export
 #' @examples
-#' \dontrun{
-#' lol <- env.base$years1_5$runstats$freqs$all2$z1msmokeLvl1 
-#' lol <- env.base$years1_5$runstats$freqs$all3$z1msmokeLvl1
-#' lol <- list.var.run.mx[[1]]
-#' lol <- list.var.run.mx$typeofchange
-#' lol.c <- lapply.inner.combination(lol, .FUN=mean_list_mx)
-#' } 
-lapply.inner.combination <- function (lol, .FUN, ...)  {
+#' lol <- list(A=list("A1"="a1","A2"="a2","A3"="a3"),B=list("B1"="b1","B2"="b2","B3"="b3"))
+#' lol.zipped <- lzipper(lol, c)			
+#' lol.zip.list <- lisp::zip.list(lol$A, lol$B)                 # same as lol.zipped but without names on outer & inner elements
+#' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = F) 		# same as lol.zipped but only has names on outer elements
+#' lol.2d <- mapply(list, lol$A, lol$B) 						# creates 2D list [2,3]
+#' lol.2ds <- split(lol.2d, col(lol.2d))						# same as lol.zip.list
+#' lol.zwn <- lisp::zip.with.names(lol$A, lol$B)				# same as lol.zipped but only has names on inner elements
+lzipper <- function (lol, .FUN, ...)  {
+	#NB: can be implemented with mapply when no inner element names needed 
 	
 	# create indices to iterate through
 	# set names so output has those names
 	indices <- seq(length(lol[[1]]))
 	names(indices) <- names(lol[[1]]) 
+	
+	# NB: see lisp::zip.with.names for a recursive implemention of the lapply below 
+	# (which also keeps inner element names)
 	
 	# for each element j in indices, i.e. lol[[1]]
 	lapply(indices, function (j) {
@@ -282,6 +353,7 @@ lapply.inner.combination <- function (lol, .FUN, ...)  {
 			})
 	
 }
+
 
 #' Executes .FUN on the specified varnames in X and return the results as a list.
 #' 
@@ -326,6 +398,34 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 	} else {
 		lapply(X[indices], .FUN, ...)
 	}
+}
+
+#' Call lapply with a list of arguments to FUN specified as the parameter FUN.args.
+#' 
+#' @param X
+#'  a vector (atomic or list) or an expression object. Other objects (including classed objects) will be coerced by base::as.list.
+#' @param FUN 
+#'  the function to be applied to each element of xlist
+#' @param FUN.args
+#'  a named list of arguments to be suppplied to FUN when executed on each element of xlist
+#' 
+#' @examples
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
+#' grpby <- c('M','F','F','M')
+#' logiset <- c(FALSE, TRUE, FALSE, TRUE)
+#' result <- table.grpby.mx.cols(mx, grpby = grpby, logiset = logiset)
+#' 
+#' X <- list(mx=mx)
+#' FUN <- table.grpby.mx.cols
+#' FUN.args <- list(grpby = grpby, logiset = logiset)
+#' result2 <- lapply.args.as.list(X, FUN, FUN.args)
+#' all.equal(result2[[1]], result)
+lapply.args.as.list <- function (X, FUN, FUN.args) {
+	do.call(lapply,
+			args=c(list(
+						X=X,
+						FUN=FUN)
+					,FUN.args))
 }
 
 #' Execute a function over a subset of a list, and merges the results into

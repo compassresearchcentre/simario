@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-#' Prepare frequency runstats for display by:
+#' Prepare frequency runs for display by:
 #'  flattening into a 3D array
 #'  calculate percentages
 #'  remove zero category
@@ -104,8 +104,10 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 #' x <- env.scenario$modules$years1_5$runstats.collated$means$all.by.gender$kids
 #' x <- env.base$modules$years1_5$runstats.collated$means$all$kids
 #' x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$gptotvis
+#' x <- runstat_f
 #' varname=attr(x, "meta")["grpby.tag"]
 #' dict <- dict.MELC
+#' dict <- dict_demo
 #' labelColumnCodes(x, dict, varname)
 #' }
 labelColumnCodes <- function(x, dict, varname) {
@@ -238,4 +240,31 @@ prop.table.grpby.array.zdim <- function (xa, numgrps) {
 	
 }
 
+cfreqs_collator <- function (runs, dict) { 
+	runs_f <- finialise.lolmx(runs, dict = dict, removeZeroCategory = FALSE)
+	mean.array.z(runs_f, CI=F)  
+}
 
+freqs_collator <- function(runs, dict) { 
+	runs_f <- finialise.lolmx(runs, dict = dict)
+	mean.array.z(runs_f, CI=F) 
+}
+
+histogram_collator <- function(runs, dict) { 
+	runs_f <- finialise.lolmx(runs, dict = dict, asPercentages = F, removeZeroCategory = FALSE) 
+	mean.array.z(runs_f) 
+}
+
+means_collator <- function(runs, dict) {
+	#runs <- all_run_results_zipped$means_by_sex[[1]]
+	runs_array <- as.arrayListmx(runs)
+	runs_array_mean <- mean.array.z(runs_array) 
+	runs_array_mean_labelled <- labelColumnCodes(runs_array_mean, dict, attr(runs_array_mean, "meta")["grpby.tag"])
+	if (is.null(colnames(runs_array_mean_labelled))) colnames(runs_array_mean_labelled) <- "Mean"
+	runs_array_mean_labelled
+}
+
+basic_collator <- function(runs) {
+	runs_array <- as.arrayListmx(runs)
+	mean.array.z(runs_array)
+}

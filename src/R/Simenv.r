@@ -279,6 +279,7 @@ expr = {
 		}
 		
 		for (i in 1:total_runs) {
+			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 
 			.$num_runs_simulated <- .$num_runs_simulated + 1
@@ -288,10 +289,24 @@ expr = {
 								module$outcomes <- module$simulateRun(simenv=.)  ))
 			
 			invisible(lapply(.$modules, function(module) module$appendRunStats()))
+			
+			invisible(lapply(.$modules, function(module) {
+								#module <- .$modules[[1]]
+								run_results <- module$map_outcomes_to_run_results(module$outcomes)
+								module$run_results <- c(module$run_results, list(run_results))
+								names(module$run_results)[i] <- paste("run", i, sep="")
+							}))
 		}
 		
 		invisible(lapply(.$modules, function(module) module$collateRunStats(simenv=.)))
+		
+		invisible(lapply(.$modules, function(module) {
+							module$run_results_collated <- module$collate_all_run_results(module$run_results)
+						}))
 
+		# call garbage collector to release memory used during calculation (sometimes this is a lot)
+		gc()
+		
 		end_time <- proc.time()
 		
 		return(end_time - start_time)

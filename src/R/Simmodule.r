@@ -101,6 +101,7 @@ expr = {
 		proto(.,
 				name=name,
 				outcomes=list(),
+				run_results=list(),
 				runstats=runstats,
 				runstats.collated=list()
 		)
@@ -145,7 +146,6 @@ expr = {
 					structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
 				})
 		
-
 		.$runstats$cfreqs <- lapply.subset.append (.$runstats$cfreqs, outcomes_wtotals, simplify = FALSE, .FUN=table.grpby.mx.cols)
 		
 		.$runstats$freqs <- lapply.subset.append.lol.args(.$outcomes, .$runstats$freqs, simplify = FALSE, .FUN=table.grpby.mx.cols)
