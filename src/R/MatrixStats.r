@@ -23,18 +23,20 @@ colmeans.list <- function (xlistm) {
 	)
 }
 
-#' Mean across Z dimension of a 3D array.
-#' Preserves meta atrribute.
+#' Mean across Z dimension of a 3D array. Each row and column cell is
+#' averaged across the Z dimension.
 #' 
 #' @param xa
 #'  an array with a Z dimension
 #' @param CI
-#'  if TRUE, lower and upper confidence intervals are also returned
+#'  if TRUE and xa has more than 1 Z dimension, lower and upper confidence intervals 
+#'  are returned in additional columns
 #' @param NA.as.zero
 #'  if TRUE (default), treat NAs as if they are zeros
 #' 
 #' @return
-#'  a matrix of means across the Z dimension
+#'  a matrix of means across the Z dimension. The "meta" attribute
+#'  of xa, if any, is retained.
 #' 
 #' @export
 #' @examples 
@@ -55,23 +57,23 @@ mean.array.z <- function (xa, CI = TRUE, NA.as.zero = T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
 	result <- apply(xa, c(ROW,COL), mean)
-	numRuns <- dim(xa)[ZDIM]
+	numZ <- dim(xa)[ZDIM]
 	
-	# CIs only make sense if more than 1 run
-	if (CI && numRuns > 1) {
+	# CIs only make sense if more than 1 Z dim
+	if (CI && numZ > 1) {
 		
 		#calculate error of each row
-		errRuns <- apply(xa,c(ROW,COL),err)
+		errZ <- apply(xa,c(ROW,COL),err)
 		
 		#calculate left CI
-		leftRuns <- result - errRuns
+		leftZ <- result - errZ
 		
 		#calculate right CI
-		rightRuns <- result + errRuns
+		rightZ <- result + errZ
 		
-		#add left and right runs to the right hand side of result
+		#add left and right Z to the right hand side of result
 		resultCI <- cbind(Mean=result,  
-				Lower=leftRuns, Upper=rightRuns)
+				Lower=leftZ, Upper=rightZ)
 		#dimnames(result)[[2]] <- c("Mean", "Lower", "Upper")
 		
 		# reorder so that lower and upper is next to the mean of each grouping
@@ -319,27 +321,23 @@ summary.mx.list <- function (xlist, indices) {
 #'  vector of values which can be interpreted as factors 
 #' @param grpby
 #'  elements to group by, or NULL to do no grouping
+#'  Same length as the columns of mx.
+#' 
 #' @param useNA
 #'  whether to include extra NA levels in the table.
 #'  one of c("no", "ifany", "always"). Defaults to "ifany".
 #' 
 #' @return
-#'  a table. If grpby is specified this will be a 2D table
+#'  a table. If grpby is specified this will be a table
 #'  with columns that are the group by and rows the categories. 
-#'  If grpby = NULL then a 2D table with 1 column and rows as categories.
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
 #' @examples
 #' 
-#' #x <- env.base$years1_5$outcomes$z1accomLvl1[,1]
-#' #grpby <- env.base$years1_5$outcomes$z1gender
-#' #grpby.tag <- "z1gender"
-#' 
-#' 
 #' x <- rep(0,1075)
 #' x <- c(8,8,2,1,1,8)
 #' grpby <- c('M','M','F','F','F','F')
-#' grpby.tag <- "gender"
 #' 
 #' table.grpby(x)
 #' table.grpby(x, grpby)
@@ -357,13 +355,14 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 	}
 }
 
-#' Executes table.grpby on the cols of a matrix.
+#' Generates a frequency table, with option to group by, for each column of a matrix.
 #' 
 #' @param mx
-#'  matrix
+#'  matrix, or dataframe
 #' 
 #' @param grpby
-#'  a vector of elements to group by, or NULL or unspecified to do no grouping
+#'  a vector of elements to group by, or NULL or unspecified to do no grouping.
+#'  Same length as the columns of mx.
 #' 
 #' @param grpby.tag
 #'  a character vector. If specified this value with be attached as the
@@ -377,32 +376,18 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #'  one of c("no", "ifany", "always"). Defaults to "ifany".
 #' 
 #' @return
-#'  list, each element of the list represents a year, 
-#'  each element is a 2D matrix where columns are the group by
-#'  and rows the categories. If grpby = NULL then 
-#'  a 1D matrix with columns as categories is returned.
+#'  list. Each element of the list is a frequency table for a column in mx.
+#'  If grpby is specified this will be a table with columns that are the group by and rows the categories. 
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #'
 #' @export 
 #' @examples
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' grpby <- c('M','F','F','M')
+#' table.grpby.mx.cols(mx)
 #' table.grpby.mx.cols(mx, grpby)
 #' logiset <- c(FALSE, TRUE, FALSE, TRUE)
 #' table.grpby.mx.cols(mx, grpby = grpby, logiset = logiset)
-#' 
-#' \dontrun{
-#' mx <- env.base$years1_5$outcomes$z1accomLvl1
-#' grpby <- env.base$years1_5$outcomes$z1gender
-#' r1 <- table.grpby.mx.cols(mx, grpby)
-#'  
-#' mx <- outcomes[[1]]
-#' grpby=children$r1stchildethn ; grpby.tag="r1stchildethn"
-#' r2 <- table.grpby.mx.cols(mx, grpby, grpby.tag)
-#' 
-#' mx <- env.base$modules$years1_5$outcomes$z1kidsLvl1
-#' grpby = NULL
-#' r3 <- table.grpby.mx.cols(mx)
-#' }
 table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, useNA = "ifany") {
 	
 	# subset
@@ -419,12 +404,6 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 	# each element of the list represents a column, 
 	# each element is a matrix where columns are the group by
 	# and rows the categories
-	
-	#use alply instead of apply because apply simplifies
-	#results.by.col <- alply(mx, COL, function (x) {
-	#			# x <- mx[,1]
-	#			table.grpby(x,grpby,grpby.tag)
-	#		})
 	
 	#use lapply instead of apply because apply simplifies
 	#use lapply instead of alply so we don't have the split attributes
@@ -443,23 +422,24 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 
 
 #' Calculates the weighted mean for each column of the matrix
-#' optionally subsetting first and grouping by another (equal length) variable.
+#' optionally subsetting and grouping by another (equal length) variable.
 #' 
 #' @param mx
 #'  matrix or dataframe to calculate column means of 
 #'  
+#' @param grpby
+#'  elements to group by, or NULL or unspecified to do no grouping. 
+#'  Same length as the columns of mx.
+#' 
+#' @param grpby.tag
+#'  added to meta attribute of the result
+#'
 #' @param logiset
 #'  logical vector indicating which observations to include, or NULL to include all.
 #'
 #' @param wgts
-#'  elemets to weight by, or NULL to do no weighting
-#'
-#' @param grpby
-#'  elements to group by, or NULL or unspecified to do no grouping
-#' 
-#' @param grpby.tag
-#'  added to meta attribute of the result
-#' 
+#'  elements to weight by, or NULL to do no weighting
+#'  
 #' @param na.rm
 #'  logical. Should missing values be removed?  
 #' 
@@ -469,24 +449,6 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 #' 
 #' @export
 #' @examples
-#' \dontrun{
-#' 	mx <- children$o.gptotvis
-#' 	wgts <- children$weight
-#' 	by <- children$z1gender
-#' 
-#' wtdmeancols(children$o.gptotvis, children$weight, children$z1gender)
-#' wtdmeancols(children$o.gptotvis, children$weight)
-#' 
-#' mx <- xframeset[[varname]]
-#' wgts <- xframeset[[wgtsname]]
-#' na.rm = T
-#' wtdmeancols(mx)
-#' wtdmeancols(mx,wgts, grpby)
-#'
-#' mx <- env.base$modules$years1_5$outcomes$gptotvis ; logiset = childsets$males
-#' mx <- X[[1]]; logiset=lol.a$logiset; wgts = NULL; grpby = NULL; grpby.tag = NULL
-#' 
-#' }
 #' mx <- matrix (c(1:10), ncol = 2)
 #' mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) ; logiset=NULL
 #' grpby = NULL
@@ -494,10 +456,8 @@ table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NU
 #' wgts = rep(1, nrow(mx))
 #' na.rm = FALSE ; na.rm = TRUE
 #' 
-#' 
 #' wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
-#' 
-wtdmeancols <- function (mx, logiset=NULL, wgts = NULL, grpby=NULL, grpby.tag = NULL, na.rm = F) {
+wtdmeancols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts = NULL, na.rm = F) {
 	
 	if (is.null(wgts)) wgts <- rep(1, nrow(mx))  #can't make this default param for some reason need to set here
 	
