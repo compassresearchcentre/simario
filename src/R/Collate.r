@@ -34,17 +34,17 @@
 #' @examples
 #' \dontrun{
 #' varname = "z1singleLvl1" ; varname = "gptotvis"
-#' lol.mx <- env.base$modules[[1]]$runstats$freqs$all[[1]]
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
+#' lol.mx <- env.base$modules[[1]]$run_results$freqs[[1]]
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$run_results$confreqs$gptotvis
 #'
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$sptype
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs$sptype
 #'  
-#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$z1singleLvl1 
-#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.scenario$modules$years1_5$runstats$cfreqs$houtptot
-#' lol.mx <- env.scenario$modules$years6_13$runstats$cfreqs[["cond"]]
+#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs$z1singleLvl1 
+#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
+#' lol.mx <- env.scenario$modules$years1_5$run_results$confreqs$houtptot
+#' lol.mx <- env.scenario$modules$years6_13$run_results$confreqs[["cond"]]
 #' 
 #' dict <- dict.MELC
 #' dict <- dict_demo
@@ -100,10 +100,10 @@ finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory 
 #' x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
 #' x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
 #' 
-#' x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$kids
-#' x <- env.scenario$modules$years1_5$runstats.collated$means$all.by.gender$kids
-#' x <- env.base$modules$years1_5$runstats.collated$means$all$kids
-#' x <- env.base$modules$years1_5$runstats.collated$means$all.by.gender$gptotvis
+#' x <- env.base$modules$years1_5$run_results_collated$means_by_gender$kids
+#' x <- env.scenario$modules$years1_5$run_results_collated$means_by_gender$kids
+#' x <- env.base$modules$years1_5$run_results_collated$means$kids
+#' x <- env.base$modules$years1_5$run_results_collated$means_by_gender$gptotvis
 #' x <- runstat_f
 #' varname=attr(x, "meta")["grpby.tag"]
 #' dict <- dict.MELC
@@ -158,10 +158,10 @@ labelColumnCodes <- function(x, dict, varname) {
 #' \dontrun{
 #' xa <- lol.mx.array
 #' 
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1  
-#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$z1singleLvl1 
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs$z1singleLvl1  
+#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs$z1singleLvl1 
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$run_results$confreqs$gptotvis
 #' xa <- flatten.lolmx(lol.mx) 
 #' dict <- dict.MELC
 #' removeZeroCategory = F
@@ -204,12 +204,12 @@ labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"
 #'  xa as proportions
 #' @examples
 #' \dontrun{
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all$z1singleLvl1 
-#' lol.mx <- env.base$modules$years1_5$runstats$freqs$all.by.ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$runstats$cfreqs$gptotvis
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs$z1singleLvl1 
+#' lol.mx <- env.base$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
+#' lol.mx <- env.base$modules$years1_5$run_results$confreqs$gptotvis
 #' 
-#' lol.mx <- env.scenario$modules$years1_5$runstats$freqs$all$sptype
-#' lol.mx <- env.scenario$modules$years1_5$runstats$cfreqs$houtptot
+#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs$sptype
+#' lol.mx <- env.scenario$modules$years1_5$run_results$confreqs$houtptot
 #' 
 #' xa <- flatten.lolmx(lol.mx)
 #' 

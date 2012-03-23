@@ -18,18 +18,24 @@ library(proto)
 #' @export 
 Simenv <- proto(
 expr = {  
-	name <- NULL
-	num_runs_simulated <- 0L		
-	simframe <- NULL
-	presim.stats <- list()
-	modules <- list()
-	dict <- NULL
 
+	#' Create new simenv object
+	#' 
+	#' @param name
+	#'  simulation name
+	#' 
+	#' @param simframe
+	#'  simframe
+	#' 
+	#' @param dict
+	#'  a Dictionary object
+	#' 
+	#' @param cat.adjustments
 	#' Categorical variable adjustment matrices.
 	#' 
 	#' Each element is an adjustment matrix:
 	#' 
-    #'            Non-smoker (%) Smoker (%)
+	#'            Non-smoker (%) Smoker (%)
 	#'     Year 1             NA         NA
 	#'     Year 2             NA         NA
 	#' attr(,"varnames")
@@ -39,21 +45,12 @@ expr = {
 	#' Values in subsequent rows can be used during the simulation to set the required proportion
 	#' during the specified iteration (eg: iteration 2 if a value is specified in Year 2).
 	#' The variables in the simframe to adjust are specified by the varnames attribute.
-	cat.adjustments <- list()
-			
-	modules <- list()
-
-	#' Create new simenv object
 	#' 
-	#' @param name
-	#'  simulation name
-	#' @param simframe
-	#'  simframe
-	#' @param cat.adjustments
-	#'  categorical adjustments
+	#' @param modules
+	#'  the list of Simmodules for this Simenv
 	#' 
 	#' @examples
-	#' env <- Simenv$new(name = "Base", simframe=simframe.master)
+	#' env <- Simenv$new(name = "Base", simframe=simframe.master, dict=dict_demo)
 	new <- function (., name, simframe, dict, cat.adjustments=list(), modules=list()) {
 		proto(.,
 				name=name,
@@ -284,12 +281,11 @@ expr = {
 
 			.$num_runs_simulated <- .$num_runs_simulated + 1
 
-			#applying simulateRun to all modules (may only be one module)
+			#execute simulateRun on all modules (may only be one module)
 			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
 								module$outcomes <- module$simulateRun(simenv=.)  ))
 			
-			invisible(lapply(.$modules, function(module) module$appendRunStats()))
-			
+			#execute map_outcomes_to_run_results on all modules and store run results
 			invisible(lapply(.$modules, function(module) {
 								#module <- .$modules[[1]]
 								run_results <- module$map_outcomes_to_run_results(module$outcomes)
@@ -297,8 +293,6 @@ expr = {
 								names(module$run_results)[i] <- paste("run", i, sep="")
 							}))
 		}
-		
-		invisible(lapply(.$modules, function(module) module$collateRunStats(simenv=.)))
 		
 		invisible(lapply(.$modules, function(module) {
 							module$run_results_collated <- module$collate_all_run_results(module$run_results)
