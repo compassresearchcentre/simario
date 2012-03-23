@@ -5,64 +5,6 @@
 # Author: Oliver Mannion
 ###############################################################################
 
-#' Creates an empty set of run stats. 
-#' 
-#' @param freqvars
-#' 			frequency variable names, or NULL
-#' @param cfreqvars
-#' 			continuous frequency variable names, or NULL
-#' @param meanvars
-#' 			mean variable names, or NULL
-#' @param freqs.args
-#' 			frequency variable args, or NULL
-#' @param means.args
-#' 			mean variable args, or NULL
-#' @return
-#'  	list(freq = freq, cfreq = cfreq, mean.sets = mean.sets, mean.grouped = mean.grouped)
-#' 		each element of the list is a list of empty catvar or convar elements, either grouped
-#' 		into sets (mean.grouped and mean.sets) or listed straight.
-#' 
-#' @examples 
-#' \dontrun{
-#' catvars <- NULL
-#' convars <- NULL
-#' means.args <- NULL
-#' mean.grouped.spec <- NULL
-#'  
-#' catvars <- c("msmoke", "fsmoke", "single", "kids", "householdsize", "welfare", "mhrswrk", "fhrswrk", "accom", "homeown", "bedrooms",	"chpar", "chres")
-#' convars <- c("gptotvis", "hadmtot", "houtptot", "gpresp", "gpmorb", "gpprev")
-#' 
-#' freqs.args <- list( by.ethnicity = list(grpbycoding=codings$r1stchildethn) )
-#' means.args <- list(	all = list(), males = list(logiset=childsets$males),	females = list(logiset=childsets$females),pacific = list(logiset=childsets$pacific),	maori = list(logiset=childsets$maori))
-#' 
-#' freqvars <- catvars
-#' runstats <- createEmptyRunStats(catvars, convars, means.args, mean.grouped.spec)
-#' }
-createEmptyRunStats <- function(freqvars, cfreqvars, meanvars, freqs.args, means.args) {
-	# Frequency tables for categorical variables
-	freqslist <- namedList(freqvars)
-	
-	# Frequency tables for continuous variables
-	cfreqs <- namedList(cfreqvars)
-	
-	# Mean tables for continuous variables
-	meanslist <- namedList(meanvars)
-	
-	freqs <- lapply(freqs.args, function(x) freqslist)
-	attr(freqs, "args.list") <- freqs.args
-	
-	means <- lapply(means.args, function(x) meanslist)
-	attr(means, "args.list") <- means.args
-	
-	list(freqs = freqs, 
-			cfreqs = cfreqs, 
-			means = means, 
-			summaries = meanslist,
-			quantiles = meanslist
-	)
-	
-}
-
 #' Loads and merges a CSV/XLS file with the supplied values (keys). ie:
 #' returns a dataframe (excluding key_column_name) for the supplied 
 #' values that exist in key_column_name of the file 
@@ -99,7 +41,7 @@ loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
 #' @param result.row
 #'  a result row, ie: a vector with values named Mean and Lower eg:
 #' 
-#'>  envs$`Scenario 1`$years1_5$runstats.collated$means$all$kids["Total",]
+#'>  envs$`Scenario 1`$years1_5$run_results_collated$means$kids["Total",]
 #'     Mean    Lower    Upper 
 #' 10.99488 10.62256 11.36721 
 #' 
@@ -116,7 +58,7 @@ loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
 #' @examples
 #' \dontrun{
 #' 
-#' result.row <- envs$`Scenario 1`$years1_5$runstats.collated$means$all$kids["Total",]
+#' result.row <- envs$`Scenario 1`$years1_5$run_results_collated$means$kids["Total",]
 #' \dontrun{
 #' > result.row
 #'     Mean    Lower    Upper 
@@ -135,10 +77,10 @@ loadMergedFile <- function(filedir, filename, key_column_name, selected_keys) {
 #' result.row <- c("0%"=5,"20%"=5,"40%"=9,"60%"=11,"80%"=15,"100%"=50)
 #' result.row <- structure(c(5, 5, 5, 5, 5, 5, 9, 9, 9, 11, 11, 11, 15, 15, 15,50.5, 6.02828342338857, 94.9717165766114), .Names = c("0% Mean","0% Lower", "0% Upper", "20% Mean", "20% Lower", "20% Upper","40% Mean", "40% Lower", "40% Upper", "60% Mean", "60% Lower","60% Upper", "80% Mean", "80% Lower", "80% Upper", "100% Mean","100% Lower", "100% Upper"))
 #' 
-#' result.row <- env.base$modules$years1_5$runstats.collated$quantiles$kids["All Years",]
-#' result.row <- env.scenario$modules$years1_5$runstats.collated$quantiles$kids["All Years",]
-#' result.row <- env.scenario$modules$years1_5$runstats.collated$means$all$kids["All Years",]
-#' result.row <- na.omit(env.scenario$modules$years6_13$runstats.collated$histo[["cond"]]["All Years",])
+#' result.row <- env.base$modules$years1_5$run_results_collated$quantiles$kids["All Years",]
+#' result.row <- env.scenario$modules$years1_5$run_results_collated$quantiles$kids["All Years",]
+#' result.row <- env.scenario$modules$years1_5$run_results_collated$means$kids["All Years",]
+#' result.row <- na.omit(env.scenario$modules$years6_13$run_results_collated$histogram[["cond"]]["All Years",])
 #' 
 #' result.as.means.and.errs(result.row.scenario)
 #' 

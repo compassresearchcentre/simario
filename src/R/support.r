@@ -56,8 +56,6 @@ environment(assign_values) <- .GlobalEnv
 #' cat(as.csv.string(x,"title"))	#title <- "title"
 #' str(as.csv.string(x))
 #' length(as.csv.string(x))
-#' 
-#' #cat(as.csv.string(t.runstats.mean.cfreq.prop.base$o.gpprev, "o.gpprev")) 
 as.csv.string <- function(x, title = NULL, row.names = T) {
 	if (!(is.null(title))) title <- dQuote(title) 
 	
@@ -80,8 +78,6 @@ as.csv.string <- function(x, title = NULL, row.names = T) {
 #'  or a character vector of row names to be written
 #' 
 #' @export 
-#' @examples
-#' #cat(as.csv.string.list(t.runstats.mean.cfreq.base))
 as.csv.string.list <- function(xlist, row.names = T) {
 	mapply(function (x, name) {
 						as.csv.string(x,name, row.names = row.names)

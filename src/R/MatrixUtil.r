@@ -242,7 +242,6 @@ as.arrayListmx <- function(listmx) {
 #' 
 #' @export 
 #' @examples
-#'  #xlist <- runstats.mean.cfreq$gpmorb
 #' 
 #'  xlist <- list(a=c("1st"=1,"2nd"=2, "3rd"=3), b=c(11:13))
 #' 
@@ -311,7 +310,7 @@ dimnames_prepend_header <- function(mx) {
 #' @export
 #' @examples
 #'  
-#' #lol.mx <- .$runstats$freqs$all.by.ethnicity$z1msmokeLvl1
+#' #lol.mx <- .$run_results$freqs.by.ethnicity$z1msmokeLvl1
 #' lol.mx <- structure(list(year1 = structure(list(`1` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), '2'= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = 1:2), year2 = structure(list(`1` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `2` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("1", "2"))))
 #' 
 #' flatten.lolmx(lol.mx)
@@ -531,7 +530,6 @@ merge_list_mx.by.cols <- function(...) {
 #' [3,] NA NA 17 NA 31 41
 #' }
 #' # Another example:	
-#' #xlistm <- runstats.all.cfreq$gpmorb
 #' xlistm <- list(first=matrix(1:6, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))), second=matrix(11:16, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))))
 #' merge_list_mx.by.rows(xlistm)
 merge_list_mx.by.rows <- function(...) {
