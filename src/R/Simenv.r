@@ -279,8 +279,6 @@ expr = {
 			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 
-			.$num_runs_simulated <- .$num_runs_simulated + 1
-
 			#execute simulateRun on all modules (may only be one module)
 			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
 								module$outcomes <- module$simulateRun(simenv=.)  ))
@@ -292,6 +290,8 @@ expr = {
 								module$run_results <- c(module$run_results, list(run_results))
 								names(module$run_results)[i] <- paste("run", i, sep="")
 							}))
+			
+			.$num_runs_simulated <- .$num_runs_simulated + 1
 		}
 		
 		invisible(lapply(.$modules, function(module) {
