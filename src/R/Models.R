@@ -4,16 +4,17 @@
 ###############################################################################
 
 
-#' Create a generalized linear model
-#' from a model dataframe that contains the model variables
-#' and their coefficients
+#' Create a generalized linear model from a model dataframe that contains 
+#' the model variables and their coefficients. The model variables specified
+#' here should be present in the simframe.
+#' 
 #' NB: the variable "_Alpha" will not be added to the model formula
 #'     but will be added as the model component m.glm$alpha 
 #' NB: the variable "_sd" will not be added to the model formula
 #'     but will be added as the model component m.glm$sd 
 #' 
 #' @param modeldf
-#'  model dataframe containing the rows:
+#'  model dataframe containing the cols (in any order):
 #' "Variable" = variable name. can be an expression like MAGE*MAGE
 #' "ClassVal0" = variable level. If present is appended to the variable name, eg: MAGELvl1
 #' "Estimate" = variable coeffient
@@ -22,6 +23,10 @@
 #' 
 #' #m.glm <- createGLM(modeldf) 
 createGLM <- function (modeldf) {
+	
+	if (!"Variable" %in% names(modeldf)) stop ("Model must contain a column named 'Variable'")
+	if (!"ClassVal0" %in% names(modeldf)) stop ("Model must contain a column named 'ClassVal0'")
+	if (!"Estimate" %in% names(modeldf)) stop ("Model must contain a column named 'Estimate'")
 	
 	#extract model components from dataframe
 	varnames <- modeldf$Variable
@@ -84,14 +89,16 @@ createGLM <- function (modeldf) {
 }
 
 #' Load and create a GLM from the first sheet in an xlsx file.
+#' See \code{\link{createGLM}} for file format.
 #'
 #' @param filedir
 #'  file directory, ending with "/", eg: "d:/workspace/"
 #' @param filename
-#'  file name, eg: "myfile.xls"
+#'  file name, eg: "myfile.xls". See \code{\link{createGLM}} for file format.
 #' @return 
 #'  a glm model object
-#' 
+#'
+#' @seealso See \code{\link{createGLM}} for file format.
 #' @export
 #' @examples
 #' \dontrun{
@@ -109,7 +116,8 @@ loadGLMXLS <- function (filedir, filename) {
 }
 
 #' Load and create a GLM from a csv file.
-#'
+#' See \code{\link{createGLM}} for file format.
+#' 
 #' @param filedir
 #'  file directory, ending with "/", eg: "d:/workspace/"
 #' @param filename
@@ -117,6 +125,7 @@ loadGLMXLS <- function (filedir, filename) {
 #' @return 
 #'  a glm model object
 #' 
+#' @seealso See \code{\link{createGLM}} for file format.
 #' @export 
 #' @examples
 #' \dontrun{
