@@ -111,7 +111,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		for (iteration in 1:NUM_ITERATIONS) {
 			#iteration = 1
-			cat("Run", simenv$num_runs_simulated, "year", iteration, "\n")
+			cat("Run", simenv$num_runs_simulated+1, "year", iteration, "\n")
 
 			store_current_values_in_previous()
 			
