@@ -31,7 +31,7 @@ mergeAndRemoveKeyColumn <- function(df, key_column_name, selected_keys) {
 	merged <- df[selected_indices,] 
 	
 	rownames(merged) <- merged[[key_column_name]]
-	remove.cols(merged, key_column_name)
+	remove.cols.named(merged, key_column_name)
 }
 
 #' Remove rows specified by indices
