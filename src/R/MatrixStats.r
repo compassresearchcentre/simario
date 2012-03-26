@@ -46,7 +46,7 @@ colmeans.list <- function (xlistm) {
 #' xa <- env.base$years1_5$runstats$means$all.by.SESBTH.2cat$gpmorb
 #' xa <- years1_5$runstats$means$all.by.gender$gptotvis
 #' 
-#' xa <- flatten.lolmx(env.scenario$modules$years6_13$run_results$confreqs[["cond"]])
+#' xa <- flatten_mxlists_to_array(env.scenario$modules$years6_13$run_results$confreqs[["cond"]])
 #' 
 #' xa <- env.base$years1_5$runstats$means$all.by.ethnicity$gptotvis
 #' xa <- env.base$years1_5$runstats$means$all.by.gender$gptotvis

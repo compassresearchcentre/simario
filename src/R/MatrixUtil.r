@@ -215,8 +215,8 @@ as.arrayFromList <- function (mylist) {
 #' @export 
 #' @examples
 #'  listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
-#'  as.arrayListmx(listmx)
-as.arrayListmx <- function(listmx) {
+#'  as_array_list_mx(listmx)
+as_array_list_mx <- function(listmx) {
 	
 	rows <- nrow(listmx[[1]]) ; rnames <- rownames(listmx[[1]])
 	cols <- ncol(listmx[[1]]) ; cnames <- colnames(listmx[[1]])
@@ -313,7 +313,7 @@ dimnames_prepend_header <- function(mx) {
 #' #lol.mx <- .$run_results$freqs.by.ethnicity$z1msmokeLvl1
 #' lol.mx <- structure(list(year1 = structure(list(`1` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), '2'= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = 1:2), year2 = structure(list(`1` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `2` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("1", "2"))))
 #' 
-#' flatten.lolmx(lol.mx)
+#' flatten_mxlists_to_array(lol.mx)
 #' \dontrun{
 #' , , year1
 #' 
@@ -329,17 +329,17 @@ dimnames_prepend_header <- function(mx) {
 #' }
 #' 
 #' lol.mx <- structure(list(year1 = structure(list(`2` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), `10`= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10")), year2 = structure(list(`2` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `10` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10"))))
-#' flatten.lolmx(lol.mx)
-flatten.lolmx <- function(lol.mx) {
+#' flatten_mxlists_to_array(lol.mx)
+flatten_mxlists_to_array <- function(lol.mx) {
 	
 	# flatten each matrix into a single row then align and return each list of matrices as a single matrix
-	lol.mx.flat <- lapply(lol.mx, flatten.listmx)
+	lol.mx.flat <- lapply(lol.mx, flatten_mxs_to_single_mx)
 	
 	# align matrices
 	lol.mx.flat.aligned <- align.by.name.list.mx(lol.mx.flat)
 	
 	# combine into an array, with each matrix in the z dimension
-	lol.mx.flat.aligned.array <- as.arrayListmx (lol.mx.flat.aligned)
+	lol.mx.flat.aligned.array <- as_array_list_mx (lol.mx.flat.aligned)
 	
 	# return with meta from first list of matrices
 	structure(lol.mx.flat.aligned.array, meta=attr(lol.mx[[1]], "meta"))
@@ -361,11 +361,11 @@ flatten.lolmx <- function(lol.mx) {
 #' @export
 #' @examples
 #'  listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
-#' flatten.listmx(listmx)
-flatten.listmx <- function(listmx) {
+#'  flatten_mxs_to_single_mx(listmx)
+flatten_mxs_to_single_mx <- function(listmx) {
 	
 	# flatten each matrix into a single row 
-	listmx.flat  <- lapply(listmx, flatten.mx) 
+	listmx.flat  <- lapply(listmx, flatten_mx_to_row) 
 	
 	# align each row matrix 
 	listmx.flat.aligned <- align.by.name.list.mx(listmx.flat)
@@ -421,8 +421,8 @@ flatten.listmx <- function(listmx) {
 #' # vector
 #' mx <- c("a"=1,"b"=2,"c"=3)
 #' 
-#' flatten.mx(mx)
-flatten.mx <- function (mx, row.names.first = FALSE) {
+#' flatten_mx_to_row(mx)
+flatten_mx_to_row <- function (mx, row.names.first = FALSE) {
 	# if already vector, return as single row matrix
 	if (is.vector(mx)) {
 		return ( matrix(mx, nrow=1, dimnames= list(NULL, names(mx))) )
