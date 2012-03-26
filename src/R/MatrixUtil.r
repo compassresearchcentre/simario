@@ -693,6 +693,27 @@ remove.zero.rows <- function(mx) {
 	structure(mx[row.is.non.zero, , drop = FALSE], meta=attr(mx,"meta"))
 }
 
+#' Remove cols specified by indices.
+#' 
+#' @param mx
+#'  matrix
+#' @param indices
+#'  indices to remove. If indices is length zero, then mx is return as is.
+#' @return 
+#'  the matrix mx with columns removed. Names and any "meta" attribute preserved.
+#'  Always returns a matrix.
+#' 
+#' @export
+#' @examples
+#'  mx <- matrix(1:3, nrow=1, dimnames=list(NULL, c("A","B","C")))
+#'  indices <- c(1,3)
+#'  indices <- vector(mode="integer")
+#'  remove.cols(mx, indices)
+remove.cols <- function(mx, indices) {
+	if (length(indices)==0) return(mx)
+	structure(mx[, -indices, drop=FALSE], meta=c(attr(mx, "meta")))
+}
+
 
 #' Remove columns that contain all NAs.
 #' 
@@ -720,10 +741,10 @@ remove.NA.cols <- function(mx) {
 #' x <- matrix(1:4, dimnames=list(NULL, c("A","NA (%)")), nrow = 2)
 #' x <- matrix(1:4, dimnames=list(NULL, c("A","B")), nrow = 2)
 #' cnames <- "NA (%)"
-#' remove.cols(x, cnames)
+#' remove.cols.named(x, cnames)
 #' data(mtcars); x <- cars; cnames <- "dist"
-#' remove.cols(x, cnames)
-remove.cols <- function(x, cnames) {
+#' remove.cols.named(x, cnames)
+remove.cols.named <- function(x, cnames) {
 	matched <- match(cnames, colnames(x))
 	if (is.na(matched)) {
 		x
@@ -744,8 +765,8 @@ remove.cols <- function(x, cnames) {
 #' mx <- matrix(1:4, dimnames=list(c("A","NA (%)"), NULL), nrow = 2)
 #' mx <- matrix(1:4, dimnames=list(c("A","B"), NULL), nrow = 2)
 #' rnames <- "NA (%)"
-#' remove.rows(mx, rnames)
-remove.rows <- function(mx, rnames) {
+#' remove.rows.named(mx, rnames)
+remove.rows.named <- function(mx, rnames) {
 	matched <- match(rnames, rownames(mx))
 	if (is.na(matched)) {
 		mx
