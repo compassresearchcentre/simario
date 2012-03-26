@@ -208,18 +208,18 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	
 		collated_results <- list()
 		
-		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, confreqs_collator, dict = dict_demo)
-		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, histogram_collator, dict = dict_demo)
-		collated_results$freqs <- lapply(all_run_results_zipped$freqs, freqs_collator, dict = dict_demo)
-		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, freqs_collator, dict = dict_demo)
-		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, freqs_collator, dict = dict_demo)
-		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, freqs_collator, dict = dict_demo)
-		collated_results$means <- lapply(all_run_results_zipped$means, means_collator, dict = dict_demo)
-		collated_results$means_males <- lapply(all_run_results_zipped$means_males, means_collator, dict = dict_demo)
-		collated_results$means_females <- lapply(all_run_results_zipped$means_females, means_collator, dict = dict_demo)
-		collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, means_collator, dict = dict_demo)
-		collated_results$summaries <- lapply(all_run_results_zipped$summaries, basic_collator)
-		collated_results$quantiles <- lapply(all_run_results_zipped$quantiles, basic_collator)
+		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_confreqs, dict = dict_demo)
+		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
+		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs, dict = dict_demo)
+		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs, dict = dict_demo)
+		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs, dict = dict_demo)
+		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs, dict = dict_demo)
+		collated_results$means <- lapply(all_run_results_zipped$means, collator_means, dict = dict_demo)
+		collated_results$means_males <- lapply(all_run_results_zipped$means_males, collator_means, dict = dict_demo)
+		collated_results$means_females <- lapply(all_run_results_zipped$means_females, collator_means, dict = dict_demo)
+		collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, collator_means, dict = dict_demo)
+		collated_results$summaries <- lapply(all_run_results_zipped$summaries, collator_list_mx)
+		collated_results$quantiles <- lapply(all_run_results_zipped$quantiles, collator_list_mx)
 	
 		collated_results
 	}

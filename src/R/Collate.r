@@ -1,84 +1,95 @@
-# Functions related to collation of run stats.
+# Functions related to collation of run results.
 # 
 # Author: oman002
 ###############################################################################
 
 
-#' Prepare frequency runs for display by:
-#'  flattening into a 3D array
-#'  calculate percentages
-#'  remove zero category
-#'  label columns
+#' @examples
+#' runs <- all_run_results_zipped$confreqs[[1]]
+#' dict <- dict_demo
+#' collator_confreqs(runs, dict_demo)
+collator_confreqs <- function (runs, dict, row.dim.label="Year", col.dim.label="") {
+	runs_mx <- collator_mutiple_lists_mx(runs, CI=F)
+	
+	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+	percentages_flattened_mx(runs_mx, dict)
+}
+
+#' @examples
+#' runs <- all_run_results_zipped$freqs[[1]]
+#' runs <- all_run_results_zipped$freqs_by_sex[[1]]
+#' collator_freqs(runs, dict_demo)
+collator_freqs <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
+	runs_mx <- collator_mutiple_lists_mx(runs, CI=F)
+	
+	zero_cat_cols <- identify_zero_category_cols(runs_mx)
+	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+	runs_mx <- percentages_flattened_mx(runs_mx, dict)
+	remove.cols(runs_mx, zero_cat_cols)
+}
+
+collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
+	runs_mx <- collator_mutiple_lists_mx(runs)
+	
+	label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label) 
+}
+
+#' @examples
+#' runs <- all_run_results_zipped$means_by_sex[[1]]
+#' collator_means(runs, dict)
+collator_means <- function(runs, dict) {
+	runs_mx <- collator_list_mx(runs)
+	
+	runs_mx_labelled <- labelColumnCodes(runs_mx, dict, attr(runs_mx, "meta")["grpby.tag"])
+	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
+	runs_mx_labelled
+}
+
+collator_list_mx <- function(runs) {
+	runs_array <- as_array_list_mx(runs)
+	mean.array.z(runs_array)
+}
+
+collator_mutiple_lists_mx <- function(runs, CI=T) {
+	runs_array <- flatten_mxlists_to_array(runs)
+	runs_mx <- mean.array.z(runs_array, CI=CI)
+}
+
+
+#' Identify and return the indices of columns that 
+#' are for the zero category. Zero category column
+#' names begin with a "0" or, for flatten column 
+#' names, contain " 0". 
 #' 
-#' @param lol.mx
-#'  a list of lists of matrices, eg:
-#'  List of 2
-#'  $ year1:List of 2
-#'  ..$ 1: 'table' int [1:2, 1:3] 1 2 3 4 5 6
-#'  ..$ 2: 'table' int [1:2, 1:3] 21 22 23 24 25 26
-#'  $ year2:List of 2
-#'  ..$ 1: 'table' int [1:2, 1:3] 31 32 33 34 35 36
-#'  ..$ 2: 'table' int [1:2, 1:3] 41 42 43 44 45 46
-#' 
-#'  NB: matrices can have different dimensions and are aligned first within a list, and then between the lists.
-#'  @seealso align.by.name.list.mx
-#' @param dict
-#'  Dictionary object instance
-#' @param asPercentages
-#'  convert values to percentages of their grouping (if any)
-#' @param removeZeroCategory 
-#'  remove zero category
+#' @param mx
+#'  matrix with column names
 #' @return
-#'  labelled and percentaged array, with z-dim = runs
+#'  vector of zero column positions
+#' 
+#' @example
+#'  mx <- matrix(1:3, nrow=1, dimnames=list(NULL, c("1","2","3")))
+#'  mx <- matrix(1:3, nrow=1, dimnames=list(NULL, c("0","1","2")))
+#'  mx <- matrix(1:4, nrow=1, dimnames=list(NULL, c("1 0","1 1","2 0", "2 1")))
+#'  identify_zero_category_cols(mx)
+identify_zero_category_cols <- function (mx) {
+	grep("\\s0|^0", colnames(mx))
+}
+
+
+#' Calculated percentages with groups of a flattened matrix.
 #' 
 #' @examples
-#' \dontrun{
-#' varname = "z1singleLvl1" ; varname = "gptotvis"
-#' lol.mx <- env.base$modules[[1]]$run_results$freqs[[1]]
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$run_results$confreqs$gptotvis
-#'
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs$sptype
-#'  
-#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs$z1singleLvl1 
-#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
-#' lol.mx <- env.scenario$modules$years1_5$run_results$confreqs$houtptot
-#' lol.mx <- env.scenario$modules$years6_13$run_results$confreqs[["cond"]]
-#' 
-#' dict <- dict.MELC
+#' mx.flattened <- runs_mx
+#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = T, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex"))
 #' dict <- dict_demo
-#' 
-#' asPercentages = T; removeZeroCategory = T; CI = F
-#' removeZeroCategory = F
-#' finialise.lolmx(lol.mx)
-#' finialise.lolmx(lol.mx, dict, asPercentages, removeZeroCategory, CI)
-#' }
-finialise.lolmx <- function(lol.mx, dict, asPercentages = T, removeZeroCategory = T) {
-	# flatten into 3D array
-	lol.mx.array <- flatten.lolmx(lol.mx)
-	
-	# get percentages
-	if (asPercentages) {
-		#calculating numgrps. If no groupings, then across the whole row
-		grpby.tag = attr(lol.mx.array, "meta")["grpby.tag"]
-		numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(dict$codings[[grpby.tag]]) 
-		
-		lol.mx.array <- prop.table.grpby.array.zdim(lol.mx.array, numgrps) * 100
-	}
-	
-	# label cols, remove 0
-	lol.mx.array.lbl <- labelFlattenedArrayCols(lol.mx.array, dict, removeZeroCategory = removeZeroCategory)
-	
-	# add (%) to column names
-	if (asPercentages) {
-		colnames(lol.mx.array.lbl) <- paste(colnames(lol.mx.array.lbl), "(%)")
-	}
-	
-	# add year as a row label
-	names(dimnames(lol.mx.array.lbl)) <- c("Year","")
-	
-	lol.mx.array.lbl
+#' percentages_flattened_mx(mx.flattened, dict)
+#' @seealso \code{\link{prop.table.mx.grped.rows}}
+percentages_flattened_mx <- function(mx.flattened, dict) {
+	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
+	numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(dict$codings[[grpby.tag]])
+	result <- prop.table.mx.grped.rows(mx.flattened, numgrps) * 100
+	colnames(result) <- paste(colnames(result), "(%)")
+	result
 }
 
 
@@ -135,136 +146,83 @@ labelColumnCodes <- function(x, dict, varname) {
 	x
 }
 
-#' Label columns of a 3D array that has flattened codes for colnames.
+#' Label a flattened matrix. Labels flattened columns according to dictionary codings, 
+#' and applies the specified row and col dimension label (if any).
 #' 
-#' @param xa
-#'  3D array with flattened codes for colnames.
-#'  A flattened code is in the form "0 1",
-#'  where the first value is a grping code and the second a varname code.
+#' @param mx.flattened
+#'  a flattened matrix, ie: a matrix that has rows that contain
+#'  groups of values.  
+#'  
+#'  A flattened matrix has a meta attribute that specifies the grouping
+#'  used (if any) and the varname that identifies the codings to apply, eg:
+#'  meta=c(grpby.tag="sex", varname="disability_state") 
+#' 
 #'  If grpby.tag is NULL or NA, then the flattened code will be in the form "0", 
-#'  i.e: no grping codes only varname codes.
+#'  i.e: no grping codes only varname codes. These will be converted in the output
+#'  to the corresponding varname category name. 
+#' 
+#'  If grpby.tag is specified then the flattened matrix will have flattened codes 
+#'  for column names. A flattened code is in the form "0 1", where the first value 
+#'  is a grping code and the second a varname code. These will be converted
+#'  in the output to the corresponding group and varname category names. 
+#' 
 #' @param dict
-#'  a Dictionary proto object
-#' @param varname
-#'  category variable name of this 3D array
-#' @param grpby.tag
-#'  grouping of flattened codes if any, else NULL or NA  
-#' @param removeZeroCategory 
-#'  remove zero category
-#' @return
-#'  3D array with relabled columns and dropped zero category (if requested)
+#'  dictionary object
 #' 
-#' @examples
-#' \dontrun{
-#' xa <- lol.mx.array
+#' @param row.dim.label
+#'  name of the entire row dimension
 #' 
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs$z1singleLvl1  
-#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs$z1singleLvl1 
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$run_results$confreqs$gptotvis
-#' xa <- flatten.lolmx(lol.mx) 
-#' dict <- dict.MELC
-#' removeZeroCategory = F
+#' @param col.dim.label
+#'  name of the entire col dimension
 #' 
-#' xa <- r$all.by.gender$householdsize
-#' 
-#' labelFlattenedArrayCols(xa, dict=dict, removeZeroCategory=removeZeroCategory)
-#' }
-labelFlattenedArrayCols <- function(xa, dict, varname=attr(xa, "meta")["varname"], 
-		grpby.tag=attr(xa, "meta")["grpby.tag"], removeZeroCategory = T) {
+#' @examples 
+#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = T, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
+#' dict <- dict_demo
+#' label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
+label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
+	varname <- attr(mx.flattened, "meta")["varname"]
+	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
-	# identify 0 category columns
-	cnames <- colnames(xa)
-	if (is.null(grpby.tag) || is.na(grpby.tag)) {
-		zerocols <- which(cnames == "0")
-	} else {
-		zerocols <- grep("\\s0", cnames)
-	}
+	#label
+	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
+	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
-	colnames(xa) <- dict$cmatchFlattened(cnames, varname, grpby.tag)
-	
-	# remove 0 category, if requested
-	if (removeZeroCategory && length(zerocols)) {
-		structure(xa[,-zerocols,,drop=FALSE], meta=c(attr(xa, "meta")))
-	} else {
-		xa
-	}
+	mx.flattened
 }
 
-#' Calculate the proportions within groups that 
-#' exist in the rows of the matrices in the ZDIM of xa
+#' Calculates the proportions within row groupings 
+#' of a flattened matrix.
 #' 
-#' @param xa
-#'  and 3D array, with matrices in the ZDIM.
+#' @param mx.grped.rows
+#'  a matrix with grped rows, ie: within each row there are groups of 
+#'  columns that form a set. Proportions are then calculated within these groups.
 #' @param numgrps
-#'  the num of groups. Each row in the ZDIM is divided into this number of groups.
-#'  Proportions are then calculated within these groups. If numgrps = 1, then 
-#'  there is only 1 group and proportions are calculated across the whole row.
+#'  the number of groups in each row. Each group will be of size \code{ncol(mx.grped.rows) / numgrps}.
+#'  If numgrps = 1, then there is only 1 group and proportions are calculated across the whole row. 
 #' @return
-#'  xa as proportions
+#'  the original matrix but with its values converted to proportions.
+#'  Preserves names and any "meta" attribute of \code{mx.grped.rows)}.
+#' 
+#' @export
 #' @examples
-#' \dontrun{
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs$z1singleLvl1 
-#' lol.mx <- env.base$modules$years1_5$run_results$freqs_by_ethnicity$z1singleLvl1
-#' lol.mx <- env.base$modules$years1_5$run_results$confreqs$gptotvis
 #' 
-#' lol.mx <- env.scenario$modules$years1_5$run_results$freqs$sptype
-#' lol.mx <- env.scenario$modules$years1_5$run_results$confreqs$houtptot
+#' mx.grped.rows <- matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = T)
+#' numgrps <- 3
 #' 
-#' xa <- flatten.lolmx(lol.mx)
-#' 
-#' xa <- array(c(1:5, rep(0,5)), dim=c(5,1,2), dimnames=list(LETTERS[1:5],c("Col")))
-#' xa <- array(c(1:5, 9,8,7,6,5), dim=c(5,2,1), dimnames=list(LETTERS[1:5], c("Col 1", "Col 2")))
-#' 
-#' xa <- lol.mx.array
+#' mx.grped.rows <- matrix(c(1:4), nrow=1)
 #' numgrps <- 1
-#' prop.table.grpby.array.zdim(xa, numgrps)
-#' }
-prop.table.grpby.array.zdim <- function (xa, numgrps) {
-	
-	grpsize <- ncol(xa) / numgrps
+#' 
+#' prop.table.mx.grped.rows(mx.grped.rows, numgrps)
+prop.table.mx.grped.rows <- function (mx.grped.rows, numgrps) {
+
+	grpsize <- ncol(mx.grped.rows) / numgrps
 	grpby <- rep(1:numgrps, each=grpsize)
 	
 	# get proportions by grp
-	xa.prop <- apply(xa, c(ROW,ZDIM), prop.table.grpby, grpby=grpby)
+	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby)
 	
-	if (ncol(xa)==1) {
-		# apply simplifies if we only have one column, so reapply dimensions
-		xa.prop.t <- structure(xa.prop, .Dim=dim(xa))
-	} else {
-		# transpose ZDIM
-		xa.prop.t <- aperm(xa.prop, perm=c(2,1,3))
-	}
+	mx.grped.rows.prop.t <- t(mx.grped.rows.prop)
 	
-	structure(xa.prop.t, meta = attr(xa, "meta"), dimnames=dimnames(xa))
-	
+	structure(mx.grped.rows.prop.t, meta = attr(mx.grped.rows, "meta"), dimnames=dimnames(mx.grped.rows))
 }
 
-confreqs_collator <- function (runs, dict) { 
-	runs_f <- finialise.lolmx(runs, dict = dict, removeZeroCategory = FALSE)
-	mean.array.z(runs_f, CI=F)  
-}
-
-freqs_collator <- function(runs, dict) { 
-	runs_f <- finialise.lolmx(runs, dict = dict)
-	mean.array.z(runs_f, CI=F) 
-}
-
-histogram_collator <- function(runs, dict) { 
-	runs_f <- finialise.lolmx(runs, dict = dict, asPercentages = F, removeZeroCategory = FALSE) 
-	mean.array.z(runs_f) 
-}
-
-means_collator <- function(runs, dict) {
-	#runs <- all_run_results_zipped$means_by_sex[[1]]
-	runs_array <- as.arrayListmx(runs)
-	runs_array_mean <- mean.array.z(runs_array) 
-	runs_array_mean_labelled <- labelColumnCodes(runs_array_mean, dict, attr(runs_array_mean, "meta")["grpby.tag"])
-	if (is.null(colnames(runs_array_mean_labelled))) colnames(runs_array_mean_labelled) <- "Mean"
-	runs_array_mean_labelled
-}
-
-basic_collator <- function(runs) {
-	runs_array <- as.arrayListmx(runs)
-	mean.array.z(runs_array)
-}
