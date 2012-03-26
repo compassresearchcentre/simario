@@ -76,17 +76,24 @@ identify_zero_category_cols <- function (mx) {
 }
 
 
-#' Calculated percentages with groups of a flattened matrix.
-#' 
+#' Calculated percentages within groups of a flattened matrix.
+#'
+#' @seealso \code{\link{prop.table.mx.grped.rows}}
+#'   
 #' @examples
 #' mx.flattened <- runs_mx
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = T, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex"))
 #' dict <- dict_demo
 #' percentages_flattened_mx(mx.flattened, dict)
-#' @seealso \code{\link{prop.table.mx.grped.rows}}
 percentages_flattened_mx <- function(mx.flattened, dict) {
+	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(dict$codings[[grpby.tag]])
+	
+	if(length(dict$codings[[varname]]) == 0 && length(dict$codings[[grpby.tag]]) > 1) {
+		stop(gettextf("prop.table.mx.grped.rows can only calculate percentages on fixed group sizes.\n Ability to calculate percentages on variable category size not yet implemented. \n varname = %s, grpby.tag = %s", varname, grpby.tag))
+	}
+	
 	result <- prop.table.mx.grped.rows(mx.flattened, numgrps) * 100
 	colnames(result) <- paste(colnames(result), "(%)")
 	result
@@ -190,8 +197,8 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	mx.flattened
 }
 
-#' Calculates the proportions within row groupings 
-#' of a flattened matrix.
+#' Calculates the proportions within row groupings of a flattened matrix. 
+#' Not suitable when each row group is of a different size.
 #' 
 #' @param mx.grped.rows
 #'  a matrix with grped rows, ie: within each row there are groups of 
