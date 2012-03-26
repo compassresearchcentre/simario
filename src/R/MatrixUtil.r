@@ -330,8 +330,8 @@ dimnames_prepend_header <- function(mx) {
 #' 
 #' lol.mx <- structure(list(year1 = structure(list(`2` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), `10`= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10")), year2 = structure(list(`2` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `10` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10"))))
 #' flatten_mxlists_to_array(lol.mx)
-flatten_mxlists_to_array <- function(lol.mx) {
 	
+flatten_mxlists_to_array <- function(lol.mx) {
 	# flatten each matrix into a single row then align and return each list of matrices as a single matrix
 	lol.mx.flat <- lapply(lol.mx, flatten_mxs_to_single_mx)
 	
