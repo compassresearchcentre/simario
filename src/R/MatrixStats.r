@@ -437,8 +437,8 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' wgts = rep(1, nrow(mx))
 #' na.rm = FALSE ; na.rm = TRUE
 #' 
-#' wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
-wtdmeancols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts = NULL, na.rm = F) {
+#' mean_mx_cols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
+mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts = NULL, na.rm = F) {
 	
 	if (is.null(wgts)) wgts <- rep(1, nrow(mx))  #can't make this default param for some reason need to set here
 	

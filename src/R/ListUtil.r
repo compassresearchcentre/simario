@@ -492,7 +492,7 @@ lapply.args.as.list <- function (X, FUN, FUN.args) {
 #' results.list <-  run_results$freqs.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table_mx_cols
 #' lapply.subset.append (run_results$freqs.by.ethnicity, outcomes, simplify = FALSE, .FUN=table_mx_cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
 #' 
-#' results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = wtdmeancols.lbl2
+#' results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = mean_mx_cols.lbl2
 #' lapply.subset.append (results.list, X, indices, simplify, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)
 #' }
 lapply.subset.append <- function (results.list, X, indices=names(results.list), simplify = TRUE, .FUN, ...) {
@@ -541,18 +541,18 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' X <- outcomes_wtotals
 #' lol <- .$runstats$means
 #' lol.args <- attr(lol, "args.list")
-#' .FUN <- wtdmeancols
+#' .FUN <- mean_mx_cols
 #' 
 #' X <- env.base$years1_5$outcomes
 #' lol <- env.base$years1_5$runstats$means
 #' lol.args <- attr(lol, "args.list")
-#' .FUN <- wtdmeancols.lbl
+#' .FUN <- mean_mx_cols.lbl
 #' 
 #' X <- env.base$modules[[1]]$outcomes
 #' lol <- list(all=namedList("gptotvis", "hadmtot"), females.by.ethnicity=namedList("gptotvis", "hadmtot")) 
 #' lol.args <- list(all=NULL, females.by.ethnicity=list(logiset=childsets$females, grpby=children$r1stchildethn, grpby.tag="r1stchildethn"))
 #' attr(lol, "args.list") <- lol.args
-#' .FUN <- wtdmeancols.lbl
+#' .FUN <- mean_mx_cols.lbl
 #' }
 #' 
 #' outcome1 <- structure(matrix(1:8, ncol=2), varname="outcome1")
@@ -562,11 +562,11 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' lol.args <- list(all=NULL, females.by.ethnicity=list(logiset=c(TRUE,TRUE,TRUE,FALSE), grpby=c("E","E","O","O"), grpby.tag="ethn"))
 #' simplify = TRUE
 #' attr(lol, "args.list") <- lol.args
-#' .FUN <- wtdmeancols
+#' .FUN <- mean_mx_cols
 #'    
 #' lapply.subset.append.lol.args(X, lol, lol.args, simplify=simplify, .FUN)
-#' wtdmeancols(outcome1)
-#' wtdmeancols(outcome1, logiset=lol.args$females.by.ethnicity$logiset, grpby=lol.args$females.by.ethnicity$grpby, grpby.tag="ethn")
+#' mean_mx_cols(outcome1)
+#' mean_mx_cols(outcome1, logiset=lol.args$females.by.ethnicity$logiset, grpby=lol.args$females.by.ethnicity$grpby, grpby.tag="ethn")
 lapply.subset.append.lol.args <- function(X, lol, lol.args = attr(lol, "args.list"), simplify=TRUE, .FUN) {
 	
 	result <- mapply(function(lol.x,lol.a) {
