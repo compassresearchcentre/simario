@@ -33,3 +33,29 @@
 #' @import abind plyr xlsx proto
 NULL
 
+#' An example Dictionary proto object. 
+#' 
+#' Provides descriptions for
+#' \itemize{
+#'   \item age  
+#'   \item age_grp 
+#'   \item alive
+#'   \item disability_state
+#'   \item earnings  
+#'   \item sex
+#' }
+#' 
+#' Provides codings for
+#' \itemize{
+#'   \item age_grp 
+#'   \item alive
+#'   \item disability_state
+#'   \item sex
+#' }
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name dict_example
+#' @usage dict_example
+#' @format A Dictionary proto object
+NULL

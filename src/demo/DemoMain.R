@@ -40,7 +40,6 @@ createSets <- function(people, codings) {
 #' Initialise models, basefile, simframe.
 #' 
 #' @examples
-#' data_dir <- getwd()
 #' data_dir <- paste(getwd(), "/data/", sep="")
 #' initDemo(data_dir)
 initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
