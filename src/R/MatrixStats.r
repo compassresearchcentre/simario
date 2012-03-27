@@ -263,13 +263,17 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 #' 
 #' @export
 #' @examples
-#' \dontrun{
-#' mxc <- env.base$years6_13$outcomes[["cond"]]
-#' mx <- env.base$years1_5$outcomes[["gptotvis"]]
-#' summary.mx(mxc)
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
+#' logiset <- c(FALSE, TRUE, FALSE, TRUE)
 #' summary.mx(mx)
-#' }
-summary.mx <- function (mx) {
+#' summary.mx(mx, logiset=logiset)
+
+summary.mx <- function (mx, logiset=NULL) {
+	
+	# subset
+	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
+	#if (!is.null(logiset)) grpby <- grpby[logiset]
+	
 	sm <- apply(mx, COL, summary)
 	
 	if(is.list(sm)) {
