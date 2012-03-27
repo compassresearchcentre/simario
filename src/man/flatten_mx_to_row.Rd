@@ -1,10 +1,10 @@
-\name{flatten.mx}
-\alias{flatten.mx}
+\name{flatten_mx_to_row}
+\alias{flatten_mx_to_row}
 \title{Flatten a vector or matrix (r,c) into a single row matrix (1,c)
 creating new column names from a combination of old rownames
 and colnames.}
 \usage{
-  flatten.mx(mx, row.names.first = FALSE)
+  flatten_mx_to_row(mx, row.names.first = FALSE)
 }
 \arguments{
   \item{row.names.first}{if TRUE, row.names will appear
@@ -43,6 +43,6 @@ mx <- matrix(c(10), nrow = 1, ncol = 1, dimnames=list(c(NA), NULL))
 # vector
 mx <- c("a"=1,"b"=2,"c"=3)
 
-flatten.mx(mx)
+flatten_mx_to_row(mx)
 }
 

@@ -51,9 +51,9 @@ colmeans.list <- function (xlistm) {
 #' xa <- env.base$years1_5$runstats$means$all.by.ethnicity$gptotvis
 #' xa <- env.base$years1_5$runstats$means$all.by.gender$gptotvis
 #' 
-#' result <- mean.array.z(xa)
+#' result <- mean_array_z(xa)
 #' }
-mean.array.z <- function (xa, CI = TRUE, NA.as.zero = T) {
+mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
 	result <- apply(xa, c(ROW,COL), mean)
@@ -235,12 +235,12 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE) {
 #' mx <- env.base$modules$years1_5$outcomes[["hadmtot"]]
 #' mx <- env.base$modules$years6_13$outcomes[["cond"]]
 #' mx <- env.base$modules$years1_5$outcomes[["gptotvis"]]
-#' quantile.mx(mx)
-#' quantile.mx(mx, probs=seq(0, 1, 0.2), na.rm = TRUE)
-#' quantile.mx(mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0, 1, 0.2), na.rm = TRUE)
-#' quantile.mx(mx, probs=seq(0, 1, 0.02), na.rm = TRUE)
+#' quantile_mx_cols(mx)
+#' quantile_mx_cols(mx, probs=seq(0, 1, 0.2), na.rm = TRUE)
+#' quantile_mx_cols(mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0, 1, 0.2), na.rm = TRUE)
+#' quantile_mx_cols(mx, probs=seq(0, 1, 0.02), na.rm = TRUE)
 #' }
-quantile.mx <- function (mx, new.names=NULL, ...) {
+quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	result <- t(apply(mx, COL, function (x) {
 						qx <- quantile(x, ...)
@@ -265,10 +265,10 @@ quantile.mx <- function (mx, new.names=NULL, ...) {
 #' @examples
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' logiset <- c(FALSE, TRUE, FALSE, TRUE)
-#' summary.mx(mx)
-#' summary.mx(mx, logiset=logiset)
+#' summary_mx_cols(mx)
+#' summary_mx_cols(mx, logiset=logiset)
 
-summary.mx <- function (mx, logiset=NULL) {
+summary_mx_cols <- function (mx, logiset=NULL) {
 	
 	# subset
 	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
@@ -295,28 +295,6 @@ summary.mx <- function (mx, logiset=NULL) {
 		}
 		t(sm)
 	}
-}
-
-#' Convience method to apply summary.mx to a subset of elements of 
-#' list.
-#' 
-#' @param xlist
-#'  a list of matrices
-#' @param indices
-#'  indices, either numeric or names, of elements in x for which to apply summary.mx,
-#'  or NULL to apply to all elements of x
-#' @return 
-#'  list of summaries
-#' 
-#' @export
-#' @examples
-#' \dontrun{
-#' xlist <- env.base$years6_13$outcomes
-#' indices <- names(env.base$years6_13$runstats$means$all)
-#' summary.mx.list(xlist, indices)
-#' } 
-summary.mx.list <- function (xlist, indices) {
-	lapply.subset(xlist, indices, summary.mx)
 }
 
 #' Frequency table, with option to group results.
@@ -388,11 +366,11 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #' @examples
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' grpby <- c('M','F','F','M')
-#' table.grpby.mx.cols(mx)
-#' table.grpby.mx.cols(mx, grpby)
+#' table_mx_cols(mx)
+#' table_mx_cols(mx, grpby)
 #' logiset <- c(FALSE, TRUE, FALSE, TRUE)
-#' table.grpby.mx.cols(mx, grpby = grpby, logiset = logiset)
-table.grpby.mx.cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, useNA = "ifany") {
+#' table_mx_cols(mx, grpby = grpby, logiset = logiset)
+table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, useNA = "ifany") {
 	
 	# subset
 	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]

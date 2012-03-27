@@ -1,0 +1,17 @@
+\name{remove.zero.rows}
+\alias{remove.zero.rows}
+\title{Remove rows that contain all zeros.}
+\usage{
+  remove.zero.rows(mx)
+}
+\arguments{
+  \item{mx}{matrix}
+}
+\description{
+  Remove rows that contain all zeros.
+}
+\examples{
+mx <- matrix(c(1:3, 0, 0, 0), nrow=2, byrow = TRUE)
+remove.zero.rows(mx)
+}
+

@@ -45,12 +45,12 @@ createSets <- function(people, codings) {
 initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	base_dir <- file.path(data_dir, "base")
 	
-	descriptions_dataframe <- read_file(base_dir, "Data dictionary.csv")
+	descriptions_dataframe <- read_file(base_dir, "Data_dictionary.csv")
 	codings_dataframe <- descriptions_dataframe
 	dict_demo <<- Dictionary$new(descriptions_dataframe, codings_dataframe)
 	
 	#load initial basefile
-	people <<- read_csv(base_dir, "Base file (people).csv")
+	people <<- read_csv(base_dir, "Base_file_(people).csv")
 	
 	#create simframe
 	sfdef <- read_csv(base_dir, "simframedef.csv")
@@ -74,7 +74,7 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 
 #' dir <- data_dir
 loadEarningsScale <- function(dir) {
-	earnings_scale_dataframe <- read_csv(dir, "Annual earnings scale by disability status.csv")
+	earnings_scale_dataframe <- read_csv(dir, "Annual_earnings_scale_by_disability_status.csv")
 	earnings_scale <- structure(earnings_scale_dataframe$Earnings, .Names=earnings_scale_dataframe$Disability.state)
 	earnings_scale
 }
@@ -82,13 +82,13 @@ loadEarningsScale <- function(dir) {
 loadTransitionProbabilities <- function(dir) {
 	transition_probabilities <- list()
 	
-	transition_probabilities$disability_state <- read_csv(dir, "Disability state transition probabilities.csv", stringsAsFactors=T)
+	transition_probabilities$disability_state <- read_csv(dir, "Disability_state_transition_probabilities.csv", stringsAsFactors=T)
 	transition_probabilities$disability_state$index <- with(transition_probabilities$disability_state, 
 			index_sex_age_grp_disability_state(Sex, Agegrp, Current.disability.state))
 	transition_probabilities$disability_state$probs <- 
 			as.matrix(transition_probabilities$disability_state[c("No.Disability", "Mild.Disability", "Moderate.Disability", "Severe.Disability")])
 	
-	transition_probabilities$death <- read_csv(dir, "Probabilities of male and female death by age and sex.csv")
+	transition_probabilities$death <- read_csv(dir, "Probabilities_of_male_and_female_death_by_age_and_sex.csv")
 	
 	transition_probabilities
 }
@@ -117,7 +117,7 @@ loadSimario <- function() {
 loadSimario()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
-source("Demo scenarios.R")
+source("DemoScenarios.R")
 
 initDemo()
 

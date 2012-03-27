@@ -18,7 +18,7 @@ error bars on the current device.}
   with values named Mean and Lower eg:
 
   > envs$`Scenario
-  1`$years1_5$runstats.collated$means$all$kids["Total",]
+  1`$years1_5$run_results_collated$means$kids["Total",]
   Mean Lower Upper 10.99488 10.62256 11.36721
 
   if there are no values named Mean, then it will be
@@ -37,32 +37,32 @@ error bars on the current device.}
 \examples{
 \dontrun{
 varname <- "kids"
-result.row.base <- env.base$modules$years1_5$runstats.collated$means$all.by.ethnicity[[varname]]["All Years",]
-result.row.scenario <- envs$`Scenario 1`$modules$years1_5$runstats.collated$means$all.by.ethnicity[[varname]]["All Years",]
+result.row.base <- env.base$modules$years1_5$run_results_collated$means_by_ethnicity[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years1_5$run_results_collated$means_by_ethnicity[[varname]]["All Years",]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="Ethnicity"
 ylab=paste("Mean")
 
 varname <- "cond"
-result.row.base <- env.base$modules$years6_13$runstats.collated$means$all.by.SESBTH[[varname]]["All Years",]
-result.row.scenario <- envs$`Scenario 1`$modules$years6_13$runstats.collated$means$all.by.SESBTH[[varname]]["All Years",]
+result.row.base <- env.base$modules$years6_13$run_results_collated$means_by_SESBTH[[varname]]["All Years",]
+result.row.scenario <- envs$`Scenario 1`$modules$years6_13$run_results_collated$means_by_SESBTH[[varname]]["All Years",]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="SES at Birth"
 ylab=paste("Mean")
 
 varname <- "gptotvis"
-result.row.base <- env.base$modules$years1_5$runstats.collated$histo[[varname]]
-result.row.scenario <- envs$`Scenario 1`$modules$years1_5$runstats.collated$histo[[varname]]
+result.row.base <- env.base$modules$years1_5$run_results_collated$histogram[[varname]]
+result.row.scenario <- envs$`Scenario 1`$modules$years1_5$run_results_collated$histogram[[varname]]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="Value"
 ylab="Freq"
 
 varname <- "cond"
-result.row.base <- env.base$modules$years6_13$runstats.collated$histo[[varname]]["All Years",]
-result.row.scenario <- env.scenario$modules$years6_13$runstats.collated$histo[[varname]]["All Years",]
+result.row.base <- env.base$modules$years6_13$run_results_collated$histogram[[varname]]["All Years",]
+result.row.scenario <- env.scenario$modules$years6_13$run_results_collated$histogram[[varname]]["All Years",]
 scenario.name <- "Scenario 1"
 title <- paste(dictLookup(varname), "all years")
 xlab="Value"

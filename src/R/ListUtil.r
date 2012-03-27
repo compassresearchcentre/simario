@@ -51,7 +51,7 @@
 #' #Test first three cases:
 #' 
 #' #ml0 <- namedList("msmoke", "fsmoke")
-#' #x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table.grpby.mx.cols
+#' #x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table_mx_cols
 #' #list.src <- lapply.subset(x, indices, .FUN)
 #'  
 #' #ml0 <- namedList("gptotvis", "hadmtot")
@@ -207,7 +207,7 @@ isListOfNulls <- function(xlist) {
 #' lol <- env.base$years1_5$runstats$means
 #' lol <- env.base$years6_13$runstats$summaries
 #' lol <- years1_5$runstats$summaries
-#' lapply.inner(lol, mean.array.z)
+#' lapply.inner(lol, mean_array_z)
 #' }
 lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
 	
@@ -263,7 +263,7 @@ lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
 #' @export
 #' @examples
 #' lol <- list(A=list("A1"="a1","A2"="a2","A3"="a3"),B=list("B1"="b1","B2"="b2","B3"="b3"))
-#' lol.zipped <- lzip(lol)			
+#' lol.zipped <- lzip(lol)
 #' lol.zip.list <- lisp::zip.list(lol$A, lol$B)                 # same as lol.zipped but without names on outer & inner elements
 #' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = FALSE) 		# same as lol.zipped but only has names on outer elements
 #' lol.2d <- mapply(list, lol$A, lol$B) 						# creates 2D list [2,3]
@@ -380,11 +380,11 @@ lzipper <- function (lol, .FUN, ...)  {
 #'
 #' X <- env.base$years6_13$outcomes
 #' indices <- names(env.base$years6_13$runstats$means$all)
-#' .FUN <- summary.mx
+#' .FUN <- summary_mx_cols
 #'  
 #' 
 #' #' lapply.subset(X, indices, .FUN, ...)
-#' results.list <-  run_results$freqs.by.ethnicity; X <- outcomes; indices=names(results.list); .FUN=table.grpby.mx.cols
+#' results.list <-  run_results$freqs.by.ethnicity; X <- outcomes; indices=names(results.list); .FUN=table_mx_cols
 #' results <- lapply.subset (X, indices, .FUN, grpby.tag="r1stchildethn")
 #' 
 #' 
@@ -414,10 +414,10 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' grpby <- c('M','F','F','M')
 #' logiset <- c(FALSE, TRUE, FALSE, TRUE)
-#' result <- table.grpby.mx.cols(mx, grpby = grpby, logiset = logiset)
+#' result <- table_mx_cols(mx, grpby = grpby, logiset = logiset)
 #' 
 #' X <- list(mx=mx)
-#' FUN <- table.grpby.mx.cols
+#' FUN <- table_mx_cols
 #' FUN.args <- list(grpby = grpby, logiset = logiset)
 #' result2 <- lapply.args.as.list(X, FUN, FUN.args)
 #' all.equal(result2[[1]], result)
@@ -464,7 +464,7 @@ lapply.args.as.list <- function (X, FUN, FUN.args) {
 #' \dontrun{
 #' X <- env.base$years6_13$outcomes
 #' results.list <- env.base$years6_13$runstats$summaries
-#' lapply.subset.append (results.list, X, .FUN=summary.mx)
+#' lapply.subset.append (results.list, X, .FUN=summary_mx_cols)
 #' 
 #' X <- env.base$years1_5$outcomes
 #' lol <- env.base$years1_5$run_results$confreqs
@@ -473,24 +473,24 @@ lapply.args.as.list <- function (X, FUN, FUN.args) {
 #' X <- env.base$years6_13$outcomes
 #' 
 #' X <- outcomes
-#' .FUN=table.grpby.mx.cols
+#' .FUN=table_mx_cols
 #' 
 #' lapply.subset.append (lol, X, simplify = FALSE, .FUN=wtdtablecols)
 #' 
 #' 
 #' lapply.subset.append(results.list=lol.x, X=X, simplify=simplify, .FUN=.FUN, logiset=lol.a$logiset)
 #' 
-#' results.list <- run_results$freqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
-#' lapply.subset.append (run_results$freqs, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols)
+#' results.list <- run_results$freqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table_mx_cols
+#' lapply.subset.append (run_results$freqs, outcomes, simplify = FALSE, .FUN=table_mx_cols)
 #' 	
 #' results.list <- run_results$confreqs; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=wtdtablecols
 #' lapply.subset.append (run_results$confreqs, outcomes, simplify = FALSE, .FUN=wtdtablecols, wgts=outcomes[[wgtsname]])
 #' 
-#' results.list <- runstats$summaries; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=quantile.mx
-#' lapply.subset.append (runstats$summaries, outcomes, .FUN=quantile.mx, probs=seq(0.2,1,0.2))
+#' results.list <- runstats$summaries; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=quantile_mx_cols
+#' lapply.subset.append (runstats$summaries, outcomes, .FUN=quantile_mx_cols, probs=seq(0.2,1,0.2))
 #' 
-#' results.list <-  run_results$freqs.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table.grpby.mx.cols
-#' lapply.subset.append (run_results$freqs.by.ethnicity, outcomes, simplify = FALSE, .FUN=table.grpby.mx.cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
+#' results.list <-  run_results$freqs.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table_mx_cols
+#' lapply.subset.append (run_results$freqs.by.ethnicity, outcomes, simplify = FALSE, .FUN=table_mx_cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
 #' 
 #' results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = wtdmeancols.lbl2
 #' lapply.subset.append (results.list, X, indices, simplify, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)

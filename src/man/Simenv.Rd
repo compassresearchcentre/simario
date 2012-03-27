@@ -4,44 +4,37 @@
 \title{Simenv object - a simulation environment.}
 \format{proto object 
  $ class                                        :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 71 11 71 30 18 37 71 71 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
- $ presim.stats                                 : list() 
- $ cat.adjustments                              : list() 
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 68 11 68 30 18 37 68 68 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ applyCatAdjustmentToSimframeVarMultipleBinary:function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 213 51 240 2 58 9 213 240 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 210 51 237 2 58 9 210 237 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ numberOfUnits                                :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 300 19 302 2 26 9 300 302 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 310 19 312 2 26 9 310 312 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ clone                                        :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 69 11 69 57 18 64 69 69 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
- $ name                                         : NULL 
- $ simframe                                     : NULL 
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 66 11 66 57 18 64 66 66 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ simulate                                     :function (., total_runs = 1)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 265 14 298 2 21 9 265 298 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 262 14 308 2 21 9 262 308 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ generatePreSimulationStats                   :function (., simframe)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 248 32 250 2 39 9 248 250 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
- $ dict                                         : NULL 
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 245 32 247 2 39 9 245 247 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ applyAllCatAdjustmentsToSimframe             :function (., iteration, propensities, print_adj = TRUE)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 99 38 118 2 45 9 99 118 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
- $ num_runs_simulated                           : int 0 
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 96 38 115 2 45 9 96 115 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ applyCatAdjustmentToSimframeVarSingle        :function (., varname, desired_props, propens, print_adj = T)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 174 43 182 2 50 9 174 182 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 171 43 179 2 50 9 171 179 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ new                                          :function (., name, simframe, dict, cat.adjustments = list(),  
     modules = list())   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 57 9 67 2 16 9 57 67 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 54 9 64 2 16 9 54 64 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>  
  $ applyCatAdjustmentToSimframe                 :function (., varnames, desired_props, iteration, propensities,  
     print_adj = TRUE)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 138 34 149 2 41 9 138 149 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07fd6af4>  
- $ modules                                      : list()}
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 135 34 146 2 41 9 135 146 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07b24138>}
 \usage{
   Simenv
 }
