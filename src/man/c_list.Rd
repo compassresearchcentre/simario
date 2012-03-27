@@ -1,21 +1,22 @@
 \name{c_list}
 \alias{c_list}
-\title{Return each element of a list as a new list.}
+\title{Select inner elements of a list of lists, and return as a new list.}
 \usage{
   c_list(xlist, fx)
 }
 \arguments{
   \item{xlist}{list}
 
-  \item{fx}{function specifing element to return. Should
-  take a single element of xlist as a parameter.}
+  \item{fx}{function specifing inner elements to select.
+  Should take a single element of xlist as a parameter.}
 }
 \value{
   equivalent to c(fx(xlist[[1]]), fx(xlist[[2]] ... )
   across every element.
 }
 \description{
-  Return each element of a list as a new list.
+  Select inner elements of a list of lists, and return as a
+  new list.
 }
 \examples{
 xlist <- list('1'=list(inner=list(A1=1:2,A2=2:3)))

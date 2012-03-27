@@ -1,12 +1,11 @@
-\name{flatten.lolmx}
-\alias{flatten.lolmx}
-\title{Takes a list of lists of matrices and converts to array, by:
- flattens each matrix in a single row,
- aligns then single rows within each list, then combines the rows into a single matrix per list
- then aligns each single matrix and combines them in the z dimension of an array
-Preserves names and meta attribute.}
+\name{flatten_mxlists_to_array}
+\alias{flatten_mxlists_to_array}
+\title{Convert a list of lists of matrices to an array, as follows:
+ flatten each matrix into a single row,
+ align the single rows within each list, then combine the rows into a single matrix per list
+ align each single matrix and combine them into the z dimension of an array}
 \usage{
-  flatten.lolmx(lol.mx)
+  flatten_mxlists_to_array(lol.mx)
 }
 \arguments{
   \item{lol.mx}{a list of lists of matrices, eg: List of 2
@@ -19,18 +18,13 @@ Preserves names and meta attribute.}
   aligned first within a list, and then between the lists.}
 }
 \description{
-  Takes a list of lists of matrices and converts to array,
-  by: flattens each matrix in a single row, aligns then
-  single rows within each list, then combines the rows into
-  a single matrix per list then aligns each single matrix
-  and combines them in the z dimension of an array
   Preserves names and meta attribute.
 }
 \examples{
-#lol.mx <- .$runstats$freqs$all.by.ethnicity$z1msmokeLvl1
+#lol.mx <- .$run_results$freqs.by.ethnicity$z1msmokeLvl1
 lol.mx <- structure(list(year1 = structure(list(`1` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), '2'= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = 1:2), year2 = structure(list(`1` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `2` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("1", "2"))))
 
-flatten.lolmx(lol.mx)
+flatten_mxlists_to_array(lol.mx)
 \dontrun{
 , , year1
 
@@ -46,7 +40,7 @@ flatten.lolmx(lol.mx)
 }
 
 lol.mx <- structure(list(year1 = structure(list(`2` = structure(c(1:6), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")), `10`= structure(c(21:26), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10")), year2 = structure(list(`2` = structure(31:36, .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn")),     `10` = structure(c(41:46), .Dim = 2:3, .Dimnames = structure(list(0:1,1:3), .Names = c("", "")), class = "table", meta = c(grpby.tag="r1stchildethn"))), .Names = c("2", "10"))))
-flatten.lolmx(lol.mx)
+flatten_mxlists_to_array(lol.mx)
 }
 \seealso{
   align.by.name.list.mx

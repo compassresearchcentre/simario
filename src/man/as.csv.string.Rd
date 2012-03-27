@@ -23,7 +23,5 @@ cat(as.csv.string(x))
 cat(as.csv.string(x,"title"))	#title <- "title"
 str(as.csv.string(x))
 length(as.csv.string(x))
-
-#cat(as.csv.string(t.runstats.mean.cfreq.prop.base$o.gpprev, "o.gpprev"))
 }
 

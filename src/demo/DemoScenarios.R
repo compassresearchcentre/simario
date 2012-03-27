@@ -1,6 +1,6 @@
-# TODO: Add comment
+# Scenario testing example for the demo simulation.
 # 
-# Author: oman002
+# Author: Oliver Mannion 
 ###############################################################################
 
 

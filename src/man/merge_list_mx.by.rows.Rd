@@ -53,7 +53,6 @@ set of rows, eg: matrices = 2, cols = 3, rows = x*, eg:
 [3,] NA NA 17 NA 31 41
 }
 # Another example:
-#xlistm <- runstats.all.cfreq$gpmorb
 xlistm <- list(first=matrix(1:6, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))), second=matrix(11:16, nrow=2, dimnames=list(c("means", "errs"),c("C","A","B"))))
 merge_list_mx.by.rows(xlistm)
 }

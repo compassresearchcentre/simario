@@ -1,9 +1,9 @@
-\name{unique.names.model.coefs}
-\alias{unique.names.model.coefs}
+\name{model_coefs_names_unique}
+\alias{model_coefs_names_unique}
 \title{Get the unique set of names of model coefs for the
 supplied list of models}
 \usage{
-  unique.names.model.coefs(models_list)
+  model_coefs_names_unique(models_list)
 }
 \arguments{
   \item{models_list}{list of models}
@@ -14,7 +14,7 @@ supplied list of models}
 }
 \examples{
 \dontrun{
-	unique.names.model.coefs(models)
+	model_coefs_names_unique(models)
 }
 }
 

@@ -1,6 +1,7 @@
 \name{loadGLMCSV}
 \alias{loadGLMCSV}
-\title{Load and create a GLM from a csv file.}
+\title{Load and create a GLM from a csv file.
+See \code{\link{createGLM}} for file format.}
 \usage{
   loadGLMCSV(filedir, filename)
 }
@@ -14,7 +15,8 @@
   a glm model object
 }
 \description{
-  Load and create a GLM from a csv file.
+  Load and create a GLM from a csv file. See
+  \code{\link{createGLM}} for file format.
 }
 \examples{
 \dontrun{
@@ -23,5 +25,8 @@ filename <- "Burt9_10.csv"
 
 loadGLMCSV(filedir , filename)
 }
+}
+\seealso{
+  See \code{\link{createGLM}} for file format.
 }
 

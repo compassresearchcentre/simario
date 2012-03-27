@@ -1,6 +1,6 @@
-# TODO: Add comment
+# SimmoduleDemo object for the demo.
 # 
-# Author: oman002
+# Author: Oliver Mannion
 ###############################################################################
 
 
@@ -177,17 +177,17 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		run_results <- list()
 		
-		run_results$confreqs <- lapply(outcomes_wtotals[convars], table.grpby.mx.cols)
-		run_results$freqs <- lapply(outcomes[catvars], table.grpby.mx.cols)
-		run_results$freqs_males <- lapply(outcomes[catvars], table.grpby.mx.cols, logiset=people_sets$males)
-		run_results$freqs_females <- lapply(outcomes[catvars], table.grpby.mx.cols, logiset=people_sets$females)
-		run_results$freqs_by_sex <- lapply(outcomes[catvars], table.grpby.mx.cols, grpby=people$sex, grpby.tag="sex")
+		run_results$confreqs <- lapply(outcomes_wtotals[convars], table_mx_cols)
+		run_results$freqs <- lapply(outcomes[catvars], table_mx_cols)
+		run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols, logiset=people_sets$males)
+		run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols, logiset=people_sets$females)
+		run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols, grpby=people$sex, grpby.tag="sex")
 		run_results$means <- lapply(outcomes_wtotals[convars], wtdmeancols)
 		run_results$means_males <- lapply(outcomes_wtotals[convars], wtdmeancols, logiset=people_sets$males)
 		run_results$means_females <- lapply(outcomes_wtotals[convars], wtdmeancols, logiset=people_sets$females)
 		run_results$means_by_sex <- lapply(outcomes_wtotals[convars], wtdmeancols, grpby=people$sex, grpby.tag="sex")
-		run_results$summaries <- lapply(outcomes_wtotals[convars], summary.mx)
-		run_results$quantiles <- lapply(outcomes_wtotals[convars], quantile.mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
+		run_results$summaries <- lapply(outcomes_wtotals[convars], summary_mx_cols)
+		run_results$quantiles <- lapply(outcomes_wtotals[convars], quantile_mx_cols, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
 		
 		run_results 
 	}

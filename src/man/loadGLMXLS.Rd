@@ -1,6 +1,7 @@
 \name{loadGLMXLS}
 \alias{loadGLMXLS}
-\title{Load and create a GLM from the first sheet in an xlsx file.}
+\title{Load and create a GLM from the first sheet in an xlsx file.
+See \code{\link{createGLM}} for file format.}
 \usage{
   loadGLMXLS(filedir, filename)
 }
@@ -8,14 +9,15 @@
   \item{filedir}{file directory, ending with "/", eg:
   "d:/workspace/"}
 
-  \item{filename}{file name, eg: "myfile.xls"}
+  \item{filename}{file name, eg: "myfile.xls". See
+  \code{\link{createGLM}} for file format.}
 }
 \value{
   a glm model object
 }
 \description{
   Load and create a GLM from the first sheet in an xlsx
-  file.
+  file. See \code{\link{createGLM}} for file format.
 }
 \examples{
 \dontrun{
@@ -24,5 +26,8 @@ filename <- "gptotvis.xlsx" ; filename <- "paddhsbetas.xlsx"
 
 loadGLMXLS(filedir, filename)
 }
+}
+\seealso{
+  See \code{\link{createGLM}} for file format.
 }
 

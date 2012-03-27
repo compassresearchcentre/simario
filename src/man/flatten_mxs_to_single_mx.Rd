@@ -1,9 +1,9 @@
-\name{flatten.listmx}
-\alias{flatten.listmx}
+\name{flatten_mxs_to_single_mx}
+\alias{flatten_mxs_to_single_mx}
 \title{Takes a list of matrices, flattens them into a single row, aligns them by column name
 and then returns a single matrix.}
 \usage{
-  flatten.listmx(listmx)
+  flatten_mxs_to_single_mx(listmx)
 }
 \arguments{
   \item{listmx}{list of matrices to flatten. Can have
@@ -22,7 +22,7 @@ and then returns a single matrix.}
 }
 \examples{
 listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
-flatten.listmx(listmx)
+ flatten_mxs_to_single_mx(listmx)
 }
 \seealso{
   listmx.flat.aligned)

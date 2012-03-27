@@ -148,7 +148,7 @@ collator_means <- function(runs, dict) {
 #' collator_list_mx(runs)
 collator_list_mx <- function(runs, CI=TRUE) {
 	runs_array <- as_array_list_mx(runs)
-	mean.array.z(runs_array, CI=CI)
+	mean_array_z(runs_array, CI=CI)
 }
 
 #' Collate and average mutiple lists of matrices.
@@ -180,7 +180,7 @@ collator_list_mx <- function(runs, CI=TRUE) {
 #' collator_mutiple_lists_mx(runs, CI=FALSE)
 collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 	runs_array <- flatten_mxlists_to_array(runs)
-	mean.array.z(runs_array, CI=CI)
+	mean_array_z(runs_array, CI=CI)
 }
 
 #' Identify and return the indices of columns that 
