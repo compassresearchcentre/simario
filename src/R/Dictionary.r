@@ -258,7 +258,7 @@ Dictionary <- proto(expr = {
 		
 		names(codings) <- codings_dataframe$Varname
 		
-		#add "varname" attribute for use with wtdmeancols.lbl function
+		#add "varname" attribute for use with mean_mx_cols.lbl function
 		codings <- mapply(function(coding, name) {
 					structure(coding, varname=name)
 				}, codings, names(codings))
