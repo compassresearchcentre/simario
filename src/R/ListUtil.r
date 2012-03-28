@@ -344,6 +344,9 @@ lzipper <- function (lol, .FUN, ...)  {
 				
 				#construct list of all element j's in each outer list
 				lol.j <- lapply(lol, function (outer) {
+							if (j > length(outer)) {
+								stop("List is missing elements")
+							}
 							outer[[j]]
 						})
 				
