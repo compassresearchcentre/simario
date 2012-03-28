@@ -129,7 +129,7 @@ create2CategoryPropensityArray <- function(df) {
 #' Create a propensity array from a dataframe, for only a single iteration.
 #' 
 #' @param df
-#'  dataframe containing 1 column per iteration.
+#'  dataframe containing n columns where n is one less than the number of categories.
 #'  This column represents the propensity to change from the 1st category to the 2nd category.
 #' @param iteration_name
 #'  used to label the single iteration in the z dim  

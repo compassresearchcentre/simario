@@ -354,7 +354,37 @@ predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 	ifelse(randunif <= predicted_probabilities, 1, 0) 
 }
 
-#' Predict and simulate continuous value from binomial
+#' Predict probabilities from the coefficients of a logistic regression
+#' 
+#' @param model.glm
+#'  model specifying variables to evaluate and coefficients
+#'  to multiple by.
+#' @param envir
+#'  environment in which to evaluate model variables.
+#'  if unspecified, uses caller's environment
+#' @param set
+#'  subset logical expression indicating elements or rows to keep, or NULL to use
+#'  all elements returned by evaluated model variables
+#' 
+#' @return 
+#' a vector of predicted probabilities
+#'  
+#' @export   
+#' @examples
+#' \dontrun{
+#' model.glm <- models$houtptot
+#' newdata <- simvalues
+#' }
+predLogistic <- function(model.glm, envir=parent.frame(), set = NULL) {
+	
+	#determine predicted values
+	predicted_logits <- predict(model.glm, envir, set)
+	predicted_probabilities <- exp(predicted_logits)/(1+exp(predicted_logits))
+	
+	predicted_probabilities
+}
+
+#' Predict and simulate binary value from binomial
 #' distribution with probability
 #' 
 #' @param model.glm
@@ -366,6 +396,9 @@ predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 #' @param set
 #'  subset logical expression indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
+#' 
+#' @return 
+#' a vector of binary values drawn from a Binomial distribution 
 #'  
 #' @export   
 #' @examples
@@ -376,8 +409,7 @@ predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	#determine predicted values
-	predicted_logits <- predict(model.glm, envir, set)
-	predicted_probabilities <- exp(predicted_logits)/(1+exp(predicted_logits))
+	predicted_probabilities <- predLogistic(model.glm, envir, set)
 	
 	if(length(predicted_probabilities) == 0) return(predicted_probabilities)
 	
