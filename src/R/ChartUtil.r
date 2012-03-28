@@ -170,7 +170,7 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 #' error.bar(barx, y.means, y.err)
 #' x = barx; y = y.means
 #' upper = y.err; lower=upper
-error.bar <- function(x, y, upper, lower=upper, length=0.1,...){
+error.bar <- function(x, y, upper, lower=pmin(y,upper), length=0.1,...){
 	if(length(x) != length(y) | length(y) !=length(lower) | length(lower) != length(upper))
 		stop("vectors must be same length")
 	
