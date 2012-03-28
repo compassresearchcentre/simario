@@ -33,7 +33,7 @@ lol <- env.base$years1_5$runstats$means
 lol <- env.base$years1_5$runstats$means
 lol <- env.base$years6_13$runstats$summaries
 lol <- years1_5$runstats$summaries
-lapply.inner(lol, mean.array.z)
+lapply.inner(lol, mean_array_z)
 }
 }
 

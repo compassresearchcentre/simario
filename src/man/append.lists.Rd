@@ -47,7 +47,7 @@
 #Test first three cases:
 
 #ml0 <- namedList("msmoke", "fsmoke")
-#x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table.grpby.mx.cols
+#x <- env.base$years1_5$outcomes; indices=names(ml0); simplify = FALSE; .FUN=table_mx_cols
 #list.src <- lapply.subset(x, indices, .FUN)
 
 #ml0 <- namedList("gptotvis", "hadmtot")
@@ -63,8 +63,8 @@
 
 #Test with lists with differently named items.
 
-list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$runstats.collated$quantiles
-list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$runstats.collated$quantiles
+list.dest <- list(foo=matrix(1:4)) # list.dest <- years1_5$run_results_collated$quantiles
+list.src <- list(bar=matrix(5:10)) # list.src <- years6_13$run_results_collated$quantiles
 
 by.name = TRUE; flatten.src = TRUE
 list.result <- append.lists(list.dest , list.src, by.name = TRUE, flatten.src = TRUE)

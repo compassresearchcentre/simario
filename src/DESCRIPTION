@@ -15,6 +15,8 @@ Maintainer: Oliver Mannion <o.mannion@auckland.ac.nz>
 Description: Framework for executing multi-run dynamic micro-simulation and
     aggregating results across all runs
 License: LGPL
+URL: http://code.google.com/p/simario/
+LazyData: true
 Collate:
     'CategoricalAdjustment.r'
     'ChartUtil.r'

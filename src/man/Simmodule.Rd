@@ -3,29 +3,24 @@
 \alias{Simmodule}
 \title{Simulation module object.}
 \format{proto object 
- $ class          :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 216 11 216 33 18 40 216 216 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
- $ collateRunStats:function (., simenv)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 180 21 211 2 28 9 180 211 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
- $ outcomes       : list() 
- $ clone          :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 214 11 214 57 18 64 214 214 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
- $ name           : NULL 
- $ result         : list() 
- $ simulateRun    :function (., simenv)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 119 17 121 2 24 9 119 121 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
- $ new            :function (., name, freqvars, cfreqvars, meanvars, freqs.args,  
-    means.args)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 77 9 107 2 16 9 77 107 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
- $ appendRunStats :function (.)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 135 20 165 2 27 9 135 165 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x07d7c6ac>  
- $ runstats       :List of 5}
+ $ class                      :function (.)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 93 11 93 33 18 40 93 93 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0766d60c>  
+ $ clone                      :function (.)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 91 11 91 57 18 64 91 91 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0766d60c>  
+ $ collate_all_run_results    :function (., all_run_results)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 87 29 89 2 36 9 87 89 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0766d60c>  
+ $ simulateRun                :function (., simenv)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 59 17 61 2 24 9 59 61 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0766d60c>  
+ $ new                        :function (., name)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 39 9 47 2 16 9 39 47 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0766d60c>  
+ $ map_outcomes_to_run_results:function (., outcomes)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 75 33 77 2 40 9 75 77 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0766d60c>}
 \usage{
   Simmodule
 }

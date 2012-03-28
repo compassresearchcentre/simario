@@ -1,23 +1,26 @@
 \name{remove.cols}
 \alias{remove.cols}
-\title{Remove cols by name.}
+\title{Remove cols specified by indices.}
 \usage{
-  remove.cols(x, cnames)
+  remove.cols(mx, indices)
 }
 \arguments{
-  \item{x}{matrix or dataframe}
+  \item{mx}{matrix}
 
-  \item{cnames}{vector of colnames}
+  \item{indices}{indices to remove. If indices is length
+  zero, then mx is return as is.}
+}
+\value{
+  the matrix mx with columns removed. Names and any "meta"
+  attribute preserved.  Always returns a matrix.
 }
 \description{
-  Remove cols by name.
+  Remove cols specified by indices.
 }
 \examples{
-x <- matrix(1:4, dimnames=list(NULL, c("A","NA (\%)")), nrow = 2)
-x <- matrix(1:4, dimnames=list(NULL, c("A","B")), nrow = 2)
-cnames <- "NA (\%)"
-remove.cols(x, cnames)
-data(mtcars); x <- cars; cnames <- "dist"
-remove.cols(x, cnames)
+mx <- matrix(1:3, nrow=1, dimnames=list(NULL, c("A","B","C")))
+ indices <- c(1,3)
+ indices <- vector(mode="integer")
+ remove.cols(mx, indices)
 }
 

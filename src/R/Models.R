@@ -151,9 +151,9 @@ loadGLMCSV <- function (filedir, filename) {
 #' @export
 #' @examples 
 #' \dontrun{
-#' 	unique.names.model.coefs(models)
+#' 	model_coefs_names_unique(models)
 #' }
-unique.names.model.coefs <- function(models_list) {
+model_coefs_names_unique <- function(models_list) {
 	names.all.coefs <- unlist(lapply(models_list, function(model) {
 				names(modelVariableCoefs(model))
 			}), use.names = F)

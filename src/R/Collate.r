@@ -25,11 +25,16 @@
 #' @seealso \code{\link{collator_mutiple_lists_mx}}
 #' @export 
 #' @examples
-#' \dontrun{
-#' runs <- all_run_results_zipped$confreqs[[1]]
-#' dict <- dict_demo
-#' collator_confreqs(runs, dict_demo)
-#' }
+#' run1_mx1 = matrix(1:2, nrow=1, dimnames=list(1, c("F","M")))
+#' run1_mx2 = matrix(1:4, nrow=2, dimnames=list(1:2, c("F","M")), byrow = TRUE)
+#' run1 = structure(list(run1_mx1, run1_mx2), meta=c(varname="disability_state", grpby.tag="sex"))
+#' run2_mx1 = matrix(11:12, nrow=1, dimnames=list(1, c("F","M")))
+#' run2_mx2 = matrix(11:14, nrow=2, dimnames=list(3:4, c("F","M")), byrow = TRUE)
+#' run2 = structure(list(run2_mx1, run2_mx2), meta=c(varname="disability_state", grpby.tag="sex")) 
+#' 
+#' runs <- list(run1=run1,run2=run2) 
+#' dict <- dict_example
+#' collator_confreqs(runs, dict)
 collator_confreqs <- function (runs, dict, row.dim.label="Year", col.dim.label="") {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
 	
@@ -61,7 +66,7 @@ collator_confreqs <- function (runs, dict, row.dim.label="Year", col.dim.label="
 #' \dontrun{
 #' runs <- all_run_results_zipped$freqs[[1]]
 #' runs <- all_run_results_zipped$freqs_by_sex[[1]]
-#' collator_freqs(runs, dict_demo)
+#' collator_freqs(runs, dict_example)
 #' }
 collator_freqs <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
@@ -108,10 +113,12 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 #' @seealso \code{\link{collator_list_mx}}
 #' @export 
 #' @examples
-#' \dontrun{
-#' runs <- all_run_results_zipped$means_by_sex[[1]]
+#' run1 = structure(matrix(1:6, nrow=3, dimnames=list(1:3, c("F","M"))), meta=c(varname="earnings", grpby.tag="sex"))
+#' run2 = structure(matrix(11:16, nrow=3, dimnames=list(1:3, c("F","M"))), meta=c(varname="earnings", grpby.tag="sex"))
+#' 
+#' runs <- list(run1=run1,run2=run2) 
+#' dict <- dict_example
 #' collator_means(runs, dict)
-#' }
 collator_means <- function(runs, dict) {
 	runs_mx <- collator_list_mx(runs)
 	
@@ -141,7 +148,7 @@ collator_means <- function(runs, dict) {
 #' collator_list_mx(runs)
 collator_list_mx <- function(runs, CI=TRUE) {
 	runs_array <- as_array_list_mx(runs)
-	mean.array.z(runs_array, CI=CI)
+	mean_array_z(runs_array, CI=CI)
 }
 
 #' Collate and average mutiple lists of matrices.
@@ -160,6 +167,7 @@ collator_list_mx <- function(runs, CI=TRUE) {
 #'  a matrix with the averaged values of runs.
 #'
 #' @export 
+#' @keywords internal
 #' @examples
 #' run1_mx1 = matrix(1:2, nrow=1, dimnames=list(1, c("F","M")))
 #' run1_mx2 = matrix(1:4, nrow=2, dimnames=list(1:2, c("F","M")), byrow = TRUE)
@@ -172,7 +180,7 @@ collator_list_mx <- function(runs, CI=TRUE) {
 #' collator_mutiple_lists_mx(runs, CI=FALSE)
 collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 	runs_array <- flatten_mxlists_to_array(runs)
-	mean.array.z(runs_array, CI=CI)
+	mean_array_z(runs_array, CI=CI)
 }
 
 #' Identify and return the indices of columns that 
@@ -198,11 +206,12 @@ identify_zero_category_cols <- function (mx) {
 
 #' Calculated percentages within groups of a flattened matrix.
 #'
-#' @param mx.flattend
+#' @param mx.flattened
 #'  a flattened matrix, ie: a matrix that has rows that contain
 #'  groups of values. Percentages are then calculated within these groups.
-#'  The number of groups is determined by using the meta grpby.tag
+#'  The number of groups is determined by using the meta "grpby.tag"
 #'  attribute to lookup the group by codings in \code{dict}.
+#'  mx.flattened must also have a meta "varname" attribute.
 #'  
 #' @param dict
 #'  Dictionary object. Used to determine number of groups.
@@ -210,12 +219,9 @@ identify_zero_category_cols <- function (mx) {
 #' @seealso \code{\link{prop.table.mx.grped.rows}}
 #' @export  
 #' @examples
-#' \dontrun{
-#' mx.flattened <- runs_mx
-#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex"))
-#' dict <- dict_demo
+#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(varname="disability_state", grpby.tag="sex"))
+#' dict <- dict_example
 #' percentages_flattened_mx(mx.flattened, dict)
-#' }
 percentages_flattened_mx <- function(mx.flattened, dict) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
@@ -256,7 +262,7 @@ percentages_flattened_mx <- function(mx.flattened, dict) {
 #' x <- runstat_f
 #' varname=attr(x, "meta")["grpby.tag"]
 #' dict <- dict.MELC
-#' dict <- dict_demo
+#' dict <- dict_example
 #' labelColumnCodes(x, dict, varname)
 #' }
 labelColumnCodes <- function(x, dict, varname) {
@@ -313,9 +319,10 @@ labelColumnCodes <- function(x, dict, varname) {
 #' @param col.dim.label
 #'  name of the entire col dimension
 #' 
+#' @export
 #' @examples 
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
-#' dict <- dict_demo
+#' dict <- dict_example
 #' label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
 label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
 	varname <- attr(mx.flattened, "meta")["varname"]
@@ -344,7 +351,7 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' @export
 #' @examples
 #' 
-#' mx.grped.rows <- matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = T)
+#' mx.grped.rows <- matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE)
 #' numgrps <- 3
 #' 
 #' mx.grped.rows <- matrix(c(1:4), nrow=1)

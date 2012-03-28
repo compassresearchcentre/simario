@@ -1,6 +1,6 @@
-# TODO: Add comment
+# SimenvDemo object for the demo simulation.
 # 
-# Author: oman002
+# Author: Oliver Mannion
 ###############################################################################
 
 SimenvDemo <- proto(. = Simenv, expr = {

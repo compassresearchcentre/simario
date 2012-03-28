@@ -1,8 +1,8 @@
-\name{remove.rows}
-\alias{remove.rows}
+\name{remove.rows.named}
+\alias{remove.rows.named}
 \title{Remove rows by name.}
 \usage{
-  remove.rows(mx, rnames)
+  remove.rows.named(mx, rnames)
 }
 \arguments{
   \item{mx}{matrix or dataframe}
@@ -16,6 +16,6 @@
 mx <- matrix(1:4, dimnames=list(c("A","NA (\%)"), NULL), nrow = 2)
 mx <- matrix(1:4, dimnames=list(c("A","B"), NULL), nrow = 2)
 rnames <- "NA (\%)"
-remove.rows(mx, rnames)
+remove.rows.named(mx, rnames)
 }
 

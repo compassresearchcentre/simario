@@ -1,8 +1,8 @@
-\name{quantile.mx}
-\alias{quantile.mx}
+\name{quantile_mx_cols}
+\alias{quantile_mx_cols}
 \title{Execute quantile on the columns of a matrix.}
 \usage{
-  quantile.mx(mx, new.names = NULL, ...)
+  quantile_mx_cols(mx, new.names = NULL, ...)
 }
 \arguments{
   \item{mx}{matrix}
@@ -25,10 +25,10 @@ mx <- years6_13$outcomes[["cond"]]
 mx <- env.base$modules$years1_5$outcomes[["hadmtot"]]
 mx <- env.base$modules$years6_13$outcomes[["cond"]]
 mx <- env.base$modules$years1_5$outcomes[["gptotvis"]]
-quantile.mx(mx)
-quantile.mx(mx, probs=seq(0, 1, 0.2), na.rm = TRUE)
-quantile.mx(mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0, 1, 0.2), na.rm = TRUE)
-quantile.mx(mx, probs=seq(0, 1, 0.02), na.rm = TRUE)
+quantile_mx_cols(mx)
+quantile_mx_cols(mx, probs=seq(0, 1, 0.2), na.rm = TRUE)
+quantile_mx_cols(mx, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0, 1, 0.2), na.rm = TRUE)
+quantile_mx_cols(mx, probs=seq(0, 1, 0.02), na.rm = TRUE)
 }
 }
 
