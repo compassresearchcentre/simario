@@ -94,10 +94,18 @@ loadTransitionProbabilities <- function(dir) {
 }
 
 loadSimario <- function() {
+	not_already_installed <- function(package_names) {
+		setdiff(package_names, row.names(installed.packages()))	
+	}
+	
 	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0 & file.exists(path.expand("~/.Rpackages"))
 	if (.is_dev_environment & !exists(".USELIB")) {
 		#loads simario from the workspace folder (the R folder - simar/src/R))
 		cat("loadSimario: loading pre-installed development version using load_all\n")
+		
+		if (length(not_already_installed("simario"))) {
+			stop("dict_example requires simario library. Please make sure simario has been installed into the R library path. This can be done by running install_simario_library.bat")	
+		}
 		
 		library(devtools)
 		load_all("simario", reset = T)
