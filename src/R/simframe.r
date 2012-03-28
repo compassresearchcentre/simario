@@ -217,12 +217,11 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' @export
 #' @examples 
 #' \dontrun{
-#' envir <- children
-#' envir <- people
-#' basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
-#' basefiledir <- "D:/workspace.sim/simario/src/demo/resource"
-#' simframe_defn <- readXLSSheet1(basefiledir, "simframedef.xlsx")
-#' simframe.master <- loadSimFrame(simframe_defn, envir)
+#'  data_dir <- paste(getwd(), "/data/", sep=""); base_dir <- file.path(data_dir, "base")
+#'  people <- read_csv(base_dir, "Base_file_(people).csv")
+#'  envir <- people
+#'  simframe_defn <- read_csv(base_dir, "simframedef.csv")
+#'  simframe.master <- loadSimFrame(simframe_defn, envir)
 #' }
 loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {
 	
@@ -252,6 +251,10 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {
 	#remove obs. that have NAs in one of their values
 	simframe <- na.omit(simframe)
 	nas <- attr(simframe, "na.action")
+	
+	if (dim(simframe)[1] == 0) {
+		stop ("Simframe is empty. Please check for NAs in simframe variables.")
+	}
 	
 	# add singular NA values back to data.frame
 	if (any(initial_value_is_NA)) {
