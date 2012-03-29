@@ -355,10 +355,11 @@ err <- function (x) {
 #' Errors if expressions cannot be evaluated.
 #' 
 #' @param exprlist list/vector of strings to evaluate
-#' @param envir environment to evaluate in, defaults to global environment. If this is a
-#'  list/dataframe then the enclosing environment will become the calling frame.
-#'  This means values not found in the list/dataframe will be evaluated in the
-#'  caller's environment
+#' @param envir environment to evaluate in, defaults to global environment. 
+#' @param enclos
+#'  Specifies the enclosure, i.e., where R looks for objects not found in envir.
+#'  Defaults to the caller's environment (parent.frame()) 
+#' 
 #' @param allowEmptyExpr allow expressions to return no value, defaults to FALSE
 #' 
 #' @export
@@ -368,12 +369,12 @@ err <- function (x) {
 #' envir <- bf
 #' eval.list(exprlist, bf)
 #' }
-eval.list <- function (exprlist, envir = .GlobalEnv, allowEmptyExpr = FALSE) {
+eval.list <- function (exprlist, envir = .GlobalEnv, enclos = parent.frame(), allowEmptyExpr = FALSE) {
 	
 	#evaluate list of strings as expressions.
 	#Any objects in the exprs must exist in envir or if not then in parent.frame()
 	values <- lapply(exprlist,
-			function (x) try(eval(parse(text=x), envir = envir), silent = TRUE))
+			function (x) try(eval(parse(text=x), envir = envir, enclos = enclos), silent = TRUE))
 	
 	# if any parse/evaluation errors, fail
 	tryerrs <- tryerrorMsgs(values)

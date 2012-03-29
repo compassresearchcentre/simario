@@ -193,9 +193,13 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #' @param envir  
 #'  environment to evaluate initial_value in. Typically this will be a
 #'  dataframe loaded from a base file. Initial_value can not only
-#'  reference values in envir, but also values in the calling frame.
+#'  reference values in envir, but also values in enclos.
 #'  Defaults to global environment.
 #' 
+#' @param enclos
+#'  Specifies the enclosure, i.e., where R looks for objects not found in envir.
+#'  Defaults to the caller's environment (parent.frame())
+#'  
 #' @return
 #'  the simulation frame. The simulation frame contains the variables in simframe_defn with
 #'  their inital_value evaluated. Each variable contains a set of observations. Each
@@ -223,7 +227,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'  simframe_defn <- read_csv(base_dir, "simframedef.csv")
 #'  simframe.master <- loadSimFrame(simframe_defn, envir)
 #' }
-loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {
+loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame()) {
 	
 	#remove empty rows
 	#(generally these are blank lines at the end of the file)
@@ -241,7 +245,7 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv) {
 	empty_exprs <- (initial_value_exprs == "")
 	initial_value_exprs[empty_exprs] <- NA_real_
 	
-	initial_values  <- eval.list(initial_value_exprs, envir)
+	initial_values  <- eval.list(initial_value_exprs, envir, enclos)
 	initial_value_is_NA <- is.na(initial_values)
 	
 	# convert non NA values to data.frame
