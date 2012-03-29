@@ -286,7 +286,7 @@ expr = {
 			#execute map_outcomes_to_run_results on all modules and store run results
 			invisible(lapply(.$modules, function(module) {
 								#module <- .$modules[[1]]
-								run_results <- module$map_outcomes_to_run_results(module$outcomes)
+								run_results <- module$map_outcomes_to_run_results(.$simframe, module$outcomes)
 								module$run_results <- c(module$run_results, list(run_results))
 								names(module$run_results)[i] <- paste("run", i, sep="")
 							}))
