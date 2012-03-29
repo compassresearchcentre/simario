@@ -29,8 +29,7 @@ Simenv
 simario:::Simenv
 
 #installing
-package_path <- "~/simario/simario_1.0.tar.gz"
-package_path <- "D:\\workspace.sim\\simario\\simario_1.0.tar.gz"
+package_path <- "~/simario/build/simario_1.0.3.tar.gz"
 install.packages(package_path, repos=NULL, type="source")
 
 install("simario")
@@ -51,7 +50,7 @@ subset(installed.packages(), Package="devtools")
 
 installed.packages()[Package == "devtools"]
 
-
+save(dict_example, file="~/simario/src/data/dict_example.rda")
 
 
 result$runstats_spec <- list(

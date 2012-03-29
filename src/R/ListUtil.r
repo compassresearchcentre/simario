@@ -169,7 +169,7 @@ checkNAs <- function (xlist) {
 #' c_list(xlist, fx)
 #' all.equal(c(xlist[[1]]$inner, xlist[[2]]$inner),c_list(xlist, fx)) 
 c_list <- function(xlist, fx) {
-	result <- unlist(lapply(xlist, fx), recursive = F)  #do.call(c, lapply(xlist, fx))
+	result <- unlist(lapply(xlist, fx), recursive = FALSE)  #do.call(c, lapply(xlist, fx))
 	names(result) <- unlist(lapply(xlist, function(x) names(fx(x))))
 	result
 }
@@ -265,7 +265,7 @@ lapply.inner <- function (lol, .FUN, ..., simplify = FALSE, USE.NAMES = FALSE) {
 #' lol <- list(A=list("A1"="a1","A2"="a2","A3"="a3"),B=list("B1"="b1","B2"="b2","B3"="b3"))
 #' lol.zipped <- lzip(lol)			
 #' lol.zip.list <- lisp::zip.list(lol$A, lol$B)                 # same as lol.zipped but without names on outer & inner elements
-#' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = F) 		# same as lol.zipped but only has names on outer elements
+#' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = FALSE) 		# same as lol.zipped but only has names on outer elements
 #' lol.2d <- mapply(list, lol$A, lol$B) 						# creates 2D list [2,3]
 #' lol.2ds <- split(lol.2d, col(lol.2d))						# same as lol.zip.list
 #' lol.zwn <- lisp::zip.with.names(lol$A, lol$B)				# same as lol.zipped but only has names on inner elements
@@ -322,7 +322,7 @@ lzip <- function(lol) {
 #' lol <- list(A=list("A1"="a1","A2"="a2","A3"="a3"),B=list("B1"="b1","B2"="b2","B3"="b3"))
 #' lol.zipped <- lzipper(lol, c)			
 #' lol.zip.list <- lisp::zip.list(lol$A, lol$B)                 # same as lol.zipped but without names on outer & inner elements
-#' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = F) 		# same as lol.zipped but only has names on outer elements
+#' lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = FALSE) 		# same as lol.zipped but only has names on outer elements
 #' lol.2d <- mapply(list, lol$A, lol$B) 						# creates 2D list [2,3]
 #' lol.2ds <- split(lol.2d, col(lol.2d))						# same as lol.zip.list
 #' lol.zwn <- lisp::zip.with.names(lol$A, lol$B)				# same as lol.zipped but only has names on inner elements
@@ -409,6 +409,7 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #' @param FUN.args
 #'  a named list of arguments to be suppplied to FUN when executed on each element of xlist
 #' 
+#' @export
 #' @examples
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
 #' grpby <- c('M','F','F','M')
