@@ -3,10 +3,14 @@
 # Author: oman002
 ###############################################################################
 
-#' Collate frequencies for variables without fixed category codings specified
-#' in the dictionary. Instead these variables will have a large variable number of 
-#' categories.
-#'  
+#' Collate frequencies. Performs the following:
+#' 
+#' \itemize{
+#'   \item Takes mean without confidence intervals using \code{\link{collator_mutiple_lists_mx}}  
+#'   \item Labels the result using the dictionary 
+#'   \item Converts frequencies to percentages
+#' }
+#'   
 #' @param runs
 #'  a list of lists of matrices, one inner list per run.
 #'  Each inner list may have any number of matrices,
@@ -34,16 +38,22 @@
 #' 
 #' runs <- list(run1=run1,run2=run2) 
 #' dict <- dict_example
-#' collator_confreqs(runs, dict)
-collator_confreqs <- function (runs, dict, row.dim.label="Year", col.dim.label="") {
+#' collator_freqs(runs, dict)
+collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="") {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
 	
 	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
 	percentages_flattened_mx(runs_mx, dict)
 }
 
-#' Collate frequencies for variables with fixed category codings specified
-#' in the dictionary.
+#' Collate frequencies and removes the zero category. Performs the following:
+#' 
+#' \itemize{
+#'   \item Takes mean without confidence intervals using \code{\link{collator_mutiple_lists_mx}} 
+#'   \item Labels the result using the dictionary 
+#'   \item Converts frequencies to percentages
+#'   \item Removes the zero category
+#' }
 #'
 #' @param runs
 #'  a list of lists of matrices, one inner list per run.
@@ -66,9 +76,9 @@ collator_confreqs <- function (runs, dict, row.dim.label="Year", col.dim.label="
 #' \dontrun{
 #' runs <- all_run_results_zipped$freqs[[1]]
 #' runs <- all_run_results_zipped$freqs_by_sex[[1]]
-#' collator_freqs(runs, dict_example)
+#' collator_freqs_remove_zero_cat(runs, dict_example)
 #' }
-collator_freqs <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
+collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
@@ -77,8 +87,13 @@ collator_freqs <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
 	remove.cols(runs_mx, zero_cat_cols)
 }
 
-#' Collate frequencies for variables without fixed category codings specified
-#' in the dictionary.
+#' Collates frequencies for use in histogram output with confidence intervals. 
+#' Performs the following:
+#' 
+#' \itemize{
+#'   \item Takes mean with confidence intervals using \code{\link{collator_mutiple_lists_mx}}
+#'   \item Labels the result using the dictionary 
+#' }
 #' 
 #' @param runs
 #'  a list of lists of matrices, one inner list per run.
@@ -103,7 +118,12 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 	label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label) 
 }
 
-#' Collate means over multiple runs.
+#' Collate means over multiple runs. Performs the following:
+#' 
+#' \itemize{
+#'   \item Takes mean with confidence intervals using \code{\link{collator_list_mx}}
+#'   \item Labels the result using the dictionary 
+#' }
 #' 
 #' @param runs
 #'  a list of matrices, one matrix per run.

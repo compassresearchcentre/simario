@@ -216,12 +216,12 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	
 		collated_results <- list()
 		
-		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_confreqs, dict = dict_demo)
+		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_freqs, dict = dict_demo)
 		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
-		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs, dict = dict_demo)
-		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs, dict = dict_demo)
-		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs, dict = dict_demo)
-		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs, dict = dict_demo)
+		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs_remove_zero_cat, dict = dict_demo)
+		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs_remove_zero_cat, dict = dict_demo)
+		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs_remove_zero_cat, dict = dict_demo)
+		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$means <- lapply(all_run_results_zipped$means, collator_means, dict = dict_demo)
 		collated_results$means_males <- lapply(all_run_results_zipped$means_males, collator_means, dict = dict_demo)
 		collated_results$means_females <- lapply(all_run_results_zipped$means_females, collator_means, dict = dict_demo)
