@@ -293,7 +293,7 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 #'  value.
 #' 
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
+#'  logical vector indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
 #' 
 #' @export
@@ -346,8 +346,8 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
-#'  all elements returned by evaluated model variables
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
 #'
 #' @export   
 #' @examples
@@ -372,8 +372,8 @@ predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
-#'  all elements returned by evaluated model variables
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
 #' 
 #' @return 
 #' a vector of predicted probabilities
@@ -403,8 +403,8 @@ predLogistic <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
-#'  all elements returned by evaluated model variables
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
 #' 
 #' @return 
 #' a vector of binary values drawn from a Binomial distribution 
@@ -435,8 +435,8 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
-#'  all elements returned by evaluated model variables
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
 #'
 #' @export   
 #' @examples
@@ -466,8 +466,8 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
-#'  all elements returned by evaluated model variables
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
 #' @param alpha
 #'  if supplied, use this value for alpha rather than the value in the model
 #'
@@ -504,8 +504,8 @@ predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL, alpha=NUL
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
 #' @param set
-#'  subset logical expression indicating elements or rows to keep, or NULL to use
-#'  all elements returned by evaluated model variables
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
 #'
 #' @export   
 #' @examples

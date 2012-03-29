@@ -258,6 +258,9 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' @param mx
 #'  matrix
 #' 
+#' @param logiset
+#'  logical vector indicating which rows to include, or NULL to include all.
+#' 
 #' @return
 #'  summary of each column, returned as a row
 #' 
@@ -267,7 +270,6 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' logiset <- c(FALSE, TRUE, FALSE, TRUE)
 #' summary_mx_cols(mx)
 #' summary_mx_cols(mx, logiset=logiset)
-
 summary_mx_cols <- function (mx, logiset=NULL) {
 	
 	# subset
@@ -426,14 +428,15 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #'  logical. Should missing values be removed?  
 #' 
 #' @return 
-#'  if grpby is NULL, vector of means for each column
-#'  if grpby is specified, a matrix of means for each column grouped
+#'  a matrix of means. Each row is the mean for a column in mx.
+#'  if grpby is NULL, a single column of means. 
+#'  if grpby is specified, a column of means for each group by category.
 #' 
 #' @export
 #' @examples
-#' mx <- matrix (c(1:10), ncol = 2)
-#' mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) ; logiset=NULL
-#' grpby = NULL
+#' mx <- matrix (c(1:10), ncol = 2) ; mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) 
+#' logiset = NULL
+#' grpby = NULL ; grpby.tag = NULL 
 #' grpby <- c("A","A","A","B","B") ; grpby.tag = "AB" 
 #' wgts = rep(1, nrow(mx))
 #' na.rm = FALSE ; na.rm = TRUE
