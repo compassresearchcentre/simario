@@ -200,21 +200,25 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'  Specifies the enclosure, i.e., where R looks for objects not found in envir.
 #'  Defaults to the caller's environment (parent.frame())
 #'  
+#' @param na_omit
+#' 
+#' If TRUE and an observation is NA, then that case (ie: it's observations for all 
+#'  variables) is removed. This however does not apply to initial_value expressions 
+#'  that return a singular NA. These remain as a vector containing NA for 
+#'  as each observation.
+#' 
+#' 
 #' @return
 #'  the simulation frame. The simulation frame contains the variables in simframe_defn with
 #'  their inital_value evaluated. Each variable contains a set of observations. Each
 #'  observation represents a case in the basefile.
 #'  
-#'  If an observation is NA, then that case (ie: it's observations for all 
-#'  variables) is removed. This however does not apply to initial_value expressions 
-#'  that return a singular NA. These remain as a vector containing NA for 
-#'  as each observation.
 #'   
 #' 	The simulation frame object has the following attributes:
 #' 
 #' 	"previous" - variables that represent values in the previous iteration
 #'  "outcome_vars" - a dataframe of Varname, Outcome_type, and Outcome_module
-#'	"na.omit" - an omit variable that indicates the observations that were removed
+#'	"na.actions" - an omit variable that indicates the observations that were removed
 #' 				because their were NA. Initial_values that returned a singular NA
 #' 				remain.
 #' 
@@ -227,7 +231,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'  simframe_defn <- read_csv(base_dir, "simframedef.csv")
 #'  simframe.master <- loadSimFrame(simframe_defn, envir)
 #' }
-loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame()) {
+loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame(), na_omit=TRUE) {
 	
 	#remove empty rows
 	#(generally these are blank lines at the end of the file)
@@ -252,9 +256,12 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.fra
 	# this repeats any inital values that are singular
 	simframe <- data.frame(initial_values[!initial_value_is_NA])
 	
-	#remove obs. that have NAs in one of their values
-	simframe <- na.omit(simframe)
-	nas <- attr(simframe, "na.action")
+	nas <- NULL
+	if (na_omit) {
+		#remove obs. that have NAs in one of their values
+		simframe <- na.omit(simframe)
+		nas <- attr(simframe, "na.action")	
+	}
 	
 	if (dim(simframe)[1] == 0) {
 		stop ("Simframe is empty. Please check for NAs in simframe variables.")
@@ -263,7 +270,7 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.fra
 	# add singular NA values back to data.frame
 	if (any(initial_value_is_NA)) {
 		simframe  <- cbind(simframe, 
-			as.list(initial_values[initial_value_is_NA]), stringsAsFactors=FALSE)
+				as.list(initial_values[initial_value_is_NA]), stringsAsFactors=FALSE)
 	}
 	
 	# previous = the names of the variables that represent values in the previous iteration
