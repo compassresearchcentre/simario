@@ -2,7 +2,8 @@
 \alias{error.bar}
 \title{Draws an error bar on the current device.}
 \usage{
-  error.bar(x, y, upper, lower = upper, length = 0.1, ...)
+  error.bar(x, y, upper, lower = pmin(y, upper),
+    length = 0.1, ...)
 }
 \arguments{
   \item{x}{vector/matrix of x locations to draw error bar,

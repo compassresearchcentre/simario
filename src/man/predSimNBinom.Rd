@@ -14,9 +14,8 @@ where alpha is specified in the model.}
   \item{envir}{environment in which to evaluate model
   variables.  if unspecified, uses caller's environment}
 
-  \item{set}{subset logical expression indicating elements
-  or rows to keep, or NULL to use all elements returned by
-  evaluated model variables}
+  \item{set}{logical vector indicating elements or rows to
+  simulate, or NULL to simulate using all values in envir}
 
   \item{alpha}{if supplied, use this value for alpha rather
   than the value in the model}

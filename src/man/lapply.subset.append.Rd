@@ -65,7 +65,7 @@ lapply.subset.append (runstats$summaries, outcomes, .FUN=quantile_mx_cols, probs
 results.list <-  run_results$freqs.by.ethnicity; X <- outcomes; indices=names(results.list); simplify = FALSE; .FUN=table_mx_cols
 lapply.subset.append (run_results$freqs.by.ethnicity, outcomes, simplify = FALSE, .FUN=table_mx_cols, grpby=outcomes$r1stchildethn, grpby.tag="r1stchildethn")
 
-results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = wtdmeancols.lbl2
+results.list <- mxlist; X <- xframe ; indices=names(results.list); simplify = TRUE ; .FUN = mean_mx_cols.lbl2
 lapply.subset.append (results.list, X, indices, simplify, .FUN, logiset=logiset, grpby=grpby, grpby.tag = grpby.tag)
 }
 }

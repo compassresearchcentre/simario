@@ -5,9 +5,10 @@
   createSingleIterationPropensityArray(df, iteration_name)
 }
 \arguments{
-  \item{df}{dataframe containing 1 column per iteration.
-  This column represents the propensity to change from the
-  1st category to the 2nd category.}
+  \item{df}{dataframe containing n columns where n is one
+  less than the number of categories.  This column
+  represents the propensity to change from the 1st category
+  to the 2nd category.}
 
   \item{iteration_name}{used to label the single iteration
   in the z dim}

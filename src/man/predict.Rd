@@ -28,9 +28,9 @@ by each variable and summs the results.}
   this, then that reassigned value will be used before a
   global or attached value.}
 
-  \item{set}{subset logical expression indicating elements
-  or rows to keep, or NULL to use all elements returned by
-  evaluated model variables}
+  \item{set}{logical vector indicating elements or rows to
+  keep, or NULL to use all elements returned by evaluated
+  model variables}
 }
 \description{
   NB: In order to know how many values to predict, there
