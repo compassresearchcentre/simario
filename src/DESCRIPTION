@@ -5,7 +5,8 @@ Depends:
     proto
 Imports:
     abind,
-    plyr
+    plyr,
+    Hmisc
 Type: Package
 Title: Discrete-time dynamic micro-simulation framework for R
 Version: 1.0.3
