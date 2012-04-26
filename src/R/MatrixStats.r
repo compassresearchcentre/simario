@@ -405,6 +405,135 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 }
 
 
+#' Weighted frequency table
+#'
+#' @param x
+#' 	vector of values.
+#' 
+#' @param wgts
+#' 	vector of weights. If unspecified a default weight of 1 is used for each value of x
+#' 
+#' @return
+#' 	weighted frequency table
+#' 
+#' @export 
+#' @examples
+#' library(Hmisc)
+#' x <- c(8,8,2,1,1,8)
+#' wgts <- c(1,1,2,1,1,1)
+#' wtdtable(x, wgts) 
+#' 1 2 8 
+#' 2 2 3
+#' 
+wtdtable <- function (x, wgts=rep(1,length(x))) {
+	if(length(x) != length(wgts)) {
+		param1Name <- as.character(sys.call())[2]
+		param2Name <- as.character(sys.call())[3]
+		stop(gettextf("Length of %s != length of weights %s", param1Name, param2Name))
+	}
+	
+	wt <- wtd.table(x, weights=wgts)
+	tbl <- wt$sum.of.weights
+	names(tbl) <- wt$x
+	
+	# wtd.table does not count NAs so we have to do it here
+	NAs <- sum(wgts[is.na(x)])
+	if (NAs > 0) {
+		#attach NA column to table
+		expandedTbl <- as.array(c(tbl,NAs))
+		names(expandedTbl) <- c(names(tbl), NA)
+		tbl <- expandedTbl
+	}
+	
+	#NB: cast to table because wtd.table doesn't do this
+	#but table does and we want wtdtable to act like table
+	#so when it is passed to the data.frame command it 
+	#works properly
+	as.table(tbl)
+}
+
+#' Produces a weighted frequency distribution for each column 
+#' of the matrix mx and returns them altogether in one table.
+#' Each column can have a different set of categories 
+#' (ie: frequency "buckets")
+#' 
+#' @param logiset
+#'  logical vector indicating which rows to include, or NULL to include all.
+#' 
+#' @param mx
+#'  matrix
+#' 
+#' @param wgts
+#'  weights. If unspecified, a default weight of 1 is used for each row
+#' 
+#' @param addVariableName
+#'  if addVariableName = TRUE, then the columns will be given the name of mx
+#' 
+#' @return
+#' weighted frequency distributions stacked in rows
+#' 
+#' @export 
+#' @examples 
+#' COL<-2
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
+#' wgts = rep(1,nrow(mx))
+#' addVariableName = FALSE
+#' addVariableName = TRUE
+#' logiset=rep(T,nrow(mx))
+#' logiset=c(T,T,T,F)
+#' wtdtable_mx_cols(mx, logiset=logiset)
+#' 
+wtdtable_mx_cols <- function(mx, wgts = rep(1,nrow(mx)), addVariableName = FALSE, logiset=NULL) {
+	
+	# subset
+	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
+	if (!is.null(logiset)) wgts <- wgts[logiset]
+	
+	
+	if(nrow(mx) != length(wgts)) {
+		param1Name <- as.character(sys.call())[2]
+		stop(gettextf("Number of rows in %s != length of wgts", param1Name))
+	}
+	
+	# if no column names, number them off
+	if (is.null(dimnames(mx)[[COL]])) {
+		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
+	}
+	
+	# get the total set of categories (ie: frequency buckets)
+	cats <- as.numeric(names(table(mx)))
+	
+	# get freqs for each column of mx
+	freqs <- apply(mx, COL, function (x) { wtdtable(x,wgts)})
+	
+	if (mode(freqs)=="list") {
+		# if its a list it means that the set of cats between
+		# columns is not consistent so we need to combine all 
+		# the freqs together, joining into cats 
+		freqs <- data.frame(
+				lapply(freqs, 
+						function (x)	{ 
+							merge(cats, x, by = 1, all.x=TRUE)$Freq 
+						}
+				)
+				, row.names = cats, check.names = FALSE
+		)
+	}
+	
+	# transponse  
+	tfreqs <- t(freqs)
+	
+	# add variable name
+	if (addVariableName) {
+		firstParamName <- as.character(sys.call())[2] 
+		names(dimnames(tfreqs))[2] <- firstParamName
+	}
+	
+	tfreqs
+}
+
+
+
 #' Calculates the weighted mean for each column of the matrix
 #' optionally subsetting and grouping by another (equal length) variable.
 #' 
