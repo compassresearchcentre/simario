@@ -4,16 +4,17 @@
 Errors if expressions cannot be evaluated.}
 \usage{
   eval.list(exprlist, envir = .GlobalEnv,
-    allowEmptyExpr = FALSE)
+    enclos = parent.frame(), allowEmptyExpr = FALSE)
 }
 \arguments{
   \item{exprlist}{list/vector of strings to evaluate}
 
   \item{envir}{environment to evaluate in, defaults to
-  global environment. If this is a list/dataframe then the
-  enclosing environment will become the calling frame.
-  This means values not found in the list/dataframe will be
-  evaluated in the caller's environment}
+  global environment.}
+
+  \item{enclos}{Specifies the enclosure, i.e., where R
+  looks for objects not found in envir.  Defaults to the
+  caller's environment (parent.frame())}
 
   \item{allowEmptyExpr}{allow expressions to return no
   value, defaults to FALSE}

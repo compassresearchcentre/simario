@@ -68,7 +68,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #'  a vector after a run of the simulation. The values of this
 #'  variable will be changed in accordance with what the user requests
 #' @param propens
-#'  matrix of the propensity scores for each child
+#'  matrix or vector of the propensity scores for each child
 #'  For binary variables there is one column of propensity scores: the
 #'  propensities to change from a 0 to a 1.
 #'  For categorical variables with more than two categories there are multiple
@@ -95,11 +95,13 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' \dontrun{
 #' default.vec <- children$SESBTH
 #' props <- c(0.1,0.1,0.8)
-#' propens <- propensities$SESBTH
+#' propens <- data.frame(propensities$SESBTH)
 #' 
-#' default.vec <- env.scenario$simframe$z1fsmokeLvl1
+#' default.vec <- env.scenario$simframe$z1accomLvl1
 #' props <- c(0.1,0.9)
-#' propens <- propensities$z1fsmokeLvl1[,1]
+#' propens <- propensities$z1accom[,,5]
+#' #propensities$z1accom is a 3 dimentional array so we take only the the 5th z dimension
+#' 	#(the propensities for year 5)
 #' 
 #' default.vec <- env.scenario$simframe$catpregsmk2
 #' props <- c(0.1, 0.1, 0.1, 0.5, 0.2)
@@ -175,26 +177,31 @@ modifyProps <- function(default.vec, props, propens=NULL) {
   
   #match propensity scores to children
   #(this function assumed that default.vec and propens have the same children
-    #in the same order)  
-  all.dat = cbind(default.vec, propens, 1:n)
+    #in the same order) 
   #the third column is a child identifier so I can put them back in the right
-    #order
+	#order
+  all.dat = data.frame(default.vec, propens, 1:n)
   new.all.dat = all.dat
 
-  rank.col = ncol(all.dat) + 1
   #rank.col identifies the column that the rankings will be in
+  #this is used later in the change.cat function where the propensities are converted to ranks
+  rank.col = ncol(all.dat) + 1
 
   #create table of given data and calculate current proportions and the numbers 
     #that need moving into or out of categories to get the requested proportions 
     #(n.change)
   tab = table(new.all.dat[,1])
   cats <- c(1:length(props))
+  #if any categories in prop are not present in default.vec then this merge is needed to fix the 
+	#problem
   tab.df = merge(cats, tab, by = 1, all.x=TRUE)
+  #after the merge any categories in cat that were not present in tab appear as NAs
+	#these NAS are changed to 0s
   na.id = which(is.na(tab.df$Freq))
   tab.df$Freq[na.id] <- 0
   current.props = tab.df$Freq/sum(tab.df$Freq)
   n.change = round(current.props*n) - round(props*n)
-    #(e.g n.change[1] may be the excess number of observations in the first 
+    #(e.g n.change[1] is the excess/deficient number of observations in the first 
       #category in observed data)
   num = 1
   i = 1
@@ -221,8 +228,8 @@ modifyProps <- function(default.vec, props, propens=NULL) {
           i = i + 1
         }
       }
-    #changes made for one iteraction of category i (may need more than one 
-      #interation if couldn't steal enough observations from the categpory 
+    #at this point changes have been made for one iteration of category i (may need more than one 
+      #iteration if couldn't steal enough observations from the category 
       #immediately above it
     #create table of current data (tab.df) and calculate numbers that need
       #moving into or out of categories to get the requested proportions 

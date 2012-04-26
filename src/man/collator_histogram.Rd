@@ -1,7 +1,7 @@
 \name{collator_histogram}
 \alias{collator_histogram}
-\title{Collate frequencies for variables without fixed category codings specified
-in the dictionary.}
+\title{Collates frequencies for use in histogram output with confidence intervals.
+Performs the following:}
 \usage{
   collator_histogram(runs, dict, row.dim.label = "Year",
     col.dim.label = "")
@@ -20,8 +20,9 @@ in the dictionary.}
   \item{col.dim.label}{name of the entire col dimension}
 }
 \description{
-  Collate frequencies for variables without fixed category
-  codings specified in the dictionary.
+  \itemize{ \item Takes mean with confidence intervals
+  using \code{\link{collator_mutiple_lists_mx}} \item
+  Labels the result using the dictionary }
 }
 \seealso{
   \code{\link{collator_mutiple_lists_mx}}

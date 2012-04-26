@@ -20,7 +20,7 @@
   matrix.
 }
 \examples{
-mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(varname="disability_state", grpby.tag="sex"))
+mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "F 4", "M 1", "M 2", "M 3", "M 4"))), meta=c(varname="disability_state", grpby.tag="sex"))
 dict <- dict_example
 percentages_flattened_mx(mx.flattened, dict)
 }

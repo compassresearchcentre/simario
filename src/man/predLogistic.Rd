@@ -1,8 +1,8 @@
-\name{predSimPois}
-\alias{predSimPois}
-\title{Predict and simulate continuous value from poisson model}
+\name{predLogistic}
+\alias{predLogistic}
+\title{Predict probabilities from the coefficients of a logistic regression}
 \usage{
-  predSimPois(model.glm, envir = parent.frame(),
+  predLogistic(model.glm, envir = parent.frame(),
     set = NULL)
 }
 \arguments{
@@ -15,13 +15,17 @@
   \item{set}{logical vector indicating elements or rows to
   simulate, or NULL to simulate using all values in envir}
 }
+\value{
+  a vector of predicted probabilities
+}
 \description{
-  Predict and simulate continuous value from poisson model
+  Predict probabilities from the coefficients of a logistic
+  regression
 }
 \examples{
 \dontrun{
- model.glm <- models$hadmtot
-	newdata <- simvalues
+model.glm <- models$houtptot
+newdata <- simvalues
 }
 }
 

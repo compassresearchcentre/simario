@@ -8,7 +8,8 @@ This function establishes the values of the simulation frame at the start
 prior to simulation by evaluating the initial value expression specified by
 the simframe definition.}
 \usage{
-  loadSimFrame(simframe_defn, envir = .GlobalEnv)
+  loadSimFrame(simframe_defn, envir = .GlobalEnv,
+    enclos = parent.frame(), na_omit = TRUE)
 }
 \arguments{
   \item{simframe_defn}{simframe definition. A dataframe of
@@ -30,8 +31,18 @@ the simframe definition.}
   \item{envir}{environment to evaluate initial_value in.
   Typically this will be a dataframe loaded from a base
   file. Initial_value can not only reference values in
-  envir, but also values in the calling frame.  Defaults to
-  global environment.}
+  envir, but also values in enclos.  Defaults to global
+  environment.}
+
+  \item{enclos}{Specifies the enclosure, i.e., where R
+  looks for objects not found in envir.  Defaults to the
+  caller's environment (parent.frame())}
+
+  \item{na_omit}{If TRUE and an observation is NA, then
+  that case (ie: it's observations for all variables) is
+  removed. This however does not apply to initial_value
+  expressions that return a singular NA. These remain as a
+  vector containing NA for as each observation.}
 }
 \value{
   the simulation frame. The simulation frame contains the
@@ -39,19 +50,13 @@ the simframe definition.}
   evaluated. Each variable contains a set of observations.
   Each observation represents a case in the basefile.
 
-  If an observation is NA, then that case (ie: it's
-  observations for all variables) is removed. This however
-  does not apply to initial_value expressions that return a
-  singular NA. These remain as a vector containing NA for
-  as each observation.
-
   The simulation frame object has the following attributes:
 
   "previous" - variables that represent values in the
   previous iteration "outcome_vars" - a dataframe of
-  Varname, Outcome_type, and Outcome_module "na.omit" - an
-  omit variable that indicates the observations that were
-  removed because their were NA. Initial_values that
+  Varname, Outcome_type, and Outcome_module "na.actions" -
+  an omit variable that indicates the observations that
+  were removed because their were NA. Initial_values that
   returned a singular NA remain.
 }
 \description{
@@ -67,12 +72,11 @@ the simframe definition.}
 }
 \examples{
 \dontrun{
-envir <- children
-envir <- people
-basefiledir <- "D:/workspace.sim/MELC/CHDS/base/"
-basefiledir <- "D:/workspace.sim/simario/src/demo/resource"
-simframe_defn <- readXLSSheet1(basefiledir, "simframedef.xlsx")
-simframe.master <- loadSimFrame(simframe_defn, envir)
+ data_dir <- paste(getwd(), "/data/", sep=""); base_dir <- file.path(data_dir, "base")
+ people <- read_csv(base_dir, "Base_file_(people).csv")
+ envir <- people
+ simframe_defn <- read_csv(base_dir, "simframedef.csv")
+ simframe.master <- loadSimFrame(simframe_defn, envir)
 }
 }
 

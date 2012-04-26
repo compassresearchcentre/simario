@@ -1,9 +1,9 @@
-\name{wtdmeancols}
-\alias{wtdmeancols}
+\name{mean_mx_cols}
+\alias{mean_mx_cols}
 \title{Calculates the weighted mean for each column of the matrix
 optionally subsetting and grouping by another (equal length) variable.}
 \usage{
-  wtdmeancols(mx, grpby = NULL, grpby.tag = NULL,
+  mean_mx_cols(mx, grpby = NULL, grpby.tag = NULL,
     logiset = NULL, wgts = NULL, na.rm = F)
 }
 \arguments{
@@ -24,9 +24,10 @@ optionally subsetting and grouping by another (equal length) variable.}
   \item{na.rm}{logical. Should missing values be removed?}
 }
 \value{
-  if grpby is NULL, vector of means for each column if
-  grpby is specified, a matrix of means for each column
-  grouped
+  a matrix of means. Each row is the mean for a column in
+  mx.  if grpby is NULL, a single column of means.  if
+  grpby is specified, a column of means for each group by
+  category.
 }
 \description{
   Calculates the weighted mean for each column of the
@@ -34,13 +35,13 @@ optionally subsetting and grouping by another (equal length) variable.}
   (equal length) variable.
 }
 \examples{
-mx <- matrix (c(1:10), ncol = 2)
-mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) ; logiset=NULL
-grpby = NULL
+mx <- matrix (c(1:10), ncol = 2) ; mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2)
+logiset = NULL
+grpby = NULL ; grpby.tag = NULL
 grpby <- c("A","A","A","B","B") ; grpby.tag = "AB"
 wgts = rep(1, nrow(mx))
 na.rm = FALSE ; na.rm = TRUE
 
-wtdmeancols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
+mean_mx_cols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
 }
 

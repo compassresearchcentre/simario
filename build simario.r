@@ -1,6 +1,8 @@
 # Build package using devtools. From Eclipse/StatET, run using 
 # R Console + Additional Console (simario demo dir) to see the
 # additional console output.
+#
+# Before building bump the version number in the DESCRIPTION file.
 # 
 # Author: oman002
 ###############################################################################

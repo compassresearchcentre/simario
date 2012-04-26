@@ -1,6 +1,6 @@
 \name{collator_means}
 \alias{collator_means}
-\title{Collate means over multiple runs.}
+\title{Collate means over multiple runs. Performs the following:}
 \usage{
   collator_means(runs, dict)
 }
@@ -10,7 +10,9 @@
   \item{dict}{Dictionary object. Used to label columns.}
 }
 \description{
-  Collate means over multiple runs.
+  \itemize{ \item Takes mean with confidence intervals
+  using \code{\link{collator_list_mx}} \item Labels the
+  result using the dictionary }
 }
 \examples{
 run1 = structure(matrix(1:6, nrow=3, dimnames=list(1:3, c("F","M"))), meta=c(varname="earnings", grpby.tag="sex"))

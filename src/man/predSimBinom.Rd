@@ -1,6 +1,6 @@
 \name{predSimBinom}
 \alias{predSimBinom}
-\title{Predict and simulate continuous value from binomial
+\title{Predict and simulate binary value from binomial
 distribution with probability}
 \usage{
   predSimBinom(model.glm, envir = parent.frame(),
@@ -13,12 +13,15 @@ distribution with probability}
   \item{envir}{environment in which to evaluate model
   variables.  if unspecified, uses caller's environment}
 
-  \item{set}{subset logical expression indicating elements
-  or rows to keep, or NULL to use all elements returned by
-  evaluated model variables}
+  \item{set}{logical vector indicating elements or rows to
+  simulate, or NULL to simulate using all values in envir}
+}
+\value{
+  a vector of binary values drawn from a Binomial
+  distribution
 }
 \description{
-  Predict and simulate continuous value from binomial
+  Predict and simulate binary value from binomial
   distribution with probability
 }
 \examples{
