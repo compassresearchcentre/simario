@@ -22,6 +22,7 @@ Collate:
     'CategoricalAdjustment.r'
     'ChartUtil.r'
     'Collate.r'
+    'ContinuousAdjustment.r'
     'Dictionary.r'
     'FileUtil.r'
     'Label.r'

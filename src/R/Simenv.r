@@ -46,18 +46,32 @@ expr = {
 	#' during the specified iteration (eg: iteration 2 if a value is specified in Year 2).
 	#' The variables in the simframe to adjust are specified by the varnames attribute.
 	#' 
+	#' @param cont.adjustments
+	#' A list of time-variant continuous variable adjustment matrices.
+	#' 
+	#' Each element is an adjustment matrix with number of rows equal to the number of micro units
+	#' amd number of columns equal to the number of iterations plus 1 (for the presimulation adjustments).
+	#' 
+	#' The user specifies from the user interface desired increments (or decrements) for all micro units
+	#' in particular categories (e.g. decrease the number of cigarettes smoked per day by 20 for every 
+	#' child with a mother who smokes 40 or more cigarettes a day), these adjustments are made to the 
+	#' simulated data from the base simulation and results stored in these matrices.  At each year in the 
+	#' simulation these cont.adjustment matrices are checked and, if they contain values, they are used
+	#' instead of the simulated values at that year. 
+	#' 
 	#' @param modules
 	#'  the list of Simmodules for this Simenv
 	#' 
 	#' @examples
 	#' env <- Simenv$new(name = "Base", simframe=simframe.master, dict=dict_demo)
-	new <- function (., name, simframe, dict, cat.adjustments=list(), modules=list()) {
+	new <- function (., name, simframe, dict, cat.adjustments=list(), cont.adjustments=list(), modules=list()) {
 		proto(.,
 				name=name,
 				num_runs_simulated <- 0L,
 				simframe=simframe,
 				presim.stats=list(),
 				cat.adjustments=cat.adjustments,
+				cont.adjustments=cont.adjustments,
 				modules=modules,
 				dict=dict
 		)
