@@ -306,6 +306,7 @@ expr = {
 							}))
 			
 			.$num_runs_simulated <- .$num_runs_simulated + 1
+			
 		}
 		
 		invisible(lapply(.$modules, function(module) {

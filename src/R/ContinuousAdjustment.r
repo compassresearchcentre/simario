@@ -23,7 +23,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' numiteration=NUM_ITERATIONS
+#' numiterations=NUM_ITERATIONS
 #' num.cases=20
 #' createContAdjustmentMatrix(num.cases, numiterations)
 #' }
