@@ -307,6 +307,9 @@ expr = {
 			
 			.$num_runs_simulated <- .$num_runs_simulated + 1
 			
+			.$cont.outcomes.all.runs <- c(.$cont.outcomes.all.runs,
+					list(store_cont_outcomes()))
+			
 		}
 		
 		invisible(lapply(.$modules, function(module) {
