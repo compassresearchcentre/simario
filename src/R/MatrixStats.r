@@ -390,7 +390,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 	# and rows the categories
 	
 	#use lapply instead of apply because apply simplifies
-	#use lapply instead of alply so we don't have the split attributes
+	#use lapply instead of apply so we don't have the split attributes
 	results.by.col <- lapply(1:ncol(mx), function (i) {
 				#i <- 1
 				table.grpby(mx[,i], grpby, useNA = useNA)
