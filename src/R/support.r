@@ -178,7 +178,11 @@ bin <- function (x, breaks, blabels = names(breaks), breaklast=NULL) {
 	}
 	if (!is.null(blabels)) blabels <- na.omit(blabels)
 		
-	cut(x, breaks=breaks, labels=blabels, include.lowest = FALSE)
+	factoredx <- cut(x, breaks=breaks, labels=blabels, include.lowest = FALSE)
+	if (!is.null(dim(x))) {
+		dim(factoredx) <- dim(x)
+	}
+	return(factoredx)
 }
 
 #' Combine levels specified in seperate binary level variables into one
@@ -286,7 +290,7 @@ binary.levels.split <- function(x, f=sort(unique(x))) {
 #' @examples
 #' \dontrun{
 #' x <- children$bwkg
-#' xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0,0))
+#' xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0))
 #' table(bin(x, 0.5))
 #' table(bin(xi, 0.5))
 #' 
@@ -296,6 +300,13 @@ binary.levels.split <- function(x, f=sort(unique(x))) {
 #' r <- incByFactor(x, factoredx, factorincrements)
 #' table(r, useNA="always")
 #' }
+#' 
+#' #example with an array
+#' test.xa <- array(c(1:18), dim=c(3,3,2))
+#' test.breaks = c(0,6,12,18)
+#' factored.xa <- bin(test.xa, test.breaks)
+#' inc <- c(0,2,-1)
+#' incByFactor(test.xa, factored.xa, inc)
 incByFactor <- function(x, factoredx, factorincrements) {
 	if (nlevels(factoredx) != length(factorincrements)) {
 		stop("factor increments must be of length ", nlevels(factoredx))
@@ -304,7 +315,7 @@ incByFactor <- function(x, factoredx, factorincrements) {
 	# add factor increment to x based on its factoring (factoredx)
 	x + factorincrements[factoredx]
 }
-
+		
 
 #' Detach an environment and return it.
 #' NB: the returned environment contains the contents of the attached environment but is
