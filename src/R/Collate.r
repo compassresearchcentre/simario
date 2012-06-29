@@ -345,7 +345,7 @@ labelColumnCodes <- function(x, dict, varname) {
 #' @export
 #' @examples 
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
-#' dict <- dict_example
+#' dict <- dict_demo
 #' label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
 label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
 	varname <- attr(mx.flattened, "meta")["varname"]
@@ -355,7 +355,9 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
-	mx.flattened
+	structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
+	
+	#mx.flattened
 }
 
 #' Calculates the proportions within row groupings of a flattened matrix. 
@@ -390,14 +392,13 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes)
 prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes) {
 
-	if (is.null(groupnameprefixes)) {
+	grpingNames<-attr(mx.grped.rows,"grpingNames")
+	
+	if (is.null(groupnameprefixes) || is.null(grpingNames)) {
 		grpby<-rep(1, ncol(mx.grped.rows))
 	} else {
-	cnames<-colnames(mx.grped.rows)
-	cnames.stripped<-regmatches(cnames, regexpr("^\\S*", cnames)) #gsub("\\s\\S*$", "", cnames)
-	grpby<-match(cnames.stripped,groupnameprefixes)
-	
-	assert(!is.na(grpby))	
+		grpby<-match(grpingNames,groupnameprefixes)
+		assert(!is.na(grpby))	
 	}
 	# get proportions by grp
 	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby)
