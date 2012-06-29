@@ -421,7 +421,12 @@ flatten_mxs_to_single_mx <- function(listmx) {
 #' # vector
 #' mx <- c("a"=1,"b"=2,"c"=3)
 #' 
+#' # 1 columned matrix (3 x 1) with names
+#' mx <- matrix(c(1,2,3), nrow = 3, ncol = 1, dimnames=list(c("row1", "row2", "row3"), "col1"))
+#' 
 #' flatten_mx_to_row(mx)
+#' flatten_mx_to_row(mx, row.names.first=TRUE)
+
 flatten_mx_to_row <- function (mx, row.names.first = FALSE) {
 	# if already vector, return as single row matrix
 	if (is.vector(mx)) {
@@ -435,8 +440,9 @@ flatten_mx_to_row <- function (mx, row.names.first = FALSE) {
 	# create new column names, as a combination of the old row and col names
 	rnames <- if (is.null(rownames(mx))) c("") else rownames(mx)
 	cnames <- if (is.null(colnames(mx))) c("") else colnames(mx)
-	cnames <- if (row.names.first || ncol(mx) == 1) {
-				trim(paste(rep(rnames,length(cnames)), sapply(cnames, rep, length(rnames))))
+	cnames <- if (row.names.first ) 
+										
+				{trim(paste(rep(rnames,length(cnames)), sapply(cnames, rep, length(rnames))))
 			} else {
 				trim(paste(sapply(cnames, rep, length(rnames)), rep(rnames,length(cnames))))
 			}

@@ -253,6 +253,143 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 	structure(result, meta=c(varname=attr(mx, "varname")))
 }
 
+#' Summary table, with option to group and weight results.
+#'  
+#' @param x
+#'  vector of values which can be interpreted as factors 
+#' @param grpby
+#'  elements to group by, or NULL to do no grouping
+#'  Same length as the columns of x.
+#' @param wgts
+#'  vector of weights, or NULL to do no weighting
+#'  Same length as the columns of x.
+#' @return
+#'  a weighted summary table, or rows of weighted summary tables if grpby is specified.
+#' function also returns the weighted number of NA's, but not not include NA's with weights of NA.
+#' 
+#' @export
+#' @examples
+#' library(Hmisc)
+#' x <- c(8,8,2,1,1,8)
+#' x <- c(8,8,2,1,1,NA)
+#' x <- c(NA,NA,2,1,1,8)
+#' grpby <- c('M','M','F','F','F','F')
+#' wgts<- c(1,2,2,3,1,1)
+#' summary.grpby(x)
+#' summary.grpby(x, grpby)
+#' summary.grpby(x=x, grpby=grpby,wgts=wgts)
+summary.grpby <- function (x, grpby = NULL, wgts=NULL) {
+	
+# 1. beginning check - that weight dimensions are correct
+	if (!is.null(wgts))	{
+			if(length(x) != length(wgts)) {
+				param1Name <- as.character(sys.call())[3]
+				stop(gettextf("Number of rows in %s != length of wgts", param1Name))
+			}
+		
+	}	
+# 2. beginning check  - that grpby dimensions are correct	
+	if (!is.null(grpby)){
+			if(length(x) != length(grpby)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != length of grpby", param1Name))
+			}
+	}
+	
+#bulk of function starts	
+	if (is.null(grpby) & is.null(wgts)) {
+		summary(x)
+	} else { 
+			non.nas <-  !is.na(x)
+			isnullgrpby=F
+			if (is.null(grpby)) {grpby<-rep(1, length(x)) ;isnullgrpby=T}
+			if (is.null(wgts)) wgts<-rep(1, length(x))
+		
+			if (isnullgrpby==F) {unique_grpby<-unique(sort(grpby))} else {unique_grpby<-1}
+			
+			# note using for statements here, as aggregate statement wont work with weights parameter
+			agg<-matrix(data=NA, nrow=length(unique(sort(grpby))), ncol=5)
+			
+			for (i in 1:length(unique_grpby)) agg[i,]<- wtd.quantile(x=x[non.nas & grpby==unique_grpby[i]], weight=wgts[non.nas & grpby==unique_grpby[i]])
+			
+			means<-matrix(data=NA, nrow=length(unique(sort(grpby))), ncol=1)
+			
+			for (i in 1:length(unique_grpby)) means[i,]<- wtd.mean(x=x[non.nas & grpby==unique_grpby[i]], weight=wgts[non.nas & grpby==unique_grpby[i]])
+			
+			NA_column<-matrix(data=NA, nrow=length(unique(sort(grpby))), ncol=1)
+			
+			#only count an NA if the correspondning weight is also not NA. Wtdtable does not work without this.
+	
+			wgts[is.na(x) & is.na(wgts)]<-0
+			
+			for (i in 1:length(unique_grpby)) {NA_column[i,]<- if ( (length(x[is.na(x) & grpby==unique_grpby[i]])==0 ) | sum(wgts[is.na(x) & grpby==unique_grpby[i]])==0 ) 0 else {as.matrix(wtdtable(x[is.na(x) & grpby==unique_grpby[i]], wgts[is.na(x)& grpby==unique_grpby[i]]))}}
+			
+			result<-  if (!isnullgrpby) {cbind(agg[,1:3], means, agg[,4:5], NA_column)} else {cbind(t(agg[,1:3]), means, t(agg[,4:5]), NA_column)}
+			colnames(result)<-c("Min." ,   "1st Qu.", "Median" , "Mean", "3rd Qu." ,"Max." , "NA's" )
+			rownames(result)<-unique_grpby
+			
+			return(result)
+	}
+}
+
+
+#' Execute summary on the columns of a matrix, allowing for weighting and grouping.
+#' work in progress
+#' 
+#' @param mx
+#'  matrix
+#' 
+#' @param logiset
+#'  logical vector indicating which rows to include, or NULL to include all.
+#' 
+#' @return
+#' returns each column's summary as an
+#' element of a list. The element of the list
+#' consists of a summary in a row (or multiple summary rows if the grpby
+#' parameter is used - one row for each grpby category for the column).
+#' 
+#' @export
+#' @examples
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
+#' logiset <- c(FALSE, TRUE, FALSE, TRUE)
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5,dimnames=list(NULL, LETTERS[1:5]))
+#' summary_mx_grpby_cols(mx, logiset=logiset)
+#' grpby<-c("M","F","F","M")
+#' wgts<-c(1,2,2,2)
+#' logiset <- c(FALSE, TRUE, TRUE, TRUE)
+#' summary_mx_grpby_cols (mx=mx, logiset=logiset, wgts=wgts,grpby=grpby)
+
+summary_mx_grpby_cols <- function (mx, logiset=NULL, wgts=NULL,grpby=NULL) {
+	
+
+		# check - that logiset dimensions are correct
+	if (!is.null(logiset))	{
+			if(nrow(mx) != length(logiset)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != length of logiset", param1Name))
+			}
+	}	
+	
+	
+	
+	# subset
+	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
+	if (!is.null(logiset)) grpby <- subset(grpby,logiset)
+	if (!is.null(logiset)) wgts <- subset(wgts,logiset)
+	
+	if (is.vector(wgts)) wgts<-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
+	if (is.vector(grpby)) grpby<-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+	
+
+	
+	sm <- lapply(1:ncol(mx), function(i){ summary.grpby (mx[,i],grpby=grpby[,i],wgts=wgts[,i])})
+	return(sm)
+
+}
+
+
+
+
 #' Execute summary on the columns of a matrix.
 #' 
 #' @param mx
@@ -305,8 +442,7 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 #'  vector of values which can be interpreted as factors 
 #' @param grpby
 #'  elements to group by, or NULL to do no grouping
-#'  Same length as the columns of mx.
-#' 
+#'  Same length as the columns of x.
 #' @param useNA
 #'  whether to include extra NA levels in the table.
 #'  one of c("no", "ifany", "always"). Defaults to "ifany".
@@ -322,7 +458,7 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 #' x <- rep(0,1075)
 #' x <- c(8,8,2,1,1,8)
 #' grpby <- c('M','M','F','F','F','F')
-#' 
+#'
 #' table.grpby(x)
 #' table.grpby(x, grpby)
 table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
@@ -373,7 +509,7 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #' logiset <- c(FALSE, TRUE, FALSE, TRUE)
 #' table_mx_cols(mx, grpby = grpby, logiset = logiset)
 table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, useNA = "ifany") {
-	
+
 	# subset
 	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
 	if (!is.null(logiset)) grpby <- grpby[logiset]
@@ -475,6 +611,7 @@ wtdtable <- function (x, wgts=rep(1,length(x))) {
 #' @export 
 #' @examples 
 #' COL<-2
+#' library(Hmisc)
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
 #' wgts = rep(1,nrow(mx))
 #' addVariableName = FALSE

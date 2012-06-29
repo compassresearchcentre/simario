@@ -231,7 +231,6 @@ identify_zero_category_cols <- function (mx) {
 #'  groups of values. Percentages are then calculated within these groups.
 #'  The number of groups is determined by using the meta "grpby.tag"
 #'  attribute to lookup the group by codings in \code{dict}.
-#'  mx.flattened must also have a meta "varname" attribute.
 #'  
 #' @param dict
 #'  Dictionary object. Used to determine number of groups.
@@ -239,20 +238,23 @@ identify_zero_category_cols <- function (mx) {
 #' @seealso \code{\link{prop.table.mx.grped.rows}}
 #' @export  
 #' @examples
-#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "F 4", "M 1", "M 2", "M 3", "M 4"))), meta=c(varname="disability_state", grpby.tag="sex"))
+#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sexLvl1"))
+#' dict <- dict_demo
+#' percentages_flattened_mx(mx.flattened, dict)
+#'
+#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("65-69 1", "65-69 2", "65-69  3", "65-69  4", "70-74  1", "70-74 2", "70-74 3", "70-74 4"))), meta=c(varname="disability_state", grpby.tag="age_grp_output"))
+#' percentages_flattened_mx(mx.flattened, dict)
+#'
+#' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sex"))
 #' dict <- dict_example
 #' percentages_flattened_mx(mx.flattened, dict)
+
 percentages_flattened_mx <- function(mx.flattened, dict) {
-	varname <- attr(mx.flattened, "meta")["varname"]
-	numcats <- length(dict$codings[[varname]]) 
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
-	numgrps <- if(is.null(grpby.tag) || is.na(grpby.tag)) 1 else length(dict$codings[[grpby.tag]])
 	
-	if(numgrps > 1 && numcats*numgrps != dim(mx.flattened)[COL]) {
-		stop(gettextf("prop.table.mx.grped.rows can only calculate percentages on fixed group sizes.\n Ability to calculate percentages on variable category size not yet implemented. \n varname = %s, grpby.tag = %s", varname, grpby.tag))
-	}
-	
-	result <- prop.table.mx.grped.rows(mx.flattened, numgrps) * 100
+	groupnameprefixes<- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
+
+	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes) * 100
 	colnames(result) <- paste(colnames(result), "(%)")
 	result
 }
@@ -357,14 +359,12 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 }
 
 #' Calculates the proportions within row groupings of a flattened matrix. 
-#' Not suitable when each row group is of a different size.
 #' 
 #' @param mx.grped.rows
 #'  a matrix with grped rows, ie: within each row there are groups of 
 #'  columns that form a set. Proportions are then calculated within these groups.
-#' @param numgrps
-#'  the number of groups in each row. Each group will be of size \code{ncol(mx.grped.rows) / numgrps}.
-#'  If numgrps = 1, then there is only 1 group and proportions are calculated across the whole row. 
+#' @param groupnameprefixes
+#'	 names of the groups. If NULL then no groups.
 #' @return
 #'  the original matrix but with its values converted to proportions.
 #'  Preserves names and any "meta" attribute of \code{mx.grped.rows)}.
@@ -372,18 +372,33 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' @export
 #' @examples
 #' 
+#' mx.grped.rows  <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sex"))
+#' groupnameprefixes<-c("Female","Male")
+#' 
 #' mx.grped.rows <- matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE)
-#' numgrps <- 3
+#' groupnameprefixes<-NULL
+#' 
+#' mx.grped.rows <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("65-69 No disability", "65-69 Mild disability", "65-69  Moderate disability", "65-69  Severe disability", "70-74  No disability", "70-74 Mild disability", "70-74 Moderate disability", "70-74 Severe disability"))), meta=c(varname="disability_state", grpby.tag="age_grp_output"))
+#' groupnameprefixes<-c("65-69", "70-74", "75-79", "80-84", "85+" )
+#' 
+#' mx.grped.rows <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Male No disability", "Male Mild disability", "Male Moderate disability", "Male Severe disability", "Female No disability", "Female  Mild disability", "Female Moderate disability", "Female  Severe disability"))), meta=c(varname="disability_state", grpby.tag="sexLvl1"))
+#' groupnameprefixes<-c("Male","Female")
 #' 
 #' mx.grped.rows <- matrix(c(1:4), nrow=1)
-#' numgrps <- 1
+#' groupnameprefixes<-NULL
 #' 
-#' prop.table.mx.grped.rows(mx.grped.rows, numgrps)
-prop.table.mx.grped.rows <- function (mx.grped.rows, numgrps) {
+#' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes)
+prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes) {
 
-	grpsize <- ncol(mx.grped.rows) / numgrps
-	grpby <- rep(1:numgrps, each=grpsize)
+	if (is.null(groupnameprefixes)) {
+		grpby<-rep(1, ncol(mx.grped.rows))
+	} else {
+	cnames<-colnames(mx.grped.rows)
+	cnames.stripped<-regmatches(cnames, regexpr("^\\S*", cnames)) #gsub("\\s\\S*$", "", cnames)
+	grpby<-match(cnames.stripped,groupnameprefixes)
 	
+	assert(!is.na(grpby))	
+	}
 	# get proportions by grp
 	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby)
 	
