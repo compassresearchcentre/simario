@@ -79,14 +79,13 @@ Dictionary <- proto(expr = {
 	#'  . <- dict_demo
 	#'  .$cmatchFlattened(x.flat, varname, grpby.tag)
 	cmatchFlattened <- function (., x.flat, varname, grpby.tag) {
-		# add category and group by coding names, if any
-		grping.match <- regexpr(".*\\s", x.flat)
-		
+				
 		if (is.null(grpby.tag) || is.na(grpby.tag)) {
 			#no grping codes, only varname codes
 			.$cmatch(x.flat, varname)	
 		} else {
-			
+			# add category and group by coding names, if any
+			grping.match <- regexpr(".*\\s", x.flat)
 			grping <- trim(regmatches(x.flat, grping.match))
 			grpingNames <- .$cmatch(grping, grpby.tag)
 			
@@ -94,7 +93,9 @@ Dictionary <- proto(expr = {
 			cats <- trim(regmatches(x.flat, cats.match))
 			catsNames <- .$cmatch(cats, varname)
 			
-			paste(grpingNames, catsNames)
+			structure(paste(grpingNames, catsNames), grpingNames=grpingNames)
+			
+			
 		}
 		
 	}
