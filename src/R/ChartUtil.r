@@ -132,9 +132,9 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 	par(xpd=T, mar=mar.default+c(0,0,0,6))
 	
 	# barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)), names.arg=names(y), axis.lty=1, col=col)
-	barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)), 
+	barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)*1.25), 
 			names.arg=names(y), axis.lty=1, col=col, ...)
-	legend(x=max(barx) + 1, y=max(y) / 2, legend=legend.text, fill=col)
+	legend(x=mean(barx), xjust = 0.5, y=max(y+y.err) *1.25, legend=legend.text, fill=col)
 	
 	error.bar(barx, y, y.err)
 	

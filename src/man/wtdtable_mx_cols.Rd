@@ -1,0 +1,42 @@
+\name{wtdtable_mx_cols}
+\alias{wtdtable_mx_cols}
+\title{Produces a weighted frequency distribution for each column
+of the matrix mx and returns them altogether in one table.
+Each column can have a different set of categories
+(ie: frequency "buckets")}
+\usage{
+  wtdtable_mx_cols(mx, wgts = rep(1, nrow(mx)),
+    addVariableName = FALSE, logiset = NULL)
+}
+\arguments{
+  \item{logiset}{logical vector indicating which rows to
+  include, or NULL to include all.}
+
+  \item{mx}{matrix}
+
+  \item{wgts}{weights. If unspecified, a default weight of
+  1 is used for each row}
+
+  \item{addVariableName}{if addVariableName = TRUE, then
+  the columns will be given the name of mx}
+}
+\value{
+  weighted frequency distributions stacked in rows
+}
+\description{
+  Produces a weighted frequency distribution for each
+  column of the matrix mx and returns them altogether in
+  one table. Each column can have a different set of
+  categories (ie: frequency "buckets")
+}
+\examples{
+COL<-2
+mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
+wgts = rep(1,nrow(mx))
+addVariableName = FALSE
+addVariableName = TRUE
+logiset=rep(T,nrow(mx))
+logiset=c(T,T,T,F)
+wtdtable_mx_cols(mx, logiset=logiset)
+}
+
