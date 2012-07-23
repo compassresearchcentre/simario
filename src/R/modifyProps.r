@@ -27,6 +27,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	ch.cat.id = which(new.all.dat[,1]==(i+num*steal))
 	#put in separate dataset
 	dat.ch.cat = new.all.dat[ch.cat.id,] 
+	#add the rankings of the propensity scores as the last column
 	dat.ch.cat = cbind(dat.ch.cat, rank(dat.ch.cat[,i+1+(num-1)], 
 					ties.method="random"))
 	if (steal==F) {
@@ -96,12 +97,18 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' default.vec <- children$SESBTH
 #' props <- c(0.1,0.1,0.8)
 #' propens <- data.frame(propensities$SESBTH)
+#' new.vec <- modifyProps(default.vec, props, propens)
+#' table(default.vec)/sum(table(default.vec))
+#' table(new.vec)/sum(table(new.vec))
 #' 
 #' default.vec <- env.scenario$simframe$z1accomLvl1
 #' props <- c(0.1,0.9)
 #' propens <- propensities$z1accom[,,5]
 #' #propensities$z1accom is a 3 dimentional array so we take only the the 5th z dimension
 #' 	#(the propensities for year 5)
+#'  table(default.vec)/sum(table(default.vec))
+#' new.vec <- modifyProps(default.vec, props, propens)
+#'  table(new.vec)/sum(table(new.vec))
 #' 
 #' default.vec <- env.scenario$simframe$catpregsmk2
 #' props <- c(0.1, 0.1, 0.1, 0.5, 0.2)
@@ -153,7 +160,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
     #col.num is the number of vectors of propensity scores required.
       #E.g. for a 2-category varaible, 1 vector of propensity scores is required
         #and for a 3-category variable, 2 vectors of propensity scores are
-        #required
+        #required etc.
     col.num = num.cat2 - 1
 
     #create random propensity score
@@ -178,7 +185,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
   #match propensity scores to children
   #(this function assumed that default.vec and propens have the same children
     #in the same order) 
-  #the third column is a child identifier so I can put them back in the right
+  #the last column is a child identifier so I can put them back in the right
 	#order
   all.dat = data.frame(default.vec, propens, 1:n)
   new.all.dat = all.dat
