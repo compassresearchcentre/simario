@@ -117,7 +117,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' prop.table(table(default.vec))
 #' prop.table(table(modifyProps(default.vec, props, propens)))
 #' }
-modifyProps <- function(default.vec, props, propens=NULL) {
+modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
   if (is.null(props) || any(is.na(props))) {
 	#no props, silently do nothing	  
 	return(default.vec)
@@ -211,19 +211,19 @@ modifyProps <- function(default.vec, props, propens=NULL) {
     #(e.g n.change[1] is the excess/deficient number of observations in the first 
       #category in observed data)
   num = 1
-  i = 1
+  i = 1 #i = current category
   while (i < length(props)) {
     if (n.change[i]==0) {
       #if no change needs to be made for category i then move onto next category
       i = i + 1
       num =1 
     } else if (sign(n.change[i])==1) {
-        #category i has too many obs - give to a higer category
+        #category i has too many obs - give to a higher category
         num = 1
         new.all.dat = change.cat(num, rank.col, i, new.all.dat, n.change)
         i = i + 1
     } else if (sign(n.change[i])== -1) {
-        #category i has too few obs - steal from a higer category
+        #category i has too few obs - steal from a higher category
         new.all.dat = change.cat(num, rank.col, i, new.all.dat, n.change)
         num = num + 1
         
@@ -250,9 +250,9 @@ modifyProps <- function(default.vec, props, propens=NULL) {
     n.change = round(current.props*n) - round(props*n)
   } 
   #check if requested proportions acheived
-  if (sum(abs(props - current.props))<=.01) {
+  if (sum(abs(props - current.props))<=accuracy) {
     #if correct
-    #change back to orignal values (if they were changed earlier)
+    #change back to orignal category names (if they were changed earlier)
       #e.g. if the orginal variable was a {0, 1} variable then all 0s would have 
         #been changed to 1s and alls 1s changed to 2s.  At this step, after the 
         #changes to get the right proportions, the 1s are changed back to 0s and 
@@ -270,7 +270,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
     
     return(new.all.dat2[,1])
     
-  } else if (sum(abs(props - current.props))>.01) {
+  } else if (sum(abs(props - current.props))>accuracy) {
       #if not correct - still do these things but give output with warning
       #(output should all be correct if I have thought of everything and made no 
         #mistakes)
