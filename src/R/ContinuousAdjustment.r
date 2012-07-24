@@ -30,10 +30,10 @@
 #' num.categories=5
 #' createContAdjustmentMatrix(num.categories, numiterations)
 #' }
-createContAdjustmentMatrix <- function(num.categories, numiterations) {
-	colnames = c("Presimulation", paste("Iteration",1:numiterations))
-	namedMatrix(num.categories, cols=colnames)
-}
+#' createContAdjustmentMatrix <- function(num.categories, numiterations) {
+	#' colnames = c("Presimulation", paste("Iteration",1:numiterations))
+	#' namedMatrix(num.categories, cols=colnames)
+#' }
 
 
 #Oman's take on it ... but we don't actually need it at all!!
@@ -52,15 +52,15 @@ createContAdjustmentMatrix <- function(num.categories, numiterations) {
 #' createContTypicalDistAcrossRuns(unitRuns, binbreaks, breakLast)
 #' }
 
-createContTypicalDistAcrossRuns <- function(unitRuns, binbreaks, breakLast = NULL) {
-	if(is.vector(unitRuns)) {
-		prop.table(table(bin(unitRuns, binbreaks, breakLast), useNA = 'ifany'))
-	}
+#createContTypicalDistAcrossRuns <- function(unitRuns, binbreaks, breakLast = NULL) {
+#	if(is.vector(unitRuns)) {
+#		prop.table(table(bin(unitRuns, binbreaks, breakLast), useNA = 'ifany'))
+#	}
 	
-	else {
-		unitRunsPropsBinned <- apply(unitRuns, COL, function(units) {
-			prop.table(table(bin(units, binbreaks, breakLast), useNA = 'ifany'))
-		})
-		rowMeans(unitRunsPropsBinned)
-	}
-}
+#	else {
+#		unitRunsPropsBinned <- apply(unitRuns, COL, function(units) {
+#			prop.table(table(bin(units, binbreaks, breakLast), useNA = 'ifany'))
+#		})
+#		rowMeans(unitRunsPropsBinned)
+#	}
+#}
