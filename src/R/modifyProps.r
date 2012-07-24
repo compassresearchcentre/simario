@@ -28,18 +28,19 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	#put in separate dataset
 	dat.ch.cat = new.all.dat[ch.cat.id,] 
 	#add the rankings of the propensity scores as the last column
-	dat.ch.cat = cbind(dat.ch.cat, rank(dat.ch.cat[,i+1+(num-1)], 
+	dat.ch.cat = cbind(dat.ch.cat, rank(dat.ch.cat[,i+(num-1)+1], 
 					ties.method="random"))
 	if (steal==F) {
 		#calculate cut-off for deciding which ones to change to a higher value
 		cut.off = nrow(dat.ch.cat) - n.change[i] + 1
-		#change those that are above the cut-off to have a higher value
+		#change those that are greater than or equal to the cut-off to have a higher value
 		dat.ch.cat[,1][dat.ch.cat[,rank.col]>=cut.off] <- (i+1)
 	}
 	if (steal==T) {
 		#calculate cut-off for deciding which ones to change to a lower value
 		cut.off = n.change[i]*(-1)
 		#change those that are below the cut-off to have a lower value
+		#
 		dat.ch.cat[,1][dat.ch.cat[,rank.col]<=cut.off] <- i
 	}
 	#identify those not in the current category (category i) and put in separate 
