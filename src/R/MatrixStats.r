@@ -723,8 +723,12 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 	if (is.null(grpby)) {
 		result <- apply(mx, COL, function(x) {
 					#x <- mx[,2]
-					non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
-					sum(x[non.nas] * wgts[non.nas]) / sum(wgts[non.nas])
+					if (!na.rm&any(is.na(x))) {
+						NA
+					} else { 
+						non.nas <- !is.na(x)
+						sum(x[non.nas] * wgts[non.nas]) / sum(wgts[non.nas])
+					}
 				})
 		
 		result <- t(t(result))
@@ -732,11 +736,20 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 	} else {
 		result <- t(apply(mx, COL, function (x) {
 							#x <- mx[,1]
-							non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
+							#non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
+							if (!na.rm&any(is.na(x))) {
+								rep(NA, length(unique(grpby)))
+							} else if (na.rm&all(is.na(x))) {
+								rep(NA, length(unique(grpby)))
+							} else {
+								non.nas <- !is.na(x)
+								#non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
+
+								weightsGrouped <- aggregate(wgts[non.nas], by = list(grpby[non.nas]), FUN = sum)$x
 							
-							weightsGrouped <- aggregate(wgts[non.nas], by = list(grpby[non.nas]), FUN = sum)$x
-							
-							aggregate(x[non.nas] * wgts[non.nas], by = list(grpby[non.nas]), FUN = sum)$x / weightsGrouped
+								aggregate(x[non.nas] * wgts[non.nas], by = list(grpby[non.nas]), FUN = sum)$x / weightsGrouped
+								#think will get error if one group has all NAs
+							}
 							
 						}))
 		dimnames(result)[[COL]] <- sort(unique(grpby))	
