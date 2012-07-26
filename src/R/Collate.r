@@ -139,8 +139,8 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 #' runs <- list(run1=run1,run2=run2) 
 #' dict <- dict_example
 #' collator_means(runs, dict)
-collator_means <- function(runs, dict) {
-	runs_mx <- collator_list_mx(runs)
+collator_means <- function(runs, dict, ...) {
+	runs_mx <- collator_list_mx(runs, ...)
 	
 	runs_mx_labelled <- labelColumnCodes(runs_mx, dict, attr(runs_mx, "meta")["grpby.tag"])
 	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
@@ -166,9 +166,9 @@ collator_means <- function(runs, dict) {
 #' run2 = structure(matrix(11:16, nrow=3, dimnames=list(1:3, c("F","M"))), meta=c(varname="earnings", grpby.tag="sex"))
 #' runs <- list(run1=run1,run2=run2) 
 #' collator_list_mx(runs)
-collator_list_mx <- function(runs, CI=TRUE) {
+collator_list_mx <- function(runs, CI=TRUE, ...) {
 	runs_array <- as_array_list_mx(runs)
-	mean_array_z(runs_array, CI=CI)
+	mean_array_z(runs_array, CI=CI, ...)
 }
 
 #' Collate and average mutiple lists of matrices.
