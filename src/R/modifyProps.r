@@ -117,7 +117,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' prop.table(table(default.vec))
 #' prop.table(table(modifyProps(default.vec, props, propens)))
 #' }
-modifyProps <- function(default.vec, props, propens=NULL) {
+modifyProps <- function(default.vec, props, propens=NULL, accuracy=0.01) {
   if (is.null(props) || any(is.na(props))) {
 	#no props, silently do nothing	  
 	return(default.vec)
@@ -250,7 +250,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
     n.change = round(current.props*n) - round(props*n)
   } 
   #check if requested proportions acheived
-  if (sum(abs(props - current.props))<=.01) {
+  if (sum(abs(props - current.props))<=accuracy) {
     #if correct
     #change back to orignal values (if they were changed earlier)
       #e.g. if the orginal variable was a {0, 1} variable then all 0s would have 
@@ -270,7 +270,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
     
     return(new.all.dat2[,1])
     
-  } else if (sum(abs(props - current.props))>.01) {
+  } else if (sum(abs(props - current.props))>accuracy) {
       #if not correct - still do these things but give output with warning
       #(output should all be correct if I have thought of everything and made no 
         #mistakes)
@@ -322,7 +322,7 @@ modifyProps <- function(default.vec, props, propens=NULL) {
 #' vecs.list <- simframe[binLevelVarnames]
 #' r <- modifyPropsAsBinLevels(vecs.list, desiredProps = desiredProps, propens = propens)
 #' }
-modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
+modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL, ...) {
 	
 	#catvar <- binary.levels.combine(simframe[binLevelVarnames])
 	cats <- seq(length(vecs.list))
@@ -330,7 +330,7 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 	catvar <- binary.levels.combine(vecs.list)
 	# prop.table(table(catvar))
 	
-	adjcatvar <- modifyProps(catvar, desiredProps, propens)
+	adjcatvar <- modifyProps(catvar, desiredProps, propens, ...)
 	
 	# quick check: this will fail if modifyProps returns any NAs
 	# like for example, where there is only 1 category catvar
