@@ -154,7 +154,6 @@ expr = {
 			cat_adj_vector <- catadj[iteration, ]
 			
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
-
 			cat_adj_vector<-structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr"))
 			
 			if (!any(is.na(cat_adj_vector))) {
