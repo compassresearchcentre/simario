@@ -78,7 +78,10 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #'  propensities to change from category 1 to category 2 are in the first
 #'  column and the propensities to change from category 2 to category 3 are
 #'  in the second column.
-#'     
+#' @param accuracy
+#' 	gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
+#' 	- the default is 0.01
+#' 
 #' @note Assumptions made by the function:
 #' It is assumed that the proportions given in props are given in consectuive 
 #' increasing order (e.g. {0,1}, {1, 2, 3} or {2, 5, 9, 23}).  If the user 
@@ -275,7 +278,7 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
       #if not correct - still do these things but give output with warning
       #(output should all be correct if I have thought of everything and made no 
         #mistakes)
-      #change back to orignal values
+      #change back to orignal category names
       if (sum(tab.names!= 1:length(props))>=1) {
         default.vec2 = numeric(nrow(new.all.dat))
         for (i in 1:length(props)) {

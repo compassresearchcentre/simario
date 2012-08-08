@@ -169,3 +169,18 @@ is_level_var <- function(varname) {
 strip_lvl_suffix <- function(varname) {
 	gsub("Lvl.$", "", varname)
 }
+
+#' desired_props <- structure(1, logiset="alive & residential")
+#' simframe <- env.base$simframe
+#' evaluateLogisetExprAttribute(desired_props, simframe) 
+evaluateLogisetExprAttribute <- function(desired_props, simframe) { 
+		
+	logiset_expr <-attr(desired_props, "logisetexpr")
+	
+	if (is.null(logiset_expr )) {
+		logiset<-NULL
+	} else {
+		logiset<- eval(parse(text=logiset_expr), envir = simframe)
+	}
+	logiset
+}

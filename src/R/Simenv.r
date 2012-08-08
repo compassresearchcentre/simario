@@ -84,18 +84,24 @@ expr = {
 	#' 
 	#' @param .
 	#'  simenv receiving object. .$simframe is modified.  
-	#' 
+	#' @param iteration
+	#' iteration number - corresponds to a row number in the matrix elements of the cat.adjustments list
 	#' @param propensities
 	#' 		named list of propensities for the cat.adjustments
 	#' @param printAdj
 	#' 		if TRUE will print new proportions of modified simframe vars
+	#' @param cat.adjustments
+	#' 	a list of categorical adjustment matrices whose rows each correpond to desired adjustments for an iteration.
+	#' 	Each matrix has a 'varname' attribute, indicating which variable in the simenv object is to be adjusted.
+	#' 	Each matrix may also have a 'logisetexpr' attribute - if so, this is evaluated and becomes a logical vector indicating which observations
+	#'  of the 'varname' variable to adjust (i.e. the "logisetexpr" attribute gives which subset of the data the row of adjustments are intended for).
 	#'
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
 	#'   
 	#' @examples
 	#'  . <- env.scenario
-	#' iteration = 1 ; print_adj = TRUE
+	#' 	iteration = 1 ; print_adj = TRUE
 	#' 
 	#' 	.$cat.adjustments$z1accomLvl1[1,] <- c(0.5,0.5)
 	#'  .$cat.adjustments$SESBTH[1,] <- c(0.1,0.1,0.8)
@@ -106,13 +112,50 @@ expr = {
 	#'  print(prop.table(table(.$simframe$catpregsmk2)),digits=3)	
 	#' 
 	#' .$applyAllCatAdjustmentsToSimframe(iteration, propensities, print_adj)
-	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE,...) {
+	#'
+	#'	
+	#'
+	#'
+	#'	. <- env.scenario
+	#'	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
+	#'	iteration=1
+	#' 	.$simframe<-.$simframe[1:13,]
+	#'  .$simframe$examplevariable<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#' 	.$cat.adjustments$examplevariable <-matrix(rep(NA,10),ncol=2)
+	#' 	.$cat.adjustments$examplevariable[1,] <- c(0.5,0.5)
+	#' 	colnames(.$cat.adjustments$examplevariable)<-c("example variable =0 (%)","example variable =1 (%)")
+	#' 	.$cat.adjustments$examplevariable<-structure(.$cat.adjustments$examplevariable, varnames="examplevariable")
+	#' 	.$cat.adjustments$examplevariable<-structure(.$cat.adjustments$examplevariable, logisetexpr="residential")
+	#' 	.$simframe$residential<-c(0, 0,  1,  1, 0,  1,  1,  1,  1,  1,  1,  1, 1)
+	#'	applyAllCatAdjustmentsToSimframe(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments)
+	#'
+	#'
+	#'	. <- env.scenario
+	#'	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
+	#'	iteration=1
+	#' 	.$simframe<-.$simframe[1:13,]
+	#'	env.base$simframe$examplevariableLvl1<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#' 	env.base$simframe$examplevariableLvl0<-c(0,0,0,0,1,1,1,1,1,0,0,0,0)
+	#' 	.$cat.adjustments$examplevariable <-matrix(rep(NA,10),ncol=2)
+	#' 	.$cat.adjustments$examplevariable[1,] <- c(0.6,0.4)
+	#' 	colnames(.$cat.adjustments$examplevariable)<-c("example variable =0 (%)","example variable =1 (%)")
+	#' 	.$cat.adjustments$examplevariable<-structure(.$cat.adjustments$examplevariable, varnames=c("examplevariableLvl0", "examplevariableLvl1"))
+	#' 	.$cat.adjustments$examplevariable<-structure(.$cat.adjustments$examplevariable, logisetexpr="residential")
+	#' 	.$simframe$residential<-c(0, 0,  1,  1, 0,  1,  1,  1,  1,  1,  1,  1, 1)
+	#'	applyAllCatAdjustmentsToSimframe(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments)
+	#' 
 
-		invisible(lapply(.$cat.adjustments, function (catadj) {
+	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments, ...) {
+
+		invisible(lapply(cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments[[1]]
 			#catadj <- .$cat.adjustments$SESBTH
 			#catadj <- .$cat.adjustments$catpregsmk2
 			cat_adj_vector <- catadj[iteration, ]
+			
+			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
+
+			cat_adj_vector<-structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr"))
 			
 			if (!any(is.na(cat_adj_vector))) {
 				
@@ -134,7 +177,9 @@ expr = {
 	#' @param varnames
 	#'  varname(s) of variable(s) to adjust, eg: "catpregsmk2" or c("z1msmokeLvl0","z1msmokeLvl1")
 	#' @param desired_props
-	#'  a vector of desired proportions, eg: c(0.1, 0.1, 0.8)
+	#'  a vector of desired proportions, eg: c(0.1, 0.1, 0.8).
+	#'  Can have a "logisetexpr" attribute - if so, this is evaulated, and becomes a logical vector indicating which observations of "varname" to adjust.
+	#' 		(i.e. the "logisetexpr" attribute gives which subset of the data the desired_props are intended for).
 	#' @param propensities
 	#' 		named list of propensities for the cat.adjustments
 	#' @param printAdj
@@ -145,15 +190,45 @@ expr = {
 	#' 
 	#' @examples
 	#'  desired_props <- cat_adj_vector  
+	#'  
+	#' 	desired_props<-c(0.5,0.5)
+	#' 	desired_props<-structure(desired_props, logisetexpr="residential")
+	#' 	.<-env.scenario
+	#' 	.$simframe<-.$simframe[1:13,]
+	#'  env.scenario$simframe$examplevariable<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#' 	varnames<-"examplevariable"
+	#'  env.scenario$simframe$residential<-c(0,0,1,1,0,1,1,1,1,1,1,1,1)
+	#' 	iteration=1
+	#' 	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
+	#' 	prop.table(table(env.scenario$simframe["examplevariable"][env.scenario$simframe$residential==1,]))
+	#'	applyCatAdjustmentToSimframe(.,varnames, desired_props, iteration, propensities, print_adj = TRUE)
+	#' 	env.scenario$simframe$examplevariable[env.scenario$simframe$residential==1]
+	#' 
+	#' 	desired_props<-c(0.6,0.4)
+	#' 	desired_props<-structure(desired_props, logisetexpr="residential")
+	#' 	.<-env.scenario
+	#' 	.$simframe<-.$simframe[1:13,]
+	#'  env.scenario$simframe$examplevariableLvl1<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#'  env.scenario$simframe$examplevariableLvl0<-c(0,0,0,0,1,1,1,1,1,0,0,0,0)
+	#' 	varnames<-c("examplevariableLvl0", "examplevariableLvl1")
+	#'  env.scenario$simframe$residential<-c(0,0,1,1,0,1,1,1,1,1,1,1,1)
+	#' 	iteration=1
+	#' 	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
+	#' 	prop.table(table(env.scenario$simframe["examplevariableLvl1"][env.base$simframe$residential==1,]))
+	#'	applyCatAdjustmentToSimframe(.,varnames, desired_props, iteration, propensities, print_adj = TRUE)
+	#' 	env.scenario$simframe$examplevariableLvl1[env.scenario$simframe$residential==1]
+
 	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE, ...) {
 		is_single_variable_to_adjust <- length(varnames) == 1
 		
+		logiset <- as.logical(evaluateLogisetExprAttribute(desired_props, .$simframe))
+		
 		if (is_single_variable_to_adjust) {
 			propens <- propensities[[varnames]][,,iteration]
-			.$applyCatAdjustmentToSimframeVarSingle(varnames, desired_props, propens, print_adj, ...)
+			.$applyCatAdjustmentToSimframeVarSingle(varnames, desired_props, propens, print_adj, logiset=logiset, ...)
 		} else {
 			propens <- propensities[[strip_lvl_suffix(varnames[1])]][,,iteration]
-			.$applyCatAdjustmentToSimframeVarMultipleBinary(varnames, desired_props, propens, print_adj, ...)	
+			.$applyCatAdjustmentToSimframeVarMultipleBinary(varnames, desired_props, propens, print_adj,logiset=logiset, ...)	
 		}
 		
 	}
@@ -170,6 +245,8 @@ expr = {
 	#'  propensities for this variable, if any
 	#' @param printAdj
 	#'  if TRUE, display adjusted proportions after adjustment
+	#' @param logiset
+	#' 	logical vector indicating which rows to include, or NULL (the default) to include all. 
 	#' 
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
@@ -181,13 +258,61 @@ expr = {
 	#' propens <- NULL
 	#' print_adj = T
 	#' applyCatAdjustmentToSimframeVarSingle(., varname, desired_props, propens, print_adj)
-	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, ...) {
-		if (print_adj) cat(varname,"\n")
+	#' 
+	#' .<-env.scenario
+	#' .$simframe<-.$simframe[1:13,] 
+	#' .$simframe$examplevariable<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#' varname<-"examplevariable"
+	#' desired_props<-c(0.5,0.5)
+	#' propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
+	#' logiset<-c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, TRUE)
+	#' prop.table(table(.$simframe[varname]))
+	#' applyCatAdjustmentToSimframeVarSingle(., varname, desired_props, propens, print_adj = T, logiset=logiset)
+	#' .$simframe$examplevariable[logiset==TRUE]
+
+
+	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, logiset=NULL, ...) {
+		if (print_adj & is.null(logiset)) cat(varname,"\n")
+		if (print_adj & !is.null(logiset)) cat(varname,"- just for the logiset subset: ", "\n")
 		
-		.$simframe[varname] <- modifyProps(.$simframe[[varname]], desired_props, propens, ...)
+		if (!is.null(logiset)){
+			#subsetting the propensities according to logiset
+			propens<-subset(propens, logiset)
+			
+			#adding a temporary ID variable - a rank column - onto a copy of the simframe portion
+			#will enable the subsets to be put back into the same order later
+			n<-dim(.$simframe[varname])[1]
+			sf<-data.frame(.$simframe[varname],1:n)
+			rankcolnum<-2 
+			
+			
+			#subsetting the copy of the simframe according to logiset
+			subset_to_change<-subset(sf,logiset)
+			
+			#keeping those not in the logiset - those that aren't to be passed to modifyprops
+			rest_not_to_be_modified<-subset(sf,!logiset)
+			
+			#modifying the logiset
+			subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens, ...)
+			
+			#putting changed set back with those that weren't in the logiset
+			new_sf<-rbind(as.matrix(subset_to_change_modified), as.matrix(rest_not_to_be_modified[,1])) 
+			
+			original.position<-rbind(as.matrix(subset_to_change[,rankcolnum]), as.matrix(rest_not_to_be_modified[,rankcolnum]))
+			
+			#putting the records back in their orignal order according to the rank column created earlier
+			.$simframe[varname]<-new_sf[order(original.position),]
+			
+		}
+		else {
+			.$simframe[varname] <- modifyProps(.$simframe[[varname]], desired_props, propens, ...)
+		}
 		
 		if (print_adj) {
-			print(prop.table(table(.$simframe[varname])), digits=3)
+		
+			if (is.null(logiset)) {print(prop.table(table(.$simframe[varname])), digits=3)}
+			else {print(prop.table(table(subset(.$simframe[varname],logiset))), digits=3)}
+			
 		}
 	}
 	
@@ -204,6 +329,8 @@ expr = {
 	#'  propensities, if ANY
 	#' @param printAdj
 	#'  if TRUE, display adjusted proportions after adjustment
+	#' 	@param logiset
+	#' 	logical vector indicating which rows to include, or NULL (the default) to include all. 
 	#'
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
@@ -220,7 +347,26 @@ expr = {
 	#' propens <- NULL 
 	#' 
 	#' .$applyCatAdjustmentToSimframeVarMultipleBinary(binLevelVarnames, desiredProps, propens, TRUE)
-	applyCatAdjustmentToSimframeVarMultipleBinary <- function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE, ...) {
+	#'	
+	#'
+	#'
+	#' binLevelVarnames<-c("examplevariableLvl0", "examplevariableLvl1")
+	#' .<-env.scenario
+	#' .$simframe<-.$simframe[1:13,]; .$simframe$examplevariableLvl1<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#' .$simframe$examplevariableLvl0<-c(0,0,0,0,1,1,1,1,1,0,0,0,0)
+	#' logiset<-c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,TRUE)
+	#' desiredProps<-c(0.6,0.4)
+	#' propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
+	#' .$simframe$examplevariableLvl1[logiset==TRUE]
+	#' apply(subset(.$simframe[c("examplevariableLvl0", "examplevariableLvl1")], logiset), COL, sum) / apply(subset(.$simframe[c("examplevariableLvl0", "examplevariableLvl1")], logiset), COL, length)
+	#' applyCatAdjustmentToSimframeVarMultipleBinary(., binLevelVarnames, desiredProps, propens, printAdj = TRUE, logiset=logiset)
+	#' .$simframe$examplevariableLvl1[logiset==TRUE]
+	
+
+
+	applyCatAdjustmentToSimframeVarMultipleBinary <- function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE, logiset=NULL, ...) {
+		
+		
 		#NB: simframe may not always contain Lvl0 var. So we construct one if this is 2 level var.
 		is2Level <- length(binLevelVarnames) == 2
 		varnames <- intersect(binLevelVarnames, names(.$simframe))
@@ -236,16 +382,59 @@ expr = {
 			vecs.list <- vecs.list[binLevelVarnames] 
 		}
 		
-		result <- modifyPropsAsBinLevels(
+		if (!is.null(logiset)) {
+			#subsetting the propensities according to logiset
+			propens<-subset(propens, logiset)
+			
+			#adding a temporary ID variable - a rank column - onto a copy of the simframe portion
+			#will enable the subsets to be put back into the same order later
+			n<-dim(vecs.list)[1]
+			sf<-data.frame(vecs.list,1:n)
+			rankcolnum<-ncol(sf) 
+			
+			
+			#subsetting the copy of the simframe according to logiset
+			subset_to_change<-subset(sf,logiset)
+			
+			#keeping those not in the logiset - those that aren't to be passed to modifyprops
+			rest_not_to_be_modified<-subset(sf,!logiset)
+			
+			#modifying the logiset
+			subset_to_change_modified <- modifyPropsAsBinLevels(
+					as.list(subset_to_change[,-rankcolnum]), 
+					desiredProps=desiredProps, 
+					propens=propens, ...)
+			
+			#putting changed set back with those that weren't in the logiset
+			new_sf<-rbind(subset_to_change_modified, rest_not_to_be_modified[,-rankcolnum]) 
+			
+			original.position<-rbind(as.matrix(subset_to_change[,rankcolnum]), as.matrix(rest_not_to_be_modified[,rankcolnum]))
+			
+			#putting the records back in their orignal order according to the rank column created earlier
+			.$simframe[varnames]<-new_sf[order(original.position),]
+		}
+		else {
+			result <- modifyPropsAsBinLevels(
 				vecs.list, 
 				desiredProps=desiredProps, 
 				propens=propens, ...)
 		
-		.$simframe[varnames] <- result[varnames] 
+			.$simframe[varnames] <- result[varnames] 
+		}
 		
 		if (printAdj) {
+			
+			if (is.null(logiset)){
+			
 			print(apply(.$simframe[varnames], COL, sum) / apply(.$simframe[varnames], COL, length), digits=3)
 			cat("\n")
+			}
+			else { cat("Just for the logiset subset: ", "\n")
+			print(apply(subset(.$simframe[varnames], logiset), COL, sum) / apply(subset(.$simframe[varnames], logiset), COL, length), digits=3)
+			cat("\n")
+				
+			}
+			
 		}
 	}
 	
