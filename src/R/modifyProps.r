@@ -80,7 +80,8 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #'  in the second column.
 #' @param accuracy
 #' 	gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
-#' 	- the default is 0.01
+#' 	- the default is 0.01.
+#'  If the '.accuracy' global variable exists, its value will be used instead of that in function call.
 #' 
 #' @note Assumptions made by the function:
 #' It is assumed that the proportions given in props are given in consectuive 
@@ -122,6 +123,9 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' prop.table(table(modifyProps(default.vec, props, propens)))
 #' }
 modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
+	
+	if (exists(".accuracy")) {accuracy<-.accuracy}
+	
   if (is.null(props) || any(is.na(props))) {
 	#no props, silently do nothing	  
 	return(default.vec)
@@ -326,7 +330,7 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
 #' vecs.list <- simframe[binLevelVarnames]
 #' r <- modifyPropsAsBinLevels(vecs.list, desiredProps = desiredProps, propens = propens)
 #' }
-modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL, ...) {
+modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 	
 	#catvar <- binary.levels.combine(simframe[binLevelVarnames])
 	cats <- seq(length(vecs.list))
@@ -334,7 +338,7 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL, ...) 
 	catvar <- binary.levels.combine(vecs.list)
 	# prop.table(table(catvar))
 	
-	adjcatvar <- modifyProps(catvar, desiredProps, propens, ...)
+	adjcatvar <- modifyProps(catvar, desiredProps, propens)
 	
 	# quick check: this will fail if modifyProps returns any NAs
 	# like for example, where there is only 1 category catvar
@@ -401,7 +405,7 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL, ...) 
 #' a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset, accuracy=0.08)
 #' prop.table(table(a[logiset]))
 
-modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens, logiset=NULL,...) {
+modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens, logiset=NULL) {
 	if (is.null(logiset)) {logiset<-rep(T, length(default.vec))}
 	default.df<-as.data.frame(default.vec)
 	propens<-subset(propens, logiset)
@@ -420,7 +424,7 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens, lo
 	rest_not_to_be_modified<-subset(sf,!logiset)
 	
 	#modifying the logiset
-	subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens,...)
+	subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens)
 	
 	#putting changed set back with those that weren't in the logiset
 	new_sf<-rbind(as.matrix(subset_to_change_modified), as.matrix(rest_not_to_be_modified[,1])) 

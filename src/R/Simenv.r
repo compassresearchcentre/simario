@@ -145,7 +145,7 @@ expr = {
 	#'	applyAllCatAdjustmentsToSimframe(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments)
 	#' 
 
-	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments, ...) {
+	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments) {
 
 		invisible(lapply(cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments[[1]]
@@ -162,7 +162,7 @@ expr = {
 				if (is.null(varnames)) {
 					stop(gettextf("Missing varnames attribute"))
 				}
-				.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj, ...)
+				.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
 			}
 			
 		}))
@@ -217,17 +217,17 @@ expr = {
 	#'	applyCatAdjustmentToSimframe(.,varnames, desired_props, iteration, propensities, print_adj = TRUE)
 	#' 	env.scenario$simframe$examplevariableLvl1[env.scenario$simframe$residential==1]
 
-	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE, ...) {
+	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE) {
 		is_single_variable_to_adjust <- length(varnames) == 1
 		
 		logiset <- as.logical(evaluateLogisetExprAttribute(desired_props, .$simframe))
 		
 		if (is_single_variable_to_adjust) {
 			propens <- propensities[[varnames]][,,iteration]
-			.$applyCatAdjustmentToSimframeVarSingle(varnames, desired_props, propens, print_adj, logiset=logiset, ...)
+			.$applyCatAdjustmentToSimframeVarSingle(varnames, desired_props, propens, print_adj, logiset=logiset)
 		} else {
 			propens <- propensities[[strip_lvl_suffix(varnames[1])]][,,iteration]
-			.$applyCatAdjustmentToSimframeVarMultipleBinary(varnames, desired_props, propens, print_adj,logiset=logiset, ...)	
+			.$applyCatAdjustmentToSimframeVarMultipleBinary(varnames, desired_props, propens, print_adj,logiset=logiset)	
 		}
 		
 	}
@@ -270,7 +270,7 @@ expr = {
 	#' .$simframe$examplevariable[logiset==TRUE]
 
 
-	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, logiset=NULL, ...) {
+	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, logiset=NULL) {
 		if (print_adj & is.null(logiset)) cat(varname,"\n")
 		if (print_adj & !is.null(logiset)) cat(varname,"- just for the logiset subset: ", "\n")
 		
@@ -278,7 +278,7 @@ expr = {
 			.$simframe[varname]<-modifypropsVarSingle_on_subset(default.vec=.$simframe[varname], desired_props=desired_props, propens=propens, logiset=logiset)
 		}
 		else {
-			.$simframe[varname] <- modifyProps(.$simframe[[varname]], desired_props, propens, ...)
+			.$simframe[varname] <- modifyProps(.$simframe[[varname]], desired_props, propens)
 		}
 		
 		if (print_adj) {
@@ -337,7 +337,7 @@ expr = {
 	
 
 
-	applyCatAdjustmentToSimframeVarMultipleBinary <- function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE, logiset=NULL, ...) {
+	applyCatAdjustmentToSimframeVarMultipleBinary <- function (., binLevelVarnames, desiredProps, propens, printAdj = TRUE, logiset=NULL) {
 		
 		
 		#NB: simframe may not always contain Lvl0 var. So we construct one if this is 2 level var.
@@ -376,7 +376,7 @@ expr = {
 			subset_to_change_modified <- modifyPropsAsBinLevels(
 					as.list(subset_to_change[,-rankcolnum]), 
 					desiredProps=desiredProps, 
-					propens=propens, ...)
+					propens=propens)
 			
 			#putting changed set back with those that weren't in the logiset
 			new_sf<-rbind(subset_to_change_modified, rest_not_to_be_modified[,-rankcolnum]) 
@@ -390,7 +390,7 @@ expr = {
 			result <- modifyPropsAsBinLevels(
 				vecs.list, 
 				desiredProps=desiredProps, 
-				propens=propens, ...)
+				propens=propens)
 		
 			.$simframe[varnames] <- result[varnames] 
 		}
@@ -434,14 +434,14 @@ expr = {
 	#' @examples 
 	#'  . <- env.base
 	#'  env.base$simulate()
-	simulate <- function(., total_runs=1,...) {
+	simulate <- function(., total_runs=1) {
 		start_time <- proc.time()
 		
 		cat(gettextf("Simulating %s\n", .$name))
 		
 		if (!exists("propensities")) propensities <- NULL
 		
-		.$applyAllCatAdjustmentsToSimframe(1, propensities,...)
+		.$applyAllCatAdjustmentsToSimframe(1, propensities)
 		
 		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
 		
