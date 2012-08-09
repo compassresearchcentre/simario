@@ -350,4 +350,86 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL, ...) 
 	structure(result, names=names(vecs.list))
 }
 
+
+#' Calls modifyProps on a subset, returning the whole vector, but with the subset modified
+#' 
+#' @param desired_props
+#'  a vector that is the proportions requested by the user.
+#'  The vector is the length of the number of distinct values of the variable
+#'  being modified.
+#' @param default.vec
+#'  a vector after a run of the simulation. The values of this
+#'  variable will be changed in accordance with what the user requests
+#' @param propens
+#'  matrix or vector of the propensity scores for each child
+#'  For binary variables there is one column of propensity scores: the
+#'  propensities to change from a 0 to a 1.
+#'  For categorical variables with more than two categories there are multiple
+#'  columns of propensity scores: E.g. for a three category variables the
+#'  propensities to change from category 1 to category 2 are in the first
+#'  column and the propensities to change from category 2 to category 3 are
+#'  in the second column.
+#' @param logiset
+#' logical vector indicating which observations to include, or NULL to include all.
+#' @note Assumptions made by the function:
+#' It is assumed that the proportions given in props are given in consectuive 
+#' increasing order (e.g. {0,1}, {1, 2, 3} or {2, 5, 9, 23}).  If the user 
+#' wants to make it so no observations are in a particular category the value 
+#' 0 must be put in the corresponding place in the vector props
+#' If the propensity scores (propens) are provided by the user then it is assumed 
+#' that default.vec and propens are given in the same order and exactly the 
+#' same children are in each vector (i.e. there are no children in one vector 
+#' that are not in the other).  In other words, the propensity score for a 
+#' specific child is in the same row in propens as that same child's value of 
+#' the variable in default.vec.
+#' 
+#' @seealso This function calls \code{\link{modifyProps}}
+#' 
+#' @examples
+#' default.vec<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+#' logiset<-c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,TRUE)
+#' desired_props<-c(0.5,0.5)
+#' propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
+#' a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset)
+#' prop.table(table(a[logiset]))
+#' 
+#' 
+#' default.vec<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+#' logiset<-NULL
+#' desired_props<-c(0.5,0.5)
+#' propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
+#' a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset, accuracy=0.08)
+#' prop.table(table(a[logiset]))
+
+modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens, logiset=NULL,...) {
+	if (is.null(logiset)) {logiset<-rep(T, length(default.vec))}
+	default.df<-as.data.frame(default.vec)
+	propens<-subset(propens, logiset)
+	
+	#adding a temporary ID variable - a rank column - onto a copy of the simframe portion
+	#will enable the subsets to be put back into the same order later
+	n<-dim(default.df)[1]
+	sf<-data.frame(default.df,1:n)
+	rankcolnum<-2 
+	
+	
+	#subsetting the copy of the simframe according to logiset
+	subset_to_change<-subset(sf,logiset)
+	
+	#keeping those not in the logiset - those that aren't to be passed to modifyprops
+	rest_not_to_be_modified<-subset(sf,!logiset)
+	
+	#modifying the logiset
+	subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens,...)
+	
+	#putting changed set back with those that weren't in the logiset
+	new_sf<-rbind(as.matrix(subset_to_change_modified), as.matrix(rest_not_to_be_modified[,1])) 
+	
+	original.position<-rbind(as.matrix(subset_to_change[,rankcolnum]), as.matrix(rest_not_to_be_modified[,rankcolnum]))
+	
+	#putting the records back in their orignal order according to the rank column created earlier
+	new_sf[order(original.position),]
+
+}
+
 cat("Loaded modifyProps.r\n")

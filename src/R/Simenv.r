@@ -265,7 +265,7 @@ expr = {
 	#' desired_props<-c(0.5,0.5)
 	#' propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
 	#' logiset<-c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, TRUE)
-	#' prop.table(table(.$simframe[varname]))
+	#' prop.table(table(.$simframe[varname][logiset,]))
 	#' applyCatAdjustmentToSimframeVarSingle(., varname, desired_props, propens, print_adj = T, logiset=logiset)
 	#' .$simframe$examplevariable[logiset==TRUE]
 
@@ -275,33 +275,7 @@ expr = {
 		if (print_adj & !is.null(logiset)) cat(varname,"- just for the logiset subset: ", "\n")
 		
 		if (!is.null(logiset)){
-			#subsetting the propensities according to logiset
-			propens<-subset(propens, logiset)
-			
-			#adding a temporary ID variable - a rank column - onto a copy of the simframe portion
-			#will enable the subsets to be put back into the same order later
-			n<-dim(.$simframe[varname])[1]
-			sf<-data.frame(.$simframe[varname],1:n)
-			rankcolnum<-2 
-			
-			
-			#subsetting the copy of the simframe according to logiset
-			subset_to_change<-subset(sf,logiset)
-			
-			#keeping those not in the logiset - those that aren't to be passed to modifyprops
-			rest_not_to_be_modified<-subset(sf,!logiset)
-			
-			#modifying the logiset
-			subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens, ...)
-			
-			#putting changed set back with those that weren't in the logiset
-			new_sf<-rbind(as.matrix(subset_to_change_modified), as.matrix(rest_not_to_be_modified[,1])) 
-			
-			original.position<-rbind(as.matrix(subset_to_change[,rankcolnum]), as.matrix(rest_not_to_be_modified[,rankcolnum]))
-			
-			#putting the records back in their orignal order according to the rank column created earlier
-			.$simframe[varname]<-new_sf[order(original.position),]
-			
+			.$simframe[varname]<-modifypropsVarSingle_on_subset(default.vec=.$simframe[varname], desired_props=desired_props, propens=propens, logiset=logiset)
 		}
 		else {
 			.$simframe[varname] <- modifyProps(.$simframe[[varname]], desired_props, propens, ...)
