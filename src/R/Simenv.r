@@ -316,7 +316,8 @@ expr = {
 	#' 
 	#' binLevelVarnames <- c("z1single0Lvl0","z1single0Lvl1")
 	#' binLevelVarnames <- c("z1accomLvl0","z1accomLvl1") ; propens <- propensities$z1accom[,1]
-	#' desiredProps <- c(0,1) ; desiredProps <- c(0.5,0.5)  
+	#' desiredProps <- c(0,1) ; desiredProps <- c(0.5,0.5)
+	#' desiredProps <- desired_props  
 	#' propens <- NULL 
 	#' 
 	#' .$applyCatAdjustmentToSimframeVarMultipleBinary(binLevelVarnames, desiredProps, propens, TRUE)
@@ -355,7 +356,7 @@ expr = {
 			vecs.list <- vecs.list[binLevelVarnames] 
 		}
 		
-		if (!is.null(logiset)) {
+		if (!is.null(logiset) && length(logiset) > 0) {
 			#subsetting the propensities according to logiset
 			propens<-subset(propens, logiset)
 			
