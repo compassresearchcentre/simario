@@ -168,6 +168,16 @@ expr = {
 		}))
 
 	}
+	
+	applyAllFixedOutcomesIfSetToSimframe <- function(.) {
+		iteration <- 1
+		
+		lapply(names(.$fixed.outcomes), function(fixedOutcomeName){
+					#fixedOutcomeName <- "kids"
+					.$simframe[[fixedOutcomeName]] <- selectFixedOutcomeIfSet(., iteration, .$simframe[[fixedOutcomeName]], fixedOutcomeName)
+				
+				})
+	}
 
 	#' Apply categorical adjustments to simframe.
 	#' 
@@ -455,6 +465,8 @@ expr = {
 			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 
+			.$applyAllFixedOutcomesIfSetToSimframe()
+			
 			#execute simulateRun on all modules (may only be one module)
 			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
 								module$outcomes <- module$simulateRun(simenv=.)  ))

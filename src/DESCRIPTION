@@ -38,3 +38,4 @@ Collate:
     'support.r'
     'DataframeUtil.r'
     'simario-package.r'
+	'FixedOutcomes.r'
