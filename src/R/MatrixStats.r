@@ -735,20 +735,18 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 		
 	} else {
 		result <- t(apply(mx, COL, function (x) {
-							#x <- mx[,1]
-							#non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
+							#x <- mx[,6]
 							if (!na.rm&any(is.na(x))) {
 								rep(NA, length(unique(grpby)))
 							} else if (na.rm&all(is.na(x))) {
 								rep(NA, length(unique(grpby)))
 							} else {
 								non.nas <- !is.na(x)
-								#non.nas <- if (na.rm) !is.na(x) else rep(T, length(x))
-
-								weightsGrouped <- aggregate(wgts[non.nas], by = list(grpby[non.nas]), FUN = sum)$x
-							
-								aggregate(x[non.nas] * wgts[non.nas], by = list(grpby[non.nas]), FUN = sum)$x / weightsGrouped
-								#think will get error if one group has all NAs
+								
+								weightsGrouped <- aggregate(wgts * non.nas, by = list(grpby), FUN = sum, na.rm = na.rm)$x
+								weightsGrouped[weightsGrouped == 0] <- NA
+								aggregate(x * wgts, by = list(grpby), FUN = sum, na.rm = na.rm)$x / weightsGrouped
+								#update - now will get NA if one group has all NAs
 							}
 							
 						}))
