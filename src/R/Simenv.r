@@ -72,6 +72,7 @@ expr = {
 				presim.stats=list(),
 				cat.adjustments=cat.adjustments,
 				modules=modules,
+				fixed.outcomes=list(),
 				dict=dict
 		)
 	}
