@@ -150,6 +150,7 @@ expr = {
 
 		invisible(lapply(cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments[[1]]
+			#catadj <- .$cat.adjustments$z1single
 			#catadj <- .$cat.adjustments$SESBTH
 			#catadj <- .$cat.adjustments$catpregsmk2
 			cat_adj_vector <- catadj[iteration, ]
@@ -282,10 +283,15 @@ expr = {
 
 
 	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, logiset=NULL) {
-		if (print_adj & is.null(logiset)) cat(varname,"\n")
-		if (print_adj & !is.null(logiset)) cat(varname,"- just for the logiset subset: ", "\n")
+		if (print_adj) {
+			if(is.null(logiset) || length(logiset) == 0) {
+				cat(varname,"\n")
+			} else {
+				cat(varname,"- just for the logiset subset: ", "\n")
+			}
+		}
 		
-		if (!is.null(logiset)){
+		if (!is.null(logiset) && length(logiset) > 0){
 			.$simframe[varname]<-modifypropsVarSingle_on_subset(default.vec=.$simframe[varname], desired_props=desired_props, propens=propens, logiset=logiset)
 		}
 		else {
@@ -294,7 +300,7 @@ expr = {
 		
 		if (print_adj) {
 		
-			if (is.null(logiset)) {print(prop.table(table(.$simframe[varname])), digits=3)}
+			if (is.null(logiset) || length(logiset) == 0) {print(prop.table(table(.$simframe[varname])), digits=3)}
 			else {print(prop.table(table(subset(.$simframe[varname],logiset))), digits=3)}
 			
 		}
@@ -336,6 +342,7 @@ expr = {
 	#'
 	#'
 	#' binLevelVarnames<-c("examplevariableLvl0", "examplevariableLvl1")
+	#' binLevelVarnames<-varnames
 	#' .<-env.scenario
 	#' .$simframe<-.$simframe[1:13,]; .$simframe$examplevariableLvl1<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
 	#' .$simframe$examplevariableLvl0<-c(0,0,0,0,1,1,1,1,1,0,0,0,0)
@@ -397,8 +404,7 @@ expr = {
 			
 			#putting the records back in their orignal order according to the rank column created earlier
 			.$simframe[varnames]<-new_sf[order(original.position),]
-		}
-		else {
+		} else {
 			result <- modifyPropsAsBinLevels(
 				vecs.list, 
 				desiredProps=desiredProps, 
@@ -409,15 +415,13 @@ expr = {
 		
 		if (printAdj) {
 			
-			if (is.null(logiset)){
-			
-			print(apply(.$simframe[varnames], COL, sum) / apply(.$simframe[varnames], COL, length), digits=3)
-			cat("\n")
-			}
-			else { cat("Just for the logiset subset: ", "\n")
-			print(apply(subset(.$simframe[varnames], logiset), COL, sum) / apply(subset(.$simframe[varnames], logiset), COL, length), digits=3)
-			cat("\n")
-				
+			if (is.null(logiset) || length(logiset) == 0) {
+				print(apply(.$simframe[varnames], COL, sum) / apply(.$simframe[varnames], COL, length), digits=3)
+				cat("\n")
+			} else {
+				cat("Just for the logiset subset: ", "\n")
+				print(apply(subset(.$simframe[varnames], logiset), COL, sum) / apply(subset(.$simframe[varnames], logiset), COL, length), digits=3)
+				cat("\n")
 			}
 			
 		}
@@ -446,6 +450,8 @@ expr = {
 	#' @examples 
 	#'  . <- env.base
 	#'  env.base$simulate()
+	#'  . <- env.scenario
+	
 	simulate <- function(., total_runs=1) {
 		start_time <- proc.time()
 		
