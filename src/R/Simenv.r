@@ -463,16 +463,17 @@ expr = {
 		
 		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
 		
-		if (exists(".DEBUG")) {
-			cat("DEBUG: Stopping to allow manual execution\n")
-			return()
-		}
-		
+
 		for (i in 1:total_runs) {
 			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 
-			.$applyAllFixedOutcomesIfSetToSimframe()
+			invisible(.$applyAllFixedOutcomesIfSetToSimframe())
+			
+			if (exists(".DEBUG")) {
+				cat("DEBUG: Stopping to allow manual execution\n")
+				return()
+			}
 			
 			#execute simulateRun on all modules (may only be one module)
 			invisible(lapply(.$modules, function(module) #module <- .$modules[[1]] 
