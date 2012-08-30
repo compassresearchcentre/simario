@@ -405,7 +405,7 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 #' a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset, accuracy=0.08)
 #' prop.table(table(a[logiset]))
 
-modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens, logiset=NULL) {
+modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NULL, logiset=NULL) {
 	if (is.null(logiset)) {logiset<-rep(T, length(default.vec))}
 	default.df<-as.data.frame(default.vec)
 	propens<-subset(propens, logiset)

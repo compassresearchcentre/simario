@@ -134,8 +134,8 @@ expr = {
 	#'	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
 	#'	iteration=1
 	#' 	.$simframe<-.$simframe[1:13,]
-	#'	env.base$simframe$examplevariableLvl1<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
-	#' 	env.base$simframe$examplevariableLvl0<-c(0,0,0,0,1,1,1,1,1,0,0,0,0)
+	#'	env.scenario$simframe$examplevariableLvl1<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+	#' 	env.scenario$simframe$examplevariableLvl0<-c(0,0,0,0,1,1,1,1,1,0,0,0,0)
 	#' 	.$cat.adjustments$examplevariable <-matrix(rep(NA,10),ncol=2)
 	#' 	.$cat.adjustments$examplevariable[1,] <- c(0.6,0.4)
 	#' 	colnames(.$cat.adjustments$examplevariable)<-c("example variable =0 (%)","example variable =1 (%)")
