@@ -9,7 +9,8 @@ be given as input to the function.
 If the propensity score(s) are not provided by the user then random
 propensity scores are generated.}
 \usage{
-  modifyProps(default.vec, props, propens = NULL)
+  modifyProps(default.vec, props, propens = NULL,
+    accuracy = 0.01)
 }
 \arguments{
   \item{props}{a vector that is the proportions requested
@@ -20,15 +21,21 @@ propensity scores are generated.}
   simulation. The values of this variable will be changed
   in accordance with what the user requests}
 
-  \item{propens}{matrix of the propensity scores for each
-  child For binary variables there is one column of
-  propensity scores: the propensities to change from a 0 to
-  a 1.  For categorical variables with more than two
+  \item{propens}{matrix or vector of the propensity scores
+  for each child For binary variables there is one column
+  of propensity scores: the propensities to change from a 0
+  to a 1.  For categorical variables with more than two
   categories there are multiple columns of propensity
   scores: E.g. for a three category variables the
   propensities to change from category 1 to category 2 are
   in the first column and the propensities to change from
   category 2 to category 3 are in the second column.}
+
+  \item{accuracy}{gives how close the end proportions are
+  allowed to be away from the desired proportions before an
+  error message is given - the default is 0.01.  If the
+  '.accuracy' global variable exists, its value will be
+  used instead of that in function call.}
 }
 \description{
   Change the default simulated values to proportions
@@ -60,11 +67,19 @@ propensity scores are generated.}
 \dontrun{
 default.vec <- children$SESBTH
 props <- c(0.1,0.1,0.8)
-propens <- propensities$SESBTH
+propens <- data.frame(propensities$SESBTH)
+new.vec <- modifyProps(default.vec, props, propens)
+table(default.vec)/sum(table(default.vec))
+table(new.vec)/sum(table(new.vec))
 
-default.vec <- env.scenario$simframe$z1fsmokeLvl1
+default.vec <- env.scenario$simframe$z1accomLvl1
 props <- c(0.1,0.9)
-propens <- propensities$z1fsmokeLvl1[,1]
+propens <- propensities$z1accom[,,5]
+#propensities$z1accom is a 3 dimentional array so we take only the the 5th z dimension
+	#(the propensities for year 5)
+ table(default.vec)/sum(table(default.vec))
+new.vec <- modifyProps(default.vec, props, propens)
+ table(new.vec)/sum(table(new.vec))
 
 default.vec <- env.scenario$simframe$catpregsmk2
 props <- c(0.1, 0.1, 0.1, 0.5, 0.2)

@@ -2,7 +2,7 @@
 \alias{collator_means}
 \title{Collate means over multiple runs. Performs the following:}
 \usage{
-  collator_means(runs, dict)
+  collator_means(runs, dict, ...)
 }
 \arguments{
   \item{runs}{a list of matrices, one matrix per run.}

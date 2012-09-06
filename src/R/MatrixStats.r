@@ -554,13 +554,14 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' 
 #' @export 
 #' @examples
+#' \dontrun{
 #' library(Hmisc)
 #' x <- c(8,8,2,1,1,8)
 #' wgts <- c(1,1,2,1,1,1)
 #' wtdtable(x, wgts) 
 #' 1 2 8 
 #' 2 2 3
-#' 
+#' }
 wtdtable <- function (x, wgts=rep(1,length(x))) {
 	if(length(x) != length(wgts)) {
 		param1Name <- as.character(sys.call())[2]
@@ -616,8 +617,8 @@ wtdtable <- function (x, wgts=rep(1,length(x))) {
 #' wgts = rep(1,nrow(mx))
 #' addVariableName = FALSE
 #' addVariableName = TRUE
-#' logiset=rep(T,nrow(mx))
-#' logiset=c(T,T,T,F)
+#' logiset=rep(TRUE,nrow(mx))
+#' logiset=c(TRUE,TRUE,TRUE,FALSE)
 #' wtdtable_mx_cols(mx, logiset=logiset)
 #' 
 wtdtable_mx_cols <- function(mx, wgts = rep(1,nrow(mx)), addVariableName = FALSE, logiset=NULL) {

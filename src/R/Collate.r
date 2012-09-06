@@ -238,13 +238,14 @@ identify_zero_category_cols <- function (mx) {
 #' @seealso \code{\link{prop.table.mx.grped.rows}}
 #' @export  
 #' @examples
+#' \dontrun{
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sexLvl1"))
 #' dict <- dict_demo
 #' percentages_flattened_mx(mx.flattened, dict)
 #'
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("65-69 1", "65-69 2", "65-69  3", "65-69  4", "70-74  1", "70-74 2", "70-74 3", "70-74 4"))), meta=c(varname="disability_state", grpby.tag="age_grp_output"))
 #' percentages_flattened_mx(mx.flattened, dict)
-#'
+#' }
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sex"))
 #' dict <- dict_example
 #' percentages_flattened_mx(mx.flattened, dict)
@@ -344,9 +345,11 @@ labelColumnCodes <- function(x, dict, varname) {
 #' 
 #' @export
 #' @examples 
+#' \dontrun{
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
 #' dict <- dict_demo
 #' label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
+#' }
 label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]

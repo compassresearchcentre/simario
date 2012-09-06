@@ -7,7 +7,9 @@
 #'  vector of values to replace with vector in fixed.outcomes. Generally x is continuous.
 #' @param varname
 #' name of variable
+#' @export
 #' @examples
+#' \dontrun{
 #' simenv <- env.scenario
 #' iteration <- 3
 #' x <- 1:1017
@@ -17,6 +19,7 @@
 #' attr(env.scenario$fixed.outcomes[["kids"]], "is.fixed.iteration")[3] <- TRUE 
 #'  x.replaced2 <- selectFixedOutcomeIfSet(simenv, iteration, x, varname)
 #' table(x.replaced2)
+#' }
 selectFixedOutcomeIfSet <- function(simenv, iteration, x, varname) {
 	fixed.outcomes <- simenv$fixed.outcomes
 	

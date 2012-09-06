@@ -2,7 +2,7 @@
 \alias{collator_list_mx}
 \title{Collate and average a list of matrices.}
 \usage{
-  collator_list_mx(runs, CI = TRUE)
+  collator_list_mx(runs, CI = TRUE, ...)
 }
 \arguments{
   \item{runs}{a list of matrices, one matrix per run. Each
