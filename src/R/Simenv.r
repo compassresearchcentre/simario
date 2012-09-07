@@ -225,7 +225,7 @@ expr = {
 	#'  env.scenario$simframe$residential<-c(0,0,1,1,0,1,1,1,1,1,1,1,1)
 	#' 	iteration=1
 	#' 	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
-	#' 	prop.table(table(env.scenario$simframe["examplevariableLvl1"][env.base$simframe$residential==1,]))
+	#' 	prop.table(table(env.scenario$simframe["examplevariableLvl1"][env.scenario$simframe$residential==1,]))
 	#'	applyCatAdjustmentToSimframe(.,varnames, desired_props, iteration, propensities, print_adj = TRUE)
 	#' 	env.scenario$simframe$examplevariableLvl1[env.scenario$simframe$residential==1]
 
