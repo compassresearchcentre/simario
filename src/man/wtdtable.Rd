@@ -17,11 +17,13 @@
   Weighted frequency table
 }
 \examples{
+\dontrun{
 library(Hmisc)
 x <- c(8,8,2,1,1,8)
 wgts <- c(1,1,2,1,1,1)
 wtdtable(x, wgts)
 1 2 8
 2 2 3
+}
 }
 

@@ -21,7 +21,7 @@
 \examples{
 \dontrun{
 x <- children$bwkg
-xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0,0))
+xi <- incByFactor(children$bwkg, bin(children$bwkg, 0.5), c(0,0.5,0,0,0,0,0,0,0))
 table(bin(x, 0.5))
 table(bin(xi, 0.5))
 
@@ -31,5 +31,12 @@ factorincrements <- rep(0,9)
 r <- incByFactor(x, factoredx, factorincrements)
 table(r, useNA="always")
 }
+
+#example with an array
+test.xa <- array(c(1:18), dim=c(3,3,2))
+test.breaks = c(0,6,12,18)
+factored.xa <- bin(test.xa, test.breaks)
+inc <- c(0,2,-1)
+incByFactor(test.xa, factored.xa, inc)
 }
 

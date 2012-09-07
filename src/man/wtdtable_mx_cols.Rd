@@ -31,12 +31,13 @@ Each column can have a different set of categories
 }
 \examples{
 COL<-2
+library(Hmisc)
 mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
 wgts = rep(1,nrow(mx))
 addVariableName = FALSE
 addVariableName = TRUE
-logiset=rep(T,nrow(mx))
-logiset=c(T,T,T,F)
+logiset=rep(TRUE,nrow(mx))
+logiset=c(TRUE,TRUE,TRUE,FALSE)
 wtdtable_mx_cols(mx, logiset=logiset)
 }
 

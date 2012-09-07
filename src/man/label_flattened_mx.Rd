@@ -39,8 +39,10 @@ and applies the specified row and col dimension label (if any).}
   specified row and col dimension label (if any).
 }
 \examples{
+\dontrun{
 mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
-dict <- dict_example
+dict <- dict_demo
 label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
+}
 }
 

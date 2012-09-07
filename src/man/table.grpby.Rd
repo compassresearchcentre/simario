@@ -9,7 +9,7 @@
   factors}
 
   \item{grpby}{elements to group by, or NULL to do no
-  grouping Same length as the columns of mx.}
+  grouping Same length as the columns of x.}
 
   \item{useNA}{whether to include extra NA levels in the
   table.  one of c("no", "ifany", "always"). Defaults to

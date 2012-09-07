@@ -43,6 +43,10 @@ mx <- matrix(c(10), nrow = 1, ncol = 1, dimnames=list(c(NA), NULL))
 # vector
 mx <- c("a"=1,"b"=2,"c"=3)
 
+# 1 columned matrix (3 x 1) with names
+mx <- matrix(c(1,2,3), nrow = 3, ncol = 1, dimnames=list(c("row1", "row2", "row3"), "col1"))
+
 flatten_mx_to_row(mx)
+flatten_mx_to_row(mx, row.names.first=TRUE)
 }
 
