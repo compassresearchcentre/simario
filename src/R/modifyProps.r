@@ -122,11 +122,11 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' prop.table(table(default.vec))
 #' prop.table(table(modifyProps(default.vec, props, propens)))
 #' }
-modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
+modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) {
 	
 	if (exists(".accuracy")) {accuracy<-.accuracy}
 	
-  if (is.null(props) || any(is.na(props))) {
+  if (is.null(desired_props) || any(is.na(desired_props))) {
 	#no props, silently do nothing	  
 	return(default.vec)
   }
@@ -147,11 +147,11 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
   }
   
   #check that the number of categories in the provided vector of data 
-    #(default.vec) is the same number of categories as given in props
+    #(default.vec) is the same number of categories as given in desired_props
   num.cat = length(table(default.vec))
-  num.cat2 = length(props)
+  num.cat2 = length(desired_props)
   if (num.cat!=num.cat2) {
-    note2 = cat("Note: Length of props not equal to number of categories in variable:", 
+    note2 = cat("Note: Length of desired_props not equal to number of categories in variable:", 
       "\n", "Assumed that there were unobserved categories in the variable", 
       "\n")
   }
@@ -181,10 +181,11 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
   
   #if the category names are not consecutive numbers starting at 1 change them 
     #so they are
-  tab.names = as.numeric(names(table(default.vec)))
-  if (sum(tab.names!= 1:length(props))>=1) {
+  ##tab.names = as.numeric(names(table(default.vec))) #delete
+  tab.names = as.integer(sort(unique(default.vec)))
+  if (sum(tab.names!= 1:length(desired_props))>=1) {
     default.vec2 = numeric(length(default.vec))
-     for (i in 1:length(props)) {
+     for (i in 1:length(desired_props)) {
       default.vec2[default.vec==tab.names[i]] <- i
      }
      default.vec = default.vec2
@@ -206,7 +207,7 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
     #that need moving into or out of categories to get the requested proportions 
     #(n.change)
   tab = table(new.all.dat[,1])
-  cats <- c(1:length(props))
+  cats <- c(1:length(desired_props))
   #if any categories in prop are not present in default.vec then this merge is needed to fix the 
 	#problem
   tab.df = merge(cats, tab, by = 1, all.x=TRUE)
@@ -215,12 +216,12 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
   na.id = which(is.na(tab.df$Freq))
   tab.df$Freq[na.id] <- 0
   current.props = tab.df$Freq/sum(tab.df$Freq)
-  n.change = round(current.props*n) - round(props*n)
+  n.change = round(current.props*n) - round(desired_props*n)
     #(e.g n.change[1] is the excess/deficient number of observations in the first 
       #category in observed data)
   num = 1
   i = 1 #i = current category
-  while (i < length(props)) {
+  while (i < length(desired_props)) {
     if (n.change[i]==0) {
       #if no change needs to be made for category i then move onto next category
       i = i + 1
@@ -239,7 +240,7 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
           #from
         #by incrementing i here we ensure that we don't get into an infinite 
           #loop due to the while condition never being satisfied
-        if (num>(length(props)-(i-1))) {
+        if (num>(length(desired_props)-(i-1))) {
           i = i + 1
         }
       }
@@ -250,24 +251,24 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
       #moving into or out of categories to get the requested proportions 
       #(n.change)
     tab = table(new.all.dat[,1])
-    cats <- c(1:length(props))
+    cats <- c(1:length(desired_props))
     tab.df = merge(cats, tab, by = 1, all.x=TRUE)
     na.id = which(is.na(tab.df$Freq))
     tab.df$Freq[na.id] <- 0
     current.props = tab.df$Freq/sum(tab.df$Freq)
-    n.change = round(current.props*n) - round(props*n)
+    n.change = round(current.props*n) - round(desired_props*n)
   } 
   #check if requested proportions acheived
-  if (sum(abs(props - current.props))<=accuracy) {
+  if (sum(abs(desired_props - current.props))<=accuracy) {
     #if correct
     #change back to orignal category names (if they were changed earlier)
       #e.g. if the orginal variable was a {0, 1} variable then all 0s would have 
         #been changed to 1s and alls 1s changed to 2s.  At this step, after the 
         #changes to get the right proportions, the 1s are changed back to 0s and 
         #the 2s are changed back to 1s.
-    if (sum(tab.names!= 1:length(props))>=1) {
+    if (sum(tab.names!= 1:length(desired_props))>=1) {
       default.vec2 = numeric(nrow(new.all.dat))
-      for (i in 1:length(props)) {
+      for (i in 1:length(desired_props)) {
         default.vec2[new.all.dat[,1]==i] <- tab.names[i]
       }
       new.all.dat[,1] = default.vec2
@@ -278,14 +279,14 @@ modifyProps <- function(default.vec, props, propens=NULL, accuracy=.01) {
     
     return(new.all.dat2[,1])
     
-  } else if (sum(abs(props - current.props))>accuracy) {
+  } else if (sum(abs(desired_props - current.props))>accuracy) {
       #if not correct - still do these things but give output with warning
       #(output should all be correct if I have thought of everything and made no 
         #mistakes)
       #change back to orignal category names
-      if (sum(tab.names!= 1:length(props))>=1) {
+      if (sum(tab.names!= 1:length(desired_props))>=1) {
         default.vec2 = numeric(nrow(new.all.dat))
-        for (i in 1:length(props)) {
+        for (i in 1:length(desired_props)) {
           default.vec2[new.all.dat[,1]==i] <- tab.names[i]
         }
         new.all.dat[,1] = default.vec2
@@ -435,5 +436,18 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 	new_sf[order(original.position),]
 
 }
+
+modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, propens=NULL, accuracy=.01, envir=parent.frame()) {
+	x.cat <- bin(x.cont, cont.binbreaks)
+	adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
+	adj.x.cont <- predSimNormsSelect(adj.x.cat, catToContModels, envir)
+	adj.x.cont
+}
+
+#test <- modifyPropsContinuous(fhrswrk, rep(1/7, 7), catToContModels$fhrswrk, attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
+#x.cont = fhrswrk
+#desired_props <- rep(1/7, 7)
+#x.cat <- bin(x.cont,attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
+#adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
 
 cat("Loaded modifyProps.r\n")

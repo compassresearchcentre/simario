@@ -185,6 +185,3 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe) {
 	logiset
 }
 
-# goes through x.cat, selects the correct models, uses them to create continuous values
-#mapCatToContUsingNormalModels <- function(x.cat, )
-#uses predSimNormsSelectExt()

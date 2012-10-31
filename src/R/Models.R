@@ -317,13 +317,20 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 	
 	# get vars from model
 	vars <- attr(delete.response(terms(model)), "variables")
+	if (length(vars)==0) {stop("Model does not contain any variables.  If this is an Intercept only model include a single variable with coefficient equal to 0")}
 	
 	#evalute vars, return as list
 	vars.evaluated <- eval(vars, envir)
-	#names(vars.evaluated) <- as.character(vars)[-1]
+	names(vars.evaluated) <- as.character(vars)[-1]
+	
 	
 	#convert to matrix 
 	vars.evaluated.mx <- as.matrixFromList(vars.evaluated, byrow = F)
+	columns.with.NAs <- apply(vars.evaluated.mx, COL, function(x) {any(is.na(x))})
+	if (any(columns.with.NAs)) {
+		cat("Warning: During predict(), NAs present in", names(columns.with.NAs)[columns.with.NAs], "\n")
+	}
+	
 	
 	#subset
 	if (!is.null(set)) {
@@ -526,6 +533,31 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	#simulate
 	sapply(predicted, function (x) rnorm(1, mean=x, sd=sd)) 
+}
+
+#' Predict and simulate value from n normal models.
+#' 
+#' for the case where each category has a separate model that should be used to simulate a value
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' @examples
+#' \dontrun{
+#' fhrswrk.cat <- bin(simframe.master$fhrswrk, binbreaks$fhrswrk)
+#' test <- predSimNormsSelect(fhrswrk.cat, catToContModels$fhrswrk, envir=simframe.master)
+#' }
+predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNorm(models[[i]], envir, set=select)
+	}
+	result
 }
 
 
