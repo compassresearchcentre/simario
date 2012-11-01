@@ -181,8 +181,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
   
   #if the category names are not consecutive numbers starting at 1 change them 
     #so they are
-  ##tab.names = as.numeric(names(table(default.vec))) #delete
-  tab.names = as.integer(sort(unique(default.vec)))
+  tab.names = as.numeric(names(table(default.vec)))
+
   if (sum(tab.names!= 1:length(desired_props))>=1) {
     default.vec2 = numeric(length(default.vec))
      for (i in 1:length(desired_props)) {
@@ -444,10 +444,14 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 	adj.x.cont
 }
 
-#test <- modifyPropsContinuous(fhrswrk, rep(1/7, 7), catToContModels$fhrswrk, attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
+test <- modifyPropsContinuous(simframe.master$fhrswrk, rep(1/7, 7), catToContModels$fhrswrk, attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
 #x.cont = fhrswrk
 #desired_props <- rep(1/7, 7)
-#x.cat <- bin(x.cont,attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
-#adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
+propens=NULL
+accuracy=.01
+envir=simframe.master
+fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
+x.cat <- bin(x.cont,fhrs.binbreaks)
+adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
 
 cat("Loaded modifyProps.r\n")
