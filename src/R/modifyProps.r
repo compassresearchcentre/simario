@@ -444,14 +444,14 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 	adj.x.cont
 }
 
-test <- modifyPropsContinuous(simframe.master$fhrswrk, rep(1/7, 7), catToContModels$fhrswrk, attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
+#test <- modifyPropsContinuous(simframe.master$fhrswrk, rep(1/7, 7), catToContModels$fhrswrk, attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"))
 #x.cont = fhrswrk
 #desired_props <- rep(1/7, 7)
-propens=NULL
-accuracy=.01
-envir=simframe.master
-fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
-x.cat <- bin(x.cont,fhrs.binbreaks)
-adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
+#propens=NULL
+#accuracy=.01
+#envir=simframe.master
+#fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
+#x.cat <- bin(x.cont,fhrs.binbreaks)
+#adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
 
 cat("Loaded modifyProps.r\n")
