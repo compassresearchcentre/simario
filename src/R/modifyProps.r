@@ -465,23 +465,54 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 
 }
 
+#' Runs modifyProps on a continuous variable
+#' Takes a continuous variable, converts it to a categorical variable using the binbreaks,
+#' modifyProps is then called on that categorical variable.
+#' The categorical variable is then converted back to a continuos variable using the catToContModels
+#' 
+#' @param x.cont
+#'  a continuous variable to be adjusted
+#' @param desired_props
+#'  desired proportions
+#' @param catToContModels
+#' a list of models which will to used to convert the adjusted categorical variable back to continuous
+#' @param cont.binbreaks
+#' binbreaks for the continuous variable to be adjusted
+#' @param propens 
+#'  matrix or vector of the propensity scores for each child
+#'  For binary variables there is one column of propensity scores: the
+#'  propensities to change from a 0 to a 1.
+#'  For categorical variables with more than two categories there are multiple
+#'  columns of propensity scores: E.g. for a three category variables the
+#'  propensities to change from category 1 to category 2 are in the first
+#'  column and the propensities to change from category 2 to category 3 are
+#'  in the second column.
+#' @param accuracy
+#' 	gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
+#' 	- the default is 0.01.
+#'  If the '.accuracy' global variable exists, its value will be used instead of that in function call.
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return
+#'  an 'adjusted' continuous variable that if binned will have the same proportions as requested in desired_props
+#' 
+#' @examples
+#' \dontrun{
+#' simframe.master$age=2
+#' desired_props <- rep(1/7, 7)
+#' desired_props <-c(.05, .1, .15, .2, .25, .2, .05) 
+#' test <- modifyPropsContinuous(simframe.master$fhrswrk, modifyPropsContinuous, catToContModels$fhrswrk, cont.binbreaks=attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"), envir=simframe.master)
+#' fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
+#' check <- bin(test, fhrs.binbreaks)
+#' table(check)
+#' table(check)/sum(table(check))
+#' }
 modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, propens=NULL, accuracy=.01, envir=parent.frame()) {
 	x.cat <- bin(x.cont, cont.binbreaks)
 	adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
-	adj.x.cont <- predSimNormsSelect(adj.x.cat, catToContModels, envir)
+	adj.x.cont <- predSimNormsSelectWithRounding(adj.x.cat, catToContModels, cont.binbreaks, envir)
 	adj.x.cont
 }
-
-#test <- modifyPropsContinuous(simframe.master$fhrswrk, rep(1/7, 7), catToContModels$fhrswrk, cont.binbreaks=attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"), envir=simframe.master)
-#x.cont = simframe.master$fhrswrk
-#desired_props <- rep(1/7, 7)
-#propens=NULL
-#accuracy=.01
-#envir=simframe.master
-#cont.binbreaks=attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
-#fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
-#x.cat <- bin(x.cont,fhrs.binbreaks)
-#adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
-#adj.x.cont <- predSimNormsSelect(adj.x.cat, catToContModels$fhrswrk, envir)
 
 cat("Loaded modifyProps.r\n")

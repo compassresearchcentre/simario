@@ -560,4 +560,48 @@ predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
 	result
 }
 
+#' Predict and simulate value from n normal models with truncation/rounding to ensure simulated 
+#' values stay within their category bounds
+#' 
+#' A function based on PredSimNormsSelect with the modification that if any simulated values are 
+#' outside the binbreaks for the group, the simulated values are changed to be equal to the
+#' boundary value
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param cont.binbreaks
+#' the binbreaks of the categorical variable
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
+#' 
+#' @examples
+#' \dontrun{
+#' x.cont = simframe.master$fhrswrk
+#' fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
+#' x.cat <- bin(x.cont, fhrs.binbreaks)
+#' desired_props <- rep(1/7, 7)
+#' desired_props <-c(.05, .1, .15, .2, .25, .2, .05) 
+#' adj.x.cat <- modifyProps(x.cat, desired_props, propen=NULL, accuracy=.01)
+#' adj.x.cont <- predSimNormsSelectWithRounding(adj.x.cat, catToContModels$fhrswrk, cont.binbreaks=fhrs.binbreaks, envir=simframe.master)
+#' check <- bin(adj.x.cont, fhrs.binbreaks)
+#' table(check)
+#' table(check)/sum(table(check))
+#' }
+predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNorm(models[[i]], envir, set=select)
+		#round so that simulated values outside the category boundaries are set to be at the boundary of the category
+		result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
+		result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
+	}
+	result
+}
 
