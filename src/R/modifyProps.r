@@ -140,12 +140,15 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		stop(gettextf("%s is NULL", as.character(sys.call())[2]))
 	}
 	
+	#keep original vector
+	orig.default.vec <- default.vec
+	
 	dim(propens)
-	dim(default.vec)
+	dim(orig.default.vec)
 	if (!is.null(propens) 
 			&& ( 
-				(length(dim(propens)) != 2 && length(default.vec) != length(propens))
-				|| (length(dim(propens)) == 2 && length(default.vec) != dim(propens)[1])
+				(length(dim(propens)) != 2 && length(orig.default.vec) != length(propens))
+				|| (length(dim(propens)) == 2 && length(orig.default.vec) != dim(propens)[1])
 				) ) {
 		firstParamName <- as.character(sys.call())[2]
 		stop(gettextf("Propensities must be the same length as %s ",firstParamName))
@@ -153,7 +156,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	
 	#check that the number of categories in the provided vector of data 
 	#(default.vec) is the same number of categories as given in desired_props
-	num.cat = length(table(default.vec))
+	num.cat = length(table(orig.default.vec))
 	num.cat2 = length(desired_props)
 	if (num.cat!=num.cat2) {
 		note2 = cat("Note: Length of desired_props not equal to number of categories in variable:", 
@@ -162,8 +165,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	}
 	
 	#n is the number of children in one year
-	n <- length(default.vec)
-	type <- is(default.vec)[1] 
+	n <- length(orig.default.vec)
+	type <- is(orig.default.vec)[1] 
 	
 	#if propensity scores not provided then create them
 	if (length(propens)==0 || any(is.na(propens))) {
@@ -187,10 +190,14 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	
 	#if the the default.vec values are not consecutive numbers starting at 1 change them 
 	#so they are
-	##tab.names = as.numeric(names(table(default.vec)))
-	##tab.names = names(table(default.vec))
-	tab.names = sort(unique(default.vec))
-	
+	if (type=="factor") {
+		tab.names = names(table(orig.default.vec))
+	} else if (type=="integer") {
+		tab.names = as.numeric(names(table(orig.default.vec)))
+	} else {
+		stop("Add additional type in modifyProps()")	
+	}
+
 	if (sum(tab.names!= 1:length(desired_props))>=1) {
 		default.vec2 = numeric(length(default.vec))
 		for (i in 1:length(desired_props)) {
@@ -278,8 +285,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 			default.vec2 = numeric(nrow(new.all.dat))
 			if (type=="factor") {
 				for (i in 1:length(desired_props)) {
-					default.vec2[new.all.dat[,1]==i] <- levels(tab.names)[i]
-					default.vec2 <- factor(default.vec2, levels=levels(tab.names))
+					default.vec2[new.all.dat[,1]==i] <- levels(orig.default.vec)[i]
+					default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
 				}
 				new.all.dat[,1] = default.vec2
 			} else if (type=="integer") {
