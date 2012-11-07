@@ -176,7 +176,7 @@ strip_lvl_suffix <- function(varname) {
 evaluateLogisetExprAttribute <- function(desired_props, simframe) { 
 		
 	logiset_expr <-attr(desired_props, "logisetexpr")
-	
+	cat("Evaluating logiset expression: \"",logiset_expr,"\"\n", sep="")
 	if (is.null(logiset_expr )) {
 		logiset<-NULL
 	} else {
@@ -185,3 +185,13 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe) {
 	logiset
 }
 
+
+#' subgroupExpression <- "mhrswrk < 20"
+#' setGlobalSubgroupFilterExpression(subgroupExpression)
+#' setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
+	#' cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
+	#' 
+	#' for (i in 1:length(env.scenario$cat.adjustments)) {
+		#' attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
+#' 	}
+#' }

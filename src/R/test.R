@@ -14,7 +14,7 @@ desired_props <- c(.05, .1, .2, .15, .3, .12, .08)
 #envir=simframe.master
 #fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
 #x.cat <- bin(x.cont,fhrs.binbreaks)
-default.vec = x.cat
+#default.vec = x.cat
 #adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
 
 #check
