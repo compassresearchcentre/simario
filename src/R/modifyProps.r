@@ -192,7 +192,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	#so they are
 	if (type=="factor") {
 		tab.names = names(table(orig.default.vec))
-	} else if (type=="integer") {
+	} else if ((type=="integer")|(type=="numeric")) {
 		tab.names = as.numeric(names(table(orig.default.vec)))
 	} else {
 		stop("Add additional type in modifyProps()")	
@@ -289,7 +289,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 					default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
 				}
 				new.all.dat[,1] = default.vec2
-			} else if (type=="integer") {
+			} else if ((type=="integer")|(type=="numeric")) {
 				for (i in 1:length(desired_props)) {
 					default.vec2[new.all.dat[,1]==i] <- tab.names[i]
 				}
@@ -317,7 +317,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 					default.vec2 <- factor(default.vec2, levels=levels(tab.names))
 				}
 				new.all.dat[,1] = default.vec2
-			} else if (type=="integer") {
+			} else if ((type=="integer")|(type=="numeric")) {
 				for (i in 1:length(desired_props)) {
 					default.vec2[new.all.dat[,1]==i] <- tab.names[i]
 				}
