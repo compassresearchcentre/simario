@@ -161,10 +161,18 @@ expr = {
 			if (!any(is.na(cat_adj_vector))) {
 				
 				varnames <- attr(catadj, "varnames")
+				catToContModels <- attr(catadj, "catToContModel")
+				cont.binbreaks <- attr(catadj, "cont.binbreaks")
+				
 				if (is.null(varnames)) {
 					stop(gettextf("Missing varnames attribute"))
 				}
-				.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
+				
+				if (!is.null(catToContModels)) {
+					.$applyContAdjustmentToSimframe(varnames, iteration, cat_adj_vector, catToContModels, cont.binbreaks, propensities=NULL)
+				} else {
+					.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
+				}
 			}
 			
 		}))
@@ -426,6 +434,15 @@ expr = {
 			
 		}
 	}
+	
+	
+	applyContAdjustmentToSimframe <- function(., varname, iteration, desiredProps, catToContModels, cont.binbreaks, propensities) {
+		cat("Adjusting", varname, ": ", desiredProps, "\n")
+		propens <- propensities[[varname]][,,iteration]
+		.$simframe[varname] <- modifyPropsContinuous(.$simframe[[varname]], desiredProps, catToContModels, cont.binbreaks, propens, envir=.$simframe)
+		.$simframe[varname]
+	}
+	
 	
 	#' Generate pre simulation stats after adjustment but before simulation begins.
 	#' 
