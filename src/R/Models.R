@@ -326,15 +326,15 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 	
 	#convert to matrix 
 	vars.evaluated.mx <- as.matrixFromList(vars.evaluated, byrow = F)
-	columns.with.NAs <- apply(vars.evaluated.mx, COL, function(x) {any(is.na(x))})
-	if (any(columns.with.NAs)) {
-		cat("Warning: During predict(), NAs present in", names(columns.with.NAs)[columns.with.NAs], "\n")
-	}
-	
 	
 	#subset
 	if (!is.null(set)) {
 		vars.evaluated.mx <- vars.evaluated.mx[set, ,drop = F]
+	}
+	
+	columns.with.NAs <- apply(vars.evaluated.mx, COL, function(x) {any(is.na(x))})
+	if (any(columns.with.NAs)) {
+		cat("Warning: During predict(), NAs present in", names(columns.with.NAs)[columns.with.NAs], "\n")
 	}
 	
 	#add intercept of 1 
