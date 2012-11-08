@@ -87,7 +87,7 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #' varname = "catpregsmk2"; coding <- c('0'=0, '1-5'=3, '6-10'=8, '11-20'=16, '>20'=27)
 #' rows = 5
 #' createAdjustmentMatrix(varname, coding, rows)
-createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_level_var(varname)) {
+createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_level_var(varname), cont.binbreaks=NULL, catToContModels=NULL) {
 	
 	if (is_numeric_scalar(rows)) {
 		rows <- paste("Year", seq(rows))
@@ -99,7 +99,7 @@ createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_le
 		varnames <- varname
 	}
 	
-	structure(namedMatrix(rows, paste(names(coding),"(%)")), varnames=varnames)
+	structure(namedMatrix(rows, paste(names(coding),"(%)")), varnames=varnames, cont.binbreaks=cont.binbreaks, catToContModel=catToContModels)
 }
 
 
@@ -176,7 +176,7 @@ strip_lvl_suffix <- function(varname) {
 evaluateLogisetExprAttribute <- function(desired_props, simframe) { 
 		
 	logiset_expr <-attr(desired_props, "logisetexpr")
-	
+	cat("Evaluating logiset expression: \"",logiset_expr,"\"\n", sep="")
 	if (is.null(logiset_expr )) {
 		logiset<-NULL
 	} else {
@@ -184,3 +184,14 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe) {
 	}
 	logiset
 }
+
+
+#' subgroupExpression <- "mhrswrk < 20"
+#' setGlobalSubgroupFilterExpression(subgroupExpression)
+#' setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
+	#' cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
+	#' 
+	#' for (i in 1:length(env.scenario$cat.adjustments)) {
+		#' attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
+#' 	}
+#' }

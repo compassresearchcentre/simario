@@ -317,13 +317,20 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 	
 	# get vars from model
 	vars <- attr(delete.response(terms(model)), "variables")
+	if (length(vars)==0) {stop("Model does not contain any variables.  If this is an Intercept only model include a single variable with coefficient equal to 0")}
 	
 	#evalute vars, return as list
 	vars.evaluated <- eval(vars, envir)
-	#names(vars.evaluated) <- as.character(vars)[-1]
+	names(vars.evaluated) <- as.character(vars)[-1]
+	
 	
 	#convert to matrix 
 	vars.evaluated.mx <- as.matrixFromList(vars.evaluated, byrow = F)
+	columns.with.NAs <- apply(vars.evaluated.mx, COL, function(x) {any(is.na(x))})
+	if (any(columns.with.NAs)) {
+		cat("Warning: During predict(), NAs present in", names(columns.with.NAs)[columns.with.NAs], "\n")
+	}
+	
 	
 	#subset
 	if (!is.null(set)) {
@@ -603,4 +610,73 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 	sapply(predicted, function (x) rnorm(1, mean=x, sd=sd)) 
 }
 
+#' Predict and simulate value from n normal models.
+#' 
+#' for the case where each category has a separate model that should be used to simulate a value
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' @examples
+#' \dontrun{
+#' fhrswrk.cat <- bin(simframe.master$fhrswrk, binbreaks$fhrswrk)
+#' test <- predSimNormsSelect(fhrswrk.cat, catToContModels$fhrswrk, envir=simframe.master)
+#' }
+predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNorm(models[[i]], envir, set=select)
+	}
+	result
+}
+
+#' Predict and simulate value from n normal models with truncation/rounding to ensure simulated 
+#' values stay within their category bounds
+#' 
+#' A function based on PredSimNormsSelect with the modification that if any simulated values are 
+#' outside the binbreaks for the group, the simulated values are changed to be equal to the
+#' boundary value
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param cont.binbreaks
+#' the binbreaks of the categorical variable
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
+#' 
+#' @examples
+#' \dontrun{
+#' x.cont = simframe.master$fhrswrk
+#' fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
+#' x.cat <- bin(x.cont, fhrs.binbreaks)
+#' desired_props <- rep(1/7, 7)
+#' desired_props <-c(.05, .1, .15, .2, .25, .2, .05) 
+#' adj.x.cat <- modifyProps(x.cat, desired_props, propen=NULL, accuracy=.01)
+#' adj.x.cont <- predSimNormsSelectWithRounding(adj.x.cat, catToContModels$fhrswrk, cont.binbreaks=fhrs.binbreaks, envir=simframe.master)
+#' check <- bin(adj.x.cont, fhrs.binbreaks)
+#' table(check)
+#' table(check)/sum(table(check))
+#' }
+predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNorm(models[[i]], envir, set=select)
+		#round so that simulated values outside the category boundaries are set to be at the boundary of the category
+		result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
+		result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
+	}
+	result
+}
 
