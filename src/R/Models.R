@@ -400,15 +400,15 @@ predLogistic <- function(model.glm, envir=parent.frame(), set = NULL) {
 	predicted_probabilities
 }
 
-#' Predict probabilities from the coefficients of a multinomial regression  (currently only works if output catgegories are 1,2,3 etc)
+#' Predict probabilities from the coefficients of a multinomial regression  (currently only works if output catgegories are 1,2,3 etc with 1 being the reference)
 #' 
 #' @param model.glm.list
 #'  List of logit models specifying variables to evaluate and coefficients
 #'  to multiple by - each logit model referring to an output category from the multinomial model. IMPORTANT NOTE - only models for the 
 #' non-reference output catgegories must be listed, with the logit for the reference group- i.e log(1/1)=0 - being taken care of in the
 #'  function itself.
-#' Logit models must be listed in order of their output category value (e.g first model refers to output category=1,
-#'  second model refers to output category=2, and so on).
+#' Logit models must be listed in order of their output category value - e.g the first model refers to output category=2,
+#'  second model refers to output category=3, and so on. (Output category=1 has to be the reference category).
 #' @param envir
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
@@ -442,15 +442,15 @@ predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
 	predicted_probabilities2
 }
 
-#' Predict and simulate value from a multinomial model (currently only works if output catgegories are 1,2,3 etc)
+#' Predict and simulate value from a multinomial model (currently only works if output catgegories are 1,2,3 etc with 1 being the reference)
 #' 
 #' @param model.glm.list
 #' List of logit models specifying variables to evaluate and coefficients
 #'  to multiple by - each logit model referring to an output category from the multinomial model.IMPORTANT NOTE - only models for the 
 #' non-reference output catgegories must be listed, with the logit for the reference group- i.e log(1/1)=0 - being taken care of in the
 #'  function itself.
-#' Logit models must be listed in order of their output category value (e.g first model refers to output category=1,
-#'  second model refers to output category=2, and so on).
+#' Logit models must be listed in order of their output category value - e.g the first model refers to output category=2,
+#'  second model refers to output category=3, and so on. (Output category=1 has to be the reference category.)
 #' @param envir
 #'  environment in which to evaluate model variables.
 #'  if unspecified, uses caller's environment
