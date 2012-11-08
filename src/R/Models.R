@@ -393,6 +393,81 @@ predLogistic <- function(model.glm, envir=parent.frame(), set = NULL) {
 	predicted_probabilities
 }
 
+#' Predict probabilities from the coefficients of a multinomial regression  (currently only works if output catgegories are 1,2,3 etc)
+#' 
+#' @param model.glm.list
+#'  List of logit models specifying variables to evaluate and coefficients
+#'  to multiple by - each logit model referring to an output category from the multinomial model. IMPORTANT NOTE - only models for the 
+#' non-reference output catgegories must be listed, with the logit for the reference group- i.e log(1/1)=0 - being taken care of in the
+#'  function itself.
+#' Logit models must be listed in order of their output category value (e.g first model refers to output category=1,
+#'  second model refers to output category=2, and so on).
+#' @param envir
+#'  environment in which to evaluate model variables.
+#'  if unspecified, uses caller's environment
+#' @param set
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
+#' 
+#' @return 
+#' a vector of predicted probabilities
+#'  
+#' @export   
+#' @examples
+#' \dontrun{
+#' model.glm <- model.glm.list=list(models$GP_multinomial_response_cat2,
+#' 			models$GP_multinomial_response_cat3,models$GP_multinomial_response_cat4,
+#' 						models$GP_multinomial_response_cat5)
+#' set<-still_alive_and_65plus_NOTRES
+#' }
+predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
+	
+	#determine predicted values
+	predicted_logits <- sapply(model.glm.list, function(x) {
+				predict(x, envir, set)				
+			})
+	#note - exp(0) is the predicted exp(logit) for the first category (the refernce category - not yet included in the matrix	
+	predicted_probabilities <- exp(predicted_logits)/(exp(0) + rowSums(exp(predicted_logits)))
+	
+	#getting predicted probabilities with reference category value tagged on as a column at the start of the matrix
+	predicted_probabilities2<-cbind(exp(0)/(exp(0) + rowSums(exp(predicted_logits))) ,predicted_probabilities )
+	
+	predicted_probabilities2
+}
+
+#' Predict and simulate value from a multinomial model (currently only works if output catgegories are 1,2,3 etc)
+#' 
+#' @param model.glm.list
+#' List of logit models specifying variables to evaluate and coefficients
+#'  to multiple by - each logit model referring to an output category from the multinomial model.IMPORTANT NOTE - only models for the 
+#' non-reference output catgegories must be listed, with the logit for the reference group- i.e log(1/1)=0 - being taken care of in the
+#'  function itself.
+#' Logit models must be listed in order of their output category value (e.g first model refers to output category=1,
+#'  second model refers to output category=2, and so on).
+#' @param envir
+#'  environment in which to evaluate model variables.
+#'  if unspecified, uses caller's environment
+#' @param set
+#'  logical vector indicating elements or rows to simulate, or NULL to 
+#'  simulate using all values in envir
+#'
+#' @export   
+#' @examples
+#' model.glm <- model.glm.list=list(models$GP_multinomial_response_cat2,
+#' 			models$GP_multinomial_response_cat3,models$GP_multinomial_response_cat4,
+#' 						models$GP_multinomial_response_cat5)
+#' set<-still_alive_and_65plus_NOTRES
+#' 
+predSimMultinomial <-function(model.glm.list, envir=parent.frame(), set = NULL) {
+		
+	probs<-predMultinomial(model.glm.list, envir=envir, set = set)
+	
+	apply(probs, ROW, function(probabilities) {
+					sample(1:length(probabilities), size=1, prob=probabilities)
+				
+				})
+	}
+		
 #' Predict and simulate binary value from binomial
 #' distribution with probability
 #' 
