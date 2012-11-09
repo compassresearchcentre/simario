@@ -376,7 +376,7 @@ expr = {
 		
 		if(is2Level && length(missingLevel)) {
 			# add in generated missing level
-			vecs.list[missingLevel] <- as.integer(!.$simframe[varnames])
+			vecs.list[missingLevel] <- as.integer(!.$simframe[varnames])  
 			
 			# order correctly
 			vecs.list <- vecs.list[binLevelVarnames] 
@@ -388,16 +388,16 @@ expr = {
 			
 			#adding a temporary ID variable - a rank column - onto a copy of the simframe portion
 			#will enable the subsets to be put back into the same order later
-			n<-dim(vecs.list)[1]
-			sf<-data.frame(vecs.list,1:n)
-			rankcolnum<-ncol(sf) 
+			n <- dim(vecs.list)[1]
+			sf <- data.frame(vecs.list,1:n)
+			rankcolnum <- ncol(sf) 
 			
 			
 			#subsetting the copy of the simframe according to logiset
-			subset_to_change<-subset(sf,logiset)
+			subset_to_change <- subset(sf,logiset)
 			
 			#keeping those not in the logiset - those that aren't to be passed to modifyprops
-			rest_not_to_be_modified<-subset(sf,!logiset)
+			rest_not_to_be_modified <- subset(sf,!logiset)
 			
 			#modifying the logiset
 			subset_to_change_modified <- modifyPropsAsBinLevels(
@@ -406,13 +406,20 @@ expr = {
 					propens=propens)
 			
 			#putting changed set back with those that weren't in the logiset
-			new_sf<-rbind(subset_to_change_modified, rest_not_to_be_modified[,-rankcolnum]) 
+			new_sf <- rbind(subset_to_change_modified, rest_not_to_be_modified[,-rankcolnum]) 
 			
-			original.position<-rbind(as.matrix(subset_to_change[,rankcolnum]), as.matrix(rest_not_to_be_modified[,rankcolnum]))
+			original.position <- rbind(as.matrix(subset_to_change[,rankcolnum]), as.matrix(rest_not_to_be_modified[,rankcolnum]))
 			
 			#putting the records back in their orignal order according to the rank column created earlier
-			.$simframe[varnames]<-new_sf[order(original.position),]
+			if (length(varnames)==length(binLevelVarnames)) {
+				.$simframe[varnames] <- new_sf[order(original.position),]
+			} else if ((length(varnames)!=length(binLevelVarnames)) & is2Level) {
+				.$simframe[varnames] <- new_sf[order(original.position),2]
+			} else {
+				stop("add new if clause in applyCatAdjustmentToSimframeVarMultipleBinary()")
+			}
 		} else {
+			#if there is no logiset and the scenario is being applied to everyone
 			result <- modifyPropsAsBinLevels(
 				vecs.list, 
 				desiredProps=desiredProps, 

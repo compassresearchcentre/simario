@@ -262,3 +262,6 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	return(new.all.dat)
 }
 
+
+
+
