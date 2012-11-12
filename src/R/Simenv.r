@@ -240,7 +240,7 @@ expr = {
 	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE) {
 		is_single_variable_to_adjust <- length(varnames) == 1
 		
-		logiset <- as.logical(evaluateLogisetExprAttribute(desired_props, .$simframe))
+		logiset <- as.logical(evaluateLogisetExprAttribute(desired_props, .$simframe, varnames))
 		
 		if (is_single_variable_to_adjust) {
 			propens <- propensities[[varnames]][,,iteration]

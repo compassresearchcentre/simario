@@ -173,10 +173,10 @@ strip_lvl_suffix <- function(varname) {
 #' desired_props <- structure(1, logiset="alive & residential")
 #' simframe <- env.base$simframe
 #' evaluateLogisetExprAttribute(desired_props, simframe) 
-evaluateLogisetExprAttribute <- function(desired_props, simframe) { 
+evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") { 
 		
 	logiset_expr <-attr(desired_props, "logisetexpr")
-	cat("Evaluating logiset expression: \"",logiset_expr,"\"\n", sep="")
+	cat("Evaluating logiset expression: \"",logiset_expr,"\" for variable ",varname, "\n", sep="")
 	if (is.null(logiset_expr )) {
 		logiset<-NULL
 	} else {

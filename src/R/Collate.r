@@ -39,11 +39,16 @@
 #' runs <- list(run1=run1,run2=run2) 
 #' dict <- dict_example
 #' collator_freqs(runs, dict)
-collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="") {
+#' collator_freqs(runs, dict, numbers=TRUE)
+collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", numbers=FALSE) {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
 	
 	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-	percentages_flattened_mx(runs_mx, dict)
+	
+	if (numbers==FALSE)
+	{percentages_flattened_mx(runs_mx, dict)}
+	else {return(runs_mx)}
+	
 }
 
 #' Collate frequencies and removes the zero category. Performs the following:
