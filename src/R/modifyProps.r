@@ -313,8 +313,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 			default.vec2 = numeric(nrow(new.all.dat))
 			if (type=="factor") {
 				for (i in 1:length(desired_props)) {
-					default.vec2[new.all.dat[,1]==i] <- levels(tab.names)[i]
-					default.vec2 <- factor(default.vec2, levels=levels(tab.names))
+					default.vec2[new.all.dat[,1]==i] <- levels(orig.default.vec)[i]
+					default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
 				}
 				new.all.dat[,1] = default.vec2
 			} else if ((type=="integer")|(type=="numeric")) {
