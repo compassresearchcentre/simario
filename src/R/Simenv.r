@@ -444,9 +444,10 @@ expr = {
 	
 	
 	applyContAdjustmentToSimframe <- function(., varname, iteration, desiredProps, catToContModels, cont.binbreaks, propensities) {
-		cat("Adjusting", varname, ": ", desiredProps, "\n")
 		propens <- propensities[[varname]][,,iteration]
-		.$simframe[varname] <- modifyPropsContinuous(.$simframe[[varname]], desiredProps, catToContModels, cont.binbreaks, propens, envir=.$simframe)
+		logiset <- as.logical(evaluateLogisetExprAttribute(desiredProps, .$simframe))
+		cat("Adjusting", varname, ": ", desiredProps, "\n")
+		.$simframe[varname] <- adjust.proportions(.$simframe[[varname]], desiredProps, propens, logiset, catToContModels, cont.binbreaks, envir=.$simframe)
 		.$simframe[varname]
 	}
 	

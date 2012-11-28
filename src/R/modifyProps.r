@@ -515,14 +515,51 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 #' table(check)
 #' table(check)/sum(table(check))
 #' }
-modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, model.type, propens=NULL, accuracy=.01, envir=parent.frame()) {
+modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, propens=NULL, accuracy=.01, envir=parent.frame()) {
 	x.cat <- bin(x.cont, cont.binbreaks)
 	adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
 	adj.x.cont <- predSimModSelect(adj.x.cat, catToContModels, cont.binbreaks, envir)
 	adj.x.cont
 }
 
+adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
+	if (!is.null(logiset) && length(logiset)>0) {
+		#subet the propensities according to the logiset
+		propens <- propens[logiset] #when/if we put propensities in for the continuous variables this prob won't work - assumes only 1 column of propensities and if more than 2 level will have more than 1 column
+		
+		#subset x according to the logiset
+		subset_to_change <- x[logiset]
+		
+		if (!is.null(catToContModels)) {
+			subset_to_change_modified <- modifyPropsContinuous(subset_to_change, desiredProps, catToContModels, cont.binbreaks, propens, accuracy=.05, envir)
+		} else {
+			subset_to_change_modified <- modifyProps(subset_to_change, desiredProps, propens, accuracy=.05)
+		}
+		
+		non.modified.x <- x[!logiset]
+		
+		modified.in.order <- combine.and.reorder(subset_to_change_modified, non.modified.x, logiset)
+		
+		return(modified.in.order)
+	} else {
+		#there is no logiset and the scenario is applied to all units
+		if (!is.null(catToContModels)) {
+			adj.x.cont <- modifyPropsContinuous(x, desiredProps, catToContModels, cont.binbreaks, propens, envir=envir)
+			return(adj.x.cont)
+		} else {
+			adj.x.cat <- modifyProps(x, desiredProps, propens, accuracy=.05)
+			return(adj.x.cat)
+		}
+	}
+}
 
 
+combine.and.reorder <- function(modified.x, non.modified.x, logiset) {
+	n = length(modified.x) + length(non.modified.x)
+	original.position <- 1:n
+	modified.out.of.order <- rbind(cbind(modified.x, original.position[logiset]), cbind(non.modified.x, original.position[!logiset]))
+	modified.in.order <- modified.out.of.order[order(modified.out.of.order[,2]), 1]
+	return(modified.in.order)
+}
 
 cat("Loaded modifyProps.r\n")

@@ -725,6 +725,7 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 #' @return 
 #' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
 predSimModSelect <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
+	#envir=simframe.master
 	x.cat <- as.integer(x.cat)
 	result <- rep(NA, length(x.cat))
 	for (i in 1:length(models)) {
