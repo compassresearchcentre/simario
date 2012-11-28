@@ -680,7 +680,20 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 	result
 }
 
-#Use when all the catToCont models for a variable are negative binomial.
+#' Predict and simulate value from n negative binomial models.
+#' No backtransformation included.
+#' 
+#' Use when all the catToCont models for a variable are negative binomial.
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
 predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 	x.cat <- as.integer(x.cat)
 	result <- rep(NA, length(x.cat))
@@ -691,6 +704,26 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 	result
 }
 
+#' Predict and simulate value from n models.   
+#' 
+#' Models can be normal or negative binomial.  Normal models include the truncation that is 
+#' described in predSimNormsSelect(). I.e. any simulated values outside the binbreaks for the group
+#' are truncated to the limits for their gorup.  Negative binomial models assume that only the last 
+#' category will have a negative binomial model and the simulated values are backtransformed by
+#' adding the start value of the last cateogory.  E.g. if the last category is 5+, then 5 is added
+#' to any values simulated from a negative binomial distribution.  
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param cont.binbreaks
+#' the binbreaks of the categorical variable
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
 predSimModSelect <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
 	x.cat <- as.integer(x.cat)
 	result <- rep(NA, length(x.cat))
