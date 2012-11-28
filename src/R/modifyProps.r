@@ -515,10 +515,10 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 #' table(check)
 #' table(check)/sum(table(check))
 #' }
-modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, propens=NULL, accuracy=.01, envir=parent.frame()) {
+modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, model.type, propens=NULL, accuracy=.01, envir=parent.frame()) {
 	x.cat <- bin(x.cont, cont.binbreaks)
 	adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
-	adj.x.cont <- predSimNormsSelectWithRounding(adj.x.cat, catToContModels, cont.binbreaks, envir)
+	adj.x.cont <- predSimModSelect(adj.x.cat, catToContModels, cont.binbreaks, envir)
 	adj.x.cont
 }
 

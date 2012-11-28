@@ -636,11 +636,11 @@ predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
 }
 
 #' Predict and simulate value from n normal models with truncation/rounding to ensure simulated 
-#' values stay within their category bounds
+#' values stay within their category bounds. 
 #' 
 #' A function based on PredSimNormsSelect with the modification that if any simulated values are 
 #' outside the binbreaks for the group, the simulated values are changed to be equal to the
-#' boundary value
+#' boundary value.   Use when all the catToCont models for a variable are normal.
 #' 
 #' @param x.cat
 #' a categorical vector
@@ -676,6 +676,38 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 		#round so that simulated values outside the category boundaries are set to be at the boundary of the category
 		result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
 		result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
+	}
+	result
+}
+
+#Use when all the catToCont models for a variable are negative binomial.
+predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNBinom(models[[i]], envir, set=select)
+	}
+	result
+}
+
+predSimModSelect <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		if (length(models[[i]]$sd)==1) {
+			result[select] <- predSimNorm(models[[i]], envir, set=select)
+			#round so that simulated values outside the category boundaries are set to be at the boundary of the category
+			result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
+			result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
+		} else if (length(models[[i]]$alpha)==1) {
+			result[select] <- predSimNBinom(models[[i]], envir, set=select)
+			#backtransform the simulated negative binomial values
+			result[select] <- result[select] + cont.binbreaks[length(cont.binbreaks)-1]+1 
+		} else {
+			stop("predSimModSelect() currently only implemented for normal and negative binomial models have either an sd or an alpha component")
+		}
 	}
 	result
 }
