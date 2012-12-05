@@ -441,7 +441,7 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 #' a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset)
 #' prop.table(table(a[logiset]))
 
-modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NULL, logiset=NULL) {
+modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NULL, logiset=NULL, accuracy=.01) {
 	if (is.null(logiset)) {logiset<-rep(T, length(default.vec))}
 	default.df<-as.data.frame(default.vec)
 	propens<-subset(propens, logiset)
@@ -460,7 +460,7 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 	rest_not_to_be_modified<-subset(sf,!logiset)
 	
 	#modifying the logiset
-	subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens)
+	subset_to_change_modified <- modifyProps(subset_to_change[,-rankcolnum], desired_props, propens, accuracy)
 	
 	#putting changed set back with those that weren't in the logiset
 	new_sf<-rbind(as.matrix(subset_to_change_modified), as.matrix(rest_not_to_be_modified[,1])) 
