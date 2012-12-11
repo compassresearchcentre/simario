@@ -636,11 +636,11 @@ predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
 }
 
 #' Predict and simulate value from n normal models with truncation/rounding to ensure simulated 
-#' values stay within their category bounds
+#' values stay within their category bounds. 
 #' 
 #' A function based on PredSimNormsSelect with the modification that if any simulated values are 
 #' outside the binbreaks for the group, the simulated values are changed to be equal to the
-#' boundary value
+#' boundary value.   Use when all the catToCont models for a variable are normal.
 #' 
 #' @param x.cat
 #' a categorical vector
@@ -676,6 +676,72 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 		#round so that simulated values outside the category boundaries are set to be at the boundary of the category
 		result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
 		result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
+	}
+	result
+}
+
+#' Predict and simulate value from n negative binomial models.
+#' No backtransformation included.
+#' 
+#' Use when all the catToCont models for a variable are negative binomial.
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
+predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNBinom(models[[i]], envir, set=select)
+	}
+	result
+}
+
+#' Predict and simulate value from n models.   
+#' 
+#' Models can be normal or negative binomial.  Normal models include the truncation that is 
+#' described in predSimNormsSelect(). I.e. any simulated values outside the binbreaks for the group
+#' are truncated to the limits for their gorup.  Negative binomial models assume that only the last 
+#' category will have a negative binomial model and the simulated values are backtransformed by
+#' adding the start value of the last cateogory.  E.g. if the last category is 5+, then 5 is added
+#' to any values simulated from a negative binomial distribution.  
+#' 
+#' @param x.cat
+#' a categorical vector
+#' @param models
+#'  a list of models with length equal to the number of categories in x.cat
+#' @param cont.binbreaks
+#' the binbreaks of the categorical variable
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
+predSimModSelect <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
+	#envir=simframe.master
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		if (length(models[[i]]$sd)==1) {
+			result[select] <- predSimNorm(models[[i]], envir, set=select)
+			#round so that simulated values outside the category boundaries are set to be at the boundary of the category
+			result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
+			result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
+		} else if (length(models[[i]]$alpha)==1) {
+			result[select] <- predSimNBinom(models[[i]], envir, set=select)
+			#backtransform the simulated negative binomial values
+			result[select] <- result[select] + cont.binbreaks[length(cont.binbreaks)-1]+1 
+		} else {
+			stop("predSimModSelect() currently only implemented for normal and negative binomial models have either an sd or an alpha component")
+		}
 	}
 	result
 }
