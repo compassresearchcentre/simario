@@ -417,12 +417,12 @@ predLogistic <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  simulate using all values in envir
 #' 
 #' @return 
-#' a vector of predicted probabilities
+#' a matrix of predicted probabilities
 #'  
 #' @export   
 #' @examples
 #' \dontrun{
-#' model.glm <- model.glm.list=list(models$GP_multinomial_response_cat2,
+#'  model.glm.list<-list(models$GP_multinomial_response_cat2,
 #' 			models$GP_multinomial_response_cat3,models$GP_multinomial_response_cat4,
 #' 						models$GP_multinomial_response_cat5)
 #' set<-still_alive_and_65plus_NOTRES
