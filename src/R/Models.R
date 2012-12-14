@@ -724,12 +724,20 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 #' 
 #' @return 
 #' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
-predSimModSelect <- function(x.cat, models, cont.binbreaks, envir=parent.frame()) {
+#'   envir=.GlobalEnv
+predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=parent.frame()) {
 	#envir=simframe.master
 	x.cat <- as.integer(x.cat)
-	result <- rep(NA, length(x.cat))
+	if (!is.null(logiset)) {
+		padded.x.cat <- rep(NA, length(logiset))
+		padded.x.cat[logiset] <- x.cat
+	} else {
+		padded.x.cat <- x.cat
+	}
+	result <- rep(NA, length(padded.x.cat))
 	for (i in 1:length(models)) {
-		select <- x.cat == i
+		select <- padded.x.cat == i
+		select[is.na(select)] <- FALSE
 		if (length(models[[i]]$sd)==1) {
 			result[select] <- predSimNorm(models[[i]], envir, set=select)
 			#round so that simulated values outside the category boundaries are set to be at the boundary of the category
@@ -743,6 +751,10 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, envir=parent.frame()
 			stop("predSimModSelect() currently only implemented for normal and negative binomial models have either an sd or an alpha component")
 		}
 	}
-	result
+	if (!is.null(logiset)) {
+		return(result[logiset])
+	} else{
+		return(result)
+	}
 }
 

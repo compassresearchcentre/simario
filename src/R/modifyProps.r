@@ -515,10 +515,10 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 #' table(check)
 #' table(check)/sum(table(check))
 #' }
-modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, propens=NULL, accuracy=.01, envir=parent.frame()) {
+modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.binbreaks, propens=NULL, logiset=NULL, accuracy=.01, envir=parent.frame()) {
 	x.cat <- bin(x.cont, cont.binbreaks)
 	adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
-	adj.x.cont <- predSimModSelect(adj.x.cat, catToContModels, cont.binbreaks, envir)
+	adj.x.cont <- predSimModSelect(adj.x.cat, catToContModels, cont.binbreaks, logiset, envir)
 	adj.x.cont
 }
 
@@ -531,7 +531,7 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 		subset_to_change <- x[logiset]
 		
 		if (!is.null(catToContModels)) {
-			subset_to_change_modified <- modifyPropsContinuous(subset_to_change, desiredProps, catToContModels, cont.binbreaks, propens, accuracy=.05, envir)
+			subset_to_change_modified <- modifyPropsContinuous(subset_to_change, desiredProps, catToContModels, cont.binbreaks, propens, logiset, accuracy=.05, envir)
 		} else {
 			subset_to_change_modified <- modifyProps(subset_to_change, desiredProps, propens, accuracy=.05)
 		}
