@@ -92,6 +92,47 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 	result
 }
 
+# a new version of mean_array_z() where the confidence intervals are percentile based 
+#rather than using asymptotic theory
+mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
+	if (NA.as.zero) xa[is.na(xa)] <- 0
+	
+	result <- apply(xa, c(ROW,COL), mean)
+	numZ <- dim(xa)[ZDIM]
+	
+	# CIs only make sense if more than 1 Z dim
+	if (CI && numZ > 1) {
+		
+		##errZ <- apply(xa,c(ROW,COL),err)
+		
+		#calculate left CI
+		leftZ <- apply(xa, c(ROW,COL), function(x) {quantile(x, .025, na.rm=T)})
+		
+		#calculate right CI
+		rightZ <- apply(xa, c(ROW,COL), function(x) {quantile(x, .975, na.rm=T)})
+		
+		#add left and right Z to the right hand side of result
+		resultCI <- cbind(Mean=result,  
+				Lower=leftZ, Upper=rightZ)
+		#dimnames(result)[[2]] <- c("Mean", "Lower", "Upper")
+		
+		# reorder so that lower and upper is next to the mean of each grouping
+		numGroups <- dim(xa)[COL]
+		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
+		resultCI <- resultCI[, reordering]
+		
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		names(dimnames(resultCI)) <- names(dimnames(result))
+		result <- resultCI
+	}
+	
+	#keep meta attribute
+	attr(result, "meta") <- attr(xa, "meta")
+	
+	result
+}
+
+
 #' Mean applied over a list of matrices/vectors. Aligns matrices/vectors first
 #' so rows and columns match (see align.by.name.list.mx).
 #' 

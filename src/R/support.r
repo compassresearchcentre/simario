@@ -359,7 +359,7 @@ err <- function (x) {
 	if (length(x) < 2) {
 		return(NA)
 	}
-	qt(0.975,df=length(x)-1)*sd(x)/sqrt(length(x))
+	qt(0.975,df=length(x)-1)*sd(x)/sqrt(length(x))	
 }
 
 #' Evaluate a list/vector of strings as expressions.
