@@ -83,12 +83,12 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' runs <- all_run_results_zipped$freqs_by_sex[[1]]
 #' collator_freqs_remove_zero_cat(runs, dict_example)
 #' }
-collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
-	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
+collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
+	runs_mx <- collator_mutiple_lists_mx(runs, CI)
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
 	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-	runs_mx <- percentages_flattened_mx(runs_mx, dict)
+	runs_mx <- percentages_flattened_mx(runs_mx, dict, CI)
 	remove.cols(runs_mx, zero_cat_cols)
 }
 
@@ -255,12 +255,12 @@ identify_zero_category_cols <- function (mx) {
 #' dict <- dict_example
 #' percentages_flattened_mx(mx.flattened, dict)
 
-percentages_flattened_mx <- function(mx.flattened, dict) {
+percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE) {
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
-	groupnameprefixes<- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
+	groupnameprefixes <- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
 
-	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes) * 100
+	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI) * 100
 	colnames(result) <- paste(colnames(result), "(%)")
 	result
 }
@@ -398,18 +398,18 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' groupnameprefixes<-NULL
 #' 
 #' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes)
-prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes) {
+prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE) {
 
-	grpingNames<-attr(mx.grped.rows,"grpingNames")
+	grpingNames <- attr(mx.grped.rows,"grpingNames")
 	
 	if (is.null(groupnameprefixes) || is.null(grpingNames)) {
-		grpby<-rep(1, ncol(mx.grped.rows))
+		grpby <- rep(1, ncol(mx.grped.rows))
 	} else {
-		grpby<-match(grpingNames,groupnameprefixes)
+		grpby <- match(grpingNames,groupnameprefixes)
 		assert(!is.na(grpby))	
 	}
 	# get proportions by grp
-	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby)
+	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby, CI=CI)
 	
 	mx.grped.rows.prop.t <- t(mx.grped.rows.prop)
 	

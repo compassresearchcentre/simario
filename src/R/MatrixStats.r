@@ -250,8 +250,17 @@ mean_list_mx <- function(listmx) {
 #' grpby <- c(1,1,2,2,3,3) 
 #' grpby <- c('M','M','F','F','F','F')
 #' prop.table.grpby(x, grpby)
-prop.table.grpby <- function (x, grpby, na.rm=TRUE) {
-	grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
+prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE) {
+	if (CI==FALSE) {
+		grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
+	} else if ((CI==TRUE)&(length(unique(grpby)==1))) {
+			#take the 1st, 4th, 7th, etc element of x to get the sum
+			n <- length(x)/3
+			id <- (3*(1:n) - 3) + 1
+			grpsum <- sum(x[id])
+	} else if ((CI==TRUE)&(length(unique(grpby)>1))) {
+		stop("write new code in prop.table.grpby() to allow for confidence intervals and grouping")
+	}
 	#x / grpsum[grpby]
 	structure(as.vector(x / grpsum[grpby]), .Names=names(x))
 }
