@@ -250,21 +250,21 @@ mean_list_mx <- function(listmx) {
 #' grpby <- c(1,1,2,2,3,3) 
 #' grpby <- c('M','M','F','F','F','F')
 #' prop.table.grpby(x, grpby)
-prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE) {
-	if (CI==FALSE) {
+prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
+	if ((CI==FALSE)|(num.runs==1)) {
 		grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
 		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
-	} else if ((CI==TRUE)&(length(unique(grpby))==1)) {
+	} else if ((CI==TRUE)&(length(unique(grpby))==1)&(num.runs>1)) {
 		#take the 1st, 4th, 7th, etc element of x to get the sum
 		n <- length(x)/3 #number of unique means
 		id <- (3*(1:n) - 3) + 1
 		grpsum <- sum(x[id])
 		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
-	} else if ((CI==TRUE)&(length(unique(grpby))>1)) {
+	} else if ((CI==TRUE)&(length(unique(grpby))>1)&(num.runs>1)) {
 		n <- length(x)/3 #number of unique means
 		id <- (3*(1:n) - 3) + 1
-		num.cats <- n/length(unique(grpby))
-		id2 <- rep(1:(n/num.cats), each=num.cats)
+		num.cats.outcome <- n/length(unique(grpby)) #number of categories for the outcome variable (not the grouping variable)
+		id2 <- rep(1:(n/num.cats.outcome), each=num.cats.outcome)
 		grpsum <- tapply(x[id], id2, sum, na.rm=na.rm)
 		grpsum <- rep(grpsum, each=n)
 		result <- structure(as.vector(x / grpsum), .Names=names(x))

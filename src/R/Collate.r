@@ -45,8 +45,10 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 	
 	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
 	
-	if (numbers==FALSE)
-	{percentages_flattened_mx(runs_mx, dict)}
+	if (numbers==FALSE) {
+		num.runs <- length(runs)
+		percentages_flattened_mx(runs_mx, dict, num.runs=num.runs)
+	}
 	else {return(runs_mx)}
 	
 }
@@ -87,12 +89,15 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	runs_mx <- collator_mutiple_lists_mx(runs, CI)
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
-	if (CI==FALSE) {
+	
+	numZ <- length(runs) #number of runs
+	
+	if ((CI==FALSE)|(numZ==1)) {
 		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-	} else (CI==TRUE) {
+	} else if ((CI==TRUE)&&(numZ>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
 	}
-	runs_mx <- percentages_flattened_mx(runs_mx, dict, CI)
+	runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 	result <- remove.cols(runs_mx, zero_cat_cols)
 	return(result)
 }
@@ -260,12 +265,12 @@ identify_zero_category_cols <- function (mx) {
 #' dict <- dict_example
 #' percentages_flattened_mx(mx.flattened, dict)
 
-percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE) {
+percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
 	groupnameprefixes <- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
 
-	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI) * 100
+	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI, num.runs) * 100
 	colnames(result) <- paste(colnames(result), "(%)")
 	return(result)
 }
@@ -432,7 +437,7 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 #' groupnameprefixes<-NULL
 #' 
 #' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes)
-prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE) {
+prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE, num.runs) {
 
 	grpingNames <- attr(mx.grped.rows,"grpingNames")
 	
@@ -443,7 +448,7 @@ prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE
 		assert(!is.na(grpby))	
 	}
 	# get proportions by grp
-	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby, CI=CI)
+	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby, CI=CI, num.runs=num.runs)
 	
 	mx.grped.rows.prop.t <- t(mx.grped.rows.prop)
 	
