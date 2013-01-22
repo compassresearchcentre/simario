@@ -87,9 +87,14 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	runs_mx <- collator_mutiple_lists_mx(runs, CI)
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
-	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+	if (CI==FALSE) {
+		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+	} else (CI==TRUE) {
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+	}
 	runs_mx <- percentages_flattened_mx(runs_mx, dict, CI)
-	remove.cols(runs_mx, zero_cat_cols)
+	result <- remove.cols(runs_mx, zero_cat_cols)
+	return(result)
 }
 
 #' Collates frequencies for use in histogram output with confidence intervals. 
@@ -262,7 +267,7 @@ percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE) {
 
 	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI) * 100
 	colnames(result) <- paste(colnames(result), "(%)")
-	result
+	return(result)
 }
 
 
@@ -360,10 +365,39 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
 	#label
+	##colnames(mx.flattened)<-c(rep("1 0", 3), rep("1 1", 3), rep("2 0", 3), rep("2 1", 3), rep("3 0", 3), rep("3 1", 3))
 	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
 	structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
+	
+	#mx.flattened
+}
+
+
+label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
+	varname <- attr(mx.flattened, "meta")["varname"]
+	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
+	
+	#label
+	
+	##colnames start off as:
+	##  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
+	##[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
+	##[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
+	
+	## Need to remove the Mean, Lower, and Upper parts
+	col.names <- colnames(mx.flattened)
+	space.ids <- str_locate_all(col.names, " ")
+	string.length <- length(space.ids[[1]])
+	end.element <- space.ids[[1]][string.length] - 1
+	sub.col.names <- tapply(col.names, 1:length(col.names), function(x) {str_sub(x, 1, end.element)})
+
+	colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
+	
+	result <- structure(mx.flattened, grpingNames=attr(colnames(mx.flattened), "grpingNames"))
+	return(result)
 	
 	#mx.flattened
 }
@@ -413,6 +447,8 @@ prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE
 	
 	mx.grped.rows.prop.t <- t(mx.grped.rows.prop)
 	
-	structure(mx.grped.rows.prop.t, meta = attr(mx.grped.rows, "meta"), dimnames=dimnames(mx.grped.rows))
+	result <- structure(mx.grped.rows.prop.t, meta = attr(mx.grped.rows, "meta"), dimnames=dimnames(mx.grped.rows))
+	
+	return(result)
 }
 

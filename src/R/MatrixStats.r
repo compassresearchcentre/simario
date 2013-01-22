@@ -253,16 +253,24 @@ mean_list_mx <- function(listmx) {
 prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE) {
 	if (CI==FALSE) {
 		grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
-	} else if ((CI==TRUE)&(length(unique(grpby)==1))) {
-			#take the 1st, 4th, 7th, etc element of x to get the sum
-			n <- length(x)/3
-			id <- (3*(1:n) - 3) + 1
-			grpsum <- sum(x[id])
-	} else if ((CI==TRUE)&(length(unique(grpby)>1))) {
-		stop("write new code in prop.table.grpby() to allow for confidence intervals and grouping")
+		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+	} else if ((CI==TRUE)&(length(unique(grpby))==1)) {
+		#take the 1st, 4th, 7th, etc element of x to get the sum
+		n <- length(x)/3 #number of unique means
+		id <- (3*(1:n) - 3) + 1
+		grpsum <- sum(x[id])
+		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+	} else if ((CI==TRUE)&(length(unique(grpby))>1)) {
+		n <- length(x)/3 #number of unique means
+		id <- (3*(1:n) - 3) + 1
+		num.cats <- n/length(unique(grpby))
+		id2 <- rep(1:(n/num.cats), each=num.cats)
+		grpsum <- tapply(x[id], id2, sum, na.rm=na.rm)
+		grpsum <- rep(grpsum, each=n)
+		result <- structure(as.vector(x / grpsum), .Names=names(x))
 	}
 	#x / grpsum[grpby]
-	structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+	return(result)
 }
 
 #' Execute quantile on the columns of a matrix.
