@@ -85,6 +85,7 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' runs <- all_run_results_zipped$freqs_by_sex[[1]]
 #' collator_freqs_remove_zero_cat(runs, dict_example)
 #' }
+	
 collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI)
 	
@@ -94,11 +95,20 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	
 	if ((CI==FALSE)|(numZ==1)) {
 		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		result <- remove.cols(runs_mx, zero_cat_cols)
 	} else if ((CI==TRUE)&&(numZ>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		resultCI <- remove.cols(runs_mx, zero_cat_cols)
+		#label CI components
+		run1_array <- as_array_list_mx(runs[[1]])
+		numGroups <- dim(run1_array)[COL]
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		names(dimnames(resultCI)) <- names(dimnames(resultCI))
+		result <- resultCI
 	}
-	runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-	result <- remove.cols(runs_mx, zero_cat_cols)
+	
 	return(result)
 }
 

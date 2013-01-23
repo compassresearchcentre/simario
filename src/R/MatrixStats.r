@@ -97,7 +97,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
-	result <- apply(xa, c(ROW,COL), mean)
+	result <- apply(xa, c(ROW,COL), mean) 
 	numZ <- dim(xa)[ZDIM]
 	
 	# CIs only make sense if more than 1 Z dim
@@ -112,11 +112,9 @@ mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
 		rightZ <- apply(xa, c(ROW,COL), function(x) {quantile(x, .975, na.rm=T)})
 		
 		#add left and right Z to the right hand side of result
-		resultCI <- cbind(Mean=result,  
-				Lower=leftZ, Upper=rightZ)
-		#dimnames(result)[[2]] <- c("Mean", "Lower", "Upper")
+		resultCI <- cbind(Mean=result,  Lower=leftZ, Upper=rightZ)
 		
-		# reorder so that lower and upper is next to the mean of each grouping
+		# reorder resultCI so that lower and upper is next to the mean of each grouping
 		numGroups <- dim(xa)[COL]
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
