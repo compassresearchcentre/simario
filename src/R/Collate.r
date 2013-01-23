@@ -40,14 +40,14 @@
 #' dict <- dict_example
 #' collator_freqs(runs, dict)
 #' collator_freqs(runs, dict, numbers=TRUE)
-collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", numbers=FALSE) {
-	runs_mx <- collator_mutiple_lists_mx(runs, CI=FALSE)
+collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", numbers=FALSE, CI=FALSE) {
+	runs_mx <- collator_mutiple_lists_mx(runs, CI)
 	
 	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
 	
 	if (numbers==FALSE) {
 		num.runs <- length(runs)
-		percentages_flattened_mx(runs_mx, dict, num.runs=num.runs)
+		percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
 	}
 	else {return(runs_mx)}
 	
@@ -380,13 +380,11 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
 	#label
-	##colnames(mx.flattened)<-c(rep("1 0", 3), rep("1 1", 3), rep("2 0", 3), rep("2 1", 3), rep("3 0", 3), rep("3 1", 3))
 	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
 	structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
-	
-	#mx.flattened
+
 }
 
 
