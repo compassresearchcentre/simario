@@ -205,7 +205,7 @@ collator_list_mx <- function(runs, CI=TRUE, ...) {
 #' collator_mutiple_lists_mx(runs, CI=FALSE)
 collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 	runs_array <- flatten_mxlists_to_array(runs)
-	mean_array_z(runs_array, CI=CI)
+	mean_array_z(runs_array, CI=CI, re_write_colnames=F)
 }
 
 #' Identify and return the indices of columns that 
@@ -362,6 +362,10 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	#label
 	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
+	
+	means_suffix<-attr(mx.flattened, "means_suffix")
+	
+	if (!is.null(means_suffix)) colnames(mx.flattened)<-paste(colnames(mx.flattened), means_suffix)
 	
 	structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
 	
