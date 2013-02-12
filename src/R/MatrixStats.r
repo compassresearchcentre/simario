@@ -309,6 +309,58 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 	structure(result, meta=c(varname=attr(mx, "varname")))
 }
 
+#does not use weights but calculates quantiles by a grouping variable, 
+#including a grouping variable that changes over time
+#also does not deal with logisets
+#new.names=c("Min", "10th", "25th", "50th", "75th","90th","Max"), na.rm = TRUE
+quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), ...) {
+	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
+	
+	# check that grpby dimensions are correct   
+	if (!is.null(grpby)){
+		if (is.vector(grpby)) {
+			if(nrow(mx) != nrow(grpby)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
+			}
+		}	
+	}
+	
+	if(is.vector(grpby)) {
+		grpby <- matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+	}
+	
+	if (is.null(grpby)) {
+		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs)}))
+		colnames(result) <- new.names
+	} else {
+		result.by.col<- lapply(1:ncol(mx), function(i) {
+					#i=1
+					aggregate(mx[,i], by=list(grpby[,i]), FUN=quantile, probs=probs)
+				})
+		num.groups <- nrow(result.by.col[[1]])
+		num.yrs <- length(result.by.col)
+		result <- matrix(ncol=length(probs)*num.groups, nrow=num.yrs)
+		#result <- matrix(ncol=ncol(result.by.col[[1]])*num.groups, nrow=num.yrs)
+		for (j in 1:num.groups) {
+			grp.result <- matrix(nrow=num.yrs, ncol=length(probs))
+			for (i in 1:num.yrs) {
+				grp.result[i,]<-result.by.col[[i]][j,][,2]
+			}
+			result[,((j*7)-6):(j*7)]<-grp.result
+		}
+		colnames(result) <- rep(new.names, num.groups)
+		
+		#grp.codes <- row.names(result.by.col[[1]])
+		#grp.codes <- rep(grp.codes, each=length(probs))
+		#dict.MELC$cmatchFlattened(.=dict.MELC, grp.codes, varname=grpby.tag)
+	
+		#or maybe they don't need to be named here (can happen in the collation of run results
+	}
+	
+	structure(result, meta=c(varname=attr(mx, "varname")))
+}
+
 #' Summary table, with option to group and weight results.
 #'  
 #' @param x
@@ -812,4 +864,160 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 	
 	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 }
+
+
+
+
+#' A function specific to the BCASO research project
+#' Calculates the weighted mean for each column of the matrix
+#' Optionally subsetting and grouping by another (equal length/number of rows) variable,
+#' which can be either a vector or a matrix.
+#' Optionally having different weights for each column of the matrix (same length/number of rows))- wgts parameter 
+#' which can also be either a vector or a matrix.
+#' 
+#' @param mx
+#'  matrix or dataframe to calculate column means of 
+#'  
+#' @param grpby
+#'  elements to group by, or NULL or unspecified to do no grouping. 
+#'  Same length as the columns of mx.
+#' 
+#' @param grpby.tag
+#'  added to meta attribute of the result
+#'
+#' @param logiset
+#'  logical vector indicating which observations to include, or NULL to include all.
+#'
+#' @param wgts
+#'  elements to weight by, or NULL to do no weighting
+#'  
+#' @return 
+#'  a matrix of means. Each row is the mean for a column in mx.
+#'  if grpby is NULL, a single column of means. 
+#'  if grpby is specified, a column of means for each group by category.
+#' 
+#' @export
+#' @examples
+#' mx <- matrix (c(1:10), ncol = 2) ; mx <- matrix (c(1:3, NA, 5:7, NA, 9:10), ncol = 2) 
+#' logiset = NULL
+#' grpby = NULL ; grpby.tag = NULL 
+#' grpby <- c("A","A","A","B","B") ; grpby.tag = "AB" 
+#' 
+#' mx <- matrix (c(1:4, 5, 6:7,NA,NA,10), ncol = 2) 
+#' wgts = rep(1, nrow(mx))
+#' wgts =c(2,2,2,2,1)
+#' grpby <- c(1,4,3,2,2) ;
+#' 
+#' wgts<-matrix(c(1,1,1,1,1,2,2,2,2,1), ncol = 2)
+#' na.rm = FALSE ; na.rm = TRUE
+#' 
+#' mean_mx_cols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
+mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts = NULL) {
+		
+	# 1. beginning check - that weight dimensions are correct
+	if (!is.null(wgts)) {
+		if (is.vector(wgts) ) {
+			if(nrow(mx) != length(wgts)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != length of wgts", param1Name))
+			}
+		}else{
+			if(nrow(mx) != nrow(wgts)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != number of rows of wgts", param1Name))
+			}
+		}
+	}      
+	# 2. beginning check  - that grpby dimensions are correct   
+	if (!is.null(grpby)){
+		if (is.vector(grpby)) {
+			if(nrow(mx) != length(grpby)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != length of grpby", param1Name))
+			}
+		}else{
+			if(nrow(mx) != nrow(grpby)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
+			}
+		}
+		
+	}
+	
+	#bulk of function starts   
+	
+	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
+	if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))  #can't make this default param for some reason need to set here
+	
+	# save before subsetting mx
+	varname <- attr(mx, "varname")
+	
+	# subset
+	if (!is.null(logiset)) mx <- subset(mx, logiset)
+	if (!is.null(logiset)) wgts <- subset(wgts, logiset)
+	if (!is.null(logiset)) grpby <- subset(grpby, logiset)
+	
+	#concatenating all grpby columns into one vector
+	if (!is.null(grpby)){
+		allgrpby=c(); j=1;while (j<=ncol(grpby)) {allgrpby=c(allgrpby,grpby[,j]);j=j+1}
+	}
+	
+	if (is.null(grpby)) {
+		result <- apply(matrix(1:ncol(mx),nrow=1), COL, function(i) {
+					x <- mx[,i]
+					non.nas <-  !is.na(x)
+					sum(x[non.nas] * wgts[non.nas,i]) / sum(wgts[non.nas,i])
+				})
+		
+		result <- t(t(result))
+		
+	} else {
+		
+		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
+			x <- mx[,i]
+			non.nas <-  !is.na(x) 
+			
+			#if all numbers in a column of mx are NA, then return NA's for each grpby category,
+			#otherwise continue the weigting procedure.
+			#Using the weighting procedure on a column of NA's falls down as 
+			#by=list(grpby[non.nas,i]) has length 0.
+			
+			if(all(is.na(x))) {
+				
+				z2<-t(rep("NA", length(unique(allgrpby))))
+				return(z2)
+			} else{      
+				
+				
+				weightsGrouped <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x
+				
+				a<-aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x / weightsGrouped
+				grp<-aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$Group.1
+				
+				
+				num_and_grp<-cbind(grp,a)
+				#creating a matrix of NA's for those grpby's not present in the column
+				#this enables each i'th step to return the same number of elements,
+				#further helping to enable correct naming of the result later (by unique allgrpby)
+				uall<-unique(allgrpby);
+				uGOTsomeNOTNA<-unique(grpby[non.nas,i]);
+				leftover<-uall[!(uall %in% uGOTsomeNOTNA)]
+				nmat<-matrix(c(leftover,rep(NA,length(leftover))), ncol=2)
+				colnames(nmat)<-c("grp","a")
+				#combining the means for the i'th result with the matrix of NA's for those grpbys not present
+				z<- rbind(nmat,num_and_grp)
+				#ordering on the grpby, to maintain the correct ordering of grpby across all
+				#ith steps - ensuring correct order in naming of the result later (by unique allgrpby)
+				z2<-z[order(z[,1]),]
+				z2[,2]
+			}
+		}))
+		
+		dimnames(result)[[COL]] <- sort(unique(allgrpby))
+	}
+	
+	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc"))) 
+}
+
 

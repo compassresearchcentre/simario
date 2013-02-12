@@ -43,15 +43,31 @@
 collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", numbers=FALSE, CI=FALSE) {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI)
 	
-	runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+	num.runs <- length(runs)
 	
-	if (numbers==FALSE) {
-		num.runs <- length(runs)
-		percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
+	if ((CI==FALSE|(num.runs==1))) {
+		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		if (numbers==FALSE) {
+			result <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
+		} else {
+			result <- runs_mx
+		}
+	} else if ((CI==TRUE)&&(num.runs>1)) {
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		if (numbers==FALSE) {
+			resultCI <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
+		} else {
+			resultCI <- runs_mx
+		}
+		#label CI components
+		run1_array <- as_array_list_mx(runs[[1]])
+		numGroups <- dim(run1_array)[COL]
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		result <- resultCI
 	}
-	else {return(runs_mx)}
-	
+	return(result)
 }
+
 
 #' Collate frequencies and removes the zero category. Performs the following:
 #' 
@@ -392,19 +408,26 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
-	#label
+	#colnames start off as:
+	# e.g.
+	#  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
+	#[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
+	#[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
 	
-	##colnames start off as:
-	##  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
-	##[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
-	##[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
-	
-	## Need to remove the Mean, Lower, and Upper parts
+	# Need to remove the Mean, Lower, and Upper parts
 	col.names <- colnames(mx.flattened)
+	#identify the position of the last space in each name
 	space.ids <- str_locate_all(col.names, " ")
-	string.length <- length(space.ids[[1]])
-	end.element <- space.ids[[1]][string.length] - 1
-	sub.col.names <- tapply(col.names, 1:length(col.names), function(x) {str_sub(x, 1, end.element)})
+	pos.last.space <- lapply(space.ids, function(x) {x[2,2]})
+	pos.last.space.vec <- rep(NA, length(col.names))
+	for (i in 1:length(pos.last.space.vec)) {
+		pos.last.space.vec[i]<-pos.last.space[[i]]
+	}
+	sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
+	
+	##string.length <- length(space.ids[[1]])
+	##end.element <- space.ids[[1]][string.length] - 1
+	##sub.col.names <- tapply(col.names, 1:length(col.names), function(x) {str_sub(x, 1, end.element)})
 
 	colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
