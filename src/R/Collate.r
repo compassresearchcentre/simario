@@ -418,7 +418,8 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	col.names <- colnames(mx.flattened)
 	#identify the position of the last space in each name
 	space.ids <- str_locate_all(col.names, " ")
-	pos.last.space <- lapply(space.ids, function(x) {x[2,2]})
+	num.spaces <- nrow(space.ids[[1]])
+	pos.last.space <- lapply(space.ids, function(x) {x[num.spaces,2]})
 	pos.last.space.vec <- rep(NA, length(col.names))
 	for (i in 1:length(pos.last.space.vec)) {
 		pos.last.space.vec[i]<-pos.last.space[[i]]
