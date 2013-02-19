@@ -125,10 +125,12 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		result <- remove.cols(runs_mx, zero_cat_cols)
+		
 	} else if ((CI==TRUE)&&(numZ>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		resultCI <- remove.cols(runs_mx, zero_cat_cols)
+		
 		#label CI components
 		run1_array <- as_array_list_mx(runs[[1]])
 		numGroups <- dim(run1_array)[COL]
@@ -287,6 +289,18 @@ identify_zero_category_cols <- function (mx) {
 	grep("\\s0|^0", colnames(mx))
 }
 
+#' Identify and return the indices of columns that 
+#' are for the zero category where grouping has been employed.  
+#' Identifies the outcome variable's zero categories but not the grouping variable's zero categories.  
+#' Zero category column names begin with a "0" or, for flatten column names, contain " 0". 
+#' 
+#' @param mx
+#'  matrix with column names
+#' @return
+#'  vector of zero column positions
+#'
+#' @export 
+#' @examples
 identify_zero_category_cols_bygrp <- function (mx) {
 	#names of the outcome variable (as opposed to the grouping variable come 2nd
 	col.names <- colnames(mx)
@@ -403,7 +417,7 @@ labelColumnCodes <- function(x, dict, varname) {
 #'  used (if any) and the varname that identifies the codings to apply, eg:
 #'  meta=c(grpby.tag="sex", varname="disability_state") 
 #' 
-#'  If grpby.tag is NULL or NA, then the flattened code will be in the form "0", 
+#'  If grpby.tag is NULL, NA, or "", then the flattened code will be in the form "0", 
 #'  i.e: no grping codes only varname codes. These will be converted in the output
 #'  to the corresponding varname category name. 
 #' 
@@ -448,13 +462,31 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 
 }
 
-
+#' Extension of label_flattened_mx() to label a flattened matrix that contains confidence 
+#' intervals.  Can handle grouping or no grouping. 
+#' Labels flattened columns according to dictionary codings, 
+#' and applies the specified row and col dimension label (if any).
+#' 
+#' @param mx.flattened
+#'  a flattened matrix, ie: a matrix that has rows that contain
+#'  groups of values.  
+#' 
+#' @param dict
+#'  dictionary object
+#' 
+#' @param row.dim.label
+#'  name of the entire row dimension
+#' 
+#' @param col.dim.label
+#'  name of the entire col dimension
+#' 
+#' @export
+#' @examples 
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
-	#colnames start off as:
-	# e.g.
+	#e.g. colnames start off as:
 	#  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
 	#[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
 	#[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
@@ -471,6 +503,7 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	}
 	sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
 	
+	#if grpby.tag="" then convert it to NA
 	if (!is.null(grpby.tag)) {
 		if (!is.na(grpby.tag)) {
 			if (grpby.tag=="") {

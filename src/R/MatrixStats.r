@@ -92,8 +92,29 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 	result
 }
 
-# a new version of mean_array_z() where the confidence intervals are percentile based 
-#rather than using asymptotic theory
+
+#' A version of mean_array_z() where the confidence intervals are percentile based 
+#' rather than using asymptotic theory.
+#' Mean across Z dimension of a 3D array. Each row and column cell is
+#' averaged across the Z dimension.
+#' 
+#' For the vector of statistic values (e.g. a vector of means from multiple runs),
+#' the 2.5 and 97.5 percentiles are used as the upper and lower limits of the 95% C.I..
+#' 
+#' @param xa
+#'  an array with a Z dimension
+#' @param CI
+#'  if TRUE and xa has more than 1 Z dimension, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' @param NA.as.zero
+#'  if TRUE (default), treat NAs as if they are zeros
+#' 
+#' @return
+#'  a matrix of means across the Z dimension. The "meta" attribute
+#'  of xa, if any, is retained.
+#' 
+#' @export
+#' @examples 
 mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
@@ -237,6 +258,10 @@ mean_list_mx <- function(listmx) {
 #'  each value of x belongs to
 #' @param na.rm
 #'   logical. Should missing values (including NaN) be removed?
+#' @param CI
+#' logical.  Are confidence intervals present?
+#' @param num.runs
+#' number of runs which were used to generate x
 #' 
 #' @return 
 #'  vector of proportions, calculated according to group
@@ -252,24 +277,27 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 	if ((CI==FALSE)|(num.runs==1)) {
 		grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
 		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+		
 	} else if ((CI==TRUE)&(length(unique(grpby))==1)&(num.runs>1)) {
+		# if CI = TRUE, there is no grouping, and there was more than 1 run
 		#take the 1st, 4th, 7th, etc element of x to get the sum
 		n <- length(x)/3 #number of unique means
 		id <- (3*(1:n) - 3) + 1
 		grpsum <- sum(x[id])
 		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+		
 	} else if ((CI==TRUE)&(length(unique(grpby))>1)&(num.runs>1)) {
+		# if CI = TRUE, there is grouping, and there was more than 1 run
 		n <- length(x)/3 #number of unique means
 		id <- (3*(1:n) - 3) + 1 #identifies where the means are
 		num.cats.outcome <- n/length(unique(grpby)) #number of categories for the outcome variable (not the grouping variable)
 		id2 <- rep(1:(n/num.cats.outcome), each=num.cats.outcome) #which means belong to which category
 		grpsum <- tapply(x[id], id2, sum, na.rm=na.rm)
-		#grpsum <- rep(grpsum, each=n)
 		num.grps <- length(unique(grpby))
 		grpsum <- rep(grpsum, each=(n*3)/num.grps)
 		result <- structure(as.vector(x / grpsum), .Names=names(x))
 	}
-	#x / grpsum[grpby]
+	#x / grpsum[grpby] #old code before JT modifed it to handle CIs
 	return(result)
 }
 
@@ -311,10 +339,34 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 	structure(result, meta=c(varname=attr(mx, "varname")))
 }
 
-#does not use weights but calculates quantiles by a grouping variable, 
-#including a grouping variable that changes over time
-#also does not deal with logisets
-#new.names=c("Min", "10th", "25th", "50th", "75th","90th","Max"), na.rm = TRUE
+
+#' Execute quantile on the columns of a matrix by a grouping variable.
+#' Extension of quantile_mx_cols to handle a tiume-variannt grouing variable.
+#' grpby can be a vector or a matrix with columns representing the value of the 
+#' grpby variable in different years.
+#' Does not have ability to include weights or logisets.   
+#' Can handle no grouping. 
+#' 
+#' @param mx
+#'  matrix
+#' @param grpby
+#' a vector or matrix indicating the group to whic the unit belongs.  
+#' Quantiles will be calculated separately for each group
+#' @param grpby.tag
+#' string. grouping variable names
+#' @param new.names
+#'  if specified, the names of the result will be 
+#'  set to this vector
+#' @param ...
+#'  additional arguments to pass to \code{\link{quantile}}
+#' e.g. na.rm=T
+#' 
+#' @return
+#'  quantile of each column returned as a row.  
+#' Quantiles for each group are put side-by-side in a rbind fashion.
+#' 
+#' @export
+#' @examples 
 quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -343,7 +395,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 		num.groups <- nrow(result.by.col[[1]])
 		num.yrs <- length(result.by.col)
 		result <- matrix(ncol=length(probs)*num.groups, nrow=num.yrs)
-		#result <- matrix(ncol=ncol(result.by.col[[1]])*num.groups, nrow=num.yrs)
+
 		for (j in 1:num.groups) {
 			grp.result <- matrix(nrow=num.yrs, ncol=length(probs))
 			for (i in 1:num.yrs) {
@@ -864,7 +916,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 
 
 
-#' A function specific to the BCASO research project
+
 #' Calculates the weighted mean for each column of the matrix
 #' Optionally subsetting and grouping by another (equal length/number of rows) variable,
 #' which can be either a vector or a matrix.
