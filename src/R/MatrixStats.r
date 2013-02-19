@@ -332,7 +332,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 		grpby <- matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
 	}
 	
-	if (is.null(grpby)) {
+	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
 		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs)}))
 		colnames(result) <- new.names
 	} else {
@@ -352,12 +352,6 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 			result[,((j*7)-6):(j*7)]<-grp.result
 		}
 		colnames(result) <- rep(new.names, num.groups)
-		
-		#grp.codes <- row.names(result.by.col[[1]])
-		#grp.codes <- rep(grp.codes, each=length(probs))
-		#dict.MELC$cmatchFlattened(.=dict.MELC, grp.codes, varname=grpby.tag)
-	
-		#or maybe they don't need to be named here (can happen in the collation of run results
 	}
 	
 	structure(result, meta=c(varname=attr(mx, "varname")))
