@@ -128,7 +128,6 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	} else if ((CI==TRUE)&&(numZ>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		
 		resultCI <- remove.cols(runs_mx, zero_cat_cols)
 		#label CI components
 		run1_array <- as_array_list_mx(runs[[1]])
@@ -196,9 +195,20 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 collator_means <- function(runs, dict, ...) {
 	runs_mx <- collator_list_mx(runs, ...)
 	
-	runs_mx_labelled <- labelColumnCodes(runs_mx, dict, attr(runs_mx, "meta")["grpby.tag"])
+	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag=="") {
+				grpby.tag<-NA
+			}
+		}
+	}
+
+	runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
 	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
-	runs_mx_labelled
+		result <- runs_mx_labelled
+
+	return(result)
 }
 
 #' Collate and average a list of matrices.

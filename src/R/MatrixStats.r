@@ -918,32 +918,31 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 		
 	# 1. beginning check - that weight dimensions are correct
 	if (!is.null(wgts)) {
-		if (is.vector(wgts) ) {
-			if(nrow(mx) != length(wgts)) {
+		if (is.vector(wgts)) {
+			if (nrow(mx) != length(wgts)) {
 				param1Name <- as.character(sys.call())[2]
 				stop(gettextf("Number of rows in %s != length of wgts", param1Name))
 			}
-		}else{
-			if(nrow(mx) != nrow(wgts)) {
+		} else {
+			if (nrow(mx) != nrow(wgts)) {
 				param1Name <- as.character(sys.call())[2]
 				stop(gettextf("Number of rows in %s != number of rows of wgts", param1Name))
 			}
 		}
 	}      
 	# 2. beginning check  - that grpby dimensions are correct   
-	if (!is.null(grpby)){
+	if (!is.null(grpby)) {
 		if (is.vector(grpby)) {
 			if(nrow(mx) != length(grpby)) {
 				param1Name <- as.character(sys.call())[2]
 				stop(gettextf("Number of rows in %s != length of grpby", param1Name))
 			}
-		}else{
-			if(nrow(mx) != nrow(grpby)) {
+		} else {
+			if (nrow(mx) != nrow(grpby)) {
 				param1Name <- as.character(sys.call())[2]
 				stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
 			}
-		}
-		
+		}	
 	}
 	
 	#bulk of function starts   
@@ -961,11 +960,11 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 	if (!is.null(logiset)) grpby <- subset(grpby, logiset)
 	
 	#concatenating all grpby columns into one vector
-	if (!is.null(grpby)){
+	if (!is.null(grpby)) {
 		allgrpby=c(); j=1;while (j<=ncol(grpby)) {allgrpby=c(allgrpby,grpby[,j]);j=j+1}
 	}
 	
-	if (is.null(grpby)) {
+	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
 		result <- apply(matrix(1:ncol(mx),nrow=1), COL, function(i) {
 					x <- mx[,i]
 					non.nas <-  !is.na(x)
@@ -990,8 +989,6 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 				z2<-t(rep("NA", length(unique(allgrpby))))
 				return(z2)
 			} else{      
-				
-				
 				weightsGrouped <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x
 				
 				a<-aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x / weightsGrouped
