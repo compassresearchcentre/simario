@@ -73,6 +73,7 @@ Dictionary <- proto(expr = {
 	#'  identifies the grping coding, or NULL if no grouping coding.
 	#' @examples
 	#'  x.flat = c("1", "2", "3", "4") ; varname = "disability_state"; grpby.tag = NULL
+	#' x.flat = c("0", "1") ; varname = "disability_state"; grpby.tag = NULL
 	#'  x.flat = c("F 1", "F 2", "F 3", "F 4", "M 1", "M 2", "M 3", "M 4"); varname = "disability_state"; grpby.tag = "sex"
 	#'  x.flat = c("0", "1", "3", "5") ; varname = "earnings" ; grpby.tag = NULL
 	#'  x.flat = c("F 0", "F 1", "F 3", "M 0", "M 5") ; varname = "earnings" ; grpby.tag = "sex"

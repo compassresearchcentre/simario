@@ -432,6 +432,14 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag=="") {
+				grpby.tag <- NULL
+			}
+		}
+	}
+	
 	#label
 	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)

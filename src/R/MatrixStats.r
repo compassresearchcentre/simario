@@ -333,12 +333,12 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 	}
 	
 	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
-		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs)}))
+		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs, na.rm=na.rm)}))
 		colnames(result) <- new.names
 	} else {
 		result.by.col<- lapply(1:ncol(mx), function(i) {
 					#i=1
-					aggregate(mx[,i], by=list(grpby[,i]), FUN=quantile, probs=probs)
+					aggregate(mx[,i], by=list(grpby[,i]), FUN=quantile, probs=probs, na.rm=na.rm)
 				})
 		num.groups <- nrow(result.by.col[[1]])
 		num.yrs <- length(result.by.col)
@@ -970,6 +970,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 	} else {
 		
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
+			#i=2
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
 			
@@ -999,13 +1000,16 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 				nmat<-matrix(c(leftover,rep(NA,length(leftover))), ncol=2)
 				colnames(nmat)<-c("grp","a")
 				#combining the means for the i'th result with the matrix of NA's for those grpbys not present
-				z<- rbind(nmat,num_and_grp)
+				z <- rbind(nmat,num_and_grp)
 				#ordering on the grpby, to maintain the correct ordering of grpby across all
 				#ith steps - ensuring correct order in naming of the result later (by unique allgrpby)
 				z2<-z[order(z[,1]),]
 				z2[,2]
 			}
 		}))
+		if (sum(is(result[1,])=="character")>=1) {
+			result <- matrix(as.numeric(result), ncol=ncol(result), nrow=nrow(result), byrow=F)
+		}
 		
 		dimnames(result)[[COL]] <- sort(unique(allgrpby))
 	}
