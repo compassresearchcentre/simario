@@ -104,9 +104,21 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 	
 collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
 	runs_mx <- collator_mutiple_lists_mx(runs, CI)
+	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
 	
+	#the above code give incorrect categories with 0s for the outcome 
+	#we only want to remove thosew columns that are 0 for the outcome, not also for the grouping variable
+	#(which is what the above code does)
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag!="") {
+				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)	
+			}
+		}
+	}
+
 	numZ <- length(runs) #number of runs
 	
 	if ((CI==FALSE)|(numZ==1)) {
@@ -116,6 +128,7 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	} else if ((CI==TRUE)&&(numZ>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		
 		resultCI <- remove.cols(runs_mx, zero_cat_cols)
 		#label CI components
 		run1_array <- as_array_list_mx(runs[[1]])
@@ -262,6 +275,20 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #'  identify_zero_category_cols(mx)
 identify_zero_category_cols <- function (mx) {
 	grep("\\s0|^0", colnames(mx))
+}
+
+identify_zero_category_cols_bygrp <- function (mx) {
+	#names of the outcome variable (as opposed to the grouping variable come 2nd
+	col.names <- colnames(mx)
+	#identify the position of the last space in each name
+	space.ids <- str_locate_all(col.names, " ")
+	relevant.name.pos <- lapply(space.ids, function(x) {x[1,1] + 1}) #position of relevant name
+	rel.name.pos.vec <- rep(NA, length(relevant.name.pos))
+	for (i in 1:length(rel.name.pos.vec)) {
+		rel.name.pos.vec[i]<-relevant.name.pos[[i]]
+	}
+	rel.names <- str_sub(col.names, rel.name.pos.vec, rel.name.pos.vec)
+	grep("\\s0|^0", rel.names)
 }
 
 
@@ -426,17 +453,19 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	}
 	sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
 	
-	##string.length <- length(space.ids[[1]])
-	##end.element <- space.ids[[1]][string.length] - 1
-	##sub.col.names <- tapply(col.names, 1:length(col.names), function(x) {str_sub(x, 1, end.element)})
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag=="") {
+				grpby.tag <- NA
+			}
+		}
+	}
 
 	colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
 	result <- structure(mx.flattened, grpingNames=attr(colnames(mx.flattened), "grpingNames"))
 	return(result)
-	
-	#mx.flattened
 }
 
 #' Calculates the proportions within row groupings of a flattened matrix. 

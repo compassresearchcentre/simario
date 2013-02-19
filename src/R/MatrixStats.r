@@ -260,11 +260,13 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
 	} else if ((CI==TRUE)&(length(unique(grpby))>1)&(num.runs>1)) {
 		n <- length(x)/3 #number of unique means
-		id <- (3*(1:n) - 3) + 1
+		id <- (3*(1:n) - 3) + 1 #identifies where the means are
 		num.cats.outcome <- n/length(unique(grpby)) #number of categories for the outcome variable (not the grouping variable)
-		id2 <- rep(1:(n/num.cats.outcome), each=num.cats.outcome)
+		id2 <- rep(1:(n/num.cats.outcome), each=num.cats.outcome) #which means belong to which category
 		grpsum <- tapply(x[id], id2, sum, na.rm=na.rm)
-		grpsum <- rep(grpsum, each=n)
+		#grpsum <- rep(grpsum, each=n)
+		num.grps <- length(unique(grpby))
+		grpsum <- rep(grpsum, each=(n*3)/num.grps)
 		result <- structure(as.vector(x / grpsum), .Names=names(x))
 	}
 	#x / grpsum[grpby]
