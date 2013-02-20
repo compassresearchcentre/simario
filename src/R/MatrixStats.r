@@ -597,7 +597,7 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 #' @param x
 #'  vector of values which can be interpreted as factors 
 #' @param grpby
-#'  elements to group by, or NULL to do no grouping
+#'  vector of elements to group by, or NULL to do no grouping
 #'  Same length as the columns of x.
 #' @param useNA
 #'  whether to include extra NA levels in the table.
@@ -628,6 +628,51 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 		}
 		
 		table(x, grpby, useNA = useNA, deparse.level = 0)
+	}
+}
+
+#' Frequency table, with option to group results.  
+#' Extension of table.grpby() that can handle grpby as a matrix as well as a vector.  
+#' Good for time-variant groupby variables
+#'  
+#' @param x
+#'  vector of values which can be interpreted as factors 
+#' @param grpby
+#'  A vector or matrix of elements to group by, or NULL to do no grouping.
+#'  vector must be same length as the columns of x or matrix must have the same number
+#'  of rows as z
+#' @param useNA
+#'  whether to include extra NA levels in the table.
+#'  one of c("no", "ifany", "always"). Defaults to "ifany".
+#' 
+#' @return
+#'  a table. If grpby is specified this will be a table
+#'  with columns that are the group by and rows the categories. 
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
+#' 
+#' @export
+#' @examples
+table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
+	
+	if (is.null(wgts)) {wgts<-rep(1,length(x)) }   
+	
+	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
+		a<-wtd.table(x, weights=wgts)
+		t(t(a$sum.of.weights))
+		
+		#t(t(table(x, useNA = useNA, deparse.level = 0)))
+	} else {
+		
+		if(length(x) != length(grpby)) {
+			stop(gettextf("Length of %s != length of %s", 
+							as.character(sys.call())[2], as.character(sys.call())[3]))
+		}
+		
+		a<-aggregate(wgts, by = list(grpby=grpby, x), FUN = sum)
+		b<-t(tapply(a$x, list(a$grpby, a$Group.2), identity))
+		b[which(is.na(b))]<-0
+		b
+		
 	}
 }
 
@@ -686,6 +731,120 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 	results.by.col <- lapply(1:ncol(mx), function (i) {
 				#i <- 1
 				table.grpby(mx[,i], grpby, useNA = useNA)
+			})
+	
+	# add names 
+	names(results.by.col) <- dimnames(mx)[[COL]]
+	
+	# return with meta
+	structure(results.by.col, meta=c(varname=attr(mx, "varname"), grpby.tag = grpby.tag, set=attr(logiset,"desc")))
+	
+}
+
+
+#' Generates a frequency table, with option to group by, and weight, for each column of a matrix.
+#' 
+#' @param mx
+#'  matrix, or dataframe
+#' 
+#' @param grpby
+#'  a vector or matrix of elements to group by, or NULL or unspecified to do no grouping.
+#'  Same length (or number of columns) as the columns of mx.
+#' 
+#' @param wgts
+#'  a vector or matrix of weights, or NULL or unspecified to do no weighting.
+#'  Same length (or number of columns) as the columns of mx.
+#' 
+#' @param grpby.tag
+#'  a character vector. If specified this value with be attached as the
+#'  meta attribute "grpby.tag"
+#'
+#' @param logiset
+#'  logical vector or matrix indicating which rows to include, or NULL to include all.
+#'
+#' @param useNA
+#'  whether to include extra NA levels in the table.
+#'  one of c("no", "ifany", "always"). Defaults to "ifany".
+#' 
+#' @return
+#'  list. Each element of the list is a frequency table for a column in mx.
+#'  If grpby is specified this will be a table with columns that are the group by and rows the categories. 
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
+#'
+#' @export 
+#' @examples
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
+#' grpby <- c('M','F','F','M')
+#' grpby<-matrix(c('M','F','F','M',  'M','M','F','M',  'M','M','M','M',  'F','F','F','F', 'F','F','F','M'),nrow=4,ncol=5)
+#' wgts<-matrix(c(rep(c(1,2,1,1),4),1,3,1,1),nrow=4,ncol=5)
+#' table_mx_cols(mx)
+#' table_mx_cols(mx, grpby)
+#' table_mx_cols(mx, grpby,wgts)
+#' logiset <- c(FALSE, TRUE, FALSE, TRUE)
+#' logiset <- c(0, 1, 0, 1)
+#' logiset <- matrix(data=c(rep(c(FALSE, TRUE, FALSE, TRUE),2),rep(c(TRUE, FALSE, TRUE,FALSE),3)), nrow=4,ncol=5)
+#' logiset <- matrix(data=c(rep(c(0, 1, 0, 1),2),rep(c(1, 0, 1,0),3)), nrow=4,ncol=5)
+#' table_mx_cols_BCASO(mx, grpby = grpby, logiset = logiset)
+#' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)
+table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, logiset = NULL) {
+	
+	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
+	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
+	if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+	
+	
+	if (!is.null(logiset)) {
+		logiset[is.na(logiset)]<-0
+		
+		# subset - if logiset is a vector
+		if (!is.matrix(logiset)) {
+			logiset<-as.logical(logiset)
+			mx <- mx[logiset, ,drop=FALSE]
+			if ( !is.null(grpby) ) grpby <- grpby[logiset, ,drop=FALSE]
+			if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
+		}
+		#subset - if logiset is a matrix
+		if (is.matrix(logiset)){
+			
+			need_to_make_NA_index<-which(logiset==F)
+			
+			mx2<-as.vector(mx)
+			mx2[need_to_make_NA_index]<-NA
+			mx<-matrix(mx2, byrow=F, nrow=nrow(mx))
+			
+			
+			if (!is.null(grpby)) {
+				grpby2<-as.vector(grpby)
+				grpby2[need_to_make_NA_index]<-NA
+				grpby<-matrix(grpby2, byrow=F, nrow=nrow(grpby))
+				
+			}
+			if (!is.null(wgts))  { 
+				wgts2<-as.vector(wgts)
+				wgts2[need_to_make_NA_index]<-NA
+				wgts<-matrix(wgts2, byrow=F, nrow=nrow(wgts))
+			}
+			
+		}
+		
+	}
+	
+	# if no column names, number them off
+	if (is.null(dimnames(mx)[[COL]])) {
+		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
+	}
+	
+	# get freqs for each column of mx, return a list
+	# in case dimensions of results of the table.grpby calls are different
+	# each element of the list represents a column, 
+	# each element is a matrix where columns are the group by
+	# and rows the categories
+	
+	#use lapply instead of apply because apply simplifies
+	#use lapply instead of alply so we don't have the split attributes
+	results.by.col <- lapply(1:ncol(mx), function (i) {
+				#i <- 1
+				table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
 			})
 	
 	# add names 
