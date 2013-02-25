@@ -276,7 +276,16 @@ mean_list_mx <- function(listmx) {
 prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 	if ((CI==FALSE)|(num.runs==1)) {
 		grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
-		result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+		#check for grouping
+		if (length(x)>length(grpsum)) {
+			#grouping 
+			n<-length(x)/length(grpsum)
+			grpsum <- rep(grpsum, each=n)
+			result <- structure(as.vector(x/grpsum), .Names=names(x))
+		} else {
+			#no grouping
+			result <- structure(as.vector(x / grpsum[grpby]), .Names=names(x))
+		}
 		
 	} else if ((CI==TRUE)&(length(unique(grpby))==1)&(num.runs>1)) {
 		# if CI = TRUE, there is no grouping, and there was more than 1 run
@@ -367,13 +376,19 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' 
 #' @export
 #' @examples 
-quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), ...) {
+quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
 	# check that grpby dimensions are correct   
 	if (!is.null(grpby)){
 		if (is.vector(grpby)) {
-			if(nrow(mx) != nrow(grpby)) {
+			if (!is.null(dim(grpby))) {
+				#if a matrix
+				if(nrow(mx) != nrow(grpby)) {
+					param1Name <- as.character(sys.call())[2]
+					stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
+				}
+			} else if (nrow(mx)!=length(grpby)) {
 				param1Name <- as.character(sys.call())[2]
 				stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
 			}
@@ -384,16 +399,40 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 		grpby <- matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
 	}
 	
+	if (!is.null(logiset)) {
+		logiset[is.na(logiset)] <- 0
+		#converts logiset from T/F to 0/1 (even if no NAs)
+		if (is.vector(logiset)) {
+			#mx <- mx[logiset, , drop=FALSE] #appears to be incorrect 
+			mx <- mx[logiset==1,]
+			#subset grpby which is a matrix by the logiset vector
+			grpby <- grpby[logiset==1,]
+		}
+		if (is.matrix(logiset)) {
+			NA_index <- which(logiset==F)
+			mx2 <- as.vector(mx)
+			mx2[NA_index] <- NA
+			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
+			if (!is.null(grpby)) {
+				grpby2 <- as.vector(grpby)
+				grpby2[NA_index] <- NA
+				grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))
+			}
+		}
+	}
+
+	
 	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
-		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs, na.rm=na.rm)}))
+		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs, ...)}))
 		colnames(result) <- new.names
 	} else {
 		result.by.col<- lapply(1:ncol(mx), function(i) {
 					#i=1
-					aggregate(mx[,i], by=list(grpby[,i]), FUN=quantile, probs=probs, na.rm=na.rm)
+					aggregate(mx[,i], by=list(grpby[,i]), FUN=quantile, probs=probs, ...)
 				})
 		num.groups <- nrow(result.by.col[[1]])
 		num.yrs <- length(result.by.col)
+		#empty, then gets filled
 		result <- matrix(ncol=length(probs)*num.groups, nrow=num.yrs)
 
 		for (j in 1:num.groups) {
@@ -798,7 +837,7 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 		
 		# subset - if logiset is a vector
 		if (!is.matrix(logiset)) {
-			logiset<-as.logical(logiset)
+			logiset <- as.logical(logiset)
 			mx <- mx[logiset, ,drop=FALSE]
 			if ( !is.null(grpby) ) grpby <- grpby[logiset, ,drop=FALSE]
 			if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
@@ -806,23 +845,21 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 		#subset - if logiset is a matrix
 		if (is.matrix(logiset)){
 			
-			need_to_make_NA_index<-which(logiset==F)
+			NA_index <- which(logiset==F)
 			
-			mx2<-as.vector(mx)
-			mx2[need_to_make_NA_index]<-NA
-			mx<-matrix(mx2, byrow=F, nrow=nrow(mx))
-			
+			mx2 <- as.vector(mx)
+			mx2[NA_index] <- NA
+			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
 			
 			if (!is.null(grpby)) {
-				grpby2<-as.vector(grpby)
-				grpby2[need_to_make_NA_index]<-NA
-				grpby<-matrix(grpby2, byrow=F, nrow=nrow(grpby))
-				
+				grpby2 <- as.vector(grpby)
+				grpby2[NA_index] <- NA
+				grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))	
 			}
 			if (!is.null(wgts))  { 
-				wgts2<-as.vector(wgts)
-				wgts2[need_to_make_NA_index]<-NA
-				wgts<-matrix(wgts2, byrow=F, nrow=nrow(wgts))
+				wgts2 <- as.vector(wgts)
+				wgts2[NA_index] <- NA
+				wgts <- matrix(wgts2, byrow=F, nrow=nrow(wgts))
 			}
 			
 		}
@@ -1160,9 +1197,25 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 	varname <- attr(mx, "varname")
 	
 	# subset
-	if (!is.null(logiset)) mx <- subset(mx, logiset)
-	if (!is.null(logiset)) wgts <- subset(wgts, logiset)
-	if (!is.null(logiset)) grpby <- subset(grpby, logiset)
+	if (!is.null(logiset)) {
+		if (is.vector(logiset)) {
+			mx <- subset(mx, logiset)
+			wgts <- subset(wgts, logiset)
+			if (!is.null(grpby)) {
+				grpby <- subset(grpby, logiset)
+			}
+		} else if (is.matrix(logiset)) {
+			NA_index <- which(logiset==F)
+			mx2 <- as.vector(mx)
+			mx2[NA_index] <- NA
+			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
+			if (!is.null(grpby)) {
+				grpby2 <- as.vector(grpby)
+				grpby2[NA_index] <- NA
+				grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))
+			}
+		}
+	}
 	
 	#concatenating all grpby columns into one vector
 	if (!is.null(grpby)) {
@@ -1179,7 +1232,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 		result <- t(t(result))
 		
 	} else {
-		
+		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
 			#i=2
 			x <- mx[,i]
@@ -1221,7 +1274,10 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 		if (sum(is(result[1,])=="character")>=1) {
 			result <- matrix(as.numeric(result), ncol=ncol(result), nrow=nrow(result), byrow=F)
 		}
-		
+		#if there is a column of NAs due to using a logiset then remove the last column which will only be NAs
+		if (sum(is.na(result[,ncol(result)]))==nrow(result)) {
+			result <- result[,-ncol(result)]
+		}
 		dimnames(result)[[COL]] <- sort(unique(allgrpby))
 	}
 	

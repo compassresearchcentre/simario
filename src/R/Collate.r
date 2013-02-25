@@ -109,7 +109,7 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
 	
 	#the above code give incorrect categories with 0s for the outcome 
-	#we only want to remove thosew columns that are 0 for the outcome, not also for the grouping variable
+	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
 	#(which is what the above code does)
 	if (!is.null(grpby.tag)) {
 		if (!is.na(grpby.tag)) {
@@ -205,10 +205,20 @@ collator_means <- function(runs, dict, ...) {
 			}
 		}
 	}
+	
+	#if there are spaces in the groupby tag it means that this table is one grouped by
+	#by the subgroup expression specifiec by the user
+	spaces.in.grpby.tag <- str_locate_all(grpby.tag, " ")[[1]]
+	if (length(spaces.in.grpby.tag)>0) {
+		colnames(runs_mx) <- colnames(runs_mx)
+		#fix labelling for means_by_subgroup later
+		runs_mx_labelled <- runs_mx
+	} else {
+		runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
+	}
 
-	runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
 	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
-		result <- runs_mx_labelled
+	result <- runs_mx_labelled
 
 	return(result)
 }
@@ -346,6 +356,16 @@ percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
 	groupnameprefixes <- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
+	
+	if(is.null(grpby.tag) || is.na(grpby.tag)) {
+		groupnameprefixes <- NULL
+	} else if (!is.null(grpby.tag) & !is.na(grpby.tag) & is.null(names(dict$codings[[grpby.tag]]))) {
+		groupnameprefixes <- c("Not in subgroup", "In specified subgroup")
+	} else if (!is.null(grpby.tag) & !is.na(grpby.tag) & !is.null(names(dict$codings[[grpby.tag]]))) {
+		groupnameprefixes <- names(dict$codings[[grpby.tag]])
+	} else {
+		stop("Check percentages_flattened_mx()")
+	}
 
 	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI, num.runs) * 100
 	colnames(result) <- paste(colnames(result), "(%)")
@@ -557,6 +577,10 @@ prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE
 		grpby <- rep(1, ncol(mx.grped.rows))
 	} else {
 		grpby <- match(grpingNames,groupnameprefixes)
+		if (sum(is.na(grpby))==length(grpby)) {
+			#grpby <- as.numeric(grpingNames)
+			grpby <- grpingNames
+		}
 		assert(!is.na(grpby))	
 	}
 	# get proportions by grp
