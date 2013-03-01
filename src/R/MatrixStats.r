@@ -152,6 +152,120 @@ mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
 }
 
 
+mean_array_z_pctile_CIs2 <- function (xa, CI = TRUE, NA.as.zero = T, cat.adjustments=NULL, dict) {
+	if ((NA.as.zero)&(sum(is.na(xa))>0)) xa[is.na(xa)] <- 0
+	
+	varname <- attr(xa, "meta")["varname"]
+	#binbreaks will be null unless the variable is a continuous one with specified binbreaks
+	binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
+	grpby.tag <- attr(xa, "meta")["grpby.tag"]
+	
+	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
+	
+	#take the mean across the z-dimensions to get the mean percentage in each category in each year across runs
+	result <- apply(pct.array, c(ROW,COL), mean)
+	col.names <- colnames(xa)
+	colnames(result) <- col.names
+	
+	numZ <- dim(xa)[ZDIM]
+	
+	# CIs only make sense if more than 1 Z dim
+	if (CI && numZ > 1) {
+		
+		##errZ <- apply(xa,c(ROW,COL),err)
+		
+		#calculate left CI
+		leftZ <- apply(pct.array, c(ROW,COL), function(x) {quantile(x, .025, na.rm=T)})
+		colnames(leftZ) <- col.names
+		
+		#calculate right CI
+		rightZ <- apply(pct.array, c(ROW,COL), function(x) {quantile(x, .975, na.rm=T)})
+		colnames(rightZ) <- col.names
+		
+		#add left and right Z to the right hand side of result
+		resultCI <- cbind(Mean=result,  Lower=leftZ, Upper=rightZ)
+		
+		# reorder resultCI so that lower and upper is next to the mean of each grouping
+		numGroups <- dim(xa)[COL] #CHECK
+		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
+		resultCI <- resultCI[, reordering]
+		
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		names(dimnames(resultCI)) <- names(dimnames(result))
+		result <- resultCI
+	}
+	
+	#keep meta attribute
+	attr(result, "meta") <- attr(xa, "meta")
+	
+	result
+}
+
+
+#' Calculates proportions for each iteration for each run.  
+#' If xa has a group-by tag then proportions are calculated separately for each group.
+#' 
+#' Other way had the means of the numerator collated.  
+#' A percentage was calculated by assuming that the denominator did not change over time.  
+#' In this function the group-by variable can be a time-variant variable 
+#' and hence the denominator changes over time. 
+#' Because of this the percentages are calculated for each group (if there is grouping),
+#' for each year for each run.  
+#' Then later the mean of the percentages is taken rather than the mean of the frequencies.
+#' 
+#' @param xa
+#' an array of run results.  nrow = num iterations, 
+#' ncol = num variable groups x num group-by groups, num z dimensions = num runs
+#' @param grpby.tag
+#' NA or the name of the groupby variable
+#'
+proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {	
+	
+	if (!is.na(grpby.tag)) {
+		#if there is grouping
+		#empty array into which the proportions will be placed
+		pct.array <- array(dim=dim(xa))
+		#for each run calculate proportions
+		for (i in 1:dim(xa)[3]) {
+			#take data from run i
+			mat <- xa[,,i]
+			#num of categories for the primary variable
+			num.categories <- length(binbreaks[[varname]]) - 1
+			#number of groups for the group-by variable
+			numgroups <- ncol(mat)/num.categories
+			#if there are no binbreaks for the primary variable then num.categories is -1
+			#and numgroups is negative.
+			#numgroups and num.categories must be calculated in a different way
+			if (numgroups<0) {
+				numgroups <- length(names(dict$codings[[grpby.tag]]))
+				num.categories <- length(names(dict$codings[[varname]]))
+			}
+			grpby <- rep(1:numgroups, each=num.categories)
+			#calculate proportions
+			props <- apply(mat, ROW, function(x) {
+						grpsum <- tapply(x, grpby, sum)
+						grpsum2 <- rep(grpsum, each=num.categories)
+						x/grpsum2})
+			pct.array[,,i] <- t(props)
+		}
+		return(pct.array)
+	}
+	
+	if (is.na(grpby.tag)) {
+		#if there is no grouping, xa is an array (z=number of runs), 
+		#each z-dimension is a cross-tab of years by categories
+		#xa has the raw numbers
+		#pct.list is a list (1 element per run), each element of the list is the percentages in each category in each year
+		pct.list <- apply(xa, 3, function(x) {list(t(apply(x, ROW, function(x) {x/sum(x)})))})
+		#convert the list to a 3D array
+		pct.array <- array(dim=c(nrow(xa), ncol(xa), length(pct.list)))
+		for (i in 1:length(pct.list)) {
+			pct.array[,,i] <- matrix(as.vector(unlist(pct.list[[i]])), ncol=ncol(xa), nrow=nrow(xa))
+		}
+		return(pct.array)
+	}
+}
+
 #' Mean applied over a list of matrices/vectors. Aligns matrices/vectors first
 #' so rows and columns match (see align.by.name.list.mx).
 #' 
@@ -775,8 +889,13 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 	# add names 
 	names(results.by.col) <- dimnames(mx)[[COL]]
 	
+	varname <- attr(mx, "varname")
+	if (is.null(varname)) {
+		varname <- attr(mx, "meta")[["varname"]]
+	}
+	
 	# return with meta
-	structure(results.by.col, meta=c(varname=attr(mx, "varname"), grpby.tag = grpby.tag, set=attr(logiset,"desc")))
+	structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 	
 }
 
@@ -831,6 +950,8 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
 	if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
 	
+	#save varname
+	varname <- attr(mx, "varname")
 	
 	if (!is.null(logiset)) {
 		logiset[is.na(logiset)]<-0
@@ -847,6 +968,7 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 			
 			NA_index <- which(logiset==F)
 			
+			#mx loses varname here
 			mx2 <- as.vector(mx)
 			mx2[NA_index] <- NA
 			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
@@ -880,7 +1002,7 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 	#use lapply instead of apply because apply simplifies
 	#use lapply instead of alply so we don't have the split attributes
 	results.by.col <- lapply(1:ncol(mx), function (i) {
-				#i <- 1
+				#i <- 10
 				table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
 			})
 	
@@ -888,7 +1010,7 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 	names(results.by.col) <- dimnames(mx)[[COL]]
 	
 	# return with meta
-	structure(results.by.col, meta=c(varname=attr(mx, "varname"), grpby.tag = grpby.tag, set=attr(logiset,"desc")))
+	structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 	
 }
 
