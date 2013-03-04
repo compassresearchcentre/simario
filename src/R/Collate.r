@@ -69,9 +69,9 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 	return(result)
 }
 
-collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", numbers=FALSE, CI=FALSE, cat.adjustments=NULL) {
+collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 
-	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments)
+	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
 	
 	num.runs <- length(runs)
 	
@@ -86,7 +86,7 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 		run1_array <- as_array_list_mx(runs[[1]])
 		numGroups <- dim(run1_array)[COL] #number of group-by groups
 		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		result <- resultCI
+		result <- resultCI*100
 	}
 	return(result)
 }
@@ -126,7 +126,7 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 #' }
 	
 collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
-	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict)
+	runs_mx <- collator_mutiple_lists_mx(runs=runs, CI=CI)
 	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
@@ -142,6 +142,79 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 		}
 	}
 
+	numZ <- length(runs) #number of runs
+	
+	if ((CI==FALSE)|(numZ==1)) {
+		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		result <- remove.cols(runs_mx, zero_cat_cols)
+		
+	} else if ((CI==TRUE)&&(numZ>1)) {
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		resultCI <- remove.cols(runs_mx, zero_cat_cols)
+		
+		#label CI components
+		run1_array <- as_array_list_mx(runs[[1]])
+		numGroups <- dim(run1_array)[COL]
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		names(dimnames(resultCI)) <- names(dimnames(resultCI))
+		result <- resultCI
+	}
+	
+	return(result)
+}
+
+#' Collate frequencies and removes the zero category. Performs the following:
+#' 
+#' \itemize{
+#'   \item Takes mean without confidence intervals using \code{\link{collator_mutiple_lists_mx}} 
+#'   \item Labels the result using the dictionary 
+#'   \item Converts frequencies to percentages
+#'   \item Removes the zero category
+#' }
+#'
+#' @param runs
+#'  a list of lists of matrices, one inner list per run.
+#'  Each inner list may have any number of matrices,
+#'  and each matrix may have a different sets of rows or columns.
+#'  The matrices will be flattened into rows.
+#' 
+#' @param dict
+#'  Dictionary object. Used to label columns.
+#'  
+#' @param row.dim.label
+#'  name of the entire row dimension
+#' 
+#' @param col.dim.label
+#'  name of the entire col dimension
+#'
+#' @seealso \code{\link{collator_mutiple_lists_mx}}
+#' @export 
+#' @examples
+#' \dontrun{
+#' runs <- all_run_results_zipped$freqs[[1]]
+#' runs <- all_run_results_zipped$freqs_by_sex[[1]]
+#' collator_freqs_remove_zero_cat(runs, dict_example)
+#' }
+
+collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
+	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict)
+	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+	
+	zero_cat_cols <- identify_zero_category_cols(runs_mx)
+	
+	#the above code give incorrect categories with 0s for the outcome 
+	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
+	#(which is what the above code does)
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag!="") {
+				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)	
+			}
+		}
+	}
+	
 	numZ <- length(runs) #number of runs
 	
 	if ((CI==FALSE)|(numZ==1)) {
@@ -302,10 +375,10 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE, cat.adjustments=NULL) {
 	mean_array_z_pctile_CIs(runs_array, CI=CI)
 }
 
-collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict) {
+collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
 	#mean_array_z_pctile_CIs(runs_array, CI=CI)
-	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict)
+	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 
 #' Identify and return the indices of columns that 

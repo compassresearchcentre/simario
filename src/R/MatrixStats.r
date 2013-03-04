@@ -152,12 +152,15 @@ mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
 }
 
 
-mean_array_z_pctile_CIs2 <- function (xa, CI = TRUE, NA.as.zero = T, cat.adjustments=NULL, dict) {
+mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	if ((NA.as.zero)&(sum(is.na(xa))>0)) xa[is.na(xa)] <- 0
 	
 	varname <- attr(xa, "meta")["varname"]
 	#binbreaks will be null unless the variable is a continuous one with specified binbreaks
-	binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
+	
+	if (is.null(binbreaks)) {
+		binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
+	}
 	grpby.tag <- attr(xa, "meta")["grpby.tag"]
 	
 	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
@@ -219,7 +222,13 @@ mean_array_z_pctile_CIs2 <- function (xa, CI = TRUE, NA.as.zero = T, cat.adjustm
 #' @param grpby.tag
 #' NA or the name of the groupby variable
 #'
-proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {	
+proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
+	
+	if (!is.na(grpby.tag)) {
+		if (grpby.tag=="") {
+			grpby.tag <- NA
+		}
+	}
 	
 	if (!is.na(grpby.tag)) {
 		#if there is grouping
@@ -230,7 +239,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 			#take data from run i
 			mat <- xa[,,i]
 			#num of categories for the primary variable
-			num.categories <- length(binbreaks[[varname]]) - 1
+			num.categories <- length(binbreaks) - 1
 			#number of groups for the group-by variable
 			numgroups <- ncol(mat)/num.categories
 			#if there are no binbreaks for the primary variable then num.categories is -1
