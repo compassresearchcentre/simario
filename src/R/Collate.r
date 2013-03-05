@@ -9,6 +9,7 @@
 #'   \item Takes mean without confidence intervals using \code{\link{collator_mutiple_lists_mx}}  
 #'   \item Labels the result using the dictionary 
 #'   \item Converts frequencies to percentages
+#'   \item Labels the output
 #' }
 #'   
 #' @param runs
@@ -68,6 +69,45 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 	}
 	return(result)
 }
+
+#'A new version of collator_freqs() that calls collator_mutiple_lists_mx2() (and then
+#' mean_array_pctile_CIs2()) instead of then 'non-2' versions.  This means that 
+#' percenatages will be averaged over runs instead of frequencies and the confidence
+#' intervals will be calculated on percentages rather than frequencies.  See documentation
+#' on mean_array_pctile_CIS2() more more details.  
+#' In contrast to the original collator_freqs() this function does not take a numbers 
+#' argument.  It will only produce percentages and not raw numbers or frequencies.
+#' Another difference between this function and the original collator_freqs() is that
+#' this function takes cat.adjustment and binbreaks arguments.  These are sent to  
+#' collator_mutiple_lists_mx2().
+#' 
+#' @param runs
+#'  a list of lists of matrices, one inner list per run.
+#'  Each inner list may have any number of matrices,
+#'  and each matrix may have a different sets of rows or columns.
+#'  The matrices will be flattened into rows.
+#' 
+#' @param dict
+#'  Dictionary object. Used to label columns.
+#'  
+#' @param row.dim.label
+#'  name of the entire row dimension
+#' 
+#' @param col.dim.label
+#'  name of the entire col dimension
+#' 
+#' @param cat.adjustments
+#' The cat.adjustments list containing the cat.adjustments for multiple variables.
+#' Within the function the specific cat.adjustments for the variable of interest are 
+#' extracted from the list in further embedded functions.  Either cat.adjustments or 
+#' binbreaks are needed if frequencies of a continuous variable are being requested.  
+#' 
+#' @param dict
+#' the specific project dictionary
+#' 
+#' @param binbreaks 
+#' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
+#' may be provided to the function.
 
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 
@@ -165,15 +205,22 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	return(result)
 }
 
-#' Collate frequencies and removes the zero category. Performs the following:
+#' Collate frequencies and removes the zero category. 
+#'
+#'A new version of collator_freqs() that calls collator_mutiple_lists_mx2() instead of 
+#' the 'non-2' version.  This means that percenatages will be averaged over runs instead 
+#' of frequencies and the confidence intervals will be calculated on percentages rather 
+#' than frequencies.  See documentation on mean_array_pctile_CIS2() more more details.  
+#' Another difference between this function and the original collator_freqs() is that
+#' this functiont takes cat.adjustments and binbreaks arguments. 
 #' 
 #' \itemize{
-#'   \item Takes mean without confidence intervals using \code{\link{collator_mutiple_lists_mx}} 
-#'   \item Labels the result using the dictionary 
-#'   \item Converts frequencies to percentages
+#'   \item Takes mean without confidence intervals using 
+#'                                               \code{\link{collator_mutiple_lists_mx2}} 
 #'   \item Removes the zero category
+#'   \item Labels the result using the dictionary 
 #' }
-#'
+#' 
 #' @param runs
 #'  a list of lists of matrices, one inner list per run.
 #'  Each inner list may have any number of matrices,
@@ -188,18 +235,19 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' 
 #' @param col.dim.label
 #'  name of the entire col dimension
-#'
-#' @seealso \code{\link{collator_mutiple_lists_mx}}
-#' @export 
-#' @examples
-#' \dontrun{
-#' runs <- all_run_results_zipped$freqs[[1]]
-#' runs <- all_run_results_zipped$freqs_by_sex[[1]]
-#' collator_freqs_remove_zero_cat(runs, dict_example)
-#' }
+#' 
+#' @param cat.adjustments
+#' The cat.adjustments list containing the cat.adjustments for multiple variables.
+#' Within the function the specific cat.adjustments for the variable of interest are 
+#' extracted from the list in further embedded functions.  Either cat.adjustments or 
+#' binbreaks are needed if frequencies of a continuous variable are being requested.  
+#' 
+#' @param binbreaks 
+#' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
+#' may be provided to the function.
 
-collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
-	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict)
+collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
+	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
 	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
@@ -319,6 +367,35 @@ collator_means <- function(runs, dict, ...) {
 	return(result)
 }
 
+collator_means2 <- function(runs, dict, cat.adjustments=NULL, binbreaks=NULL, ...) {
+	runs_mx <- collator_list_mx2(runs, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
+	
+	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag=="") {
+				grpby.tag<-NA
+			}
+		}
+	}
+	
+	#if there are spaces in the groupby tag it means that this table is one grouped by
+	#by the subgroup expression specifiec by the user
+	spaces.in.grpby.tag <- str_locate_all(grpby.tag, " ")[[1]]
+	if (length(spaces.in.grpby.tag)>0) {
+		colnames(runs_mx) <- colnames(runs_mx)
+		#fix labelling for means_by_subgroup later
+		runs_mx_labelled <- runs_mx
+	} else {
+		runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
+	}
+	
+	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
+	result <- runs_mx_labelled
+	
+	return(result)
+}
+
 #' Collate and average a list of matrices.
 #' 
 #' @param runs
@@ -341,6 +418,11 @@ collator_means <- function(runs, dict, ...) {
 collator_list_mx <- function(runs, CI=TRUE, ...) {
 	runs_array <- as_array_list_mx(runs)
 	mean_array_z_pctile_CIs(runs_array, CI=CI, ...)
+}
+
+collator_list_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL, ...) {
+	runs_array <- as_array_list_mx(runs)
+	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks, ...)
 }
 
 #' Collate and average mutiple lists of matrices.
@@ -370,14 +452,21 @@ collator_list_mx <- function(runs, CI=TRUE, ...) {
 #' 
 #' runs <- list(run1=run1,run2=run2) 
 #' collator_mutiple_lists_mx(runs, CI=FALSE)
-collator_mutiple_lists_mx <- function(runs, CI=TRUE, cat.adjustments=NULL) {
+collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 	runs_array <- flatten_mxlists_to_array(runs)
 	mean_array_z_pctile_CIs(runs_array, CI=CI)
 }
 
+#'A new version of collator_mutiple_lists_mx() that calls 
+#' mean_array_pctile_CIs2()) instead of then 'non-2' version.  This means that 
+#' percenatages will be averaged over runs instead of frequencies and the confidence
+#' intervals will be calculated on percentages rather than frequencies.  See documentation
+#' on mean_array_pctile_CIS2() more more details.  
+#' Another difference between this function and the original collator_mutiple_lists_mx() 
+#' is that this function takes cat.adjustments, dict, and binbreaks arguments.  
+
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
-	#mean_array_z_pctile_CIs(runs_array, CI=CI)
 	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 

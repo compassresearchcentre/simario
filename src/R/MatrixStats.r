@@ -151,7 +151,43 @@ mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
 	result
 }
 
-
+#' A new version of mean_array_z_pctile_CIs().  Differs from mean_array_z_pctile_CIs() in
+#' that the percentages are calculated within each run and the mean of the percentages
+#' taken as the point estimate. In mean_array_z_pctile_CIs() the mean numerator and 
+#' denominator are taken over the runs and to get the point estimate this mean numerator 
+#' is divided by the mean denominatoror to get a point estimate of the percentage.  This
+#' is equivalent to the first method (implemented in this function) if the denominator
+#' does not change over time, but if the denominator does change over time (e.g. this
+#' might happen when we are taking percentages by groups where the grouping variable is
+#' time-variant) the results are different and the method in this function is preferable.
+#' The same difference between the two versions of the function is seen in the calculation
+#' of confidence intervals.  In mean_array_z_pctile_CIs() the 2.5th and 97.5th percentiles
+#' of the frequencies over the runs are taken and then these are divided by the mean
+#' denominator.  If the we have a situation as described above where percentages are being
+#' calculated by a time-variant grouping variable then we can end up with confidence
+#' intervals that are greater than 100%. In this function, the 2.5th and 97.5th percentiles
+#' of the percentages are taken so that, in the case where percentages are calculated by a 
+#' time-variant grouping variable, the confidence intervals are more accurate and will not
+#' go above 100%.   
+#' This function has additional arguments compared to mean_array_z_pctile_CIs(), namely,
+#' cat.adjustments, dict, and binbreaks. 
+#' @param xa
+#'  an array with a Z dimension
+#' @param CI
+#'  if TRUE and xa has more than 1 Z dimension, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' @param NA.as.zero
+#'  if TRUE (default), treat NAs as if they are zeros
+#' @param cat.adjustments
+#' The cat.adjustments list containing the cat.adjustments for multiple variables.
+#' Within the function the specific cat.adjustments for the variable of interest are 
+#' extracted from the list.  Either cat.adjustments or binbreaks are needed if frequencies
+#' of a continuous variable are being requested.  
+#' @param dict
+#' the specific project dictionary
+#' @param binbreaks 
+#' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
+#' may be provided to the function.
 mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	if ((NA.as.zero)&(sum(is.na(xa))>0)) xa[is.na(xa)] <- 0
 	
@@ -162,6 +198,7 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 		binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
 	}
 	grpby.tag <- attr(xa, "meta")["grpby.tag"]
+	
 	
 	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
 	
@@ -205,23 +242,31 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 }
 
 
-#' Calculates proportions for each iteration for each run.  
+#' Calculates proportions for each iteration for each run.
+#' Called by mean_array_pctile_CIs2().   
 #' If xa has a group-by tag then proportions are calculated separately for each group.
 #' 
-#' Other way had the means of the numerator collated.  
-#' A percentage was calculated by assuming that the denominator did not change over time.  
-#' In this function the group-by variable can be a time-variant variable 
-#' and hence the denominator changes over time. 
-#' Because of this the percentages are calculated for each group (if there is grouping),
-#' for each year for each run.  
-#' Then later the mean of the percentages is taken rather than the mean of the frequencies.
+#' Other way had the means of the numerator collated.  A percentage was calculated by 
+#' assuming that the denominator did not change over time.  In this function the group-by 
+#' variable can be a time-variant variable and hence the denominator changes over time. 
+#' Because of this, the percentages are calculated for each group (if there is grouping),
+#' for each year for each run.  Then later the mean of the percentages is taken rather 
+#' than the mean of the frequencies.  For more details see the preamble to 
+#' mean_array_pctile_CIs2(). 
 #' 
 #' @param xa
 #' an array of run results.  nrow = num iterations, 
 #' ncol = num variable groups x num group-by groups, num z dimensions = num runs
 #' @param grpby.tag
 #' NA or the name of the groupby variable
-#'
+#' @param binbreaks
+#' Passed from mean_array_pctile_CIS2().  Used to calculate the number of categories for
+#' the outcome variable.
+#' @param varname
+#' a string of length 1 with the name of the outcome variable.  Passed from 
+#' mean_array_pctile_CIS2().  
+#'@param dicr
+#' the dictionary of the specific MSM project.
 proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 	
 	if (!is.na(grpby.tag)) {
@@ -434,6 +479,7 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 }
 
 #' Execute quantile on the columns of a matrix.
+#' The group-by variable must be time-invariant.
 #' 
 #' @param mx
 #'  matrix
@@ -477,13 +523,16 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' grpby can be a vector or a matrix with columns representing the value of the 
 #' grpby variable in different years.
 #' Does not have ability to include weights or logisets.   
-#' Can handle no grouping. 
+#' The group-by variable may be time-invariant or time-variant.  Can handle no grouping. 
 #' 
 #' @param mx
 #'  matrix
 #' @param grpby
 #' a vector or matrix indicating the group to whic the unit belongs.  
-#' Quantiles will be calculated separately for each group
+#' Quantiles will be calculated separately for each group.
+#' If the group-by variable is time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then 
+#' grpby should be a matrix with number of columns equal to number of years. 
 #' @param grpby.tag
 #' string. grouping variable names
 #' @param new.names
@@ -755,6 +804,7 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 }
 
 #' Frequency table, with option to group results.
+#' The group-by variable must be time-invariant.
 #'  
 #' @param x
 #'  vector of values which can be interpreted as factors 
@@ -795,14 +845,17 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 
 #' Frequency table, with option to group results.  
 #' Extension of table.grpby() that can handle grpby as a matrix as well as a vector.  
-#' Good for time-variant groupby variables
+#' The group-by variable may be time-invariant or time-variant.  
 #'  
 #' @param x
 #'  vector of values which can be interpreted as factors 
 #' @param grpby
 #'  A vector or matrix of elements to group by, or NULL to do no grouping.
 #'  vector must be same length as the columns of x or matrix must have the same number
-#'  of rows as z
+#'  of rows as z.
+#' If the group-by variable is  time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then 
+#' grpby should be a matrix with number of columns equal to number of years. 
 #' @param useNA
 #'  whether to include extra NA levels in the table.
 #'  one of c("no", "ifany", "always"). Defaults to "ifany".
@@ -839,6 +892,7 @@ table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
 }
 
 #' Generates a frequency table, with option to group by, for each column of a matrix.
+#' The group-by variable must be time-invariant.
 #' 
 #' @param mx
 #'  matrix, or dataframe
@@ -909,7 +963,8 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 }
 
 
-#' Generates a frequency table, with option to group by, and weight, for each column of a matrix.
+#' Generates a frequency table, with option to group by, and weight, for each column of a 
+#' matrix.  The group-by variable may be time-invariant or time-variant.  
 #' 
 #' @param mx
 #'  matrix, or dataframe
@@ -917,6 +972,9 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' @param grpby
 #'  a vector or matrix of elements to group by, or NULL or unspecified to do no grouping.
 #'  Same length (or number of columns) as the columns of mx.
+#' If  the group-by variable is time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then grpby 
+#' should be a matrix with number of columns equal to number of years. 
 #' 
 #' @param wgts
 #'  a vector or matrix of weights, or NULL or unspecified to do no weighting.
@@ -1157,6 +1215,7 @@ wtdtable_mx_cols <- function(mx, wgts = rep(1,nrow(mx)), addVariableName = FALSE
 
 #' Calculates the weighted mean for each column of the matrix
 #' optionally subsetting and grouping by another (equal length) variable.
+#' The group-by variable must be time-invariant.
 #' 
 #' @param mx
 #'  matrix or dataframe to calculate column means of 
@@ -1249,6 +1308,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #' which can be either a vector or a matrix.
 #' Optionally having different weights for each column of the matrix (same length/number of rows))- wgts parameter 
 #' which can also be either a vector or a matrix.
+#'  The group-by variable may be time-invariant or time-variant.  
 #' 
 #' @param mx
 #'  matrix or dataframe to calculate column means of 
@@ -1256,6 +1316,9 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #' @param grpby
 #'  elements to group by, or NULL or unspecified to do no grouping. 
 #'  Same length as the columns of mx.
+#' If the group-by variable is time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then 
+#' grpby should be a matrix with number of columns equal to number of years. 
 #' 
 #' @param grpby.tag
 #'  added to meta attribute of the result
