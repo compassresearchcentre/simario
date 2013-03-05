@@ -367,34 +367,6 @@ collator_means <- function(runs, dict, ...) {
 	return(result)
 }
 
-collator_means2 <- function(runs, dict, cat.adjustments=NULL, binbreaks=NULL, ...) {
-	runs_mx <- collator_list_mx2(runs, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
-	
-	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag=="") {
-				grpby.tag<-NA
-			}
-		}
-	}
-	
-	#if there are spaces in the groupby tag it means that this table is one grouped by
-	#by the subgroup expression specifiec by the user
-	spaces.in.grpby.tag <- str_locate_all(grpby.tag, " ")[[1]]
-	if (length(spaces.in.grpby.tag)>0) {
-		colnames(runs_mx) <- colnames(runs_mx)
-		#fix labelling for means_by_subgroup later
-		runs_mx_labelled <- runs_mx
-	} else {
-		runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
-	}
-	
-	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
-	result <- runs_mx_labelled
-	
-	return(result)
-}
 
 #' Collate and average a list of matrices.
 #' 
@@ -420,10 +392,7 @@ collator_list_mx <- function(runs, CI=TRUE, ...) {
 	mean_array_z_pctile_CIs(runs_array, CI=CI, ...)
 }
 
-collator_list_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL, ...) {
-	runs_array <- as_array_list_mx(runs)
-	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks, ...)
-}
+
 
 #' Collate and average mutiple lists of matrices.
 #' 
