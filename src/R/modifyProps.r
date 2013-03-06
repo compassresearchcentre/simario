@@ -198,13 +198,13 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		stop("Add additional type in modifyProps()")	
 	}
 
-	if (sum(tab.names!= 1:length(desired_props))>=1) {
-		default.vec2 = numeric(length(default.vec))
-		for (i in 1:length(desired_props)) {
-			default.vec2[default.vec==tab.names[i]] <- i
-		}
-		default.vec = default.vec2
-	}
+	#if (sum(tab.names!= 1:length(desired_props))>=1) {
+	#	default.vec2 = numeric(length(default.vec))
+	#	for (i in 1:length(desired_props)) {
+	#		default.vec2[default.vec==tab.names[i]] <- i
+	#	}
+	#	default.vec = default.vec2
+	#}
 	
 	#match propensity scores to children
 	#(this function assumed that default.vec and propens have the same children
@@ -218,6 +218,25 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	#this is used later in the change.cat function where the propensities are converted to ranks
 	rank.col = ncol(all.dat) + 1
 	
+	#creating a name vector with all the categories and no percentage symbols
+	#(needed if there are categories in the cat.adjectments vector that are not present 
+	# in the data)
+	locate.spaces <- str_locate_all(names(desired_props), " ")
+	pos.last.space <- NULL
+	lapply(locate.spaces, function(x) {
+				pos.last.space <<- c(pos.last.space, x[nrow(x),1])
+			})
+	cat.names <- names(desired_props)
+	new.names <- rep(NA, length(cat.names))
+	for (i in 1:length(desired_props)) {
+		new.names[i] <- str_sub(cat.names[i], 1, pos.last.space[i]-1)
+	}
+	t1 <- table(orig.default.vec)
+	names(desired_props) <- new.names
+	t2 <- desired_props
+	all.names <- unique(c(names(t1), names(t2)))
+	
+	
 	#create table of given data and calculate current proportions and the numbers 
 	#that need moving into or out of categories to get the requested proportions 
 	#(n.change)
@@ -230,6 +249,14 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	#these NAS are changed to 0s
 	na.id = which(is.na(tab.df$Freq))
 	tab.df$Freq[na.id] <- 0
+	rownames(tab.df)<-all.names
+	#reorder to be the same as that in desired_props (cat.adjustments)
+	sort.vec <- rep(NA, length(cat.names))
+	for (i in 1:length(cat.names)) {
+		sort.vec[i] <- which(row.names(tab.df)==new.names[i])
+	}
+	tab.df <- tab.df[sort.vec,]
+	tab.df$x <- 1:nrow(tab.df)
 	current.props = tab.df$Freq/sum(tab.df$Freq)
 	n.change = round(current.props*n) - round(desired_props*n)
 	#(e.g n.change[1] is the excess/deficient number of observations in the first 
@@ -268,8 +295,17 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		tab = table(new.all.dat[,1])
 		cats <- c(1:length(desired_props))
 		tab.df = merge(cats, tab, by = 1, all.x=TRUE)
+		#merge(names)
 		na.id = which(is.na(tab.df$Freq))
 		tab.df$Freq[na.id] <- 0
+		rownames(tab.df)<-all.names
+		#reorder to be the same as that in desired_props (cat.adjustments)
+		sort.vec <- rep(NA, length(cat.names))
+		for (j in 1:length(cat.names)) {
+			sort.vec[j] <- which(row.names(tab.df)==new.names[j])
+		}
+		tab.df <- tab.df[sort.vec,]
+		tab.df$x <- 1:nrow(tab.df)
 		current.props = tab.df$Freq/sum(tab.df$Freq)
 		n.change = round(current.props*n) - round(desired_props*n)
 	} 

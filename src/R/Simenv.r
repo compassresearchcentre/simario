@@ -107,6 +107,7 @@ expr = {
 	#' 	.$cat.adjustments$z1accomLvl1[1,] <- c(0.5,0.5)
 	#'  .$cat.adjustments$SESBTH[1,] <- c(0.1,0.1,0.8)
 	#'  .$cat.adjustments$catpregsmk2[1,] <- c(0.01,0.02,0.03,0.04,0.90)
+	#' .$cat.adjustments$INTERACT[1,] <- c(0, 0, 0, 0, 0, 0, 0, 0, 1)
 	#' 
 	#'  print(prop.table(table(.$simframe$z1accomLvl1)),digits=3)
 	#'  print(prop.table(table(binary.levels.combine(.$simframe$SESBTHLvl1 , .$simframe$SESBTHLvl2, .$simframe$SESBTHLvl3))),digits=3)
@@ -153,6 +154,7 @@ expr = {
 			#catadj <- .$cat.adjustments$z1single
 			#catadj <- .$cat.adjustments$SESBTH
 			#catadj <- .$cat.adjustments$catpregsmk2
+			#catadj <- .$cat.adjustments$INTERACT
 			cat_adj_vector <- catadj[iteration, ]
 			
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
@@ -517,7 +519,7 @@ expr = {
 		}
 		
 		invisible(lapply(.$modules, function(module) {
-							module$run_results_collated <- module$collate_all_run_results(module$run_results)
+							module$run_results_collated <- module$collate_all_run_results(module$run_results, .$cat.adjustments)
 						}))
 
 		# call garbage collector to release memory used during calculation (sometimes this is a lot)
