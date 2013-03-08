@@ -301,7 +301,7 @@ expr = {
 			}
 		}
 		
-		if (!is.null(logiset) && length(logiset) > 0){
+		if (!is.null(logiset) && length(logiset) > 0) {
 			.$simframe[varname]<-modifypropsVarSingle_on_subset(default.vec=.$simframe[varname], desired_props=desired_props, propens=propens, logiset=logiset)
 		}
 		else {
