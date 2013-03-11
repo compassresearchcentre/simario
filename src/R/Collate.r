@@ -440,6 +440,7 @@ collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict
 	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 
+
 #' Identify and return the indices of columns that 
 #' are for the zero category. Zero category column
 #' names begin with a "0" or, for flatten column 

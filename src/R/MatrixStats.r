@@ -198,9 +198,10 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 		binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
 	}
 	grpby.tag <- attr(xa, "meta")["grpby.tag"]
-	
-	
-	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
+	#new
+	#if (is.na(grpby.tag)) {
+	#	grpby.tag <- attr(cat.adjustments[[varname]], "logisetexpr")
+	#}
 	
 	#take the mean across the z-dimensions to get the mean percentage in each category in each year across runs
 	result <- apply(pct.array, c(ROW,COL), mean)
@@ -519,11 +520,13 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 
 
 #' Execute quantile on the columns of a matrix by a grouping variable.
-#' Extension of quantile_mx_cols to handle a tiume-variannt grouing variable.
+#' Only used for user-specified subgroups.
+#' Extension of quantile_mx_cols to handle a time-variant grouing variable.
 #' grpby can be a vector or a matrix with columns representing the value of the 
 #' grpby variable in different years.
 #' Does not have ability to include weights or logisets.   
-#' The group-by variable may be time-invariant or time-variant.  Can handle no grouping. 
+#' The group-by variable may be time-invariant or time-variant.  
+#' Not sure if can handle no grouping. 
 #' 
 #' @param mx
 #'  matrix
@@ -614,7 +617,24 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 			}
 			result[,((j*7)-6):(j*7)]<-grp.result
 		}
-		colnames(result) <- rep(new.names, num.groups)
+		
+		#name columns
+		start.colnames <- rep(new.names, num.groups)
+		#cat.codings <- as.numeric(names(table(children[[grpby.tag]])))
+		#if (length(cat.codings)>0) {
+		#	cat.names <- dict.MELC$cmatch(cat.codings, grpbyName)
+		#} else if ((length(cat.codings)==0)&(length(table(grpby))==2)) {
+			#cat.codings <- as.numeric(names(table(run_results$run1$outcomes[[grpbyName]])))
+			cat.names <- c("Not in subgroup", "In subgroup")
+		#}
+		
+		colname.prefixes <- rep(cat.names, each=ncol(result)/length(cat.names))
+		final.colnames <- character(length(start.colnames))
+		for (i in 1:length(colname.prefixes)) {
+			final.colnames[i] <- paste(colname.prefixes[i], start.colnames[i])
+		}
+		colnames(result) <- final.colnames
+
 	}
 	
 	structure(result, meta=c(varname=attr(mx, "varname")))
@@ -1069,8 +1089,13 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 	#use lapply instead of apply because apply simplifies
 	#use lapply instead of alply so we don't have the split attributes
 	results.by.col <- lapply(1:ncol(mx), function (i) {
-				#i <- 10
-				table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+				#i <- 1
+				##table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+				#new:
+				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+				colnames(result) <- c("Not in subgroup", "In subgroup")
+				return(result)
+				
 			})
 	
 	# add names 
