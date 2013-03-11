@@ -487,12 +487,17 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 #' 
 #' @param x.cont
 #'  a continuous variable to be adjusted
+#' 
 #' @param desired_props
 #'  desired proportions
+#' 
 #' @param catToContModels
-#' a list of models which will to used to convert the adjusted categorical variable back to continuous
+#' a list of models which will to used to convert the adjusted categorical variable back 
+#' to continuous
+#' 
 #' @param cont.binbreaks
 #' binbreaks for the continuous variable to be adjusted
+#' 
 #' @param propens 
 #'  matrix or vector of the propensity scores for each child
 #'  For binary variables there is one column of propensity scores: the
@@ -502,10 +507,13 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 #'  propensities to change from category 1 to category 2 are in the first
 #'  column and the propensities to change from category 2 to category 3 are
 #'  in the second column.
+#' 
 #' @param accuracy
-#' 	gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
-#' 	- the default is 0.01.
-#'  If the '.accuracy' global variable exists, its value will be used instead of that in function call.
+#' 	gives how close the end proportions are allowed to be away from the desired 
+#' proportions before an error message is given	- the default is 0.01.
+#'  If the '.accuracy' global variable exists, its value will be used instead of that in 
+#' function call.
+#' 
 #' @param envir
 #'  environment in which to evaluate model variables.
 #' 
@@ -530,7 +538,41 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 	adj.x.cont
 }
 
-
+#' A wrapper for modifyProps.  
+#' Subsets by the logiset call the appropriate version of modifyProps 
+#' (modifyPropsContinuous or modifyProps) then, if modifyProps was called on a logiset,
+#' combine and reorder the data using combine.and.reorder(). 
+#' Called in adjustCatVar(), adjustContVar, and applyContAdjustmentToSimframe(). 
+#' 
+#' @param x
+#' A categorical vector to be adjusted.
+#' 
+#' @param desiredProps
+#' Vector of desired proportions
+#' 
+#' @param propens
+#' propensity scores used to decide who should change categories
+#' 
+#' @param logiset
+#' A TRUE/FALSE vector indicating the subset of units to apply the scenari (change in 
+#' proportions) to
+#' 
+#' @param catToContModels
+#' A list of models which will to used to convert the adjusted categorical variable back 
+#' to continuous.
+#' 
+#' @param cont.binbreaks
+#' Binbreaks for the variable being adjusted if exist.  Used to ensure the imputed
+#' continuous values (only for continuous variables) are within the bounds of the 
+#' category.
+#' 
+#' @param envir
+#' environment - for the MELC MSM is usually the simframe of the scenario environment.
+#' 
+#' @return
+#' an adjusted vector, either categorical or continuous depending on whether catToCont 
+#' models were provided.
+ 
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
 	if (!is.null(logiset) && length(logiset)>0) {
 		#subet the propensities according to the logiset
@@ -562,7 +604,25 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 	}
 }
 
-
+#' Combines and reorders (so correct original order) after modifyProps has been called on
+#' a logiset.
+#' Called in adjust.proportions().  
+#' 
+#' @param modified.x
+#' A vector of modified values (i.e. those tht were in the logiset.  Either categorical or
+#' continuous. 
+#' 
+#' @param non.modified.x
+#' A vector of non-modified values of the same variable (i.e. those tht were not in the 
+#' logiset.  Either categorical or continuous.
+#' 
+#' @param logiset
+#' A TRUE/FALSE vetor defining which units are in the logical subset on which modifyProps
+#' was called.
+#' 
+#' @return 
+#' A combined and reordered vector.  Contains evereyone in the population in the correct 
+#' order.
 combine.and.reorder <- function(modified.x, non.modified.x, logiset) {
 	n = length(modified.x) + length(non.modified.x)
 	original.position <- 1:n
