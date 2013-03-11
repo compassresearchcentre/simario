@@ -213,6 +213,7 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' than frequencies.  See documentation on mean_array_pctile_CIS2() more more details.  
 #' Another difference between this function and the original collator_freqs() is that
 #' this functiont takes cat.adjustments and binbreaks arguments. 
+#' Currently only used in tableBuilder().
 #' 
 #' \itemize{
 #'   \item Takes mean without confidence intervals using 
@@ -267,12 +268,12 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 	
 	if ((CI==FALSE)|(numZ==1)) {
 		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		result <- remove.cols(runs_mx, zero_cat_cols)
+		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		result <- remove.cols(runs_mx, zero_cat_cols)*100
 		
 	} else if ((CI==TRUE)&&(numZ>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		resultCI <- remove.cols(runs_mx, zero_cat_cols)
 		
 		#label CI components
@@ -280,7 +281,7 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 		numGroups <- dim(run1_array)[COL]
 		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
 		names(dimnames(resultCI)) <- names(dimnames(resultCI))
-		result <- resultCI
+		result <- resultCI*100
 	}
 	
 	return(result)
