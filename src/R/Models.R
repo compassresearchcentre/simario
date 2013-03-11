@@ -741,6 +741,7 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 		if (length(models[[i]]$sd)==1) {
 			result[select] <- predSimNorm(models[[i]], envir, set=select)
 			#round so that simulated values outside the category boundaries are set to be at the boundary of the category
+			result[select] <- round(result[select])
 			result[select][result[select]<cont.binbreaks[i]+1] <- cont.binbreaks[i]+1
 			result[select][result[select]>cont.binbreaks[i+1]] <- cont.binbreaks[i+1]
 		} else if (length(models[[i]]$alpha)==1) {

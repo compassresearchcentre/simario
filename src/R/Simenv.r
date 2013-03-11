@@ -155,6 +155,7 @@ expr = {
 			#catadj <- .$cat.adjustments$SESBTH
 			#catadj <- .$cat.adjustments$catpregsmk2
 			#catadj <- .$cat.adjustments$INTERACT
+			#catadj <- .$cat.adjustments$MAGE
 			cat_adj_vector <- catadj[iteration, ]
 			
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
