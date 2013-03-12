@@ -177,7 +177,10 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	if (!is.null(grpby.tag)) {
 		if (!is.na(grpby.tag)) {
 			if (grpby.tag!="") {
-				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)	
+				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
+				if (length(zero_cat_cols)==0) {
+					zero_cat_cols <- identify_zero_category_cols(runs_mx)
+				}
 			}
 		}
 	}
@@ -677,12 +680,12 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	col.names <- colnames(mx.flattened)
 	#identify the position of the last space in each name
 	space.ids <- str_locate_all(col.names, " ")
-	num.spaces <- nrow(space.ids[[1]])
-	pos.last.space <- lapply(space.ids, function(x) {x[num.spaces,2]})
-	pos.last.space.vec <- rep(NA, length(col.names))
-	for (i in 1:length(pos.last.space.vec)) {
-		pos.last.space.vec[i]<-pos.last.space[[i]]
+	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
+	pos.last.space <- rep(NA, length(num.spaces))
+	for (i in 1:length(num.spaces)) {
+		pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
 	}
+	pos.last.space.vec <- pos.last.space
 	sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
 	
 	#if grpby.tag="" then convert it to NA
@@ -694,7 +697,21 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 		}
 	}
 
-	colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+	if (num.spaces[1]<=2) {
+		colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+	} else if (num.spaces[1]>2) {
+		#take last character of sub.col.names to match
+		name.length <- str_length(sub.col.names)
+		simple.names <- str_sub(sub.col.names, name.length, name.length)
+		simple.names.words <- dict$cmatch(simple.names, varname)
+		#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
+		subgroup.indicator <- str_sub(sub.col.names, 1, name.length-2)
+		final.names <- rep(NA, length(sub.col.names))
+		for (i in 1:length(sub.col.names)) {
+			final.names[i] <- paste(subgroup.indicator[i], simple.names.words[i])
+		}
+		colnames(mx.flattened) <- final.names
+	}
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
 	result <- structure(mx.flattened, grpingNames=attr(colnames(mx.flattened), "grpingNames"))

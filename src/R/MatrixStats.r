@@ -547,7 +547,7 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' 
 #' @export
 #' @examples 
-quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, ...) {
+quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
 	# check that grpby dimensions are correct   
@@ -616,14 +616,14 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 		
 		#name columns
 		start.colnames <- rep(new.names, num.groups)
-		#cat.codings <- as.numeric(names(table(children[[grpby.tag]])))
-		#if (length(cat.codings)>0) {
-		#	cat.names <- dict.MELC$cmatch(cat.codings, grpbyName)
-		#} else if ((length(cat.codings)==0)&(length(table(grpby))==2)) {
-			#cat.codings <- as.numeric(names(table(run_results$run1$outcomes[[grpbyName]])))
+		if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+			#colnames(result) <- c("Not in subgroup", "In subgroup")
 			cat.names <- c("Not in subgroup", "In subgroup")
-		#}
-		
+		} else if (!is.null(grpby.tag)) {
+			cat.names <- unlist(dict$cnamesLookup(grpby.tag))
+		} else {
+			cat("Checking naming sections in quantile_mx_cols_BCASO \n")
+		}
 		colname.prefixes <- rep(cat.names, each=ncol(result)/length(cat.names))
 		final.colnames <- character(length(start.colnames))
 		for (i in 1:length(colname.prefixes)) {
