@@ -203,6 +203,8 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 	#	grpby.tag <- attr(cat.adjustments[[varname]], "logisetexpr")
 	#}
 	
+	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
+	
 	#take the mean across the z-dimensions to get the mean percentage in each category in each year across runs
 	result <- apply(pct.array, c(ROW,COL), mean)
 	col.names <- colnames(xa)
