@@ -198,10 +198,6 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 		binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
 	}
 	grpby.tag <- attr(xa, "meta")["grpby.tag"]
-	#new
-	#if (is.na(grpby.tag)) {
-	#	grpby.tag <- attr(cat.adjustments[[varname]], "logisetexpr")
-	#}
 	
 	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
 	
@@ -214,8 +210,6 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 	
 	# CIs only make sense if more than 1 Z dim
 	if (CI && numZ > 1) {
-		
-		##errZ <- apply(xa,c(ROW,COL),err)
 		
 		#calculate left CI
 		leftZ <- apply(pct.array, c(ROW,COL), function(x) {quantile(x, .025, na.rm=T)})
@@ -891,10 +885,10 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #' @examples
 table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
 	
-	if (is.null(wgts)) {wgts<-rep(1,length(x)) }   
+	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
 	
 	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
-		a<-wtd.table(x, weights=wgts)
+		a <- wtd.table(x, weights=wgts)
 		t(t(a$sum.of.weights))
 		
 		#t(t(table(x, useNA = useNA, deparse.level = 0)))
@@ -905,9 +899,9 @@ table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
 							as.character(sys.call())[2], as.character(sys.call())[3]))
 		}
 		
-		a<-aggregate(wgts, by = list(grpby=grpby, x), FUN = sum)
-		b<-t(tapply(a$x, list(a$grpby, a$Group.2), identity))
-		b[which(is.na(b))]<-0
+		a <- aggregate(wgts, by = list(grpby=grpby, x), FUN = sum)
+		b <- t(tapply(a$x, list(a$grpby, a$Group.2), identity))
+		b[which(is.na(b))] <- 0
 		b
 		
 	}
@@ -1033,7 +1027,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' logiset <- matrix(data=c(rep(c(0, 1, 0, 1),2),rep(c(1, 0, 1,0),3)), nrow=4,ncol=5)
 #' table_mx_cols_BCASO(mx, grpby = grpby, logiset = logiset)
 #' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)
-table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, logiset = NULL) {
+table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, logiset = NULL, dict=NULL) {
 	
 	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
 	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
@@ -1043,7 +1037,7 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 	varname <- attr(mx, "varname")
 	
 	if (!is.null(logiset)) {
-		logiset[is.na(logiset)]<-0
+		logiset[is.na(logiset)] <- 0
 		
 		# subset - if logiset is a vector
 		if (!is.matrix(logiset)) {
@@ -1053,7 +1047,7 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 			if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
 		}
 		#subset - if logiset is a matrix
-		if (is.matrix(logiset)){
+		if (is.matrix(logiset)) {
 			
 			NA_index <- which(logiset==F)
 			
@@ -1082,6 +1076,12 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
 	}
 	
+	if (!is.null(grpby.tag)) {
+		if (grpby.tag=="") {
+			grpby.tag <- NULL
+		}
+	}
+	
 	# get freqs for each column of mx, return a list
 	# in case dimensions of results of the table.grpby calls are different
 	# each element of the list represents a column, 
@@ -1092,12 +1092,14 @@ table_mx_cols_BCASO <- function(mx, grpby = NULL, wgts=NULL, grpby.tag = NULL, l
 	#use lapply instead of alply so we don't have the split attributes
 	results.by.col <- lapply(1:ncol(mx), function (i) {
 				#i <- 1
+				#old:
 				##table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
 				#new:
 				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-				colnames(result) <- c("Not in subgroup", "In subgroup")
+				if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+					colnames(result) <- c("Not in subgroup", "In subgroup")
+				} 
 				return(result)
-				
 			})
 	
 	# add names 
