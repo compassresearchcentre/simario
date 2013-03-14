@@ -55,7 +55,7 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 		result <- runs_mx
 		}
 	} else if ((CI==TRUE)&&(num.runs>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs<-num.runs)
 		if (numbers==FALSE) {
 			resultCI <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
 		} else {
@@ -119,7 +119,7 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
 		result <- runs_mx
 	} else if ((CI==TRUE)&&(num.runs>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs)
 		resultCI <- runs_mx
 	
 		#label CI components
@@ -188,12 +188,13 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	numZ <- length(runs) #number of runs
 	
 	if ((CI==FALSE)|(numZ==1)) {
-		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		result <- remove.cols(runs_mx, zero_cat_cols)
 		
 	} else if ((CI==TRUE)&&(numZ>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		resultCI <- remove.cols(runs_mx, zero_cat_cols)
 		
@@ -270,12 +271,13 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 	numZ <- length(runs) #number of runs
 	
 	if ((CI==FALSE)|(numZ==1)) {
-		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
 		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		result <- remove.cols(runs_mx, zero_cat_cols)*100
 		
 	} else if ((CI==TRUE)&&(numZ>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
 		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		resultCI <- remove.cols(runs_mx, zero_cat_cols)
 		
@@ -667,7 +669,7 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' 
 #' @export
 #' @examples 
-label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
+label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
 	
@@ -676,17 +678,21 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	#[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
 	#[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
 	
-	# Need to remove the Mean, Lower, and Upper parts
 	col.names <- colnames(mx.flattened)
-	#identify the position of the last space in each name
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
-	pos.last.space <- rep(NA, length(num.spaces))
-	for (i in 1:length(num.spaces)) {
-		pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
+	if ((CI==TRUE)&(num.runs>1)) {
+		# Need to remove the Mean, Lower, and Upper parts
+		#identify the position of the last space in each name
+		pos.last.space <- rep(NA, length(num.spaces))
+		for (i in 1:length(num.spaces)) {
+			pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
+		}
+		pos.last.space.vec <- pos.last.space
+		sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
+	} else if ((CI==FALSE)|(num.runs==1)) {
+		sub.col.names <- col.names
 	}
-	pos.last.space.vec <- pos.last.space
-	sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
 	
 	#if grpby.tag="" then convert it to NA
 	if (!is.null(grpby.tag)) {
