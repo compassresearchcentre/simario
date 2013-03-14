@@ -1379,7 +1379,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #' na.rm = FALSE ; na.rm = TRUE
 #' 
 #' mean_mx_cols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
-mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts = NULL) {
+mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wgts=NULL, dict=NULL) {
 		
 	# 1. beginning check - that weight dimensions are correct
 	if (!is.null(wgts)) {
@@ -1502,6 +1502,9 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, 
 			result <- result[,-ncol(result)]
 		}
 		dimnames(result)[[COL]] <- sort(unique(allgrpby))
+		if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+			colnames(result) <- c("Not in subgroup", "In subgroup")
+		}
 	}
 	
 	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc"))) 
