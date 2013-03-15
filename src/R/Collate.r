@@ -126,8 +126,9 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 		run1_array <- as_array_list_mx(runs[[1]])
 		numGroups <- dim(run1_array)[COL] #number of group-by groups
 		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		result <- resultCI*100
+		result <- resultCI
 	}
+	result <- result*100
 	return(result)
 }
 
@@ -263,7 +264,10 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 	if (!is.null(grpby.tag)) {
 		if (!is.na(grpby.tag)) {
 			if (grpby.tag!="") {
-				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)	
+				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
+				if (length(zero_cat_cols)==0) {
+					zero_cat_cols <- identify_zero_category_cols(runs_mx)
+				}
 			}
 		}
 	}

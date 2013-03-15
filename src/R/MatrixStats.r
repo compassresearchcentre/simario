@@ -289,6 +289,10 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 			#numgroups and num.categories must be calculated in a different way
 			if (numgroups<0) {
 				numgroups <- length(names(dict$codings[[grpby.tag]]))
+				if ((numgroups==0)&(dict$dlookup_exists(grpby.tag)==1)) {
+					#there is a user specified subgroup
+					numgroups <- 2
+				}
 				num.categories <- length(names(dict$codings[[varname]]))
 			}
 			grpby <- rep(1:numgroups, each=num.categories)
@@ -1035,6 +1039,9 @@ table_mx_cols_BCASO <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logis
 	
 	#save varname
 	varname <- attr(mx, "varname")
+	if (is.null(varname)) {
+		varname <- attr(mx, "meta")[["varname"]]
+	}
 	
 	if (!is.null(logiset)) {
 		logiset[is.na(logiset)] <- 0
@@ -1457,7 +1464,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	} else {
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
-			#i=2
+			#i=1
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
 			
@@ -1473,24 +1480,24 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			} else{      
 				weightsGrouped <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x
 				
-				a<-aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x / weightsGrouped
-				grp<-aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$Group.1
+				a <- aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x / weightsGrouped
+				grp <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$Group.1
 				
 				
-				num_and_grp<-cbind(grp,a)
+				num_and_grp <- cbind(grp,a)
 				#creating a matrix of NA's for those grpby's not present in the column
 				#this enables each i'th step to return the same number of elements,
 				#further helping to enable correct naming of the result later (by unique allgrpby)
-				uall<-unique(allgrpby);
-				uGOTsomeNOTNA<-unique(grpby[non.nas,i]);
-				leftover<-uall[!(uall %in% uGOTsomeNOTNA)]
-				nmat<-matrix(c(leftover,rep(NA,length(leftover))), ncol=2)
-				colnames(nmat)<-c("grp","a")
+				uall <- unique(allgrpby);
+				uGOTsomeNOTNA <- unique(grpby[non.nas,i]);
+				leftover <- uall[!(uall %in% uGOTsomeNOTNA)]
+				nmat <- matrix(c(leftover,rep(NA,length(leftover))), ncol=2)
+				colnames(nmat) <- c("grp","a")
 				#combining the means for the i'th result with the matrix of NA's for those grpbys not present
 				z <- rbind(nmat,num_and_grp)
 				#ordering on the grpby, to maintain the correct ordering of grpby across all
 				#ith steps - ensuring correct order in naming of the result later (by unique allgrpby)
-				z2<-z[order(z[,1]),]
+				z2 <- z[order(z[,1]),]
 				z2[,2]
 			}
 		}))
