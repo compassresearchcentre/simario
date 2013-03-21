@@ -116,7 +116,8 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 	num.runs <- length(runs)
 	
 	if ((CI==FALSE|(num.runs==1))) {
-		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs)
 		result <- runs_mx
 	} else if ((CI==TRUE)&&(num.runs>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs)
@@ -190,7 +191,7 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	
 	if ((CI==FALSE)|(numZ==1)) {
 		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		result <- remove.cols(runs_mx, zero_cat_cols)
 		
@@ -685,14 +686,16 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	col.names <- colnames(mx.flattened)
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
-	if ((CI==TRUE)&(num.runs>1)) {
-		# Need to remove the Mean, Lower, and Upper parts
-		#identify the position of the last space in each name
-		pos.last.space <- rep(NA, length(num.spaces))
+	#identify the position of the last space in each name
+	pos.last.space <- rep(NA, length(num.spaces))
+	if (sum(num.spaces)>0) {
 		for (i in 1:length(num.spaces)) {
 			pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
 		}
-		pos.last.space.vec <- pos.last.space
+	}
+	pos.last.space.vec <- pos.last.space
+	if ((CI==TRUE)&(num.runs>1)) {
+		# Need to remove the Mean, Lower, and Upper parts
 		sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
 	} else if ((CI==FALSE)|(num.runs==1)) {
 		sub.col.names <- col.names
@@ -712,10 +715,11 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	} else if (num.spaces[1]>2) {
 		#take last character of sub.col.names to match
 		name.length <- str_length(sub.col.names)
-		simple.names <- str_sub(sub.col.names, name.length, name.length)
+		##simple.names <- str_sub(sub.col.names, name.length, name.length)
+		simple.names <- str_sub(sub.col.names, pos.last.space.vec+1, name.length)
 		simple.names.words <- dict$cmatch(simple.names, varname)
 		#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
-		subgroup.indicator <- str_sub(sub.col.names, 1, name.length-2)
+		subgroup.indicator <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
 		final.names <- rep(NA, length(sub.col.names))
 		for (i in 1:length(sub.col.names)) {
 			final.names[i] <- paste(subgroup.indicator[i], simple.names.words[i])
