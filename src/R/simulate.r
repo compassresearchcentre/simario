@@ -128,6 +128,8 @@ result.as.means.and.errs <- function(result.row, simplify = T) {
 #' x <- simframe$z1singleLvl1 ; coding <- codings$z1singleLvl1
 #' table.catvar(simframe$z1singleLvl1, codings$z1singleLvl1)
 #' }
+#' x <- binary.levels.combine(simframe.master$SESBTHLvl1, simframe.master$SESBTHLvl2, simframe.master$SESBTHLvl3)
+#' coding <- dict.MELC$codings$SESBTH
 table.catvar <- function (x, coding) {
 	
 	varname <- attr(coding, "varname")
@@ -141,6 +143,7 @@ table.catvar <- function (x, coding) {
 	attr(tbl, "meta") <- c("varname" = varname)
 	
 	tbl
+	
 }
 
 #' Display a vector of continuous values in a table using the
