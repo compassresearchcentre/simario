@@ -152,7 +152,7 @@ table.catvar.with.CI <- function (x, coding) {
 	
 	tbl <- prop.table(table(x)) * 100
 	#calculate CIs for each group proportion
-	n <- table(x)
+	n <- length(x)
 	p <- tbl/100
 	se <- sqrt(p*(1-p)/n)
 	z <- qnorm(.975)
@@ -209,7 +209,7 @@ table.contvar <- function (x, breaks, varname) {
 table.contvar.with.CI <- function (x, breaks, varname) {
 	tbl <- prop.table(table(bin(x, breaks, breaklast=NULL), useNA='ifany')) * 100
 	#calculate CIs for each group proportion
-	n <- table(bin(x, breaks, breaklast=NULL), useNA='ifany')
+	n <- length(x)
 	p <- tbl/100
 	se <- sqrt(p*(1-p)/n)
 	z <- qnorm(.975)

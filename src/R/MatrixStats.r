@@ -115,7 +115,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 #' 
 #' @export
 #' @examples 
-mean_array_z_pctile_CIs <- function (xa, CI = TRUE, NA.as.zero = T) {
+mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
 	result <- apply(xa, c(ROW,COL), mean) 
