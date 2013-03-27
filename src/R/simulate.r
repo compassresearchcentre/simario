@@ -146,6 +146,37 @@ table.catvar <- function (x, coding) {
 	
 }
 
+table.catvar.with.CI <- function (x, coding) {
+	
+	varname <- attr(coding, "varname")
+	
+	tbl <- prop.table(table(x)) * 100
+	#calculate CIs for each group proportion
+	n <- table(x)
+	p <- tbl/100
+	se <- sqrt(p*(1-p)/n)
+	z <- qnorm(.975)
+	upper.limit <- p + z*se
+	lower.limit <- p - z*se
+	tbl2 <- c(tbl, lower.limit*100, upper.limit*100)
+	tbl.names <- names(tbl2) 
+	tbl2 <- tbl2[order(tbl.names)]
+	if (table(tbl.names)[1]>1) {
+		CI=TRUE
+		suffixes <- c("Mean", "Lower", "Upper")
+	} else {
+		suffixes <- c("", "", "")
+	}
+	
+	# match names into codings
+	codings.indices <- match((tbl.names[order(tbl.names)]), coding)
+	names(tbl2) <- paste(names(coding)[codings.indices], "(%)", suffixes)
+	
+	attr(tbl2, "meta") <- c("varname" = varname)
+	
+	tbl2	
+}
+
 #' Display a vector of continuous values in a table using the
 #' breaks supplied.
 #' Attachs a meta attribute with varname
@@ -173,6 +204,32 @@ table.contvar <- function (x, breaks, varname) {
 	tbl <- prop.table(table(bin(x, breaks, breaklast=NULL), useNA='ifany')) * 100
 	attr(tbl, "meta") <- c("varname" = varname)
 	tbl
+}
+
+table.contvar.with.CI <- function (x, breaks, varname) {
+	tbl <- prop.table(table(bin(x, breaks, breaklast=NULL), useNA='ifany')) * 100
+	#calculate CIs for each group proportion
+	n <- table(bin(x, breaks, breaklast=NULL), useNA='ifany')
+	p <- tbl/100
+	se <- sqrt(p*(1-p)/n)
+	z <- qnorm(.975)
+	upper.limit <- p + z*se
+	lower.limit <- p - z*se
+	tbl2 <- c(tbl, lower.limit*100, upper.limit*100)
+	tbl.names <- names(tbl2) 
+	tbl2 <- tbl2[order(tbl.names)]
+	tbl2[tbl2<0] <- 0
+	if (table(tbl.names)[1]>1) {
+		CI=TRUE
+		suffixes <- c("Mean", "Lower", "Upper")
+	} else {
+		suffixes <- c("", "", "")
+	}
+	
+	names(tbl2) <- paste(tbl.names[order(tbl.names)], "(%)", suffixes)
+	
+	attr(tbl2, "meta") <- c("varname" = varname)
+	t(tbl2)
 }
 
 cat("Loaded simulate\n")
