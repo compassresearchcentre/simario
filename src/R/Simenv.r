@@ -493,7 +493,7 @@ expr = {
 		
 
 		for (i in 1:total_runs) {
-			#i = 1
+			#i = 2
 			cat("Run",i,"of",total_runs,"\n")
 
 			invisible(.$applyAllFixedOutcomesIfSetToSimframe())
@@ -520,7 +520,7 @@ expr = {
 		}
 		
 		invisible(lapply(.$modules, function(module) {
-							module$run_results_collated <- module$collate_all_run_results(module$run_results, .$cat.adjustments)
+							module$run_results_collated <- module$collate_all_run_results(module$run_results, .$cat.adjustments, .$simframe)
 						}))
 
 		# call garbage collector to release memory used during calculation (sometimes this is a lot)
