@@ -684,16 +684,12 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	#[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
 	
 	col.names <- colnames(mx.flattened)
-	space.ids <- str_locate_all(col.names, " ")
-	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
+	
 	#identify the position of the last space in each name
-	pos.last.space <- rep(NA, length(num.spaces))
-	if (sum(num.spaces)>0) {
-		for (i in 1:length(num.spaces)) {
-			pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
-		}
-	}
-	pos.last.space.vec <- pos.last.space
+	last.space.output <- identify.position.last.space(col.names)
+	pos.last.space.vec <- last.space.output[[1]]
+	num.spaces <- last.space.output[[2]]
+	
 	if ((CI==TRUE)&(num.runs>1)) {
 		# Need to remove the Mean, Lower, and Upper parts
 		sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
@@ -715,7 +711,13 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	} else if (num.spaces[1]>2) {
 		#take last character of sub.col.names to match
 		name.length <- str_length(sub.col.names)
-		##simple.names <- str_sub(sub.col.names, name.length, name.length)
+		
+		#identify the position of the last space in each name again 
+		#(will have changed if removed Mean, Lower, Upper but will be same if didn't
+		last.space.output <- identify.position.last.space(sub.col.names)
+		pos.last.space.vec <- last.space.output[[1]]
+		num.spaces <- last.space.output[[2]]
+		
 		simple.names <- str_sub(sub.col.names, pos.last.space.vec+1, name.length)
 		simple.names.words <- dict$cmatch(simple.names, varname)
 		#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
@@ -730,6 +732,21 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	
 	result <- structure(mx.flattened, grpingNames=attr(colnames(mx.flattened), "grpingNames"))
 	return(result)
+}
+
+#identify the position of the last space in each name
+identify.position.last.space <- function(col.names) {
+	space.ids <- str_locate_all(col.names, " ")
+	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
+	pos.last.space <- rep(NA, length(num.spaces))
+	if (sum(num.spaces)>0) {
+		for (i in 1:length(num.spaces)) {
+			pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
+		}
+	}
+	pos.last.space.vec <- pos.last.space
+	result.list <- list(pos.last.space.vec, num.spaces)
+	return(result.list)
 }
 
 #' Calculates the proportions within row groupings of a flattened matrix. 
