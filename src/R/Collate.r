@@ -734,7 +734,20 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	return(result)
 }
 
-#identify the position of the last space in each name
+
+#' Identify the position of the last space in each element in a character vector.
+#' Used to identify the last space in the column names in label_flattened_mx_grping.and.CIs().
+#' Returns a list of 2 elements.  
+#' The first element, pos.last.space.vec, is a vector identifying the position of the last space 
+#' in each element of the input vector. 
+#' The second element, num.spaces, states the number of spaces in each element of the input 
+#' vector.  
+#' 
+#' @param col.names
+#'  a character vector.  
+#' 
+#' @export
+#' @examples 
 identify.position.last.space <- function(col.names) {
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
@@ -745,7 +758,7 @@ identify.position.last.space <- function(col.names) {
 		}
 	}
 	pos.last.space.vec <- pos.last.space
-	result.list <- list(pos.last.space.vec, num.spaces)
+	result.list <- list(pos.last.space.vec=pos.last.space.vec, num.spaces=num.spaces)
 	return(result.list)
 }
 
