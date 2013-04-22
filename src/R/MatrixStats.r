@@ -584,8 +584,18 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 			grpby <- grpby[logiset==1,]
 		}
 		if (is.matrix(logiset)) {
-			NA_index <- which(logiset==F)
 			mx2 <- as.vector(mx)
+			if (length(mx2)!=length(logiset)) {
+				#logiset can be matrix with one column,  in thsi case we have to repeat out
+				#logiset so the entire dataset gets subset rather than just the first column
+				logiset <- rep(logiset, ncol(mx))
+				logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
+			}
+			if (length(mx)!=length(logiset)) {
+				stop("Check logiset subsetting in quantile_mx_col_BCASO()")
+			}
+			NA_index <- which(logiset==F)
+			
 			mx2[NA_index] <- NA
 			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
 			if (!is.null(grpby)) {
@@ -1046,20 +1056,30 @@ table_mx_cols_BCASO <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logis
 	if (!is.null(logiset)) {
 		logiset[is.na(logiset)] <- 0
 		
-		# subset - if logiset is a vector
+		# subset by logiset - if logiset is a vector
 		if (!is.matrix(logiset)) {
 			logiset <- as.logical(logiset)
 			mx <- mx[logiset, ,drop=FALSE]
 			if ( !is.null(grpby) ) grpby <- grpby[logiset, ,drop=FALSE]
 			if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
 		}
-		#subset - if logiset is a matrix
+		#subset by logiset - if logiset is a matrix
 		if (is.matrix(logiset)) {
-			
-			NA_index <- which(logiset==F)
 			
 			#mx loses varname here
 			mx2 <- as.vector(mx)
+
+			if (length(mx2)!=length(logiset)) {
+				#logiset can be matrix with one column,  in thsi case we have to repeat out
+					#logiset so the entire dataset gets subset rather than just the first column
+				logiset <- rep(logiset, ncol(mx))
+				logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
+			}
+			if (length(mx)!=length(logiset)){
+				stop("Check logiset subsetting in table_mx_cols_BCASO()")
+			}
+			NA_index <- which(logiset==F)
+			
 			mx2[NA_index] <- NA
 			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
 			
@@ -1426,17 +1446,30 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	# save before subsetting mx
 	varname <- attr(mx, "varname")
 	
-	# subset
+	# subset bu logiset
 	if (!is.null(logiset)) {
 		if (is.vector(logiset)) {
+			if (length(mx)!=length(logiset)) {
+				stop("Check logiset subsetting in mean_mx_cols_BCASO()")
+			}
 			mx <- subset(mx, logiset)
 			wgts <- subset(wgts, logiset)
 			if (!is.null(grpby)) {
 				grpby <- subset(grpby, logiset)
 			}
 		} else if (is.matrix(logiset)) {
-			NA_index <- which(logiset==F)
 			mx2 <- as.vector(mx)
+			if (length(mx2)!=length(logiset)) {
+				#logiset can be matrix with one column,  in thsi case we have to repeat out
+				#logiset so the entire dataset gets subset rather than just the first column
+				logiset <- rep(logiset, ncol(mx))
+				logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
+			}
+			if (length(mx)!=length(logiset)) {
+				stop("Check logiset subsetting in mean_mx_cols_BCASO()")
+			}
+			NA_index <- which(logiset==F)
+			
 			mx2[NA_index] <- NA
 			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
 			if (!is.null(grpby)) {
