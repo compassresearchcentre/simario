@@ -1542,6 +1542,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			result <- result[,-ncol(result)]
 		}
 		dimnames(result)[[COL]] <- sort(unique(allgrpby))
+		
 		if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 			colnames(result) <- c("Not in subgroup", "In subgroup")
 		}

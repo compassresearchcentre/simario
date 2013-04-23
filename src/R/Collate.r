@@ -362,7 +362,7 @@ collator_means <- function(runs, dict, ...) {
 	}
 	
 	#if there are spaces in the groupby tag it means that this table is one grouped by
-	#by the subgroup expression specifiec by the user
+	#by the subgroup expression specific by the user
 	spaces.in.grpby.tag <- str_locate_all(grpby.tag, " ")[[1]]
 	if (length(spaces.in.grpby.tag)>0) {
 		colnames(runs_mx) <- colnames(runs_mx)
