@@ -117,10 +117,10 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 	
 	if ((CI==FALSE|(num.runs==1))) {
 		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs, binbreaks=binbreaks)
 		result <- runs_mx
 	} else if ((CI==TRUE)&&(num.runs>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs, binbreaks=binbreaks)
 		resultCI <- runs_mx
 	
 		#label CI components
@@ -444,9 +444,25 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #' on mean_array_pctile_CIS2() more more details.  
 #' Another difference between this function and the original collator_mutiple_lists_mx() 
 #' is that this function takes cat.adjustments, dict, and binbreaks arguments.  
-
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
+	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
+}
+
+collator_mutiple_lists_mx2b <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
+	runs_array <- flatten_mxlists_to_array(runs)
+	#varname <- attr(runs_array, "meta")[["varname"]]
+	#if (!is.null(cat.adjustments)){
+	#	binbreaks <- attr(cat.adjustments, "cont.binbreaks")
+	#}
+	#make sure order of columns is correct
+	#if (!is.null(binbreaks)) {
+	#	for (i in 1:(dim(runs_array)[3])) {
+	#		ord <- match(names(binbreaks[-1]), colnames(runs_array[,,i]))
+	#		runs_array[,,i] <- runs_array[,,i][,ord]
+	#	}
+	#	colnames(runs_array) <- names(binbreaks[-1])
+	#}
 	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 
@@ -674,9 +690,10 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' 
 #' @export
 #' @examples 
-label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs) {
+label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
+	grpingNames <- attr(colnames(mx.flattened), "grpingNames")
 	
 	#e.g. colnames start off as:
 	#  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
@@ -706,10 +723,25 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 		}
 	}
 
-	if (num.spaces[1]<=2) {
-		colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
-	} else if (num.spaces[1]>2) {
-		#take last character of sub.col.names to match
+	last.space.output <- identify.position.last.space(sub.col.names)
+	num.spaces <- last.space.output[[2]]
+	if ((num.spaces[1]==0)) {
+		#no grouping
+		if (!is.null(binbreaks)) {
+			un.ordered.names <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+			ord <- match(un.ordered.names, names(binbreaks[-1]))
+			ordered.names <- un.ordered.names[order(ord)]
+			#reorder results
+			mx.flattened <- mx.flattened[,order(ord)]
+			colnames(mx.flattened) <- ordered.names
+		} else {
+			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+		}
+	} else if (num.spaces[1]>0) {
+		#there is grouping
+	
+		#names of the variable of interest (not the grouping variable)
+		#take last part of sub.col.names to match
 		name.length <- str_length(sub.col.names)
 		
 		#identify the position of the last space in each name again 
@@ -720,17 +752,45 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 		
 		simple.names <- str_sub(sub.col.names, pos.last.space.vec+1, name.length)
 		simple.names.words <- dict$cmatch(simple.names, varname)
-		#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
-		subgroup.indicator <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
-		final.names <- rep(NA, length(sub.col.names))
-		for (i in 1:length(sub.col.names)) {
-			final.names[i] <- paste(subgroup.indicator[i], simple.names.words[i])
+		
+		if (!is.null(binbreaks)) {
+			un.ordered.names <- dict$cmatchFlattened(simple.names.words, varname, grpby.tag=NULL)
+			ord <- match(un.ordered.names, names(binbreaks[-1]))
+			ordered.names <- unique(un.ordered.names[order(ord)])
+			if ((CI==TRUE)&(num.runs>1)) {
+				num.grps <- (length(un.ordered.names)/length(ordered.names))/3
+			} else if ((CI==FALSE)|(num.runs==1)) {
+				num.grps <- length(un.ordered.names)/length(ordered.names)
+			}
+			ord2 <- NULL
+			for (i in 1:num.grps) {
+				ord2 <- c(ord2, ord[1:(length(ord)/num.grps)]+(i-1)*length(ordered.names))
+			}
+			ordered.names <- un.ordered.names[order(ord2)]
+			#reorder results
+			mx.flattened <- mx.flattened[,order(ord2)]
+			
+			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names[order(ord2)], varname, grpby.tag)
+		} else {
+			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
 		}
-		colnames(mx.flattened) <- final.names
+		
+		if ((sum(grepl("NA", colnames(mx.flattened)))==ncol(mx.flattened)) | (any(grepl("subgroup", colnames(mx.flattened))))) {
+			#are inside collate_all_run_results() and are collating results by a user specified subgroup
+		
+			#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
+			grp.names.words <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
+			final.names <- rep(NA, length(sub.col.names))
+			for (i in 1:length(sub.col.names)) {
+			final.names[i] <- paste(grp.names.words[i], simple.names.words[i])
+			}
+			colnames(mx.flattened) <- final.names
+		}
+
 	}
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
-	result <- structure(mx.flattened, grpingNames=attr(colnames(mx.flattened), "grpingNames"))
+	result <- structure(mx.flattened, grpingNames=grpingNames, varname=varname)
 	return(result)
 }
 
