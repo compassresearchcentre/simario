@@ -449,22 +449,7 @@ collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict
 	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 
-collator_mutiple_lists_mx2b <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
-	runs_array <- flatten_mxlists_to_array(runs)
-	#varname <- attr(runs_array, "meta")[["varname"]]
-	#if (!is.null(cat.adjustments)){
-	#	binbreaks <- attr(cat.adjustments, "cont.binbreaks")
-	#}
-	#make sure order of columns is correct
-	#if (!is.null(binbreaks)) {
-	#	for (i in 1:(dim(runs_array)[3])) {
-	#		ord <- match(names(binbreaks[-1]), colnames(runs_array[,,i]))
-	#		runs_array[,,i] <- runs_array[,,i][,ord]
-	#	}
-	#	colnames(runs_array) <- names(binbreaks[-1])
-	#}
-	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
-}
+
 
 
 #' Identify and return the indices of columns that 
