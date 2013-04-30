@@ -752,13 +752,6 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 		}
 		
 		if (!is.null(binbreaks)) {
-			##if (any(is.na(as.numeric(simple.names.words)))) {
-				#names are already the character versions and the match is not needed
-				##un.ordered.names <- simple.names.words
-			##} else {
-				#convert numeric codes to character names
-				##un.ordered.names <- dict$cmatchFlattened(simple.names.words, varname, grpby.tag=NULL)
-			##}
 			un.ordered.names <- simple.names.words
 			ord <- match(un.ordered.names, names(binbreaks[-1]))
 			ordered.names <- unique(un.ordered.names[order(ord)])
@@ -792,7 +785,7 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 				final.names[i] <- paste(grp.names.words[i], ordered.names[i])
 			}
 			colnames(mx.flattened) <- final.names
-			##colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names[order(ord2)], varname, grpby.tag)
+			
 		} else {
 			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
 		}
