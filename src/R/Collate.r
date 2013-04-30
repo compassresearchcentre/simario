@@ -713,7 +713,13 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	if ((num.spaces[1]==0)) {
 		#no grouping
 		if (!is.null(binbreaks)) {
-			un.ordered.names <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+			if (any(is.na(as.numeric(sub.col.names)))) {
+				#names are already the character versions and the match is not needed
+				un.ordered.names <- sub.col.names
+			} else {
+				#convert numeric codes to character names
+				un.ordered.names <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+			}
 			ord <- match(un.ordered.names, names(binbreaks[-1]))
 			ordered.names <- un.ordered.names[order(ord)]
 			#reorder results
@@ -735,11 +741,25 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 		pos.last.space.vec <- last.space.output[[1]]
 		num.spaces <- last.space.output[[2]]
 		
+		#primary variable names
 		simple.names <- str_sub(sub.col.names, pos.last.space.vec+1, name.length)
-		simple.names.words <- dict$cmatch(simple.names, varname)
+		if (any(is.na(as.numeric(simple.names)))) {
+			#names are already the character versions and the match is not needed
+			simple.names.words <- simple.names
+		} else {
+			#convert numeric codes to character names
+			simple.names.words <- dict$cmatch(simple.names, varname)
+		}
 		
 		if (!is.null(binbreaks)) {
-			un.ordered.names <- dict$cmatchFlattened(simple.names.words, varname, grpby.tag=NULL)
+			##if (any(is.na(as.numeric(simple.names.words)))) {
+				#names are already the character versions and the match is not needed
+				##un.ordered.names <- simple.names.words
+			##} else {
+				#convert numeric codes to character names
+				##un.ordered.names <- dict$cmatchFlattened(simple.names.words, varname, grpby.tag=NULL)
+			##}
+			un.ordered.names <- simple.names.words
 			ord <- match(un.ordered.names, names(binbreaks[-1]))
 			ordered.names <- unique(un.ordered.names[order(ord)])
 			if ((CI==TRUE)&(num.runs>1)) {
@@ -752,16 +772,33 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 				ord2 <- c(ord2, ord[1:(length(ord)/num.grps)]+(i-1)*length(ordered.names))
 			}
 			ordered.names <- un.ordered.names[order(ord2)]
+			
 			#reorder results
 			mx.flattened <- mx.flattened[,order(ord2)]
 			
-			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names[order(ord2)], varname, grpby.tag)
+			#grping variable names
+			grp.names <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
+			if (any(is.na(as.numeric(grp.names)))) {
+				#names are already the character versions and the match is not needed
+				grp.names.words <- grp.names
+			} else {
+				#no binbreaks
+				#convert numeric codes to character names
+				grp.names.words <- dict$cmatch(grp.names, grpby.tag)
+			}
+			
+			final.names <- rep(NA, length(sub.col.names))
+			for (i in 1:length(sub.col.names)) {
+				final.names[i] <- paste(grp.names.words[i], ordered.names[i])
+			}
+			colnames(mx.flattened) <- final.names
+			##colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names[order(ord2)], varname, grpby.tag)
 		} else {
 			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
 		}
 		
 		if ((sum(grepl("NA", colnames(mx.flattened)))==ncol(mx.flattened)) | (any(grepl("subgroup", colnames(mx.flattened))))) {
-			#are inside collate_all_run_results() and are collating results by a user specified subgroup
+			#should be inside collate_all_run_results() and are collating results by a user specified subgroup
 		
 			#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
 			grp.names.words <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
