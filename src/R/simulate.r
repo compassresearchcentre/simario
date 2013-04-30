@@ -217,7 +217,13 @@ table.contvar.with.CI <- function (x, breaks, varname) {
 	lower.limit <- p - z*se
 	tbl2 <- c(tbl, lower.limit*100, upper.limit*100)
 	tbl.names <- names(tbl2) 
-	tbl2 <- tbl2[order(tbl.names)]
+	
+	un.ordered.names <- tbl.names
+	ord <- match(un.ordered.names, names(breaks[-1]))
+	ordered.names <- un.ordered.names[order(ord)]
+	
+	tbl2 <- tbl2[order(ord)]
+	
 	tbl2[tbl2<0] <- 0
 	if (table(tbl.names)[1]>1) {
 		CI=TRUE
@@ -226,10 +232,12 @@ table.contvar.with.CI <- function (x, breaks, varname) {
 		suffixes <- c("", "", "")
 	}
 	
-	names(tbl2) <- paste(tbl.names[order(tbl.names)], "(%)", suffixes)
+	names(tbl2) <- paste(tbl.names[order(ord)], "(%)", suffixes)
 	
 	attr(tbl2, "meta") <- c("varname" = varname)
 	t(tbl2)
 }
+
+
 
 cat("Loaded simulate\n")
