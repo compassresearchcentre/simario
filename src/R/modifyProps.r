@@ -70,9 +70,11 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #'  a vector that is the proportions requested by the user.
 #'  The vector is the length of the number of distinct values of the variable
 #'  being modified.
+#' 
 #' @param default.vec
 #'  a vector after a run of the simulation. The values of this
 #'  variable will be changed in accordance with what the user requests
+#' 
 #' @param propens
 #'  matrix or vector of the propensity scores for each child
 #'  For binary variables there is one column of propensity scores: the
@@ -82,6 +84,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #'  propensities to change from category 1 to category 2 are in the first
 #'  column and the propensities to change from category 2 to category 3 are
 #'  in the second column.
+#' 
 #' @param accuracy
 #' 	gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
 #' 	- the default is 0.01.

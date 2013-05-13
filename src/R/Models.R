@@ -759,3 +759,29 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 	}
 }
 
+
+# models is a list of models
+predictOrdinal <- function(models, numchildren, envir=parent.frame()) {
+	#number of categories in the outcome is one pluse the number of models in the list
+	num.cat <- length(models) + 1
+	LinPreds <- prob.current.cat.or.less <- Probs <- matrix(ncol=num.cat, nrow=numchildren)
+	for (i in 1:num.cat) {
+		if (i==1) {
+			LinPreds[,i] <- predict(models[[i]], envir)
+			Probs[,i] <- exp(LinPreds[,i])/(1 + exp(LinPreds[,i]))
+			prob.current.cat.or.less[,i] <- Probs[,i]
+		} else if (i>1 & i<num.cat) {
+			LinPreds[,i] <- predict(models[[i]], envir)
+			prob.current.cat.or.less[,i] <- exp(LinPreds[,i])/(1 + exp(LinPreds[,i]))
+			Probs[,i] <- prob.current.cat.or.less[,i] - prob.current.cat.or.less[,i-1]
+		} else if (i==num.cat) {
+			LinPreds[,i] <- rep(1, numchildren)
+			prob.current.cat.or.less[,i] <- rep(1, numchildren)
+			Probs[,i] <- prob.current.cat.or.less[,i] - prob.current.cat.or.less[,i-1]
+		}
+	}
+	return(Probs)
+}
+
+
+
