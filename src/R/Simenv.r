@@ -147,7 +147,7 @@ expr = {
 	#'	applyAllCatAdjustmentsToSimframe(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments)
 	#' 
 
-	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities, print_adj = TRUE, cat.adjustments=.$cat.adjustments) {
+	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities=NULL, print_adj = TRUE, cat.adjustments=.$cat.adjustments) {
 
 		invisible(lapply(cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments[[1]]
@@ -172,7 +172,7 @@ expr = {
 				}
 				
 				if (!is.null(catToContModels)) {
-					.$applyContAdjustmentToSimframe(varnames, iteration, cat_adj_vector, catToContModels, cont.binbreaks, propensities=NULL)
+					.$applyContAdjustmentToSimframe(varnames, iteration, cat_adj_vector, catToContModels, cont.binbreaks, propensities)
 				} else {
 					.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
 				}
