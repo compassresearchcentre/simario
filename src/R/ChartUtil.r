@@ -97,6 +97,13 @@ chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row
 			legend.text=c("Base", scenario.name))
 }
 
+#' Close over parameters to chart.2series.bar.err 
+chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
+	function() {
+		chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) 
+	}
+}
+
 #' Draw a side-by-side bar plot with error bars and a legend to the right
 #' of the plot on the current device.
 #' 
