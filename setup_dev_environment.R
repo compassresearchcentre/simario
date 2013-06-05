@@ -31,9 +31,16 @@ test_dev_environment <- function() {
 	cat("R_USER (home) directory", Sys.getenv("R_USER"),"\n")
 	library(devtools)
 	
-	if(length(as.package("simario"))>1) {
-		cat("simario development environment setup OK\n")
-	}	
+	if(installed.packages()["devtools","Version"] >= 0.8) {
+			if(length(as.package("..\\..\\simario\\src"))>1) {
+				cat("simario development environment setup OK\n")
+			}
+	}
+	if(installed.packages()["devtools","Version"] < 0.8) {
+			if(length(as.package("simario"))>1) {
+				cat("simario development environment setup OK\n")
+			}
+	}
 }
 
 install.packages.not.installed <- function(package_names) {
