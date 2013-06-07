@@ -188,10 +188,11 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 
 #' subgroupExpression <- "mhrswrk < 20"
 #' setGlobalSubgroupFilterExpression(subgroupExpression)
-#' setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
-	#' cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
-	#' 
-	#' for (i in 1:length(env.scenario$cat.adjustments)) {
-		#' attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
-#' 	}
-#' }
+#' env.scenario$cat.adjustments[[1]]
+setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
+	 cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
+	 
+	 for (i in 1:length(env.scenario$cat.adjustments)) {
+		 attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
+ 	}
+ }
