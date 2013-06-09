@@ -1405,7 +1405,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #' wgts<-matrix(c(1,1,1,1,1,2,2,2,2,1), ncol = 2)
 #' na.rm = FALSE ; na.rm = TRUE
 #' 
-#' mean_mx_cols(mx, logiset=logiset, wgts=wgts, grpby=grpby, grpby.tag=grpby.tag, na.rm = na.rm)
+#' mean_mx_cols_BCASO(mx, grpby=grpby, grpby.tag=grpby.tag, logiset=logiset, wgts=wgts,  dict = dict)
 mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wgts=NULL, dict=NULL) {
 		
 	# 1. beginning check - that weight dimensions are correct
@@ -1422,6 +1422,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			}
 		}
 	}      
+	
 	# 2. beginning check  - that grpby dimensions are correct   
 	if (!is.null(grpby)) {
 		if (is.vector(grpby)) {
@@ -1446,7 +1447,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	# save before subsetting mx
 	varname <- attr(mx, "varname")
 	
-	# subset bu logiset
+	# subset by logiset
 	if (!is.null(logiset)) {
 		if (is.vector(logiset)) {
 			if (length(mx)!=length(logiset)) {
@@ -1485,15 +1486,16 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		allgrpby=c(); j=1;while (j<=ncol(grpby)) {allgrpby=c(allgrpby,grpby[,j]);j=j+1}
 	}
 	
-	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
+	if ( is.null(grpby) || sum(is.na(grpby)) == length(grpby) ) {
+		
 		result <- apply(matrix(1:ncol(mx),nrow=1), COL, function(i) {
+					#i = 1
 					x <- mx[,i]
 					non.nas <-  !is.na(x)
 					sum(x[non.nas] * wgts[non.nas,i]) / sum(wgts[non.nas,i])
 				})
 		
 		result <- t(t(result))
-		
 	} else {
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
@@ -1543,10 +1545,14 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		}
 		dimnames(result)[[COL]] <- sort(unique(allgrpby))
 		
-		if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+		if (is.null(dict)) {
+			stop("Dict is NULL")
+		} else 	if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 			colnames(result) <- c("Not in subgroup", "In subgroup")
 		}
 	}
+
+	rownames(result) <- colnames(mx)
 	
 	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc"))) 
 }
