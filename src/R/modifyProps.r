@@ -575,19 +575,62 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 #' @return
 #' an adjusted vector, either categorical or continuous depending on whether catToCont 
 #' models were provided.
- 
+
+#' Subset the first dimension, returning the same number of dimensions
+#' 
+#' @param x a vecotr, matrix or array
+#' 
+#' @param logical vector to subset first dimension by
+#' 
+#' @examples
+#' x <- matrix(c(1:6), nrow=2)
+#' logiset <- c(T,F)
+#' subsetFirstDimension(x, logiset)
+subsetFirstDimension <- function (x, logiset) {
+	
+	matrixDims <- length(dim(x))
+	
+	if (matrixDims == 0) {
+		#x is a vector
+		
+		if (length(x) != length(logiset)) {
+			stop("logiset is not the same length as x")
+		} else {
+			x[logiset]
+		}
+		
+	} else if (matrixDims == 2) {
+		#x is a 2d matrix
+		if (dim(x)[1] != length(logiset)) {
+			stop("length of logiset is not the same as number of rows in x")
+		} else {
+			x[logiset, , drop = F]
+		}
+		
+		
+	} else if (matrixDims == 3) {
+		#x is a 3d matrix
+		if (dim(x)[1] != length(logiset)) {
+			stop("length of logiset is not the same as number of rows in x")
+		} else {
+			x[logiset, , , drop = F]
+		}
+	}
+		
+}
+
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
 	if (!is.null(logiset) && length(logiset)>0) {
 		#subet the propensities according to the logiset
-		propens <- propens[logiset] #when/if we put propensities in for the continuous variables this prob won't work - assumes only 1 column of propensities and if more than 2 level will have more than 1 column
+		propens_subset <- subsetFirstDimension(propens, logiset)
 		
 		#subset x according to the logiset
 		subset_to_change <- x[logiset]
 		
 		if (!is.null(catToContModels)) {
-			subset_to_change_modified <- modifyPropsContinuous(subset_to_change, desiredProps, catToContModels, cont.binbreaks, propens, logiset, accuracy=.05, envir)
+			subset_to_change_modified <- modifyPropsContinuous(subset_to_change, desiredProps, catToContModels, cont.binbreaks, propens_subset, logiset, accuracy=.05, envir)
 		} else {
-			subset_to_change_modified <- modifyProps(subset_to_change, desiredProps, propens, accuracy=.05)
+			subset_to_change_modified <- modifyProps(subset_to_change, desiredProps, propens_subset, accuracy=.05)
 		}
 		
 		non.modified.x <- x[!logiset]
@@ -598,10 +641,10 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 	} else {
 		#there is no logiset and the scenario is applied to all units
 		if (!is.null(catToContModels)) {
-			adj.x.cont <- modifyPropsContinuous(x, desiredProps, catToContModels, cont.binbreaks, propens, envir=envir)
+			adj.x.cont <- modifyPropsContinuous(x, desiredProps, catToContModels, cont.binbreaks, propens_subset, envir=envir)
 			return(adj.x.cont)
 		} else {
-			adj.x.cat <- modifyProps(x, desiredProps, propens, accuracy=.05)
+			adj.x.cat <- modifyProps(x, desiredProps, propens_subset, accuracy=.05)
 			return(adj.x.cat)
 		}
 	}
