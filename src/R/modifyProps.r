@@ -621,8 +621,8 @@ subsetFirstDimension <- function (x, logiset) {
 
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
 	if (!is.null(logiset) && length(logiset)>0) {
-		#subet the propensities according to the logiset
-		propens_subset <- subsetFirstDimension(propens, logiset)
+		#subset the propensities according to the logiset
+		propens_subset <- if (!is.null(propens)) { subsetFirstDimension(propens, logiset) } else NULL
 		
 		#subset x according to the logiset
 		subset_to_change <- x[logiset]
