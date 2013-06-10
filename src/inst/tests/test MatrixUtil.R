@@ -1,4 +1,4 @@
-context("modifyProps tests")
+context("MatrixUtil tests")
 
 test_that("subsetFirstDimension", {
 	

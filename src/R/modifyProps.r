@@ -576,49 +576,6 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 #' an adjusted vector, either categorical or continuous depending on whether catToCont 
 #' models were provided.
 
-#' Subset the first dimension, returning the same number of dimensions
-#' 
-#' @param x a vecotr, matrix or array
-#' 
-#' @param logical vector to subset first dimension by
-#' 
-#' @examples
-#' x <- matrix(c(1:6), nrow=2)
-#' logiset <- c(T,F)
-#' subsetFirstDimension(x, logiset)
-subsetFirstDimension <- function (x, logiset) {
-	
-	matrixDims <- length(dim(x))
-	
-	if (matrixDims == 0) {
-		#x is a vector
-		
-		if (length(x) != length(logiset)) {
-			stop("logiset is not the same length as x")
-		} else {
-			x[logiset]
-		}
-		
-	} else if (matrixDims == 2) {
-		#x is a 2d matrix
-		if (dim(x)[1] != length(logiset)) {
-			stop("length of logiset is not the same as number of rows in x")
-		} else {
-			x[logiset, , drop = F]
-		}
-		
-		
-	} else if (matrixDims == 3) {
-		#x is a 3d matrix
-		if (dim(x)[1] != length(logiset)) {
-			stop("length of logiset is not the same as number of rows in x")
-		} else {
-			x[logiset, , , drop = F]
-		}
-	}
-		
-}
-
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
 	if (!is.null(logiset) && length(logiset)>0) {
 		#subset the propensities according to the logiset
