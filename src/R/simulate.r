@@ -161,20 +161,27 @@ table.catvar.with.CI <- function (x, coding) {
 	tbl2 <- c(tbl, lower.limit*100, upper.limit*100)
 	tbl.names <- names(tbl2) 
 	tbl2 <- tbl2[order(tbl.names)]
+	
 	if (table(tbl.names)[1]>1) {
 		CI=TRUE
-		suffixes <- c("Mean", "Lower", "Upper")
+		tbl3 <- matrix(tbl2, ncol=3, nrow=length(tbl2)/3, byrow=TRUE)
+		suffixes <- c("Mean (%)", "Lower", "Upper")
+		codings.indices <- match((tbl.names[order(tbl.names)]), coding)
+		colnames(tbl3) <- suffixes
+		id <- 3*(1:(length(tbl2)/3)) - 2
+		codings.indices <- match((tbl.names[order(tbl.names)]), coding)
+		rownames(tbl3) <- names(coding)[codings.indices][id]
+		attr(tbl3, "meta") <- c("varname" = varname)
+		return(tbl3)
 	} else {
 		suffixes <- c("", "", "")
+		# match names into codings
+		codings.indices <- match((tbl.names[order(tbl.names)]), coding)
+		names(tbl2) <- paste(names(coding)[codings.indices], "(%)", suffixes)
+		attr(tbl2, "meta") <- c("varname" = varname)
+		return(tbl2)
 	}
-	
-	# match names into codings
-	codings.indices <- match((tbl.names[order(tbl.names)]), coding)
-	names(tbl2) <- paste(names(coding)[codings.indices], "(%)", suffixes)
-	
-	attr(tbl2, "meta") <- c("varname" = varname)
-	
-	tbl2	
+
 }
 
 #' Display a vector of continuous values in a table using the
