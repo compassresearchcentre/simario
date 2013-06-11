@@ -811,3 +811,47 @@ select.row.list.mx <- function(mxlist, rownum, na.rm = T) {
 	result
 	
 }
+
+#' Subset the first dimension, returning the same number of dimensions
+#' 
+#' @param x a vector, matrix or array
+#' 
+#' @param logical vector to subset first dimension by
+#' 
+#' @examples
+#' x <- matrix(c(1:6), nrow=2)
+#' logiset <- c(T,F)
+#' subsetFirstDimension(x, logiset)
+subsetFirstDimension <- function (x, logiset) {
+	
+	matrixDims <- length(dim(x))
+	
+	if (matrixDims == 0) {
+		#x is a vector
+		
+		if (length(x) != length(logiset)) {
+			stop("logiset is not the same length as x")
+		} else {
+			x[logiset]
+		}
+		
+	} else if (matrixDims == 2) {
+		#x is a 2d matrix
+		if (dim(x)[1] != length(logiset)) {
+			stop("length of logiset is not the same as number of rows in x")
+		} else {
+			x[logiset, , drop = F]
+		}
+		
+		
+	} else if (matrixDims == 3) {
+		#x is a 3d matrix
+		if (dim(x)[1] != length(logiset)) {
+			stop("length of logiset is not the same as number of rows in x")
+		} else {
+			x[logiset, , , drop = F]
+		}
+	}
+	
+}
+
