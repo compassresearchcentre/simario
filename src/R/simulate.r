@@ -239,7 +239,7 @@ table.contvar.with.CI <- function (x, breaks, varname) {
 		colnames(tbl3) <- suffixes
 		id <- 3*(1:(length(tbl2)/3)) - 2
 		rownames(tbl3) <- tbl.names[order(ord)][id]
-		attr(tbl2, "meta") <- c("varname" = varname)
+		attr(tbl3, "meta") <- c("varname" = varname)
 		return(tbl3)
 		
 	} else {
