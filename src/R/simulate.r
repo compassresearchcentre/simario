@@ -234,15 +234,22 @@ table.contvar.with.CI <- function (x, breaks, varname) {
 	tbl2[tbl2<0] <- 0
 	if (table(tbl.names)[1]>1) {
 		CI=TRUE
-		suffixes <- c("Mean", "Lower", "Upper")
+		tbl3 <- matrix(tbl2, ncol=3, nrow=length(tbl2)/3, byrow=TRUE)
+		suffixes <- c("Mean (%)", "Lower", "Upper")
+		colnames(tbl3) <- suffixes
+		id <- 3*(1:(length(tbl2)/3)) - 2
+		rownames(tbl3) <- tbl.names[order(ord)][id]
+		attr(tbl2, "meta") <- c("varname" = varname)
+		return(tbl3)
+		
 	} else {
 		suffixes <- c("", "", "")
+		names(tbl2) <- paste(tbl.names[order(ord)], "(%)", suffixes)
+		attr(tbl2, "meta") <- c("varname" = varname)
+		tbl3 <- t(tbl2)
+		return(tbl3)
+		
 	}
-	
-	names(tbl2) <- paste(tbl.names[order(ord)], "(%)", suffixes)
-	
-	attr(tbl2, "meta") <- c("varname" = varname)
-	t(tbl2)
 }
 
 
