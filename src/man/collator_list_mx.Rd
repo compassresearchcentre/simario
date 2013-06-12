@@ -1,0 +1,26 @@
+\name{collator_list_mx}
+\alias{collator_list_mx}
+\title{Collate and average a list of matrices.}
+\usage{
+  collator_list_mx(runs, CI = TRUE, ...)
+}
+\arguments{
+  \item{runs}{a list of matrices, one matrix per run. Each
+  matrix must have the same dimensions.}
+
+  \item{CI}{if TRUE and length(runs) > 1, lower and upper
+  confidence intervals are returned in additional columns}
+}
+\value{
+  a matrix with the averaged values of runs.
+}
+\description{
+  Collate and average a list of matrices.
+}
+\examples{
+run1 = structure(matrix(1:6, nrow=3, dimnames=list(1:3, c("F","M"))), meta=c(varname="earnings", grpby.tag="sex"))
+run2 = structure(matrix(11:16, nrow=3, dimnames=list(1:3, c("F","M"))), meta=c(varname="earnings", grpby.tag="sex"))
+runs <- list(run1=run1,run2=run2)
+collator_list_mx(runs)
+}
+

@@ -1,0 +1,70 @@
+\name{modifypropsVarSingle_on_subset}
+\alias{modifypropsVarSingle_on_subset}
+\title{Calls modifyProps on a subset, returning the whole vector, but with the subset modified}
+\usage{
+  modifypropsVarSingle_on_subset(default.vec,
+    desired_props, propens = NULL, logiset = NULL,
+    accuracy = 0.01)
+}
+\arguments{
+  \item{desired_props}{a vector that is the proportions
+  requested by the user.  The vector is the length of the
+  number of distinct values of the variable being
+  modified.}
+
+  \item{default.vec}{a vector after a run of the
+  simulation. The values of this variable will be changed
+  in accordance with what the user requests}
+
+  \item{propens}{matrix or vector of the propensity scores
+  for each child For binary variables there is one column
+  of propensity scores: the propensities to change from a 0
+  to a 1.  For categorical variables with more than two
+  categories there are multiple columns of propensity
+  scores: E.g. for a three category variables the
+  propensities to change from category 1 to category 2 are
+  in the first column and the propensities to change from
+  category 2 to category 3 are in the second column.}
+
+  \item{logiset}{logical vector indicating which
+  observations to include, or NULL to include all.}
+}
+\description{
+  Calls modifyProps on a subset, returning the whole
+  vector, but with the subset modified
+}
+\note{
+  Assumptions made by the function: It is assumed that the
+  proportions given in props are given in consectuive
+  increasing order (e.g. {0,1}, {1, 2, 3} or {2, 5, 9,
+  23}).  If the user wants to make it so no observations
+  are in a particular category the value 0 must be put in
+  the corresponding place in the vector props If the
+  propensity scores (propens) are provided by the user then
+  it is assumed that default.vec and propens are given in
+  the same order and exactly the same children are in each
+  vector (i.e. there are no children in one vector that are
+  not in the other).  In other words, the propensity score
+  for a specific child is in the same row in propens as
+  that same child's value of the variable in default.vec.
+}
+\examples{
+default.vec<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+logiset<-c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,TRUE)
+desired_props<-c(0.5,0.5)
+propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
+a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset)
+prop.table(table(a[logiset]))
+
+
+default.vec<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
+logiset<-NULL
+desired_props<-c(0.5,0.5)
+propens<-c(0.90, 0.80, 0.80, 0.70, 0.50, 0.40, 0.10, 0.10, 0.15, 0.70, 0.90, 0.90, 0.90)
+a<-modifypropsVarSingle_on_subset(default.vec=default.vec, desired_props=desired_props, propens=propens, logiset=logiset)
+prop.table(table(a[logiset]))
+}
+\seealso{
+  This function calls \code{\link{modifyProps}}
+}
+

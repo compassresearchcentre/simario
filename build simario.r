@@ -15,7 +15,7 @@ get_version_from_description_file <- function(package_dir) {
 	description_file_words[Version_index+1]
 }
 
-package_name <- ".."
+package_name <- "."
 package_dir <- "~/simario" 
 
 build_dir <- file.path(package_dir, "build")

@@ -459,12 +459,6 @@ predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
 #'  simulate using all values in envir
 #'
 #' @export   
-#' @examples
-#' model.glm <- model.glm.list=list(models$GP_multinomial_response_cat2,
-#' 			models$GP_multinomial_response_cat3,models$GP_multinomial_response_cat4,
-#' 						models$GP_multinomial_response_cat5)
-#' set<-still_alive_and_65plus_NOTRES
-#' 
 predSimMultinomial <-function(model.glm.list, envir=parent.frame(), set = NULL) {
 		
 	probs<-predMultinomial(model.glm.list, envir=envir, set = set)
@@ -761,6 +755,7 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 
 
 # models is a list of models
+#' @export 
 predictOrdinal <- function(models, numchildren, envir=parent.frame()) {
 	#number of categories in the outcome is one pluse the number of models in the list
 	num.cat <- length(models) + 1

@@ -1,0 +1,29 @@
+\name{mean_array_z_pctile_CIs}
+\alias{mean_array_z_pctile_CIs}
+\title{A version of mean_array_z() where the confidence intervals are percentile based
+rather than using asymptotic theory.
+Mean across Z dimension of a 3D array. Each row and column cell is
+averaged across the Z dimension.}
+\usage{
+  mean_array_z_pctile_CIs(xa, CI = TRUE, NA.as.zero = T)
+}
+\arguments{
+  \item{xa}{an array with a Z dimension}
+
+  \item{CI}{if TRUE and xa has more than 1 Z dimension,
+  lower and upper confidence intervals are returned in
+  additional columns}
+
+  \item{NA.as.zero}{if TRUE (default), treat NAs as if they
+  are zeros}
+}
+\value{
+  a matrix of means across the Z dimension. The "meta"
+  attribute of xa, if any, is retained.
+}
+\description{
+  For the vector of statistic values (e.g. a vector of
+  means from multiple runs), the 2.5 and 97.5 percentiles
+  are used as the upper and lower limits of the 95% C.I..
+}
+

@@ -98,6 +98,7 @@ chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row
 }
 
 #' Close over parameters to chart.2series.bar.err 
+#' @export 
 chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
 	function() {
 		chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) 

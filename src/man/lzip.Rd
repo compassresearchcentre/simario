@@ -1,0 +1,42 @@
+\name{lzip}
+\alias{lzip}
+\title{Takes a list of lists, and combines the corresponding elements of each list
+into a result list of lists. The first list of the result contain the first elements
+of the source lists, the second list of the result contains the second elements
+of the sources lists, and so on.}
+\usage{
+  lzip(lol)
+}
+\arguments{
+  \item{lol}{list of lists. Each inner list should have the
+  same number of elements}
+}
+\value{
+  the corresponding elements of lol combined
+}
+\description{
+  eg: str(lol) List of 2 $ A:List of 3 ..$ A1: chr "a1" ..$
+  A2: chr "a2" ..$ A3: chr "a3" $ B:List of 3 ..$ B1: chr
+  "b1" ..$ B2: chr "b2" ..$ B3: chr "b3"
+}
+\details{
+  The result of zip is:
+
+  List of 3 $ A1:List of 2 ..$ A: chr "a1" ..$ B: chr "b1"
+  $ A2:List of 2 ..$ A: chr "a2" ..$ B: chr "b2" $ A3:List
+  of 2 ..$ A: chr "a3" ..$ B: chr "b3"
+
+  zip is the same as the Lisp operation zip:
+
+  (zip '(a1 a2 a3) '(b1 b2 b3) => ((a1 b1) (a2 b2) (a3 b3))
+}
+\examples{
+lol <- list(A=list("A1"="a1","A2"="a2","A3"="a3"),B=list("B1"="b1","B2"="b2","B3"="b3"))
+lol.zipped <- lzip(lol)
+#lol.zip.list <- lisp::zip.list(lol$A, lol$B)                 # same as lol.zipped but without names on outer & inner elements
+lol.mapply <- mapply(list, lol$A, lol$B, SIMPLIFY = FALSE) 		# same as lol.zipped but only has names on outer elements
+lol.2d <- mapply(list, lol$A, lol$B) 						# creates 2D list [2,3]
+lol.2ds <- split(lol.2d, col(lol.2d))						# same as lol.zip.list
+#lol.zwn <- lisp::zip.with.names(lol$A, lol$B)				# same as lol.zipped but only has names on inner elements
+}
+

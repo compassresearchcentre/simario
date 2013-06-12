@@ -114,8 +114,6 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 #'  of xa, if any, is retained.
 #' 
 #' @export
-#' @examples
-#' mean_array_z_pctile_CIs(xa) 
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
@@ -443,7 +441,7 @@ mean_list_mx <- function(listmx) {
 #' x <- 1:6
 #' grpby <- c(1,1,2,2,3,3) 
 #' grpby <- c('M','M','F','F','F','F')
-#' prop.table.grpby(x, grpby)
+#' prop.table.grpby(x, grpby, num.runs = 1)
 prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 	if ((CI==FALSE)|(num.runs==1)) {
 		grpsum <- tapply(x, grpby, sum, na.rm=na.rm)
@@ -552,8 +550,6 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' Quantiles for each group are put side-by-side in a rbind fashion.
 #' 
 #' @export
-#' @examples
-#' quantile_mx_cols_BCASO(mx) 
 quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -899,8 +895,6 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
-#' @examples
-#' table.grpby_BCASO(x)
 table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
@@ -1032,6 +1026,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #'
 #' @export 
 #' @examples
+#' \dontrun{
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
 #' grpby <- c('M','F','F','M')
 #' grpby<-matrix(c('M','F','F','M',  'M','M','F','M',  'M','M','M','M',  'F','F','F','F', 'F','F','F','M'),nrow=4,ncol=5)
@@ -1044,7 +1039,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' logiset <- matrix(data=c(rep(c(FALSE, TRUE, FALSE, TRUE),2),rep(c(TRUE, FALSE, TRUE,FALSE),3)), nrow=4,ncol=5)
 #' logiset <- matrix(data=c(rep(c(0, 1, 0, 1),2),rep(c(1, 0, 1,0),3)), nrow=4,ncol=5)
 #' table_mx_cols_BCASO(mx, grpby = grpby, logiset = logiset)
-#' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)
+#' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)}
 table_mx_cols_BCASO <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logiset=NULL, dict) {
 	
 	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
@@ -1408,8 +1403,6 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #' 
 #' wgts<-matrix(c(1,1,1,1,1,2,2,2,2,1), ncol = 2)
 #' na.rm = FALSE ; na.rm = TRUE
-#' 
-#' mean_mx_cols_BCASO(mx, grpby=grpby, grpby.tag=grpby.tag, logiset=logiset, wgts=wgts,  dict = dict)
 mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wgts=NULL, dict=NULL) {
 		
 	# 1. beginning check - that weight dimensions are correct

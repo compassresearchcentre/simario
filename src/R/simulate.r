@@ -121,15 +121,17 @@ result.as.means.and.errs <- function(result.row, simplify = T) {
 #'  a coding variable. names(coding) is the labels
 #'  attr(coding, "varname") is a named element in xlist
 #' @return 
-#'  a table (proportions) with names specified by coding 
+#'  a table (proportions) with names specified by coding
+#' 
+#' @export 
+#' 
 #' @examples
 #' \dontrun{
 #' table.catvar(children$SESBTH, codings$SESBTH)
 #' x <- simframe$z1singleLvl1 ; coding <- codings$z1singleLvl1
 #' table.catvar(simframe$z1singleLvl1, codings$z1singleLvl1)
-#' }
 #' x <- binary.levels.combine(simframe.master$SESBTHLvl1, simframe.master$SESBTHLvl2, simframe.master$SESBTHLvl3)
-#' coding <- dict.MELC$codings$SESBTH
+#' coding <- dict.MELC$codings$SESBTH}
 table.catvar <- function (x, coding) {
 	
 	varname <- attr(coding, "varname")

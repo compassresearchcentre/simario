@@ -1,0 +1,68 @@
+\name{modifyPropsContinuous}
+\alias{modifyPropsContinuous}
+\title{Runs modifyProps on a continuous variable
+Takes a continuous variable, converts it to a categorical variable using the binbreaks,
+modifyProps is then called on that categorical variable.
+The categorical variable is then converted back to a continuos variable using the catToContModels}
+\usage{
+  modifyPropsContinuous(x.cont, desired_props,
+    catToContModels, cont.binbreaks, propens = NULL,
+    logiset = NULL, accuracy = 0.01,
+    envir = parent.frame())
+}
+\arguments{
+  \item{x.cont}{a continuous variable to be adjusted}
+
+  \item{desired_props}{desired proportions}
+
+  \item{catToContModels}{a list of models which will to
+  used to convert the adjusted categorical variable back to
+  continuous}
+
+  \item{cont.binbreaks}{binbreaks for the continuous
+  variable to be adjusted}
+
+  \item{propens}{matrix or vector of the propensity scores
+  for each child For binary variables there is one column
+  of propensity scores: the propensities to change from a 0
+  to a 1.  For categorical variables with more than two
+  categories there are multiple columns of propensity
+  scores: E.g. for a three category variables the
+  propensities to change from category 1 to category 2 are
+  in the first column and the propensities to change from
+  category 2 to category 3 are in the second column.}
+
+  \item{accuracy}{gives how close the end proportions are
+  allowed to be away from the desired proportions before an
+  error message is given - the default is 0.01.  If the
+  '.accuracy' global variable exists, its value will be
+  used instead of that in function call.}
+
+  \item{envir}{environment in which to evaluate model
+  variables.}
+}
+\value{
+  an 'adjusted' continuous variable that if binned will
+  have the same proportions as requested in desired_props
+}
+\description{
+  Runs modifyProps on a continuous variable Takes a
+  continuous variable, converts it to a categorical
+  variable using the binbreaks, modifyProps is then called
+  on that categorical variable. The categorical variable is
+  then converted back to a continuos variable using the
+  catToContModels
+}
+\examples{
+\dontrun{
+simframe.master$age=2
+desired_props <- rep(1/7, 7)
+desired_props <-c(.05, .1, .15, .2, .25, .2, .05)
+test <- modifyPropsContinuous(simframe.master$fhrswrk, modifyPropsContinuous, catToContModels$fhrswrk, cont.binbreaks=attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks"), envir=simframe.master)
+fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
+check <- bin(test, fhrs.binbreaks)
+table(check)
+table(check)/sum(table(check))
+}
+}
+

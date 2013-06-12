@@ -1,0 +1,48 @@
+\name{label_flattened_mx}
+\alias{label_flattened_mx}
+\title{Label a flattened matrix. Labels flattened columns according to dictionary codings,
+and applies the specified row and col dimension label (if any).}
+\usage{
+  label_flattened_mx(mx.flattened, dict,
+    row.dim.label = "", col.dim.label = "")
+}
+\arguments{
+  \item{mx.flattened}{a flattened matrix, ie: a matrix that
+  has rows that contain groups of values.
+
+  A flattened matrix has a meta attribute that specifies
+  the grouping used (if any) and the varname that
+  identifies the codings to apply, eg:
+  meta=c(grpby.tag="sex", varname="disability_state")
+
+  If grpby.tag is NULL, NA, or "", then the flattened code
+  will be in the form "0", i.e: no grping codes only
+  varname codes. These will be converted in the output to
+  the corresponding varname category name.
+
+  If grpby.tag is specified then the flattened matrix will
+  have flattened codes for column names. A flattened code
+  is in the form "0 1", where the first value is a grping
+  code and the second a varname code. These will be
+  converted in the output to the corresponding group and
+  varname category names.}
+
+  \item{dict}{dictionary object}
+
+  \item{row.dim.label}{name of the entire row dimension}
+
+  \item{col.dim.label}{name of the entire col dimension}
+}
+\description{
+  Label a flattened matrix. Labels flattened columns
+  according to dictionary codings, and applies the
+  specified row and col dimension label (if any).
+}
+\examples{
+\dontrun{
+mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
+dict <- dict_demo
+label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
+}
+}
+

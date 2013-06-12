@@ -1,0 +1,53 @@
+\name{collator_freqs_remove_zero_cat2}
+\alias{collator_freqs_remove_zero_cat2}
+\title{Collate frequencies and removes the zero category.}
+\usage{
+  collator_freqs_remove_zero_cat2(runs, dict,
+    row.dim.label = "Year", col.dim.label = "", CI = FALSE,
+    cat.adjustments = NULL, binbreaks = NULL)
+}
+\arguments{
+  \item{runs}{a list of lists of matrices, one inner list
+  per run.  Each inner list may have any number of
+  matrices, and each matrix may have a different sets of
+  rows or columns.  The matrices will be flattened into
+  rows.}
+
+  \item{dict}{Dictionary object. Used to label columns.}
+
+  \item{row.dim.label}{name of the entire row dimension}
+
+  \item{col.dim.label}{name of the entire col dimension}
+
+  \item{cat.adjustments}{The cat.adjustments list
+  containing the cat.adjustments for multiple variables.
+  Within the function the specific cat.adjustments for the
+  variable of interest are extracted from the list in
+  further embedded functions.  Either cat.adjustments or
+  binbreaks are needed if frequencies of a continuous
+  variable are being requested.}
+
+  \item{binbreaks}{The binbreaks for the specific outcome
+  variable.  Either binbreaks or cat.adjustments may be
+  provided to the function.}
+}
+\description{
+  A new version of collator_freqs() that calls
+  collator_mutiple_lists_mx2() instead of the 'non-2'
+  version.  This means that percenatages will be averaged
+  over runs instead of frequencies and the confidence
+  intervals will be calculated on percentages rather than
+  frequencies.  See documentation on
+  mean_array_pctile_CIS2() more more details. Another
+  difference between this function and the original
+  collator_freqs() is that this functiont takes
+  cat.adjustments and binbreaks arguments. Currently only
+  used in tableBuilder().
+}
+\details{
+  \itemize{ \item Takes mean without confidence intervals
+  using \code{\link{collator_mutiple_lists_mx2}} \item
+  Removes the zero category \item Labels the result using
+  the dictionary }
+}
+

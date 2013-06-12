@@ -108,6 +108,7 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' @param binbreaks 
 #' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
 #' may be provided to the function.
+#' @export
 
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 
@@ -252,6 +253,8 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' @param binbreaks 
 #' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
 #' may be provided to the function.
+#' 
+#' @export 
 
 collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
@@ -483,8 +486,6 @@ identify_zero_category_cols <- function (mx) {
 #'  vector of zero column positions
 #'
 #' @export 
-#' @examples
-#' identify_zero_category_cols_bygrp(mx)
 identify_zero_category_cols_bygrp <- function (mx) {
 	#names of the outcome variable (as opposed to the grouping variable come 2nd
 	col.names <- colnames(mx)
@@ -517,14 +518,14 @@ identify_zero_category_cols_bygrp <- function (mx) {
 #' \dontrun{
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sexLvl1"))
 #' dict <- dict_demo
-#' percentages_flattened_mx(mx.flattened, dict)
+#' percentages_flattened_mx(mx.flattened, dict, num.runs = 1)
 #'
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("65-69 1", "65-69 2", "65-69  3", "65-69  4", "70-74  1", "70-74 2", "70-74 3", "70-74 4"))), meta=c(varname="disability_state", grpby.tag="age_grp_output"))
-#' percentages_flattened_mx(mx.flattened, dict)
+#' percentages_flattened_mx(mx.flattened, dict, num.runs = 1)
 #' }
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4,1,2,3,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("Female 1", "Female 2", "Female 3", "Female 4", "Male 1", "Male 2", "Male 3", "Male 4"))), meta=c(varname="disability_state", grpby.tag="sex"))
 #' dict <- dict_example
-#' percentages_flattened_mx(mx.flattened, dict)
+#' percentages_flattened_mx(mx.flattened, dict, num.runs = 1)
 
 percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
@@ -675,8 +676,6 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #'  name of the entire col dimension
 #' 
 #' @export
-#' @examples 
-#' label_flattened_mx_grping.and.CIs(mx.flattened, dict, row.dim.label="", col.dim.label="", num.runs)
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
@@ -824,8 +823,6 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 #'  a character vector.  
 #' 
 #' @export
-#' @examples
-#' identify.position.last.space(col.names)
 identify.position.last.space <- function(col.names) {
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
@@ -869,7 +866,7 @@ identify.position.last.space <- function(col.names) {
 #' mx.grped.rows <- matrix(c(1:4), nrow=1)
 #' groupnameprefixes<-NULL
 #' 
-#' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes)
+#' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes, num.runs = 1)
 prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE, num.runs) {
 
 	grpingNames <- attr(mx.grped.rows,"grpingNames")

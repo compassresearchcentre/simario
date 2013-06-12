@@ -1,0 +1,31 @@
+\name{c_list}
+\alias{c_list}
+\title{Select inner elements of a list of lists, and return as a new list.}
+\usage{
+  c_list(xlist, fx)
+}
+\arguments{
+  \item{xlist}{list}
+
+  \item{fx}{function specifing inner elements to select.
+  Should take a single element of xlist as a parameter.}
+}
+\value{
+  equivalent to c(fx(xlist[[1]]), fx(xlist[[2]] ... )
+  across every element.
+}
+\description{
+  Select inner elements of a list of lists, and return as a
+  new list.
+}
+\examples{
+xlist <- list('1'=list(inner=list(A1=1:2,A2=2:3)))
+xlist <- list('1'=list(inner=list(A1=1:2,A2=2:3)),'2'=list(inner=list(B1=3:4,B2=4:5)))
+fx <- function(x) x$inner
+
+c(xlist[[1]]$inner, xlist[[2]]$inner)
+c(fx(xlist[[1]]), fx(xlist[[2]]))
+c_list(xlist, fx)
+all.equal(c(xlist[[1]]$inner, xlist[[2]]$inner),c_list(xlist, fx))
+}
+

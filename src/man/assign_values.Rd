@@ -1,0 +1,29 @@
+\name{assign_values}
+\alias{assign_values}
+\title{Assign the values of variables (specifed by name in a source character vector)
+to another set of variables (specifed by name in a dest character vector).
+Will modify variables in enclosing environments.}
+\usage{
+  assign_values(dest_var_names, src_var_names)
+}
+\arguments{
+  \item{dest_var_names}{a character vector of variable
+  names to be assigned}
+
+  \item{src_var_names}{a parallel character vector of
+  variable names supplying the values to}
+}
+\description{
+  Assign the values of variables (specifed by name in a
+  source character vector) to another set of variables
+  (specifed by name in a dest character vector). Will
+  modify variables in enclosing environments.
+}
+\examples{
+\dontrun{
+d1 <- 1; d2 <- 2; s1 <- 10; s2 <- 20
+assign_values(c("d1","d2"), c("s1","s2"))
+d1; d2
+}
+}
+

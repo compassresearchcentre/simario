@@ -1,0 +1,26 @@
+\name{predSimNormsSelect}
+\alias{predSimNormsSelect}
+\title{Predict and simulate value from n normal models.}
+\usage{
+  predSimNormsSelect(x.cat, models, envir = parent.frame())
+}
+\arguments{
+  \item{x.cat}{a categorical vector}
+
+  \item{models}{a list of models with length equal to the
+  number of categories in x.cat}
+
+  \item{envir}{environment in which to evaluate model
+  variables.}
+}
+\description{
+  for the case where each category has a separate model
+  that should be used to simulate a value
+}
+\examples{
+\dontrun{
+fhrswrk.cat <- bin(simframe.master$fhrswrk, binbreaks$fhrswrk)
+test <- predSimNormsSelect(fhrswrk.cat, catToContModels$fhrswrk, envir=simframe.master)
+}
+}
+
