@@ -32,7 +32,7 @@ test_dev_environment <- function() {
 	library(devtools)
 	
 	if(installed.packages()["devtools","Version"] >= 0.8) {
-			if(length(as.package("..\\..\\simario\\src"))>1) {
+			if(length(as.package(".."))>1) {
 				cat("simario development environment setup OK\n")
 			}
 	}
