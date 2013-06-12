@@ -484,6 +484,7 @@ identify_zero_category_cols <- function (mx) {
 #'
 #' @export 
 #' @examples
+#' identify_zero_category_cols_bygrp(mx)
 identify_zero_category_cols_bygrp <- function (mx) {
 	#names of the outcome variable (as opposed to the grouping variable come 2nd
 	col.names <- colnames(mx)
@@ -675,6 +676,7 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' 
 #' @export
 #' @examples 
+#' label_flattened_mx_grping.and.CIs(mx.flattened, dict, row.dim.label="", col.dim.label="", num.runs)
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
@@ -822,7 +824,8 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 #'  a character vector.  
 #' 
 #' @export
-#' @examples 
+#' @examples
+#' identify.position.last.space(col.names)
 identify.position.last.space <- function(col.names) {
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))

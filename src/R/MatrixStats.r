@@ -114,7 +114,8 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 #'  of xa, if any, is retained.
 #' 
 #' @export
-#' @examples 
+#' @examples
+#' mean_array_z_pctile_CIs(xa) 
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
@@ -551,7 +552,8 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' Quantiles for each group are put side-by-side in a rbind fashion.
 #' 
 #' @export
-#' @examples 
+#' @examples
+#' quantile_mx_cols_BCASO(mx) 
 quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -898,6 +900,7 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #' 
 #' @export
 #' @examples
+#' table.grpby_BCASO(x)
 table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
