@@ -17,7 +17,7 @@ install.packages.not.installed <- function(package_names) {
 }
 
 install_simario_required_packages <- function() {
-	package_names <- c("abind", "plyr", "xlsx", "proto")
+	package_names <- c("abind", "plyr", "xlsx", "proto", "stringr")
 	install.packages.not.installed(package_names)	
 }
 
