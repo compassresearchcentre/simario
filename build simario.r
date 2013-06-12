@@ -15,11 +15,21 @@ get_version_from_description_file <- function(package_dir) {
 	description_file_words[Version_index+1]
 }
 
+if_does_not_exist_create_dir <- function (dir) {
+	if (!file.exists(dir)) (
+					dir.create(dir)
+					)
+}
+
 package_name <- "."
 package_dir <- "~/simario" 
 
 build_dir <- file.path(package_dir, "build")
 deploy_dir <- file.path(package_dir, "deploy")
+man_dir <- file.path(package_dir, "src/man")
+
+if_does_not_exist_create_dir(build_dir)
+if_does_not_exist_create_dir(man_dir)
 
 library(devtools)
 

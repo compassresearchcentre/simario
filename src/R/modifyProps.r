@@ -598,10 +598,10 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 	} else {
 		#there is no logiset and the scenario is applied to all units
 		if (!is.null(catToContModels)) {
-			adj.x.cont <- modifyPropsContinuous(x, desiredProps, catToContModels, cont.binbreaks, propens_subset, envir=envir)
+			adj.x.cont <- modifyPropsContinuous(x, desiredProps, catToContModels, cont.binbreaks, propens, envir=envir)
 			return(adj.x.cont)
 		} else {
-			adj.x.cat <- modifyProps(x, desiredProps, propens_subset, accuracy=.05)
+			adj.x.cat <- modifyProps(x, desiredProps, propens, accuracy=.05)
 			return(adj.x.cat)
 		}
 	}
