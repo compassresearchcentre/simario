@@ -117,7 +117,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
-	result <- apply(xa, c(ROW,COL), mean) 
+	result <- apply(xa, c(ROW,COL), mean, na.rm=TRUE) 
 	numZ <- dim(xa)[ZDIM]
 	
 	# CIs only make sense if more than 1 Z dim
@@ -1496,7 +1496,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	} else {
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
-			#i=1
+			#i=14
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
 			
