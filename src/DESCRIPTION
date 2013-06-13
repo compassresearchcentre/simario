@@ -11,8 +11,8 @@ Imports:
     stringr
 Type: Package
 Title: Discrete-time dynamic micro-simulation framework for R
-Version: 1.3.6
-Date: 2013-06-10
+Version: 1.3.7
+Date: 2013-06-13
 Author: Oliver Mannion <o.mannion@auckland.ac.nz>
 Maintainer: Oliver Mannion <o.mannion@auckland.ac.nz>
 Description: Framework for executing multi-run dynamic micro-simulation and
