@@ -293,6 +293,11 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 					#there is a user specified subgroup
 					numgroups <- 2
 				}
+				
+				if (is.null(dict$codings[[varname]])) {
+					stop(gettextf("No binbreaks or dictionary codings for %s", varname))
+				}
+				
 				num.categories <- length(names(dict$codings[[varname]]))
 			}
 			grpby <- rep(1:numgroups, each=num.categories)
