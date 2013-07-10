@@ -652,6 +652,10 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
+	means_suffix<-attr(mx.flattened, "means_suffix")
+	
+	if (!is.null(means_suffix)) colnames(mx.flattened)<-paste(colnames(mx.flattened), means_suffix)
+	
 	structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
 
 }

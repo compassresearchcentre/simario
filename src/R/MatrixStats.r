@@ -53,7 +53,7 @@ colmeans.list <- function (xlistm) {
 #' 
 #' result <- mean_array_z(xa)
 #' }
-mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
+mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
 	result <- apply(xa, c(ROW,COL), mean)
@@ -81,7 +81,14 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T) {
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
 		
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		newsuffix<-rep(c("Mean", "Lower", "Upper"), numGroups)
+		
+		if(re_write_colnames) {
+			colnames(resultCI)<-paste(colnames(resultCI), newsuffix)
+		} else { 
+				attr(resultCI, "means_suffix")<-newsuffix
+		}
+				
 		names(dimnames(resultCI)) <- names(dimnames(result))
 		result <- resultCI
 	}
@@ -293,6 +300,11 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 					#there is a user specified subgroup
 					numgroups <- 2
 				}
+				
+				if (is.null(dict$codings[[varname]])) {
+					stop(gettextf("No binbreaks or dictionary codings for %s", varname))
+				}
+				
 				num.categories <- length(names(dict$codings[[varname]]))
 			}
 			grpby <- rep(1:numgroups, each=num.categories)
@@ -661,7 +673,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 #'  Same length as the columns of x.
 #' @return
 #'  a weighted summary table, or rows of weighted summary tables if grpby is specified.
-#' function also returns the weighted number of NA's, but not not include NA's with weights of NA.
+#' function also returns the weighted number of NA's, but does not include NA's with weights of NA.
 #' 
 #' @export
 #' @examples
