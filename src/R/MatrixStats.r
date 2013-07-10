@@ -121,6 +121,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 #'  of xa, if any, is retained.
 #' 
 #' @export
+#' 'xa <- runs_array
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
@@ -145,8 +146,12 @@ mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 		numGroups <- dim(xa)[COL]
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
-		
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+
+		attr(resultCI, "colnames_original") <- colnames(resultCI)
+		colnames_suffix <- rep(c("Mean", "Lower", "Upper"), numGroups)
+		attr(resultCI, "means_suffix") <- colnames_suffix
+				
+		colnames(resultCI) <- paste(colnames(resultCI), colnames_suffix)
 		names(dimnames(resultCI)) <- names(dimnames(result))
 		result <- resultCI
 	}
