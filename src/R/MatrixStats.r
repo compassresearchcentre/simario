@@ -1040,7 +1040,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' logiset <- matrix(data=c(rep(c(0, 1, 0, 1),2),rep(c(1, 0, 1,0),3)), nrow=4,ncol=5)
 #' table_mx_cols_BCASO(mx, grpby = grpby, logiset = logiset)
 #' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)}
-table_mx_cols_BCASO <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logiset=NULL, dict) {
+table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logiset=NULL, dict) {
 	
 	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
 	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
@@ -1075,7 +1075,7 @@ table_mx_cols_BCASO <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logis
 				logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
 			}
 			if (length(mx)!=length(logiset)){
-				stop("Check logiset subsetting in table_mx_cols_BCASO()")
+				stop("Check logiset subsetting in table_mx_cols_MELC()")
 			}
 			NA_index <- which(logiset==F)
 			

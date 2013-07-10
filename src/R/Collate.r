@@ -220,7 +220,6 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' than frequencies.  See documentation on mean_array_pctile_CIS2() more more details.  
 #' Another difference between this function and the original collator_freqs() is that
 #' this functiont takes cat.adjustments and binbreaks arguments. 
-#' Currently only used in tableBuilder().
 #' 
 #' \itemize{
 #'   \item Takes mean without confidence intervals using 
