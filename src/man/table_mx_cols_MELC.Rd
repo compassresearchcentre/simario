@@ -1,9 +1,9 @@
-\name{table_mx_cols_BCASO}
-\alias{table_mx_cols_BCASO}
+\name{table_mx_cols_MELC}
+\alias{table_mx_cols_MELC}
 \title{Generates a frequency table, with option to group by, and weight, for each column of a
 matrix.  The group-by variable may be time-invariant or time-variant.}
 \usage{
-  table_mx_cols_BCASO(mx, grpby = NULL, wgts = NULL,
+  table_mx_cols_MELC(mx, grpby = NULL, wgts = NULL,
     grpby.tag = NULL, logiset = NULL, dict)
 }
 \arguments{

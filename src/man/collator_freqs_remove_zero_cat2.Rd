@@ -41,8 +41,7 @@
   mean_array_pctile_CIS2() more more details. Another
   difference between this function and the original
   collator_freqs() is that this functiont takes
-  cat.adjustments and binbreaks arguments. Currently only
-  used in tableBuilder().
+  cat.adjustments and binbreaks arguments.
 }
 \details{
   \itemize{ \item Takes mean without confidence intervals

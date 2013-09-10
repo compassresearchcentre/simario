@@ -121,7 +121,8 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 #'  of xa, if any, is retained.
 #' 
 #' @export
-#' 'xa <- runs_array
+#' @examples
+#' #xa <- runs_array
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	

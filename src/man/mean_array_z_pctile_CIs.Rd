@@ -26,4 +26,7 @@ averaged across the Z dimension.}
   means from multiple runs), the 2.5 and 97.5 percentiles
   are used as the upper and lower limits of the 95% C.I..
 }
+\examples{
+#xa <- runs_array
+}
 

@@ -17,7 +17,7 @@
 \value{
   a weighted summary table, or rows of weighted summary
   tables if grpby is specified. function also returns the
-  weighted number of NA's, but not not include NA's with
+  weighted number of NA's, but does not include NA's with
   weights of NA.
 }
 \description{

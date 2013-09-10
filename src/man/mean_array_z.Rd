@@ -3,7 +3,8 @@
 \title{Mean across Z dimension of a 3D array. Each row and column cell is
 averaged across the Z dimension.}
 \usage{
-  mean_array_z(xa, CI = TRUE, NA.as.zero = T)
+  mean_array_z(xa, CI = TRUE, NA.as.zero = T,
+    re_write_colnames = T)
 }
 \arguments{
   \item{xa}{an array with a Z dimension}
