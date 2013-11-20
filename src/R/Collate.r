@@ -352,6 +352,7 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 #' dict <- dict_example
 #' collator_means(runs, dict)
 collator_means <- function(runs, dict, ...) {
+	#runs_mx <- collator_list_mx(runs)
 	runs_mx <- collator_list_mx(runs, ...)
 	
 	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
@@ -562,6 +563,8 @@ percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
 #' 
 #' @examples
 #' \dontrun{
+#' x <- runs_mx
+#' varname <- grpby.tag
 #' x <- structure(matrix(1:2, nrow=1, dimnames=list(1, c("0","1"))), meta=c("grpby.tag"="z1gender"))
 #' x <- structure(matrix(1:6, nrow=1, dimnames=list(1, c("0 Mean","0 Lower","0 Upper","1 Mean","1 Lower","1 Upper"))), meta=c("grpby.tag"="z1gender"))
 #' 
@@ -588,6 +591,13 @@ labelColumnCodes <- function(x, dict, varname) {
 	catcodings <- dict$codings[[varname]]
 	
 	codings_indices <- match(cnames_numeric, catcodings)
+	
+	if (any(is.na(codings_indices))) {
+		warning(
+				paste("For varname", varname, "Expecting codings of",paste(catcodings, collapse=" "),"but got", paste(cnames_numeric[is.na(codings_indices)],collapse=" "))
+		)
+	}
+	
 	cnames_numeric_desc <- names(catcodings)[codings_indices]
 	
 	# combine desc with existing alpha, NB: assume alpha is at the end
@@ -632,6 +642,7 @@ labelColumnCodes <- function(x, dict, varname) {
 #' @export
 #' @examples 
 #' \dontrun{
+#' mx.flattened <- runs_mx
 #' mx.flattened <- structure(matrix(c(1,2,1,3,1,4,2,2,2,3,2,4), nrow=2, byrow = TRUE, dimnames=list(NULL, c("F 1", "F 2", "F 3", "M 1", "M 2", "M 3"))), meta=c(grpby.tag="sex", varname="disability_state"))
 #' dict <- dict_demo
 #' label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
@@ -649,7 +660,10 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 	}
 	
 	#label
-	colnames(mx.flattened) <- dict$cmatchFlattened(colnames(mx.flattened), varname, grpby.tag)
+	colnames_original <- attr(mx.flattened, "colnames_original")
+	cnames <- if (!is.null(colnames_original)) colnames_original else colnames(mx.flattened)
+	
+	colnames(mx.flattened) <- dict$cmatchFlattened(cnames, varname, grpby.tag)
 	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
 	
 	means_suffix<-attr(mx.flattened, "means_suffix")
