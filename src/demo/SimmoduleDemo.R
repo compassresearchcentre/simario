@@ -172,13 +172,12 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' 
 	#' @examples
 	#'  . <- env.base$modules$demo
-	#'  outcomes <- .$outcomes
-	map_outcomes_to_run_results <- function(., simframe, outcomes) {
-		
-		cat(gettextf("Generating run results for %s\n", .$name))
-		
-		catvars <- getOutcomeVars(simframe.master, "categorical", "demo")
-		convars <- getOutcomeVars(simframe.master, "continuous", "demo")
+	#'  outcomes <- .$outcomes									
+	map_outcomes_to_run_results <- function(., simframe, outcomes, cat.adjustments, run) {
+																	#have added cat.adjustments and run here 		
+		cat(gettextf("Generating run results for %s\n", .$name))	#to get to work with newer simario version of map_outcomes_to_run_results
+		catvars <- getOutcomeVars(simframe.master, "categorical", "demo")	#yet to make these parameters do anything in this function
+	convars <- getOutcomeVars(simframe.master, "continuous", "demo")		
 		
 		# add additional "all years" row totals to continuous vars
 		outcomes_wtotals <- lapply(outcomes[convars], function(x) {
@@ -211,7 +210,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' @examples 
 	#' . <- env.base$modules$demo
 	#' all_run_results <- .$run_results
-	collate_all_run_results <- function(., all_run_results) {
+	collate_all_run_results <- function(., all_run_results, cat.adjustments, simframe) {
 		cat(gettextf("Collating all run results for %s\n", .$name))
 		
 		all_run_results_zipped <- lzip(all_run_results)

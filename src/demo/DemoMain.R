@@ -42,6 +42,7 @@ createSets <- function(people, codings) {
 #' @examples
 #' data_dir <- paste(getwd(), "/data/", sep="")
 #' initDemo(data_dir)
+
 initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	base_dir <- file.path(data_dir, "base")
 	
@@ -93,28 +94,27 @@ loadTransitionProbabilities <- function(dir) {
 	transition_probabilities
 }
 
+#copied this new version of the loadSimario function from MELC 
+# original is at (H:\COMPASS\MelC\SimarioPaper\OldLoadSimarioFunctionFromDemo) 
 loadSimario <- function() {
-	not_already_installed <- function(package_names) {
-		setdiff(package_names, row.names(installed.packages()))	
-	}
-	
-	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0 & file.exists(path.expand("~/.Rpackages"))
+	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0
 	if (.is_dev_environment & !exists(".USELIB")) {
-		#loads simario from the workspace folder (the R folder - simar/src/R))
 		cat("loadSimario: loading pre-installed development version using load_all\n")
 		
-		if (length(not_already_installed("simario"))) {
-			stop("dict_example requires simario library. Please make sure simario has been installed into the R library path. This can be done by running install_simario_library.bat")	
-		}
-		
+		library(stringr)
 		library(devtools)
-		load_all("simario", reset = T)
+		library(testthat)		
+		if(installed.packages()["devtools","Version"] >= 0.8) {
+			##load_all("../../simario/src", reset = T) #had to comment out this line and 
+			load_all("H:/workspace/simario/src", reset=T) #put the path in like this to 
+		} else {											#get to work
+			load_all("simario", reset = T)
+		} 
 		
 		#workaround for devtools issue https://github.com/hadley/devtools/issues/38
 		Simenv$.super <- .GlobalEnv
 		Simmodule$.super <- .GlobalEnv
 	} else {
-		#loads simario from a preexisting (on computer) R library folder - like C:/Program Files/R/R-2.14.1/library/simario
 		cat("loadSimario: loading installed library\n")
 		library(simario)
 		cat("simario v", sessionInfo()$otherPkgs$simario$Version, "loaded\n")
@@ -122,6 +122,7 @@ loadSimario <- function() {
 }
 
 #setwd(file.path(Sys.getenv("R_USER"), "simario/src/demo/"))
+
 loadSimario()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")

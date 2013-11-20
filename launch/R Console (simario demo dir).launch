@@ -3,9 +3,9 @@
 <stringAttribute key="de.walware.statet.r.debug/RConsole/arguments.options" value=""/>
 <booleanAttribute key="de.walware.statet.r.debug/RConsole/console.pin" value="false"/>
 <stringAttribute key="de.walware.statet.r.debug/RConsole/type" value="local.rjs-rmi"/>
-<stringAttribute key="de.walware.statet.r.debug/REnv/REnvSetting" value="default-workbench"/>
+<stringAttribute key="de.walware.statet.r.debug/REnv/REnvSetting" value="user-local--161lj2llah0mu;R 3.0.2"/>
 <stringAttribute key="de.walware.statet.r.debug/REnv/workingDirectory" value="${workspace_loc:/simario/src/demo}"/>
-<stringAttribute key="de.walware.statet.r/renv/REnvCode" value="default-workbench"/>
+<stringAttribute key="de.walware.statet.r/renv/REnvCode" value="user-local--161lj2llah0mu;R 3.0.2"/>
 <stringAttribute key="de.walware.statet.r/renv/WorkingDirectory" value="${workspace_loc:/simario/src/demo}"/>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
 <mapEntry key="R_KEEP_PKG_SOURCE" value="yes"/>
