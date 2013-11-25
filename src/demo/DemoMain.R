@@ -105,9 +105,9 @@ loadSimario <- function() {
 		library(devtools)
 		library(testthat)		
 		if(installed.packages()["devtools","Version"] >= 0.8) {
-			load_all("../../../simario/src", reset = T) #had to comment out this line and 
-			#load_all("H:/workspace/simario/src", reset=T) #put the path in like this to 
-		} else {											#get to work
+			load_all("../../../simario/src", reset = T) 
+			
+		} else {											
 			load_all("simario", reset = T)
 		} 
 		
