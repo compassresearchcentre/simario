@@ -131,13 +131,13 @@ chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, re
 #' }
 chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 	# default margins
-	mar.default <- c(5, 4, 4, 2) + 0.1
+	#mar.default <- c(5, 4, 4, 2) + 0.1
 	#par(mar.default) #set default
 	
 	# xpd=T: allow drawing outside of plot (ie. in margin)
 	# par()$mar+c(0,0,0,6): extend current right margin of plot by 4 lines
 	# mar.default + c(0,0,0,6): default margin + 4 lines extended to the right 
-	par(xpd=T, mar=mar.default+c(0,0,0,6))
+	#par(xpd=T, mar=mar.default+c(0,0,0,6))
 	
 	# barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)), names.arg=names(y), axis.lty=1, col=col)
 	barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)*1.25), 
