@@ -177,7 +177,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 																	#have added cat.adjustments and run here 		
 		cat(gettextf("Generating run results for %s\n", .$name))	#to get to work with newer simario version of map_outcomes_to_run_results
 		catvars <- getOutcomeVars(simframe.master, "categorical", "demo")	#yet to make these parameters do anything in this function
-	convars <- getOutcomeVars(simframe.master, "continuous", "demo")		
+		convars <- getOutcomeVars(simframe.master, "continuous", "demo")		
 		
 		# add additional "all years" row totals to continuous vars
 		outcomes_wtotals <- lapply(outcomes[convars], function(x) {

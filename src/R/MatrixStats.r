@@ -879,8 +879,8 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 	if (is.null(grpby)) {
 		t(t(table(x, useNA = useNA, deparse.level = 0)))
-	} else {
-		
+	} else {	
+	
 		if(length(x) != length(grpby)) {
 			stop(gettextf("Length of %s != length of %s", 
 							as.character(sys.call())[2], as.character(sys.call())[3]))
@@ -1338,8 +1338,8 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 	
 	if (is.null(grpby)) {
 		result <- apply(mx, COL, function(x) {
-					#x <- mx[,2]
-					if (!na.rm&any(is.na(x))) {
+					#x <- mx[,60]
+					if (!na.rm & any(is.na(x))) {
 						NA
 					} else { 
 						non.nas <- !is.na(x)
@@ -1347,7 +1347,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 					}
 				})
 		
-		result <- t(t(result))
+		result <- t(t(result)) #turn into matrix
 		
 	} else {
 		result <- t(apply(mx, COL, function (x) {

@@ -520,6 +520,7 @@ expr = {
 		}
 		
 		invisible(lapply(.$modules, function(module) {
+							#module <- .$modules[[1]]
 							module$run_results_collated <- module$collate_all_run_results(module$run_results, .$cat.adjustments, .$simframe)
 						}))
 
