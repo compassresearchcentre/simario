@@ -42,8 +42,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		#'  vector of categorical values from which a new adjusted vector is returned 
 		#' @param varname
 		#'  varname, used to lookup in cat.adjustments and propensities
-		adjustCatVar <- function(x, varname) {
+		adjustCatVar <- function(x, varname, propens=NULL) {
 			cat.adjustments <- simenv$cat.adjustments
+			
+			#varname.no.lvl <- strip_lvl_suffix(varname[1])
 			
 			if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
 			
@@ -53,9 +55,17 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				return(x)
 			}
 			
+			#attach logisetexpr attribute to desiredProps
+			desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logisetexpr"))
+			
+			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
+			
+					
 			cat("Adjusting", varname, ": ", desiredProps, "\n")
 			
-			modifyProps(x, desiredProps, propensities[[varname]][,,iteration])
+			adjust.proportions(x, desiredProps, propens, logiset) 
+			
+			#modifyProps(x, desiredProps, propensities[[varname]][,,iteration])    ###Doesn't work for subgroup
 		}
 		
 		store_current_values_in_outcomes <- function(iteration) {

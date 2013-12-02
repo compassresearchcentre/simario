@@ -33,3 +33,19 @@ runScenario1 <- function() {
 	#prop.table(table(env.scenario$simframe$disability_state))
 	
 }
+
+
+runScenario2 <- function() {
+	env.scenario <<- SimenvDemo$new("Scenario 1")
+	subgroupExpression <- "sex=='F'"
+	setGlobalSubgroupFilterExpression(subgroupExpression)
+	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 497),2,3,4,rep(1,497))
+	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
+	env.scenario$cat.adjustments$disability_state[50,] <- c(0.2,0.2,0.3,0.3)
+	env.scenario$simulate(2)
+	
+	### test if the adjustment work
+	#test<-env.scenario$modules$demo$outcomes$disability_state[,1]
+	#test<-env.scenario$modules$demo$outcomes$disability_state[,50]
+	#table(test[env.scenario$simframe$sex=='F'])
+}

@@ -100,10 +100,11 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 }
 
 
-#' A version of mean_array_z() where the confidence intervals are percentile based 
-#' rather than using asymptotic theory.
+
 #' Mean across Z dimension of a 3D array. Each row and column cell is
 #' averaged across the Z dimension.
+#' A version of mean_array_z() where the confidence intervals are percentile based 
+#' rather than using asymptotic theory.
 #' 
 #' For the vector of statistic values (e.g. a vector of means from multiple runs),
 #' the 2.5 and 97.5 percentiles are used as the upper and lower limits of the 95% C.I..
