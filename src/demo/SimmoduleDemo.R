@@ -45,8 +45,6 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		adjustCatVar <- function(x, varname, propens=NULL) {
 			cat.adjustments <- simenv$cat.adjustments
 			
-			#varname.no.lvl <- strip_lvl_suffix(varname[1])
-			
 			if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
 			
 			desiredProps <- cat.adjustments[[varname]][iteration,]
