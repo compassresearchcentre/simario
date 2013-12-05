@@ -52,7 +52,7 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 		if (numbers==FALSE) {
 			result <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
 		} else {
-		result <- runs_mx
+			result <- runs_mx
 		}
 	} else if ((CI==TRUE)&&(num.runs>1)) {
 		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs<-num.runs)

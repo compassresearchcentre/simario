@@ -184,3 +184,19 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 	}
 	logiset
 }
+
+#' subgroupExpression <- "mhrswrk < 20"
+#' setGlobalSubgroupFilterExpression(subgroupExpression)
+#' attr(env.scenario$cat.adjustments[[1]], "logisetexpr")
+setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
+	if (is.null(subgroupExpression) || subgroupExpression == "") {
+		return(removeGlobalSubgroupFilterExpression())
+	}
+	
+	cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
+	
+	for (i in 1:length(env.scenario$cat.adjustments)) {
+		attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
+	}
+}
+

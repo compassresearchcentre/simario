@@ -100,10 +100,11 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 }
 
 
-#' A version of mean_array_z() where the confidence intervals are percentile based 
-#' rather than using asymptotic theory.
+
 #' Mean across Z dimension of a 3D array. Each row and column cell is
 #' averaged across the Z dimension.
+#' A version of mean_array_z() where the confidence intervals are percentile based 
+#' rather than using asymptotic theory.
 #' 
 #' For the vector of statistic values (e.g. a vector of means from multiple runs),
 #' the 2.5 and 97.5 percentiles are used as the upper and lower limits of the 95% C.I..
@@ -1016,7 +1017,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #'  matrix, or dataframe
 #' 
 #' @param grpby
-#'  a vector or matrix of elements to group by, or NULL or unspecified to do no grouping.
+#'  a vector or matrix of T/F elements to group by, or NULL or unspecified to do no grouping.
 #'  Same length (or number of columns) as the columns of mx.
 #' If  the group-by variable is time-invariant grpby can be provided as a vector or as a 
 #' matrix with every column the same.  If the group-by variable is time-variable then grpby 
@@ -1153,6 +1154,9 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 	
 }
+
+
+
 
 
 #' Weighted frequency table

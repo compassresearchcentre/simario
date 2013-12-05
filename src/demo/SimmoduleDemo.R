@@ -37,12 +37,22 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		#' Adjust categorical values to desired proportions for current iteration
 		#' in cat.adjustments (if any).
-		#' 
+		#'
+		#' Allows subgroup adjustment if a subgroup expression attribute is attached. 
+		#'  
 		#' @param x
 		#'  vector of categorical values from which a new adjusted vector is returned 
 		#' @param varname
 		#'  varname, used to lookup in cat.adjustments and propensities
-		adjustCatVar <- function(x, varname) {
+		#' @param propens
+		#' 
+		#' @return 
+		#' an adjusted vector of categorical variable
+		#' 
+		#' @export
+		#' @examples
+		#' adjustCatVar(disability_state, "disability_state")
+		adjustCatVar <- function(x, varname, propens=NULL) {
 			cat.adjustments <- simenv$cat.adjustments
 			
 			if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
@@ -53,9 +63,17 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				return(x)
 			}
 			
+			#attach logisetexpr attribute to desiredProps
+			desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logisetexpr"))
+			
+			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
+			
+					
 			cat("Adjusting", varname, ": ", desiredProps, "\n")
 			
-			modifyProps(x, desiredProps, propensities[[varname]][,,iteration])
+			adjust.proportions(x, desiredProps, propens, logiset) 
+			
+			#modifyProps(x, desiredProps, propensities[[varname]][,,iteration])    ###Doesn't work for subgroup
 		}
 		
 		store_current_values_in_outcomes <- function(iteration) {
@@ -180,24 +198,50 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		convars <- getOutcomeVars(simframe.master, "continuous", "demo")		
 		
 		# add additional "all years" row totals to continuous vars
-		outcomes_wtotals <- lapply(outcomes[convars], function(x) {
+		# outcomes_wtotals <- lapply(outcomes[convars], function(x) {
 						#x <- outcomes[[convars[1]]] 
-					structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
-				})
+		#			structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
+		#		})
+		
+		#user specified subgroup variable
+		#prepend "outcomes$", "simframe$", or "env.base$...outcomes$" to variables so they
+		#can be found
+		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
+			base.outcomes.expr <- paste("env.base$modules$demo$run_results$run", run, "$outcomes", sep="")
+			base.outcomes.current.run <- eval(parse(text=base.outcomes.expr))
+			subgroup.expr <- attr(cat.adjustments[[1]], "logisetexpr")
+			prepended.exprs <- prepend.paths(subgroup.expr) 
+			sg.expr <- unlist(prepended.exprs["sg.expr"])
+			names(sg.expr) <- ""
+			sg.expr.base <- unlist(prepended.exprs["sg.expr.base"])
+			names(sg.expr.base) <- ""
+			eval(parse(text=sg.expr))
+			eval(parse(text=sg.expr.base))
+		}
 		
 		run_results <- list()
 		
-		run_results$confreqs <- lapply(outcomes_wtotals[convars], table_mx_cols)
-		run_results$freqs <- lapply(outcomes[catvars], table_mx_cols)
-		run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols, logiset=people_sets$males)
-		run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols, logiset=people_sets$females)
-		run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols, grpby=people$sex, grpby.tag="sex")
-		run_results$means <- lapply(outcomes_wtotals[convars], mean_mx_cols)
-		run_results$means_males <- lapply(outcomes_wtotals[convars], mean_mx_cols, logiset=people_sets$males)
-		run_results$means_females <- lapply(outcomes_wtotals[convars], mean_mx_cols, logiset=people_sets$females)
-		run_results$means_by_sex <- lapply(outcomes_wtotals[convars], mean_mx_cols, grpby=people$sex, grpby.tag="sex")
-		run_results$summaries <- lapply(outcomes_wtotals[convars], summary_mx_cols)
-		run_results$quantiles <- lapply(outcomes_wtotals[convars], quantile_mx_cols, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
+		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
+			run_results$freqs_by_subgroup <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
+			run_results$means_by_subgroup <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
+			run_results$freqs_by_subgroup_base_data <- lapply(base.outcomes.current.run[catvars], table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
+			run_results$means_by_subgroup_base_data <- lapply(base.outcomes.current.run[convars], mean_mx_cols_BCASO, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
+		}
+		
+		run_results$confreqs <- lapply(outcomes[convars], table_mx_cols_MELC, dict=dict_demo)
+	    run_results$freqs <- lapply(outcomes[catvars], table_mx_cols_MELC, dict=dict_demo)
+		run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
+		run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
+		run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
+
+		run_results$means <- lapply(outcomes[convars], mean_mx_cols_BCASO, dict=dict_demo)
+		run_results$means_males <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$males, dict=dict_demo)
+		run_results$means_females <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$females, dict=dict_demo)
+		run_results$means_by_sex <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
+		run_results$summaries <- lapply(outcomes[convars], summary_mx_cols)
+		run_results$quantiles <- lapply(outcomes[convars], quantile_mx_cols, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
+		
+		run_results$outcomes <- outcomes 
 		
 		run_results 
 	}
@@ -213,10 +257,19 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	collate_all_run_results <- function(., all_run_results, cat.adjustments, simframe) {
 		cat(gettextf("Collating all run results for %s\n", .$name))
 		
+		outcomes <- .$outcomes
+		
 		all_run_results_zipped <- lzip(all_run_results)
 		all_run_results_zipped <- lapply(all_run_results_zipped, lzip)
 	
 		collated_results <- list()
+		
+		if (!is.null(all_run_results_zipped$freqs_by_subgroup)) {
+			collated_results$freqs_by_subgroup <- lapply(all_run_results_zipped$freqs_by_subgroup, collator_freqs_remove_zero_cat2, dict=dict_demo, CI=TRUE)
+			collated_results$means_by_subgroup <- lapply(all_run_results_zipped$means_by_subgroup, collator_means, dict=dict_demo, NA.as.zero=F, CI=TRUE)
+			collated_results$freqs_by_subgroup_base_data <- lapply(all_run_results_zipped$freqs_by_subgroup_base_data, collator_freqs_remove_zero_cat2, dict=dict_demo, CI=TRUE)
+			collated_results$means_by_subgroup_base_data <- lapply(all_run_results_zipped$means_by_subgroup_base_data, collator_means, dict=dict_demo, NA.as.zero=F, CI=TRUE)
+		}
 		
 		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_freqs, dict = dict_demo)
 		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
@@ -236,6 +289,38 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	
 })
 
+prepend.paths <- function(expr) {
+	#expr <- "r1stchildethnLvl3==1 & mhrswrk<21"
+	
+	catvars <- getOutcomeVars(env.base$simframe, "categorical")
+	contvars <- getOutcomeVars(env.base$simframe, "continuous")
+	time.variant.vars <- c(catvars, contvars)
+	#catvars and contvars are time-variant
+	presimvars <- names(env.base$presim.stats)
+	#presimvars are time-invariant
+	
+	for (i in 1:length(time.variant.vars)) {
+		pos1 <- str_locate(expr, time.variant.vars[i])
+		if (sum(is.na(pos1))==0) {
+			replace.expr1 <- paste("outcomes$", time.variant.vars[i], sep="")
+			expr <- str_replace_all(expr, time.variant.vars[i], replace.expr1)	
+		}
+	}
+	for (i in 1:length(presimvars)) {
+		pos2 <- str_locate(expr, presimvars[i])
+		if (sum(is.na(pos2))==0) {
+			replace.expr2 <- paste("simframe$", presimvars[i], sep="")
+			##expr <- str_replace(expr, presimvars[i], replace.expr2)
+			expr <- str_replace_all(expr, presimvars[i], replace.expr2)
+		}
+	}
+	sg.expr <- paste("sg.var <- ", expr, sep="")
+	sg.expr.base <- str_replace_all(sg.expr, "outcomes", "base.outcomes.current.run")
+	sg.expr.base <- str_replace(sg.expr.base, "sg.var", "sg.var.base")
+	sg.expr.base <- str_replace_all(sg.expr.base, "simframe", "env.base$simframe")
+	result <- list(sg.expr=sg.expr, sg.expr.base=sg.expr.base)
+	return(result)
+}
 
 #' Create a unique integer index vector given the supplied values.
 #' This index can then be used to lookup a row in the disability
