@@ -124,7 +124,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 #' @examples
 #' #xa <- runs_array
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
-	if (NA.as.zero) xa[is.na(xa)] <- 0
+	if (NA.as.zero) xa[is.na(xa)] <- 0 #turns any 0s to NAs (this is the default)
 	
 	result <- apply(xa, c(ROW,COL), mean, na.rm=TRUE) 
 	numZ <- dim(xa)[ZDIM]
