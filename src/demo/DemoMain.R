@@ -37,13 +37,40 @@ createSets <- function(people, codings) {
 	sets
 }
 
+
+#' List of breaks codings for adjustable continuous variables.  
+#' 
+#' binbreak names cannot have spaces - because in label_flattened_mx_grping.and.CIs() looks
+#' 	at if there are any spaces to determine whether there is subgrouping or not.  An underscore
+#' 	can be used instead of a space
+#' 
+#' @examples
+#' createBinBreaks(people)
+
+createBinBreaks <- function(people) {
+	binbreaks <- list()
+	
+	#NB: the very first cut point must be less than min(x)
+	#subsequent cut points are the closed right bound,
+	#and the final cut point should be max(x)
+	# eg: breaks of c(0, 34, 35, 36, 37, 44)
+	# will cut into the following bins
+	#  (0,34] (34,35] (35,36] (36,37] (37,44] 
+	
+	
+	binbreaks$IQ <- c(-1, 49, 69, 85, 129, 999)
+	names(binbreaks$IQ) <- c(NA, "0-49", "50-69", "70-85", "86-129", "130+")
+
+	binbreaks
+}
+
 #' Initialise models, basefile, simframe.
 #' 
 #' @examples
 #' data_dir <- paste(getwd(), "/data/", sep="")
 #' initDemo(data_dir)
 
-initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
+initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, catToCont.modelfiledir) {
 	base_dir <- file.path(data_dir, "base")
 	
 	descriptions_dataframe <- read_file(base_dir, "Data_dictionary.csv")
@@ -56,7 +83,6 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	#create simframe
 	sfdef <- read_csv(base_dir, "simframedef.csv")
 	simframe.master <<- loadSimFrame(sfdef, people)
-	
 	people_sets <<- createSets(people, dict_demo$codings)
 	
 	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
@@ -67,7 +93,18 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep="")) {
 	breaks_age_grp <<- 	c(-1, 59, 79, 99)
 	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
 	
+	#load models
+	models <<- loadDemoModels(modelfiledir)
+	checkModelVars(models, simframe.master)
+	
+	#load catToCont models
+	catToContModels <<- loadCatToContModels(catToCont.modelfiledir)
+	lapply(catToContModels, checkModelVars, simframe=simframe.master)
+	
 	propensities <<- NULL		# referenced by adjustCatVar
+	
+	#load aux
+	binbreaks <<- createBinBreaks(people)
 	
 	cat ("Demo initialised\n")
 	
@@ -121,6 +158,42 @@ loadSimario <- function() {
 	}
 }
 
+#' Load each model from an xls file, and construct a GLM object from it
+#' @examples
+#' models <- loadDemoModels(modelfiledir)
+loadDemoModels <- function(modelfiledir) {
+	models <- list()
+	
+	models$IQModel7_15 <- loadGLMCSV(modelfiledir, "IQModel7_15.csv")
+	models$IQModel16_27 <- loadGLMCSV(modelfiledir, "IQModel16_27.csv")
+	models$IQModel28onwards <- loadGLMCSV(modelfiledir, "IQModel28onwards.csv")
+	
+	cat("Loaded models\n")
+	models
+}
+
+
+#' Load models for mapping from categorical to continuous (in sceanrio testing of continuous 
+#' variables) 
+#' Load each model from an xls file, and construct a GLM object from it
+#' @examples
+#' modelfiledir <- "D:/workspace.sim/MELC/CHDS/models_CatToCont/"
+#' models <- loadMELCModels(modelfiledir)
+loadCatToContModels <- function(modelfiledir) {
+	catToContModels <- list()
+	
+	catToContModels$IQ <- list()
+	
+	catToContModels$IQ <- list(loadGLMCSV(modelfiledir, "IQCatToCont0_49.csv"),
+			loadGLMCSV(modelfiledir, "IQCatToCont50_69.csv"), loadGLMCSV(modelfiledir, "IQCatToCont70_85.csv"),
+			loadGLMCSV(modelfiledir, "IQCatToCont86_129.csv"), loadGLMCSV(modelfiledir, "IQCatToCont130Plus.csv"))
+	
+	cat("Loaded CatToCont models\n")
+	catToContModels
+}
+
+
+
 #setwd(file.path(Sys.getenv("R_USER"), "simario/src/demo/"))
 
 loadSimario()
@@ -128,7 +201,14 @@ source("SimenvDemo.R")
 source("SimmoduleDemo.R")
 source("DemoScenarios.R")
 
-initDemo()
+
+dirs <- list()
+dirs$root <- paste(getwd(),"/",sep="")
+dirs$base <- paste(dirs$root ,"base/",sep="")
+dirs$models <- paste(dirs$root,"data/models/",sep="")
+dirs$catToContModels <- paste(dirs$root, "data/models_CatToCont/", sep="")
+
+initDemo(modelfiledir=dirs$models, catToCont.modelfiledir=dirs$catToContModels)
 
 #if no base simulation yet, then simulate 
 if (!exists("env.base")) {
@@ -140,3 +220,6 @@ if (!exists("env.base")) {
 	
 	print(env.base$simulate(total_runs=2))
 }
+
+
+

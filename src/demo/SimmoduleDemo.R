@@ -76,6 +76,51 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			#modifyProps(x, desiredProps, propensities[[varname]][,,iteration])    ###Doesn't work for subgroup
 		}
 		
+	
+		
+		
+		#' Adjust continuous values to desired proportions in cat.adjustments (if any).
+		#' 
+		#' Allows subgroup adjustment if a global subgroup expression is set. 
+		#' 
+		#' @param x
+		#' continuous values to adjust
+		#' @param varname
+		#'  varname, used a lookup into cat.adjustments and propensities
+		#' @examples
+		#' 
+		adjustContVar <- function(x, varname, propens=NULL) {
+			cat.adjustments <- simenv$cat.adjustments
+			
+			if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
+			
+			desiredProps <- cat.adjustments[[varname]][iteration,]
+			
+			if (any(is.na(desiredProps))) {
+				return(x)
+			}
+			
+			#attach logiset attribute to desiredProps
+			desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logiset"))
+			
+			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
+			
+			#think this function is only called in year 1 so don't need to have this here
+			##if ((is.null(propens))&(!is.null(propensities[[varname]]))) {
+			##propens <- propensities[[varname]][,,iteration]
+			##}
+			
+			cat("Adjusting", varname, ": ", desiredProps, "\n")
+			
+			catToContModels <- attr(cat.adjustments[[varname]], "catToContModel")
+			cont.binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
+			
+			adj.x.cont <- adjust.proportions(x, desiredProps, propens, logiset, catToContModels, cont.binbreaks, envir=parent.frame())
+			return(adj.x.cont)
+		}
+		
+		
+		
 		store_current_values_in_outcomes <- function(iteration) {
 			outcomes <<- lapply(outcomes, function(x) {
 						x[,iteration] <- get(attr(x,"varname"));x 
@@ -116,6 +161,48 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			death_transition_probs
 		}
 		
+		
+		simulate_IQ <- function(){
+			if (iteration < 6) {
+				IQchange <<- 0
+			} else if (iteration >= 7 & iteration <= 15) {
+				IQchange <<- predSimNorm(models$IQModel7_15)
+			} else if (iteration >= 16 & iteration <= 27) {
+				IQchange <<- predSimNorm(models$IQModel16_27)
+			} else if (iteration >= 28) {
+				IQchange <<- predSimNorm(models$IQModel28onwards)
+			}
+			IQ <<- IQ_previous + round(IQchange)
+			isNegative <<- IQ < 0
+			IQ[!alive] <<- IQ_previous[!alive]
+			IQ[isNegative] <<- IQ_previous[isNegative]
+			IQ <<- adjustContVar(IQ,"IQ")
+			IQ
+		}
+		
+
+		
+		#simulate_IQ <- function(){
+			#if (iteration < 6) {
+				#IQ  <<- IQ_previous
+			#} else if (iteration >= 7 & iteration <= 15) {
+				#IQchange <<- predSimNorm(models$IQModel7_15)
+				#IQ <<- IQ_previous + IQchange
+				#IQ <<- round(IQ)
+				#IQ[IQ < 0] <<- IQ_previous
+			#} else if (iteration >= 16 & iteration <= 27) {
+				#IQchange <<- predSimNorm(models$IQModel16_27)
+				#IQ <<- IQ_previous + IQchange
+				#IQ <<- round(IQ)
+				#IQ[IQ < 0] <<- IQ_previous
+			#} else if (iteration >= 28) {
+				#IQchange <<- predSimNorm(models$IQModel28onwards)
+				#IQ <<- IQ_previous + IQchange
+				#IQ <<- round(IQ)
+				#IQ[IQ < 0] <<- IQ_previous
+			#}
+		#}
+		
 		# SIMULATION STARTS HERE
 		# simenv <- env.base
 						
@@ -150,13 +237,17 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				
 				age[alive] <- age[alive] + 1
 				
-				age_grp[alive] <- bin(age[alive], breaks_age_grp)
+				age_grp[alive] <- bin(age[alive], breaks_age_grp)	
+				
+				simulate_IQ()
 				
 				death_transition_probs <- lookup_death_transition_probs(sex[alive], age[alive])
 	
 				now_dead <- runif(length(death_transition_probs)) <= death_transition_probs
 				
 				alive[alive] <- !now_dead
+				
+				
 				
 			}
 			
@@ -202,6 +293,36 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 						#x <- outcomes[[convars[1]]] 
 		#			structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
 		#		})
+	
+	
+	#bin/group continuous variables that are displayed as categorical for scenario testing purposes
+	#(IQ)	
+	
+	binned.list <- binned.list.base <- list()
+	for (i in 1:length(convars)) {
+		tab <- outcomes[c(convars[i])]
+		binned.tab <- matrix(bin(tab[[1]], binbreaks[[convars[i]]]), ncol=100)
+		attr(binned.tab, "meta") <- c(varname=convars[[i]])
+		binned.list[[i]] <- binned.tab
+		names(binned.list)[i] <- convars[i]
+		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
+			#the env.base$...run1$outcomes object only exits if we are in the scenario environments
+			#we only need the base.outcomes.current.run if a subgroup scenario was run 
+			#(otherwise, if no subgroup scenario run, they just look at the tables from env.base)
+			base.outcomes.expr <- paste("env.base$modules$demo$run_results$run", run, "$outcomes", sep="")
+			base.outcomes.current.run <- eval(parse(text=base.outcomes.expr))
+			
+			if (is.null(base.outcomes.current.run)) {
+				stop(gettextf("%s does not exist. Cannot create binned.list.base", base.outcomes.expr))
+			}
+			
+			tab.base <- base.outcomes.current.run[c(convars[i])]
+			binned.tab.base <- matrix(bin(tab.base[[1]], binbreaks[[convars[i]]]), ncol=100)
+			attr(binned.tab.base, "meta") <- c(varname=convars[[i]])
+			binned.list.base[[i]] <- binned.tab.base
+			names(binned.list.base)[i] <- convars[i]
+		}
+	}
 		
 		#user specified subgroup variable
 		#prepend "outcomes$", "simframe$", or "env.base$...outcomes$" to variables so they
@@ -224,8 +345,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
 			run_results$freqs_by_subgroup <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
 			run_results$means_by_subgroup <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
+			run_results$freqs_continuousGrouped_by_subgroup <- lapply(binned.list, table_mx_cols_MELC, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
 			run_results$freqs_by_subgroup_base_data <- lapply(base.outcomes.current.run[catvars], table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
 			run_results$means_by_subgroup_base_data <- lapply(base.outcomes.current.run[convars], mean_mx_cols_BCASO, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
+			run_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(binned.list.base, table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
 		}
 		
 		run_results$confreqs <- lapply(outcomes[convars], table_mx_cols_MELC, dict=dict_demo)
@@ -233,6 +356,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
 		run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
 		run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
+		run_results$freqs_continuousGrouped <- lapply(binned.list, table_mx_cols_MELC, dict=dict_demo)
 
 		run_results$means <- lapply(outcomes[convars], mean_mx_cols_BCASO, dict=dict_demo)
 		run_results$means_males <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$males, dict=dict_demo)
@@ -267,13 +391,16 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		if (!is.null(all_run_results_zipped$freqs_by_subgroup)) {
 			collated_results$freqs_by_subgroup <- lapply(all_run_results_zipped$freqs_by_subgroup, collator_freqs_remove_zero_cat2, dict=dict_demo, CI=TRUE)
 			collated_results$means_by_subgroup <- lapply(all_run_results_zipped$means_by_subgroup, collator_means, dict=dict_demo, NA.as.zero=F, CI=TRUE)
+			collated_results$freqs_continuousGrouped_by_subgroup <- lapply(all_run_results_zipped$freqs_continuousGrouped_by_subgroup, collator_freqs2, dict=dict_demo, CI=FALSE, cat.adjustments=cat.adjustments)
 			collated_results$freqs_by_subgroup_base_data <- lapply(all_run_results_zipped$freqs_by_subgroup_base_data, collator_freqs_remove_zero_cat2, dict=dict_demo, CI=TRUE)
 			collated_results$means_by_subgroup_base_data <- lapply(all_run_results_zipped$means_by_subgroup_base_data, collator_means, dict=dict_demo, NA.as.zero=F, CI=TRUE)
+			collated_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(all_run_results_zipped$freqs_continuousGrouped_by_subgroup_base_data, collator_freqs2, dict=dict_demo, CI=FALSE, cat.adjustments=cat.adjustments) #cat.adjustments only used to get binbreaks
 		}
 		
 		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_freqs, dict = dict_demo)
 		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
 		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs_remove_zero_cat, dict = dict_demo)
+		collated_results$freqs_continuousGrouped[[2]] <- collator_freqs2(all_run_results_zipped$freqs_continuousGrouped[[2]], dict=dict_demo, CI=TRUE, cat.adjustments=cat.adjustments)
 		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs_remove_zero_cat, dict = dict_demo)
@@ -283,7 +410,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, collator_means, dict = dict_demo)
 		collated_results$summaries <- lapply(all_run_results_zipped$summaries, collator_list_mx)
 		collated_results$quantiles <- lapply(all_run_results_zipped$quantiles, collator_list_mx)
-	
+		
 		collated_results
 	}
 	

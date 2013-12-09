@@ -19,7 +19,8 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' env.scenario <- SimenvDemo$new(name = "My Scenario")
 	new <- function(., name=NULL, simframe=simframe.master, dict=dict_demo) {
 		
-		cat.adjustments <- createEmptyCatAdjustments(simframe, dict)
+		NUM_ITERATIONS <- 100
+		cat.adjustments <- createEmptyCatAdjustments(simframe, dict, numiterations=NUM_ITERATIONS)
 		
 		modules <- list(demo = SimmoduleDemo$new(simframe))
 		
@@ -54,13 +55,16 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' simframe <- simframe.master
 	#' dict <- dict_demo
 	#' cat.adjustments <- createEmptyCatAdjustments(simframe, dict)
-	createEmptyCatAdjustments <- function(simframe, dict) {
+	createEmptyCatAdjustments <- function(simframe, dict, numiterations = NUM_ITERATIONS) {
 		
 		catvars <- getOutcomeVars(simframe, "categorical")
 		
-		NUM_ITERATIONS <- 100
+		cat.adjustments <- createAdjustmentMatrices(catvars, dict, numiterations)
 		
-		createAdjustmentMatrices(catvars, dict, NUM_ITERATIONS)
+		#create continuous variable cat.adjustments
+		cat.adjustments$IQ <- createAdjustmentMatrix("IQ", binbreaks$IQ[-1], numiterations, is_a_level_var=F, cont.binbreaks=binbreaks$IQ, catToContModels=catToContModels$IQ)
+		
+		cat.adjustments 
 	}
 	
 })

@@ -80,3 +80,15 @@ runScenario4 <- function() {
 	#table(test[env.scenario$modules$demo$outcomes$age_grp[,60]==2])
 }
 
+
+#' scenario for continuous variable
+runScenario5 <- function() {
+	env.scenario <<- SimenvDemo$new("Scenario 5")
+	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
+	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
+	env.scenario$simulate(2)
+	
+	### test if the adjustment work
+	#env.scenario$modules$demo$run_results$run1$freqs_continuousGrouped$IQ$`1`
+	#env.scenario$modules$demo$run_results$run1$freqs_continuousGrouped$IQ$`50`
+}

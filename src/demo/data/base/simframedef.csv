@@ -5,3 +5,5 @@ sex,,sex,,
 alive,,T,,demo
 earnings,,0,continuous,demo
 disability_state,,1,categorical,demo
+IQ,IQ_previous,IQ,continuous,demo
+IQ_previous,,as.integer(NA),,

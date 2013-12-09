@@ -5,3 +5,5 @@ alive,alive,"c('Alive'=T,'Dead'=F)"
 disability_state,disability state,"c('No disability'=1,'Mild disability'=2,'Moderate disability'=3,'Severe disability'=4)"
 earnings,earnings to date,
 sex,gender,"c('Female'='F', 'Male'='M')"
+IQ,IQ,
+IQ_previous,IQ(prev year),
