@@ -161,6 +161,15 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			death_transition_probs
 		}
 		
+		simulate_qualification <- function(){
+			#generate propensities for scenario testing
+			numPeople <- length(simframe.master[[1]])
+			qualificationmodels <- propensityModels[["qualification"]]
+			qualificationPropensities <- predictOrdinal(qualificationmodels, numPeople, envir=env.base$simframe, stochastic=TRUE)
+			qualification <<- adjustContVar(qualification, "qualification", propens=qualificationPropensities[,-ncol(qualificationPropensities)])
+	
+		}
+		
 		
 		simulate_IQ <- function(){
 			IQchange <- 0
@@ -217,10 +226,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 							sample(1:4, size = 1, replace = T, prob=prob)	
 						})
 				
-				disability_state <- adjustCatVar(disability_state, "disability_state")
+				disability_state <- adjustContVar(disability_state, "disability_state")
 				
 				#earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
-				
+				simulate_qualification()
 				
 				age[alive] <- age[alive] + 1
 				

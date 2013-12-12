@@ -45,7 +45,7 @@ SimenvDemo <- proto(. = Simenv, expr = {
 		#NB: we transpose to turn the tables into matrices so they
 		#are displayed properly
 		tbls$sex <- t(table.catvar(simframe$sex, codings$sex))
-		tbls$qualification <- table.catvar.with.CI(binary.levels.combine(simframe$qualificationLvl1, simframe$qualificationLvl2, simframe$qualificationLvl3, simframe$qualificationLvl4), codings$qualification)
+		#tbls$qualification <- table.catvar.with.CI(binary.levels.combine(simframe$qualificationLvl1, simframe$qualificationLvl2, simframe$qualificationLvl3, simframe$qualificationLvl4), codings$qualification)
 		
 		tbls
 	}

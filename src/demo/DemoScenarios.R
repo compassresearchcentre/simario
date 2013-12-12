@@ -123,3 +123,14 @@ runScenario7 <- function() {
 	### test if the adjustment work
 
 }
+
+
+runScenario8 <- function() {
+	env.scenario <<- SimenvDemo$new("Scenario 8")
+	#subgroupExpression <- "sexLvl2==1"
+	#setGlobalSubgroupFilterExpression(subgroupExpression)
+	env.scenario$cat.adjustments$qualification[1,] <- rep(1/4, 4)
+	env.scenario$cat.adjustments$qualification[50,] <- c(0.1,0.1,0.6,0.2)
+	env.scenario$simulate(2)
+	
+}

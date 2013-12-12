@@ -1,0 +1,6 @@
+Variable,ClassVal0,Estimate
+Intercept,,3.189611
+earnings,,-0.00003
+sex,,0.2512
+age,,-0.1127
+age*age,,0.00154
