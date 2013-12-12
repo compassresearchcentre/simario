@@ -57,9 +57,11 @@ createBinBreaks <- function(people) {
 	# will cut into the following bins
 	#  (0,34] (34,35] (35,36] (36,37] (37,44] 
 	
-	
+	binbreaks$earnings <- c(-1, 5000, 10000, 20000, 30000, 50000, 999999999999)
+	names(binbreaks$earnings) <- c(NA, "$5000_or_less", "$5001-$10000", "$10001-$20000", "$20001-$30000", "$30001-$50000","$50001_or_more")
 	binbreaks$IQ <- c(-1, 49, 69, 85, 129, 999)
 	names(binbreaks$IQ) <- c(NA, "0-49", "50-69", "70-85", "86-129", "130+")
+	
 
 	binbreaks
 }
@@ -80,7 +82,7 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, ca
 	#load initial basefile
 	people <<- read_csv(base_dir, "Base_file_(people).csv")
 	
-	#create simframe
+	#create simframer
 	sfdef <- read_csv(base_dir, "simframedef.csv")
 	simframe.master <<- loadSimFrame(sfdef, people)
 	people_sets <<- createSets(people, dict_demo$codings)
@@ -88,7 +90,7 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, ca
 	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
 	transition_probabilities <<- loadTransitionProbabilities(transition_probabilities_dir)
 	
-	earnings_scale <<- loadEarningsScale(data_dir)
+	#earnings_scale <<- loadEarningsScale(data_dir)
 	
 	breaks_age_grp <<- 	c(-1, 59, 79, 99)
 	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
@@ -111,11 +113,11 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, ca
 }
 
 #' dir <- data_dir
-loadEarningsScale <- function(dir) {
-	earnings_scale_dataframe <- read_csv(dir, "Annual_earnings_scale_by_disability_status.csv")
-	earnings_scale <- structure(earnings_scale_dataframe$Earnings, .Names=earnings_scale_dataframe$Disability.state)
-	earnings_scale
-}
+#' loadEarningsScale <- function(dir) {
+	#' earnings_scale_dataframe <- read_csv(dir, "Annual_earnings_scale_by_disability_status.csv")
+	#' earnings_scale <- structure(earnings_scale_dataframe$Earnings, .Names=earnings_scale_dataframe$Disability.state)
+	#' earnings_scale
+#' }
 
 loadTransitionProbabilities <- function(dir) {
 	transition_probabilities <- list()
@@ -167,6 +169,7 @@ loadDemoModels <- function(modelfiledir) {
 	models$IQModel7_15 <- loadGLMCSV(modelfiledir, "IQModel7_15.csv")
 	models$IQModel16_27 <- loadGLMCSV(modelfiledir, "IQModel16_27.csv")
 	models$IQModel28onwards <- loadGLMCSV(modelfiledir, "IQModel28onwards.csv")
+	models$earningsModel <- loadGLMCSV(modelfiledir, "earningsModel.csv")
 	
 	cat("Loaded models\n")
 	models

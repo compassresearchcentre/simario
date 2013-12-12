@@ -3,7 +3,7 @@
 # Author: Oliver Mannion 
 ###############################################################################
 
-
+#' scenario on categorical variable
 #' runScenario1()
 runScenario1 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 1")
@@ -38,7 +38,7 @@ runScenario1 <- function() {
 runScenario2 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 2")
 	# test a change on female only
-	subgroupExpression <- "sex=='F'"
+	subgroupExpression <- "sexLvl2==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 497),2,3,4,rep(1,497))
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
@@ -46,33 +46,34 @@ runScenario2 <- function() {
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
-	#test<-env.scenario$modules$demo$outcomes$disability_state[,1]
-	#test<-env.scenario$modules$demo$outcomes$disability_state[,50]
-	#table(test[env.scenario$simframe$sex=='F'])
+	#test1<-env.scenario$modules$demo$outcomes$disability_state[,1]
+	#test2<-env.scenario$modules$demo$outcomes$disability_state[,50]
+	#table(test1[env.scenario$simframe$sex==2])
+	#table(test2[env.scenario$simframe$sex==2])
 }
 
 #' subgroup scenario (multiple expression)
-runScenario3 <- function() {
+ runScenario3 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 3")
-	subgroupExpression <- "sex=='F' & age_grp==1"
+	subgroupExpression <- "sexLvl2==1 & qualificationLv2==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 497),2,3,4,rep(1,497))
-	env.scenario$cat.adjustments$disability_state[59,] <- c(0.1,0.1,0.6,0.2)
+	env.scenario$simframe$disability_state <- rep(1:4, 250)
+	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
+	env.scenario$cat.adjustments$disability_state[50,] <- c(0.2,0.2,0.3,0.3)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
-	#test1<-env.scenario$modules$demo$outcomes$disability_state[,59]
-	#test2<-test1[env.scenario$simframe$sex=='F']
-	#table(test2[env.scenario$modules$demo$outcomes$age_grp[,59]==1])
+
 }
 
 #' subgroup scenario for time-variant variable
+#' ########### Doesn't work
 runScenario4 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 4")
-	subgroupExpression <- "age_grp==2"
+	subgroupExpression <- "disability_stateLvl1==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 497),2,3,4,rep(1,497))
-	env.scenario$cat.adjustments$disability_state[60,] <- c(0.2,0.2,0.3,0.3)
+	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
+	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
@@ -81,7 +82,7 @@ runScenario4 <- function() {
 }
 
 
-#' scenario for continuous variable
+#' scenario on continuous variable
 runScenario5 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 5")
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
@@ -91,4 +92,34 @@ runScenario5 <- function() {
 	### test if the adjustment work
 	#env.scenario$modules$demo$run_results$run1$freqs_continuousGrouped$IQ$`1`
 	#env.scenario$modules$demo$run_results$run1$freqs_continuousGrouped$IQ$`50`
+}
+
+
+#' scenario on subgroup of continuous variable
+runScenario6 <- function() {
+	env.scenario <<- SimenvDemo$new("Scenario 6")
+	subgroupExpression <- "sexLvl2==1"
+	setGlobalSubgroupFilterExpression(subgroupExpression)
+	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
+	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
+	env.scenario$simulate(2)
+	
+	### test if the adjustment work
+	#env.scenario$modules$demo$run_results_collated$freqs_continuousGrouped_by_subgroup$IQ[1,]
+	#env.scenario$modules$demo$run_results_collated$freqs_continuousGrouped_by_subgroup$IQ[50,]
+
+}
+
+#' scenario on subgroup of categorical variable
+runScenario7 <- function() {
+	env.scenario <<- SimenvDemo$new("Scenario 7")
+	subgroupExpression <- "IQ<100"
+	setGlobalSubgroupFilterExpression(subgroupExpression)
+	env.scenario$simframe$disability_state <- rep(1:4, 250)
+	env.scenario$cat.adjustments$disability_state[1,] <- rep(1/4, 4)
+	env.scenario$cat.adjustments$disability_state[50,] <- rep(1/4, 4)
+	env.scenario$simulate(2)
+	
+	### test if the adjustment work
+
 }

@@ -28,6 +28,9 @@
 #'  variable is supplied via cat.varnames.
 #' @param rows row names, or a numeric scalar for the number of rows
 #'  number of iterations to create
+#'
+#' @return 
+#' A list of empty categorical variable adjustment matrices 
 #' 
 #' @export
 #' @examples
@@ -64,15 +67,28 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #' 
 #' @param varname
 #'  variable name. This can be a standard variable name, eg: "catpregsmk2"
-#'  or a level variable name, eg: "z1homeownLvl1". 
+#'  or a level variable name, eg: "z1homeownLvl1".
+#'  
 #' @param coding
 #'  codings for the variable, eg: c('0'='Own home','1'='Not owned')
-#' @param rows row names, or a numeric scalar for the number of rows in 
+#' 
+#' @param rows 
+#' row names, or a numeric scalar for the number of rows in 
 #'  which case the rows will be labelled "Year 1", "Year 2"... up to rows.
+#' 
 #' @param is_a_level_var
 #'  is this a multi-level binary variable? i.e: are the values for this variable
 #'  stored in multiple binary variables, eg: SESBTHLvl1, SESBTHLvl2, SESBTHLvl3?
 #'  Defaults to testing whether varname ends in LvlX.
+#' 
+#' @param cont.binbreaks
+#' binbreaks for continuous variable. It is the scale to convert a continuous 
+#' variable to categorical variable when we do adjustment on it.
+#' 
+#' @param catToContModels
+#' It is the models that convert the adjustment on categorical variable (we convert 
+#' from a continuous variable according to binbreaks) back to the correspongding 
+#' continuous variable. 
 #' 
 #' @return
 #'  a matrix of NAs with columns specified by codings, and rows specified by rows
@@ -114,10 +130,12 @@ createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_le
 #' rows - the values for each individual micro-unit
 #' cols - propensity to change from the 1st category to the 2nd category.
 #' z dim - iterations/years
+#' 
 #' @export
 #' @examples
 #' df <- data.frame(year1 = 1:10/100, year2 = 11:20/100)
 #' create2CategoryPropensityArray(df)
+
 create2CategoryPropensityArray <- function(df) {
 	#convert dataframe to array with
 	#rows = obs, cols = "Level 1", z = vars 
@@ -144,6 +162,7 @@ create2CategoryPropensityArray <- function(df) {
 #' df <- data.frame(year1_cat1 = 1:10/100, year1_cat2 = 11:20/100)
 #' iteration_name <- "Year 1" 
 #' createSingleIterationPropensityArray(df, iteration_name)
+
 createSingleIterationPropensityArray <- function(df, iteration_name) {
 	#convert dataframe to array with
 	#rows = obs, cols = cols, z = "At Birth"
@@ -151,25 +170,66 @@ createSingleIterationPropensityArray <- function(df, iteration_name) {
 			dimnames=list(rownames(df), colnames(df), iteration_name)  )
 }
 
+
+
+#' Check if each element of a character vector has the trailing "LvlX" (if any) 
+#' where X is any character
+#' 
+#' @param varname
+#' character vector to check
+#' 
+#' @return 
+#' a vector of logical value
+#' 
+#' @export 
+#' @examples
+#' varname <- c("fooLvl1", "bar")
+#' is_level_var(varname)
+
 is_level_var <- function(varname) {
 	grepl("Lvl.$", varname)
 }
+
+
 
 #' Remove trailing "LvlX" (if any) where X is any character
 #' 
 #' @param varname
 #'  character vector to strip
+#' 
+#' @return 
+#' a vector of characters without "LvlX"
+#' 
+#' @export 
 #' @examples
-#' \dontrun{
-#' varname <- "fooLvl1"
+#' varname <- c("fooLvl1", "bar")
 #' strip_lvl_suffix(varname)
-#' varname <- "bar"
-#' strip_lvl_suffix(varname)
-#' }
+
 strip_lvl_suffix <- function(varname) {
 	gsub("Lvl.$", "", varname)
 }
 
+
+
+#' 
+#' 
+#' 
+#' @param desired_props
+#' a vector that is the proportions requested by the user.
+#' The vector is the length of the number of distinct values of the variable
+#' being modified.
+#' 
+#' @param simframe
+#' the simframe to evaluate
+#' 
+#' @param varname
+#' variable name.
+#'  
+#' @return
+#' a vector of logical value
+#'
+#' @export 
+#' @examples
 #' desired_props <- structure(1, logiset="alive & residential")
 #' simframe <- env.base$simframe
 #' evaluateLogisetExprAttribute(desired_props, simframe) 
@@ -185,6 +245,20 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 	logiset
 }
 
+
+
+#' 
+#' 
+#' 
+#' 
+#' @param subgroupExpression
+#'  the subgroup expression that is requested by the user. 
+#'  It specify the subgroup which is going to be adjusted.
+#'
+#' @return
+#'
+#' @export 
+#' @examples
 #' subgroupExpression <- "mhrswrk < 20"
 #' setGlobalSubgroupFilterExpression(subgroupExpression)
 #' attr(env.scenario$cat.adjustments[[1]], "logisetexpr")

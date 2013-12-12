@@ -150,8 +150,8 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		lookup_death_transition_probs <- function(sex, age) {
 			death_transition_probs <- rep(NA, length(sex))
 			
-			males <- sex == "M"
-			females <- sex == "F"
+			males <- sex == 1
+			females <- sex == 2
 			
 			age_males <- age[males]
 			age_females <- age[females]
@@ -163,45 +163,31 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		
 		simulate_IQ <- function(){
-			if (iteration < 6) {
-				IQchange <<- 0
-			} else if (iteration >= 7 & iteration <= 15) {
-				IQchange <<- predSimNorm(models$IQModel7_15)
+			IQchange <- 0
+			 if (iteration >= 7 & iteration <= 15) {
+				IQchange <- predSimNorm(models$IQModel7_15)
 			} else if (iteration >= 16 & iteration <= 27) {
-				IQchange <<- predSimNorm(models$IQModel16_27)
+				IQchange <- predSimNorm(models$IQModel16_27)
 			} else if (iteration >= 28) {
-				IQchange <<- predSimNorm(models$IQModel28onwards)
+				IQchange <- predSimNorm(models$IQModel28onwards)
 			}
 			IQ <<- IQ_previous + round(IQchange)
-			isNegative <<- IQ < 0
+			isNegative <- IQ < 0
 			IQ[!alive] <<- IQ_previous[!alive]
 			IQ[isNegative] <<- IQ_previous[isNegative]
 			IQ <<- adjustContVar(IQ,"IQ")
 			IQ
 		}
 		
-
+		simulate_earnings <- function(){
+			if(iteration <= 15){
+				earnings <<- 0
+			} else if (iteration > 15){
+				earnings[alive] <<- predSimNBinom(models$earningsModel)
+			}
+			earnings
+		}
 		
-		#simulate_IQ <- function(){
-			#if (iteration < 6) {
-				#IQ  <<- IQ_previous
-			#} else if (iteration >= 7 & iteration <= 15) {
-				#IQchange <<- predSimNorm(models$IQModel7_15)
-				#IQ <<- IQ_previous + IQchange
-				#IQ <<- round(IQ)
-				#IQ[IQ < 0] <<- IQ_previous
-			#} else if (iteration >= 16 & iteration <= 27) {
-				#IQchange <<- predSimNorm(models$IQModel16_27)
-				#IQ <<- IQ_previous + IQchange
-				#IQ <<- round(IQ)
-				#IQ[IQ < 0] <<- IQ_previous
-			#} else if (iteration >= 28) {
-				#IQchange <<- predSimNorm(models$IQModel28onwards)
-				#IQ <<- IQ_previous + IQchange
-				#IQ <<- round(IQ)
-				#IQ[IQ < 0] <<- IQ_previous
-			#}
-		#}
 		
 		# SIMULATION STARTS HERE
 		# simenv <- env.base
@@ -233,13 +219,16 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				
 				disability_state <- adjustCatVar(disability_state, "disability_state")
 				
-				earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
+				#earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
+				
 				
 				age[alive] <- age[alive] + 1
 				
 				age_grp[alive] <- bin(age[alive], breaks_age_grp)	
 				
 				simulate_IQ()
+				
+				simulate_earnings()
 				
 				death_transition_probs <- lookup_death_transition_probs(sex[alive], age[alive])
 	
@@ -328,8 +317,6 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		#prepend "outcomes$", "simframe$", or "env.base$...outcomes$" to variables so they
 		#can be found
 		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
-			base.outcomes.expr <- paste("env.base$modules$demo$run_results$run", run, "$outcomes", sep="")
-			base.outcomes.current.run <- eval(parse(text=base.outcomes.expr))
 			subgroup.expr <- attr(cat.adjustments[[1]], "logisetexpr")
 			prepended.exprs <- prepend.paths(subgroup.expr) 
 			sg.expr <- unlist(prepended.exprs["sg.expr"])
@@ -397,10 +384,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			collated_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(all_run_results_zipped$freqs_continuousGrouped_by_subgroup_base_data, collator_freqs2, dict=dict_demo, CI=FALSE, cat.adjustments=cat.adjustments) #cat.adjustments only used to get binbreaks
 		}
 		
-		collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_freqs, dict = dict_demo)
+		#collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_freqs, dict = dict_demo)
 		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
 		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs_remove_zero_cat, dict = dict_demo)
-		collated_results$freqs_continuousGrouped[[2]] <- collator_freqs2(all_run_results_zipped$freqs_continuousGrouped[[2]], dict=dict_demo, CI=TRUE, cat.adjustments=cat.adjustments)
+		collated_results$freqs_continuousGrouped <- lapply(all_run_results_zipped$freqs_continuousGrouped, collator_freqs2, dict=dict_demo, CI=TRUE, cat.adjustments=cat.adjustments)
 		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs_remove_zero_cat, dict = dict_demo)

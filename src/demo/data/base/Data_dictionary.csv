@@ -4,6 +4,7 @@ age_grp,age group,"c('0 - 59'=1, '60-79'=2, '80-99'=3)"
 alive,alive,"c('Alive'=T,'Dead'=F)"
 disability_state,disability state,"c('No disability'=1,'Mild disability'=2,'Moderate disability'=3,'Severe disability'=4)"
 earnings,earnings to date,
-sex,gender,"c('Female'='F', 'Male'='M')"
+sex,gender,"c('Male'=1, 'Female'=2)"
 IQ,IQ,
 IQ_previous,IQ(prev year),
+qualification,highest qualification,"c('None'=1, 'Secondary School'=2, 'Below Degree'=3, 'Degree'=4)"

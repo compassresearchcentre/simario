@@ -35,6 +35,9 @@
 #'
 #' @seealso result.as.means.and.errs
 #' 
+#' @return 
+#' 
+#' 
 #' @export
 #' @examples
 #'  
@@ -120,6 +123,9 @@ chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, re
 #' @param ...
 #'  additional params to pass to barplot
 #' 
+#' @return 
+#' 
+#' 
 #' @export
 #' @examples
 #' \dontrun{
@@ -163,6 +169,8 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 #'   width of error bar whisker, defaults to 0.1
 #' @param ...
 #'   any other parameters to arrows
+#' 
+#' @return 
 #' 
 #' @export
 #' @examples

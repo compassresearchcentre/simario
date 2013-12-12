@@ -1,0 +1,15 @@
+Variable,ClassVal0,Estimate
+Intercept,,5.226
+IQ,,0.0265
+age,,0.1259
+age*age,,-0.001339
+qualification,1,-0.2971982
+qualification,2,-0.13473
+qualification,3,0.1107404
+qualification,4,0.3211879
+sex,2,-0.1573548
+sex,1,0.1573548
+disability_state,2,-0.112
+disability_state,3,-0.347
+disability_state,4,-0.68
+_Alpha,,0.612017577

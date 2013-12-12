@@ -7,3 +7,14 @@ earnings,,0,continuous,demo
 disability_state,,1,categorical,demo
 IQ,IQ_previous,IQ,continuous,demo
 IQ_previous,,as.integer(NA),,
+qualification,,qualification,categorical,demo
+qualificationLvl1,,as.integer(qualification==1),,
+qualificationLvl2,,as.integer(qualification==2),,
+qualificationLvl3,,as.integer(qualification==3),,
+qualificationLvl4,,as.integer(qualification==4),,
+sexLvl1,,as.integer(sex==1),,
+sexLvl2,,as.integer(sex==2),,
+disability_stateLvl1,,as.integer(disability_state==1),,
+disability_stateLvl2,,as.integer(disability_state==2),,
+disability_stateLvl3,,as.integer(disability_state==3),,
+disability_stateLvl4,,as.integer(disability_state==4),,
