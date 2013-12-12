@@ -754,11 +754,30 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 }
 
 
-# models is a list of models
+#' Calculates the predicted probabilities (from an ordinal regression model) to be in each
+#' cateory for a three or more level categorical variable. 
+#' 
+#' @param models. A list of models - one for each category.  The difference in the models will
+#' only be the intercept if the model is an ordinal multinomial regression (clogit in SAS).
+#' 
+#' @param stochatic.  If TRUE adds random variation around the probabilities to be in each 
+#' category.  If  TRUE it will cause the probabilities to no longer add to 1 and so should only 
+#' be used when the probabilities are being used as propensities in scenario testing.
+#' 
+#' @return A matrix of probabilities.  Rows correspond to individual units (children) and
+#' columns correspond to the categories of the variable.  The probabilities will add to 1 and be 
+#' the exact probabilities estimated from the model if stocahtic=FALSE, otherwise, if 
+#' stochatic=TRUE, they will approximate probabilities that will most likely not add to 1 and 
+#' could also be negative or greater than 1.
+#' 
 #' @export 
 predictOrdinal <- function(models, numchildren, envir=parent.frame(), stochastic=FALSE) {
-	#number of categories in the outcome is one pluse the number of models in the list
+	#number of categories in the outcome is one plus the number of models in the list
 	num.cat <- length(models) + 1
+	
+	#create matrices of the linear predictor (on the log scale) and the probability to be in each 
+	#category for each child (Probs).  prob.current.cat.or.less is an intermediate stage in 
+	#calculating the probabiliyt to be in each category. 
 	LinPreds <- prob.current.cat.or.less <- Probs <- matrix(ncol=num.cat, nrow=numchildren)
 	for (i in 1:num.cat) {
 		if (i==1) {
