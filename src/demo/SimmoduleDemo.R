@@ -52,29 +52,29 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		#' @export
 		#' @examples
 		#' adjustCatVar(disability_state, "disability_state")
-		adjustCatVar <- function(x, varname, propens=NULL) {
-			cat.adjustments <- simenv$cat.adjustments
+		# adjustCatVar <- function(x, varname, propens=NULL) {
+			# cat.adjustments <- simenv$cat.adjustments
 			
-			if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
+			#if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
 			
-			desiredProps <- cat.adjustments[[varname]][iteration,]
+			#desiredProps <- cat.adjustments[[varname]][iteration,]
 			
-			if (any(is.na(desiredProps))) {
-				return(x)
-			}
+			#if (any(is.na(desiredProps))) {
+				#return(x)
+			#}
 			
 			#attach logisetexpr attribute to desiredProps
-			desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logisetexpr"))
+			#desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logisetexpr"))
 			
-			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
+			#logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
 			
 					
-			cat("Adjusting", varname, ": ", desiredProps, "\n")
+			#cat("Adjusting", varname, ": ", desiredProps, "\n")
 			
-			adjust.proportions(x, desiredProps, propens, logiset) 
+			#adjust.proportions(x, desiredProps, propens, logiset) 
 			
 			#modifyProps(x, desiredProps, propensities[[varname]][,,iteration])    ###Doesn't work for subgroup
-		}
+		#}
 		
 	
 		
@@ -89,7 +89,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		#'  varname, used a lookup into cat.adjustments and propensities
 		#' @examples
 		#' 
-		adjustContVar <- function(x, varname, propens=NULL) {
+		adjustVar <- function(x, varname, propens=NULL) {
 			cat.adjustments <- simenv$cat.adjustments
 			
 			if (!varname %in% names(cat.adjustments)) stop(gettextf("No cat.adjustments for %s", varname))
@@ -166,7 +166,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			numPeople <- length(simframe.master[[1]])
 			qualificationmodels <- propensityModels[["qualification"]]
 			qualificationPropensities <- predictOrdinal(qualificationmodels, numPeople, envir=env.base$simframe, stochastic=TRUE)
-			qualification <<- adjustContVar(qualification, "qualification", propens=qualificationPropensities[,-ncol(qualificationPropensities)])
+			qualification <<- adjustVar(qualification, "qualification", propens=qualificationPropensities[,-ncol(qualificationPropensities)])
 	
 		}
 		
@@ -184,7 +184,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			isNegative <- IQ < 0
 			IQ[!alive] <<- IQ_previous[!alive]
 			IQ[isNegative] <<- IQ_previous[isNegative]
-			IQ <<- adjustContVar(IQ,"IQ")
+			IQ <<- adjustVar(IQ,"IQ")
 			IQ
 		}
 		
@@ -226,7 +226,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 							sample(1:4, size = 1, replace = T, prob=prob)	
 						})
 				
-				disability_state <- adjustContVar(disability_state, "disability_state")
+				disability_state <- adjustVar(disability_state, "disability_state")
 				
 				#earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
 				simulate_qualification()

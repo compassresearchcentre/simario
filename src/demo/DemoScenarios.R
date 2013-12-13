@@ -53,9 +53,10 @@ runScenario2 <- function() {
 }
 
 #' subgroup scenario (multiple expression)
+#' doesn't work
  runScenario3 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 3")
-	subgroupExpression <- "sexLvl2==1 & qualificationLv2==1"
+	subgroupExpression <- "sexLvl2==1 & qualificationLvl2==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$simframe$disability_state <- rep(1:4, 250)
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
@@ -67,10 +68,10 @@ runScenario2 <- function() {
 }
 
 #' subgroup scenario for time-variant variable
-#' ########### Doesn't work
+#' doesn't work
 runScenario4 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 4")
-	subgroupExpression <- "disability_stateLvl1==2"
+	subgroupExpression <- "disability_stateLvl1==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
 	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
