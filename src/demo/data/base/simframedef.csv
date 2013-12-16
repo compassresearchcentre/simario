@@ -4,7 +4,7 @@ age_grp,,1,categorical,demo
 sex,,sex,,
 alive,,T,,demo
 earnings,,0,continuous,demo
-disability_state,,1,categorical,demo
+disability_state,,disability_state,categorical,demo
 IQ,IQ_previous,IQ,continuous,demo
 IQ_previous,,as.integer(NA),,
 qualification,,qualification,categorical,demo

@@ -38,7 +38,7 @@ runScenario1 <- function() {
 runScenario2 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 2")
 	# test a change on female only
-	subgroupExpression <- "sexLvl2==1"
+	subgroupExpression <- "sex==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$cat.adjustments$disability_state[50,] <- c(0.2,0.2,0.3,0.3)
@@ -54,14 +54,17 @@ runScenario2 <- function() {
 #' subgroup scenario (multiple expression)
 #' doesn't work
  runScenario3 <- function() {
-	env.scenario <<- SimenvDemo$new("Scenario 3")
-	subgroupExpression <- "sexLvl2==1 & qualificationLvl2==1"
+	env.scenario <<- SimenvDemo$new("Scenario 3")	
+	subgroupExpression <- "sex==2 & qualification==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$cat.adjustments$disability_state[50,] <- c(0.2,0.2,0.3,0.3)
+	
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
+	# env.scenario$modules$demo$run_results_collated$freqs_by_subgroup$disability_state[1,]
+	# env.scenario$modules$demo$run_results_collated$freqs_by_subgroup$disability_state[50,]
 
 }
 
@@ -69,10 +72,11 @@ runScenario2 <- function() {
 #' doesn't work
 runScenario4 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 4")
-	subgroupExpression <- "disability_stateLvl1==1"
+	env.scenario$simframe$disability_state <- c(2,rep(1, 999))
+	subgroupExpression <- "disability_state==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
-	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
+	env.scenario$cat.adjustments$IQ[50,] <- c(0.1,0.1,0.5,0.2,0.1)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
@@ -97,7 +101,7 @@ runScenario5 <- function() {
 #' scenario on subgroup of continuous variable
 runScenario6 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 6")
-	subgroupExpression <- "sexLvl2==1"
+	subgroupExpression <- "sex==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
 	env.scenario$cat.adjustments$IQ[50,] <- c(0.1,0.1,0.5,0.2,0.1)
@@ -127,7 +131,7 @@ runScenario7 <- function() {
 
 runScenario8 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 8")
-	#subgroupExpression <- "sexLvl2==1"
+	#subgroupExpression <- "sex==2"
 	#setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$qualification[1,] <- rep(1/4, 4)
 	env.scenario$cat.adjustments$qualification[50,] <- c(0.1,0.1,0.6,0.2)
