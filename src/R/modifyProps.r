@@ -768,12 +768,12 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		randomPeople <- sample(1:num.majority, num.missingCategories, replace=TRUE)
 		
 		# Apply the missing units to random units and store into default.vec
-		if(num.majority > num.missingCategories){
+		if(num.majority >= num.missingCategories){
 			for(i in (1:length(missingCategories))){
 				default.vec[isMajority][randomPeople[i]] <<- missingCategories[[i]]
 			}
 		}else{
-			stop("......................................................")
+			stop("Error: The total number of micro-units in the subgroup being adjusted should be at least the number of categories in the variable being adjusted")
 		}
 	}
 	
