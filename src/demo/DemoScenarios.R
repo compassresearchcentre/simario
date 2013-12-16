@@ -10,7 +10,7 @@ runScenario1 <- function() {
 	
 	#this is a work around to make the modifyprops function work
 	#modifyprops needs one of each category to work
-	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 997))
+	#env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 997))
 	
 	# test changes at the beginning of the simulation
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
@@ -40,7 +40,6 @@ runScenario2 <- function() {
 	# test a change on female only
 	subgroupExpression <- "sexLvl2==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 497),2,3,4,rep(1,497))
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$cat.adjustments$disability_state[50,] <- c(0.2,0.2,0.3,0.3)
 	env.scenario$simulate(2)
@@ -58,7 +57,6 @@ runScenario2 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 3")
 	subgroupExpression <- "sexLvl2==1 & qualificationLvl2==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	env.scenario$simframe$disability_state <- rep(1:4, 250)
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$cat.adjustments$disability_state[50,] <- c(0.2,0.2,0.3,0.3)
 	env.scenario$simulate(2)
@@ -87,7 +85,7 @@ runScenario4 <- function() {
 runScenario5 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 5")
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
-	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
+	env.scenario$cat.adjustments$IQ[50,] <- c(0.1,0.1,0.5,0.2,0.1)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
@@ -102,7 +100,7 @@ runScenario6 <- function() {
 	subgroupExpression <- "sexLvl2==1"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
-	env.scenario$cat.adjustments$IQ[50,] <- rep(1/5, 5)
+	env.scenario$cat.adjustments$IQ[50,] <- c(0.1,0.1,0.5,0.2,0.1)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
@@ -116,12 +114,13 @@ runScenario7 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 7")
 	subgroupExpression <- "IQ<100"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	env.scenario$simframe$disability_state <- rep(1:4, 250)
 	env.scenario$cat.adjustments$disability_state[1,] <- rep(1/4, 4)
-	env.scenario$cat.adjustments$disability_state[50,] <- rep(1/4, 4)
+	env.scenario$cat.adjustments$disability_state[50,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
+	#env.scenario$modules$demo$run_results_collated$freqs_by_subgroup$disability_state[1,]
+	#env.scenario$modules$demo$run_results_collated$freqs_by_subgroup$disability_state[50,]
 
 }
 
@@ -134,4 +133,7 @@ runScenario8 <- function() {
 	env.scenario$cat.adjustments$qualification[50,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$simulate(2)
 	
+	### test if the adjustment work
+	#table(env.scenario$modules$demo$outcomes$qualification[,1])
+	#table(env.scenario$modules$demo$outcomes$qualification[,50])
 }

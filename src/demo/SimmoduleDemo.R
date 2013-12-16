@@ -101,7 +101,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			}
 			
 			#attach logiset attribute to desiredProps
-			desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logiset"))
+			desiredProps <- structure(desiredProps, varname=varname, logisetexpr=attr(cat.adjustments[[varname]], "logiset"))
 			
 			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
 			
