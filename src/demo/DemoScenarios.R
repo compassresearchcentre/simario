@@ -52,7 +52,7 @@ runScenario2 <- function() {
 }
 
 #' subgroup scenario (multiple expression)
-#' doesn't work
+#' doesn't work because there has to be at least one unit not in the subgroup
  runScenario3 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 3")	
 	subgroupExpression <- "sex==2 & qualification==2"
@@ -69,19 +69,19 @@ runScenario2 <- function() {
 }
 
 #' subgroup scenario for time-variant variable
-#' doesn't work
+
 runScenario4 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 4")
 	env.scenario$simframe$disability_state <- c(2,rep(1, 999))
-	subgroupExpression <- "disability_state==1"
+	subgroupExpression <- "disability_state==1 & sex==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
 	env.scenario$cat.adjustments$IQ[50,] <- c(0.1,0.1,0.5,0.2,0.1)
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
-	#test<-env.scenario$modules$demo$outcomes$disability_state[,60]
-	#table(test[env.scenario$modules$demo$outcomes$age_grp[,60]==2])
+	#env.scenario$modules$demo$run_results_collated$freqs_continuousGrouped_by_subgroup$IQ[1,]
+	#env.scenario$modules$demo$run_results_collated$freqs_continuousGrouped_by_subgroup$IQ[50,]
 }
 
 

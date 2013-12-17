@@ -735,7 +735,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		varname <- attr(desired_props,"varname")
 		
 		# The categories of the variable
-		categories<-as.vector(dict_demo$codings[[varname]])
+		#categories<-as.vector(dict_demo$codings[[varname]])
+		categories<-attr(desired_props,"levels")
 		num.missingCategories=0
 		
 		# The list to store all missing categories

@@ -136,6 +136,12 @@ loadTransitionProbabilities <- function(dir) {
 	
 	transition_probabilities$death <- read_csv(dir, "Probabilities_of_male_and_female_death_by_age_and_sex.csv")
 	
+	transition_probabilities$qualification <- read_csv(dir, "QualTransitionProbs.csv", stringsAsFactors=T)
+	transition_probabilities$qualification$index <- with(transition_probabilities$qualification, 
+			index_age_qualification(age, Current.qualification))
+	transition_probabilities$qualification$probs <- 
+			as.matrix(transition_probabilities$qualification[c("None", "Secondary.School", "Below.Degree", "Degree")])
+	
 	transition_probabilities
 }
 

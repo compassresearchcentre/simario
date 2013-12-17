@@ -157,13 +157,12 @@ expr = {
 			#catadj <- .$cat.adjustments$INTERACT
 			#catadj <- .$cat.adjustments$MAGE
 			cat_adj_vector <- catadj[iteration, ]
-			
+			varnames <- attr(catadj,"varnames")
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
-			cat_adj_vector <- structure(cat_adj_vector, varname=attr(catadj,"varnames"), logisetexpr=attr(catadj,"logisetexpr"))
+			cat_adj_vector <- structure(cat_adj_vector, varname=varnames, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varnames]])
 			
 			if (!any(is.na(cat_adj_vector))) {
 				
-				varnames <- attr(catadj, "varnames")
 				catToContModels <- attr(catadj, "catToContModel")
 				cont.binbreaks <- attr(catadj, "cont.binbreaks")
 				

@@ -101,7 +101,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			}
 			
 			#attach logiset attribute to desiredProps
-			desiredProps <- structure(desiredProps, varname=varname, logisetexpr=attr(cat.adjustments[[varname]], "logiset"))
+			desiredProps <- structure(desiredProps, varname=varname, logisetexpr=attr(cat.adjustments[[varname]], "logiset"), levels=simenv$dict$codings[[varname]])
 			
 			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
 			
@@ -161,7 +161,30 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			death_transition_probs
 		}
 		
+		
+		lookup_qualification_transition_probs <- function(age, current_qualification) {
+			qualification_transition_index <- index_age_qualification(age, current_qualification)
+			#qualification_transition_index is vector of 1000 or however many people
+			#transition_probabilities$qualification$index is a vector of posisble combinations of age, current qualification
+			#match does a look up of the vector of people indices, in the vector of possible indices
+			#ie 'qualification_transition_row' gives the appropraite row numbers (for the combo of age, current_qualification) to refer to in the probablity matrix (transition_probabilities$qualification$probs)
+			qualification_transition_row <- match(qualification_transition_index, transition_probabilities$qualification$index)  
+			qualification_transition_probs <- transition_probabilities$qualification$probs[qualification_transition_row, ]
+			qualification_transition_probs
+		}
+		
+		
 		simulate_qualification <- function(){
+			
+			if(iteration>=17 & iteration<=56){
+				
+				qualification_transition_probs <- lookup_qualification_transition_probs(age[alive], qualification[alive])
+				
+				qualification[alive] <<- apply(qualification_transition_probs, ROW, function(prob) {
+							sample(1:4, size = 1, replace = T, prob=prob)	
+						})
+			}
+						
 			#generate propensities for scenario testing
 			numPeople <- length(simframe.master[[1]])
 			qualificationmodels <- propensityModels[["qualification"]]
@@ -457,4 +480,17 @@ prepend.paths <- function(expr) {
 #'  an integer vector with the values 1,2,3,4
 index_sex_age_grp_disability_state <- function(sex, age_grp, disability_state) {
 	as.integer(sex) * 100 + as.integer(age_grp) * 10 + as.integer(disability_state)
+}
+
+
+#' Create a unique integer index vector given the supplied values.
+#' This index can then be used to lookup a row in the qualification
+#' transition probability dataframe.
+#' 
+#' @param age
+#'  an integer vector with the values 17 to 56.
+#' @param qualification
+#'  an integer vector with the values 1,2,3,4
+index_age_qualification <- function(age, qualification) {
+	as.integer(age) * 10 + as.integer(qualification)
 }
