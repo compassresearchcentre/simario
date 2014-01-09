@@ -96,6 +96,8 @@ align.by.name.list.mx <- function(listmx) {
 	# if numeric names, sort numerically
 	mt.rownames <- if (all(nulls.rownames)) NULL else nsort(unique(unlist(all.rownames)))
 	mt.colnames <- if (all(nulls.colnames)) NULL else nsort(unique(unlist(all.colnames)))
+	#mt.rownames <- if (all(nulls.rownames)) NULL else unique(unlist(all.rownames))
+	#mt.colnames <- if (all(nulls.colnames)) NULL else unique(unlist(all.colnames))
 	mt.dimnames <- list(mt.rownames, mt.colnames)
 	
 	# map existing matrix's columns and rows to new matrix template

@@ -11,6 +11,7 @@ runScenario1 <- function() {
 	#this is a work around to make the modifyprops function work
 	#modifyprops needs one of each category to work
 	#env.scenario$simframe$disability_state <- c(2,3,4,rep(1, 997))
+	#env.scenario$simframe$disability_state <- rep(1, 1000)
 	
 	# test changes at the beginning of the simulation
 	env.scenario$cat.adjustments$disability_state[1,] <- c(0.1,0.1,0.6,0.2)
@@ -72,7 +73,7 @@ runScenario2 <- function() {
 
 runScenario4 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 4")
-	env.scenario$simframe$disability_state <- c(2,rep(1, 999))
+	#env.scenario$simframe$disability_state <- c(2,rep(1, 999))
 	subgroupExpression <- "disability_state==1 & sex==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
@@ -114,6 +115,7 @@ runScenario6 <- function() {
 }
 
 #' scenario on subgroup of categorical variable
+#' doesn't work
 runScenario7 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 7")
 	subgroupExpression <- "IQ<100"

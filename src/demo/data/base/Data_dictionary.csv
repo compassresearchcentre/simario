@@ -1,6 +1,6 @@
 Varname,Description,Codings_Expr
 age,age,
-age_grp,age group,"c('0 - 59'=1, '60-79'=2, '80-99'=3)"
+age_grp,age group,"c('0-59'=1, '60-79'=2, '80-99'=3)"
 alive,alive,"c('Alive'=T,'Dead'=F)"
 disability_state,disability state,"c('No disability'=1,'Mild disability'=2,'Moderate disability'=3,'Severe disability'=4)"
 earnings,earnings to date,

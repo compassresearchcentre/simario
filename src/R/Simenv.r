@@ -156,15 +156,19 @@ expr = {
 			#catadj <- .$cat.adjustments$catpregsmk2
 			#catadj <- .$cat.adjustments$INTERACT
 			#catadj <- .$cat.adjustments$MAGE
-			cat_adj_vector <- catadj[iteration, ]
+			cat_adj_vector <- catadj[iteration, ]	
 			varnames <- attr(catadj,"varnames")
+			varname <- varnames[length(varnames)]
+			varname <- strip_lvl_suffix(varname)
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
-			cat_adj_vector <- structure(cat_adj_vector, varname=varnames, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varnames]])
+			#cat_adj_vector <- structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr"))
+			cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varname]])
 			
 			if (!any(is.na(cat_adj_vector))) {
 				
 				catToContModels <- attr(catadj, "catToContModel")
 				cont.binbreaks <- attr(catadj, "cont.binbreaks")
+				
 				
 				if (is.null(varnames)) {
 					stop(gettextf("Missing varnames attribute"))

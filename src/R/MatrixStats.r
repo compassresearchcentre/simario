@@ -914,7 +914,7 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
-table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
+table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
 	
@@ -937,6 +937,51 @@ table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL) {
 		
 	}
 }
+
+
+
+#' modified by Mengdan - original above
+#' modified in to make order of tables of continuous variables in run_results be the same as in binbreaks
+table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
+	
+	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
+	
+	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
+		a <- wtd.table(x, weights=wgts)
+		a <- a$sum.of.weights
+		if(!is.null(binbreak[[1]])){
+			a <- a[names(binbreak[[1]])]
+			a <- a[!is.na(a)]
+		}
+		return (t(t(a)))
+	} else {
+		
+		if(length(x) != length(grpby)) {
+			stop(gettextf("Length of %s != length of %s", 
+							as.character(sys.call())[2], as.character(sys.call())[3]))
+		}
+		
+		a <- aggregate(wgts, by = list(grpby=grpby, x), FUN = sum)
+		b <- t(tapply(a$x, list(a$grpby, a$Group.2), identity))		
+		if(!is.null(binbreak[[1]])){
+			c1<-b[,1]
+			names(c1) <- rownames(b)
+			c2<-b[,2]
+			names(c2) <- rownames(b)
+			c1 <- c1[names(binbreak[[1]])]
+			c1 <- c1[!is.na(c1)]
+			c2 <- c2[names(binbreak[[1]])]
+			c2 <- c2[!is.na(c2)]
+			b<-cbind(c1,c2)
+		}
+		b[which(is.na(b))] <- 0
+		return(t(t(b)))
+		
+	}
+}
+
+
+
 
 #' Generates a frequency table, with option to group by, for each column of a matrix.
 #' The group-by variable must be time-invariant.
@@ -1140,7 +1185,7 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 				#old:
 				##table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
 				#new:
-				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i], binbreak=binbreaks[varname])
 				if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 					colnames(result) <- c("Not in subgroup", "In subgroup")
 				} 
