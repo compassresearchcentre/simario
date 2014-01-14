@@ -211,8 +211,7 @@ strip_lvl_suffix <- function(varname) {
 
 
 
-#' 
-#' 
+#' Evaluate logiset expression attribute for the variable.
 #' 
 #' @param desired_props
 #' a vector that is the proportions requested by the user.
@@ -247,15 +246,15 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 
 
 
-#' 
-#' 
-#' 
+#' Set the subgroup expression to all cat.adjustments if the subgroup expression exists. 
+#' Otherwise, remove the subgroup expression.
 #' 
 #' @param subgroupExpression
 #'  the subgroup expression that is requested by the user. 
 #'  It specify the subgroup which is going to be adjusted.
 #'
-#' @return
+#' @return 
+#' NULL
 #'
 #' @export 
 #' @examples
@@ -274,3 +273,21 @@ setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
 	}
 }
 
+
+
+
+#' Clear the subgroup expression for all cat.adjustments.
+#' 
+#' @return
+#' NULL
+#'
+#' @export 
+#' @examples
+#' 
+removeGlobalSubgroupFilterExpression <- function() {
+	cat("Clearing global subgroup expression\n")
+	
+	for (i in 1:length(env.scenario$cat.adjustments)) {
+		attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- NULL
+	}
+}

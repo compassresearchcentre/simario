@@ -2,7 +2,7 @@ Varname,Previous_var,Initial_value,Outcome_type,Outcome_module
 age,,1,,demo
 age_grp,,1,categorical,demo
 sex,,sex,,
-alive,,T,,demo
+alive,,T,categorical,demo
 earnings,,0,continuous,demo
 disability_state,,disability_state,categorical,demo
 IQ,IQ_previous,IQ,continuous,demo

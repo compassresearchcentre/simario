@@ -263,6 +263,7 @@ loadSimario()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
 source("DemoScenarios.R")
+source("Table Builder.R")
 
 
 dirs <- list()
