@@ -8,8 +8,15 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			
 	#' Create new object.
 	#' 
+	#' @param .
+	#'  receiving object
 	#' @param simframe
+	#'  simframe. Stored in the environment
 	#' 
+	#' @return 
+	#'  a new simmoduleDemo object
+	#' 
+	#' @export
 	#' @examples 
 	#' . <- SimmoduleDemo
 	#' simframe <- simframe.master
@@ -19,6 +26,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		.super$new(., name="Demo")
 	}
 	
+	
 	#' Simulate outcomes.
 	#'
 	#' @param .
@@ -26,12 +34,12 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' @param simenv
 	#'  a Simenv object containing a simframe and cat.adjustments
 	#' 
-	#' @return outcomes
+	#' @return 
+	#'  outcomes
 	#' 
+	#' @export
 	#' @examples
-	#' 
 	#' simenv <- env.base
-	#' 
 	#' outcomes <- simulateRun(simenv=simenv) 
 	simulateRun <- function(., simenv) {
 		
@@ -77,18 +85,24 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		#}
 		
 	
-		
-		
-		#' Adjust continuous values to desired proportions in cat.adjustments (if any).
-		#' 
-		#' Allows subgroup adjustment if a global subgroup expression is set. 
-		#' 
+		#' Adjust categorical or continuous to desired proportions for current iteration
+		#' in cat.adjustments (if any).
+		#'
+		#' Allows subgroup adjustment if a subgroup expression attribute is attached. 
+		#'  
 		#' @param x
-		#' continuous values to adjust
+		#'  vector of categorical or continuous values from which a new adjusted vector is returned 
 		#' @param varname
-		#'  varname, used a lookup into cat.adjustments and propensities
-		#' @examples
+		#'  varname, used to lookup in cat.adjustments and propensities
+		#' @param propens
+		#'  propensity scores used to decide who should change categories
 		#' 
+		#' @return 
+		#' an adjusted vector of categorical variable
+		#' 
+		#' @export
+		#' @examples
+		#' adjustVar(disability_state, "disability_state")
 		adjustVar <- function(x, varname, propens=NULL) {
 			cat.adjustments <- simenv$cat.adjustments
 			
@@ -102,7 +116,13 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			
 			#attach logiset attribute to desiredProps
 			#desiredProps <- structure(desiredProps, logisetexpr=attr(cat.adjustments[[varname]], "logiset"))
-			desiredProps <- structure(desiredProps, varname=varname, logisetexpr=attr(cat.adjustments[[varname]], "logiset"), levels=simenv$dict$codings[[varname]])
+			contvars <- getOutcomeVars(simenv$simframe, "continuous")
+			if(varname%in%contvars){
+				desiredProps <- structure(desiredProps, varname=varname, logisetexpr=attr(cat.adjustments[[varname]], "logiset"), levels=names(binbreaks[[varname]])[-1])
+			}else{
+				desiredProps <- structure(desiredProps, varname=varname, logisetexpr=attr(cat.adjustments[[varname]], "logiset"), levels=simenv$dict$codings[[varname]])
+			}
+			
 			
 			logiset <- evaluateLogisetExprAttribute(desiredProps, parent.frame())
 			
@@ -116,18 +136,37 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			catToContModels <- attr(cat.adjustments[[varname]], "catToContModel")
 			cont.binbreaks <- attr(cat.adjustments[[varname]], "cont.binbreaks")
 			
-			adj.x.cont <- adjust.proportions(x, desiredProps, propens, logiset, catToContModels, cont.binbreaks, envir=parent.frame())
-			return(adj.x.cont)
+			adj.x <- adjust.proportions(x, desiredProps, propens, logiset, catToContModels, cont.binbreaks, envir=parent.frame())
+			return(adj.x)
 		}
 		
 		
-		
+		#' Set up outcomes with values from current vars.
+		#'  
+		#' @param iteration
+		#'  the current iteration
+		#' 
+		#' @return 
+		#'  NULL
+		#' 
+		#' @export
+		#' @examples
+		#' 	store_current_values_in_outcomes(1)
 		store_current_values_in_outcomes <- function(iteration) {
 			outcomes <<- lapply(outcomes, function(x) {
 						x[,iteration] <- get(attr(x,"varname"));x 
 					}) 
 		}
 		
+		
+		#' Set up previous vars with values from current vars.
+		#'  
+		#' @return 
+		#'  NULL
+		#' 
+		#' @export
+		#' @examples
+		#' 	store_current_values_in_previous()
 		store_current_values_in_previous <- function() {
 			previous <- attr(simenv$simframe, "previous")
 			invisible(mapply(function(var.prev, var.current) {
@@ -137,6 +176,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 
 		
+		# Return the disability transition probabilities from transition_probabilities.
 		lookup_disability_transition_probs <- function(sex, age_grp, current_disability_state) {
 			disability_transition_index <- index_sex_age_grp_disability_state(sex, age_grp, current_disability_state)
 			#disability_transition_index is vector of 1000 or however many people
@@ -147,7 +187,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			disability_transition_probs <- transition_probabilities$disability_state$probs[disability_transition_row, ]
 			disability_transition_probs
 		}
+		
 
+		# Return the death transition probabilities from transition_probabilities.
 		lookup_death_transition_probs <- function(sex, age) {
 			death_transition_probs <- rep(NA, length(sex))
 			
@@ -163,6 +205,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 		
 		
+		# Return the qualification transition probabilities from transition_probabilities.
 		lookup_qualification_transition_probs <- function(age, current_qualification) {
 			qualification_transition_index <- index_age_qualification(age, current_qualification)
 			#qualification_transition_index is vector of 1000 or however many people
@@ -175,6 +218,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 		
 		
+		# Simulate qualification
 		simulate_qualification <- function(){
 			
 			if(iteration>=17 & iteration<=56){
@@ -195,6 +239,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		}
 		
 		
+		# Simulate IQ
 		simulate_IQ <- function(){
 			IQchange <- 0
 			 if (iteration >= 7 & iteration <= 15) {
@@ -212,10 +257,13 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			IQ
 		}
 		
+		
+		# Simulate earnings
 		simulate_earnings <- function(){
 			if(iteration <= 15){
 				earnings <<- 0
 			} else if (iteration > 15){
+				earnings <<- outcomes$earnings[,iteration-1]
 				earnings[alive] <<- predSimNBinom(models$earningsModel)
 			}
 			earnings
@@ -227,7 +275,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 						
 		attach(simenv$simframe, name="simframe")
 		
-		NUM_ITERATIONS <- 100
+		NUM_ITERATIONS <<- 100
 		num_people <- length(sex)
 		MAX_AGE <- 99		
 		
@@ -239,7 +287,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 
 			store_current_values_in_previous()
 			
-			alive[age > MAX_AGE] <- F
+			alive[age >= MAX_AGE] <- F
 			
 			if (any(alive)) {
 			
@@ -252,7 +300,6 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				
 				disability_state <- adjustVar(disability_state, "disability_state")
 				
-				#earnings[alive] <- earnings[alive] + earnings_scale[disability_state[alive]]
 				simulate_qualification()
 				
 				age[alive] <- age[alive] + 1
@@ -285,11 +332,20 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#' descriptive statistics (eg: freqs, means, etc) generated for variables 
 	#' in outcomes. 
 	#' 
+	#' @param .
+	#'  receiving object.
+	#' 
 	#' @param simframe
 	#'  the simulation environment's simframe. Useful for accessing adjusted variables.
 	#' 
 	#' @param outcomes
 	#'  the list of outcome matrices generated by simulateRun()
+	#' 
+	#' @param cat.adjustments
+	#'  the simulation environment's cat.adjustments.
+	#' 
+	#' @param run
+	#'  the current run
 	#' 
 	#' @return 
 	#'  a list of run results. Each element E1 of run results is a list and is the set of results for a given 
@@ -297,13 +353,18 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#'  the operation applied to an outcome variable (ie: an element in outcomes). eg:
 	#'  result
 	#'  result$freqs$disability_state (list)  
-	#'  result$freqs$num_children (list)
 	#'  result$means$earnings (matrix)
 	#'  result$quantiles$earnings (matrix)
 	#' 
+	#' @export
 	#' @examples
 	#'  . <- env.base$modules$demo
-	#'  outcomes <- .$outcomes									
+	#'  simframe<-env.base$simframe
+	#'  outcomes <- .$outcomes
+	#'  cat.adjustments <- env.base$cat.adjustments	
+	#'  run<-1
+	#'  map_outcomes_to_run_results(simframe, outcomes, cat.adjustments, run)
+									
 	map_outcomes_to_run_results <- function(., simframe, outcomes, cat.adjustments, run) {
 																	#have added cat.adjustments and run here 		
 		cat(gettextf("Generating run results for %s\n", .$name))	#to get to work with newer simario version of map_outcomes_to_run_results
@@ -371,7 +432,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			run_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(binned.list.base, table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
 		}
 		
-		run_results$confreqs <- lapply(outcomes[convars], table_mx_cols_MELC, dict=dict_demo)
+		#run_results$confreqs <- lapply(outcomes[convars], table_mx_cols_MELC, dict=dict_demo)
 	    run_results$freqs <- lapply(outcomes[catvars], table_mx_cols_MELC, dict=dict_demo)
 		run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
 		run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
@@ -389,15 +450,29 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		run_results 
 	}
-	
+
+
 	#' Collates (ie: reduces) all run results to averaged values and labels collated results.
 	#'
+	#' @param .
+	#'  receiving object.
+	#' 
 	#' @param all_run_results
 	#'  the list of all run results generated by map_outcomes_to_run_results() 
 	#' 
+	#' @param cat.adjustments
+	#'  the simulation environment's cat.adjustments.
+	#' 
+	#' @param simframe
+	#'  the simulation environment's simframe.
+	#' 
+	#' @export
 	#' @examples 
 	#' . <- env.base$modules$demo
 	#' all_run_results <- .$run_results
+	#' cat.adjustments <- env.base$cat.adjustments	
+	#' simframe<-env.base$simframe
+	#' collate_all_run_results(all_run_results, cat.adjustments, simframe)
 	collate_all_run_results <- function(., all_run_results, cat.adjustments, simframe) {
 		cat(gettextf("Collating all run results for %s\n", .$name))
 		
@@ -436,6 +511,18 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	
 })
 
+#' 
+#' 
+#' 
+#' 
+#' @param expr
+#' 
+#' @return 
+#' 
+#' 
+#' @export 
+#' @example 
+#' 
 prepend.paths <- function(expr) {
 	#expr <- "r1stchildethnLvl3==1 & mhrswrk<21"
 	
@@ -479,6 +566,16 @@ prepend.paths <- function(expr) {
 #'  an integer vector with the values 1,2,3
 #' @param disability_state
 #'  an integer vector with the values 1,2,3,4
+#' 
+#' @return 
+#'  a vector of unique integer index
+#' 
+#' @export 
+#' @example 
+#' sex <- c(1,1,2,2)
+#' age_grp <- c(1,2,3,1)
+#' disability_state <- c(1,2,3,4)
+#' index_sex_age_grp_disability_state(sex, age_grp, disability_state)
 index_sex_age_grp_disability_state <- function(sex, age_grp, disability_state) {
 	as.integer(sex) * 100 + as.integer(age_grp) * 10 + as.integer(disability_state)
 }
@@ -492,6 +589,15 @@ index_sex_age_grp_disability_state <- function(sex, age_grp, disability_state) {
 #'  an integer vector with the values 17 to 56.
 #' @param qualification
 #'  an integer vector with the values 1,2,3,4
+#' 
+#' @return 
+#'  a vector of unique integer index
+#' 
+#' @export 
+#' @example 
+#' age <- 17:56
+#' qualification<-rep(c(1:4),10)
+#' index_age_qualification(age, qualification)
 index_age_qualification <- function(age, qualification) {
 	as.integer(age) * 10 + as.integer(qualification)
 }

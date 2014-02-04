@@ -10,8 +10,10 @@ library(xlsx)
 #' 
 #' @param x
 #'  chacter vector
+#' 
 #' @return 
 #'  file extension, eg: "csv"
+#' 
 #' @export
 #' @examples
 #' x <- "data.txt"
@@ -28,30 +30,49 @@ file_extension <- function(x) {
 #' 
 #' @param filedir
 #'  file directory, with or without trailing slash
+#' 
 #' @param filename
 #'  file name
+#' 
 #' @param stringsAsFactors
 #'  logical: should character vectors be converted to factors?
+#' 
 #' @param ...
 #'  additional parameters to read.csv
+#' 
+#' @return 
+#'  a data frame
+#' 
 #' @export
+#' @example 
+#' filedir <- "D:/workspace.sim/simario/demo/data/base"
+#' people <<- read_csv(base_dir, "Base_file_(people).csv")
 read_csv <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 	filedir <- add_trailing_slash(filedir)		
 	read.csv(paste(filedir, filename, sep=""), stringsAsFactors = stringsAsFactors, ...)
 }
 
+
 #' Read a file and return a dataframe.
 #' 
 #' @param filedir
 #'  file directory, with or without trailing slash
+#' 
 #' @param filename
 #'  file name 
+#' 
 #' @param filetype
 #'  "csv", "xls", or "xlsx". Defaults to the extension of filename
+#' 
 #' @param stringsAsFactors
 #'  logical: should character vectors be converted to factors?
+#' 
 #' @param ...
 #'  additional parameters to read_csv or read.xlsx2
+#' 
+#' @return
+#'  a data frame
+#' 
 #' @export
 #' @examples 
 #' \dontrun{
@@ -67,17 +88,27 @@ read_file <- function (filedir, filename, filetype = file_extension(filename), s
 		xlsx = readXLSSheet1(filedir, filename, stringsAsFactors = stringsAsFactors, ...))
 }
 
+
 #' Returns first sheet of XLS as dataframe
 #' 
 #' @param filedir
 #'  file directory, with or without trailing slash
+#' 
 #' @param filename
 #'  file name
+#' 
 #' @param stringsAsFactors
 #'  logical: should character vectors be converted to factors?
+#' 
 #' @param ...
 #'  additional parameters to read.xlsx2
+#' 
+#' @return 
+#'  a data frame
+#' 
 #' @export
+#' @example 
+#' 
 readXLSSheet1 <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 	filedir <- add_trailing_slash(filedir)		
 	oldOpt <- options(stringsAsFactors = stringsAsFactors)

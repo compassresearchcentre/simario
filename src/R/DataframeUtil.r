@@ -8,12 +8,15 @@
 #' the key column. Merging means selecting rows from key_column_name
 #' that are in selected_keys, erroring if a row cannot be found.  
 #' 
+#' @param df
+#'  dataframe
 #' @param key_column_name
 #'  column to merge on
 #' @param selected_keys
 #'  values of keys in key_column_name to select
-#' @param df
-#'  dataframe
+#'
+#' @return
+#' a dataframe after merged.
 #' 
 #' @export
 #' @examples
@@ -40,6 +43,10 @@ mergeAndRemoveKeyColumn <- function(df, key_column_name, selected_keys) {
 #'  matrix or dataframe
 #' @param indices
 #'  integer vector of indices to remove
+#' 
+#' @return
+#' a matrix or dataframe after remove rows
+#' 
 #' @export
 #' @examples
 #' x <- data.frame(x = c(1, 2, 3), y = c(0, 10, NA))

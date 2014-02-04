@@ -3,10 +3,21 @@
 #' The fixed vector is that in fixed.outcomes and is based on user specified adjustments to a base
 #' run of the simulation.  
 #'
+#' @param simenv
+#'  a Simenv object
+#' 
+#' @param iteration
+#'  the current iteration
+#' 
 #' @param x
 #'  vector of values to replace with vector in fixed.outcomes. Generally x is continuous.
+#' 
 #' @param varname
-#' name of variable
+#'  name of variable
+#' 
+#' @return
+#'  a vector
+#' 
 #' @export
 #' @examples
 #' \dontrun{

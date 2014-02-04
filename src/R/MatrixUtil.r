@@ -153,6 +153,9 @@ align.by.name.list.mx <- function(listmx) {
 #'  row into each vector/matrix element of listmx.dest. Existing elements of listmx.dest
 #'  will be in the first row(s).  
 #' 
+#' @return 
+#'  list of vector/matrix/arrays after appended.
+#' 
 #' @export 
 #' @examples
 #'
@@ -191,9 +194,24 @@ append.list.mx <- function(listmx.dest, listmx.src, into.dim=ZDIM) {
 	
 }
 
+
+#' copy names of dimensions and meta attributes
+#' from elements of list.src to list.dest
+#' Called by append.list.mx().
+#' 
+#' @param list.dest
+#' 	list of vector/matrix/arrays
+#' 
+#' @param list.src
+#'  list of vector/matrix/arrays 
+#' 
+#' @return 
+#'  list of vector/matrix/arrays after add names and attributes
+#' 
+#' @export 
+#' @examples
+#' 
 copyMeta.list <- function(list.dest, list.src) {
-	# copy names of dimensions and meta attributes
-	# from elements of list.src to list.dest
 	mapply(function(dest,source){
 				#add back names of dimension 
 				names(dimnames(dest)) <- names(dimnames(source))
@@ -203,17 +221,32 @@ copyMeta.list <- function(list.dest, list.src) {
 }
 
 
+#' convert list of vectors to an array.
+#' Recycling rule will be applied.
+#' 
+#' @param mylist
+#' 	list of vectors
+#' 
+#' @return 
+#'  an array
+#' 
+#' @export 
+#' @examples
+#' mylist <- list(1:5,2:6,7)
+#' result <- as.arrayFromList(mylist)
 as.arrayFromList <- function (mylist) {
-	## convert list of vectors to an array
 	t(array(unlist(mylist), dim=c(length(mylist[[1]]),length(mylist))))
 }
+
 
 #' Convert a list of matrices into an array, with each matrix in the z dimension.
 #' 
 #' @param listmx
 #'  list of matrices. Each must matrix the same dimensions.
+#' 
 #' @return
 #'  array with dimnames and meta from listmx
+#' 
 #' @export 
 #' @examples
 #'  listmx <- list(A=structure(matrix(c(1:6), nrow=2, dimnames=(list(1:2, 1:3))), meta=c("grpby.tag"="r1stchildethn")), B=structure( matrix(c(21:26), nrow=2, dimnames=(list(1:2, 1:3))) , meta=c("grpby.tag"="r1stchildethn")))
@@ -232,6 +265,7 @@ as_array_list_mx <- function(listmx) {
 	
 }
 
+
 #' Converts a list of same length vectors to a matrix.
 #' Unlike as.matrix.default, it unlists first and
 #' uses names from the first list element in the result.
@@ -241,6 +275,9 @@ as_array_list_mx <- function(listmx) {
 #' @param byrow
 #'  if TRUE, each list element becomes a row in the matrix
 #'  else, each list element becomes a column in the matrix
+#' 
+#' @return 
+#' a matrix
 #' 
 #' @export 
 #' @examples
@@ -265,10 +302,14 @@ as.matrixFromList <- function (xlist, byrow = TRUE) {
 	}				
 }
 
+
 #' Push row/col headers (ie: names of the rownames and colnames) into the rownames and colnames.
 #' 
 #' @param mx
 #'  matrix
+#' 
+#' @return 
+#' matrix with prepended dimnames
 #' 
 #' @export 
 #' @examples
@@ -289,6 +330,7 @@ dimnames_prepend_header <- function(mx) {
 	structure(mx, dimnames = list(new.row.names, new.col.names))
 }
 
+
 #' Convert a list of lists of matrices to an array, as follows:
 #'  flatten each matrix into a single row,
 #'  align the single rows within each list, then combine the rows into a single matrix per list
@@ -307,7 +349,11 @@ dimnames_prepend_header <- function(mx) {
 #'  ..$ 2: 'table' int [1:2, 1:3] 41 42 43 44 45 46
 #' 
 #'  NB: matrices can have different dimensions and are aligned first within a list, and then between the lists.
-#'  @seealso align.by.name.list.mx
+#' 
+#' @return 
+#' an array
+#' 
+#' @seealso align.by.name.list.mx
 #' 
 #' @export
 #' @examples
@@ -348,12 +394,14 @@ flatten_mxlists_to_array <- function(lol.mx) {
 	
 }
 
+
 #' Takes a list of matrices, flattens them into a single row, aligns them by column name
 #' and then returns a single matrix.
 #' 
 #' @param listmx
 #'  list of matrices to flatten. Can have different dimensions but must have similar names
 #'  for alignment (@seealso listmx.flat.aligned)
+#' 
 #' @return 
 #'  a single matrix with 
 #'    colnames = the flattened row/col names of listmx[[1]]],
@@ -382,6 +430,7 @@ flatten_mxs_to_single_mx <- function(listmx) {
 	
 }
 
+
 #' Flatten a vector or matrix (r,c) into a single row matrix (1,c) 
 #' creating new column names from a combination of old rownames 
 #' and colnames. 
@@ -392,12 +441,11 @@ flatten_mxs_to_single_mx <- function(listmx) {
 #' eg: A1, A2,
 #'     B1, B2
 #' 
+#' @param mx
+#'  matrix
 #' @param row.names.first
 #'  if TRUE, row.names will appear first in the names of the resultant columns, eg: becomes A1,B1,A2,B2
 #'  else row.names will appear last, eg: 1A, 1B, 2A, 2B
-#' 
-#' @param mx
-#'  matrix
 #' 
 #' @return
 #'  a single row matrix (1,c)
@@ -462,8 +510,13 @@ flatten_mx_to_row <- function (mx, row.names.first = FALSE) {
 
 #' Create a matrix of NA with specified col/row names/lengths.
 #' 
-#' @param rows row names, or a numeric scalar for the number of rows
-#' @param cols columns names, or a numeric scalar for the number of cols
+#' @param rows 
+#' row names, or a numeric scalar for the number of rows
+#' @param cols 
+#' columns names, or a numeric scalar for the number of cols
+#' 
+#' @return 
+#' a named matrix of NA
 #' 
 #' @export
 #' @examples
@@ -487,11 +540,19 @@ namedMatrix <- function (rows, cols) {
 #' matrix, as are every col 2,3 etc.
 #' @param ...
 #'  matrices, or a list of matrices
+#' 
+#' @return 
+#'  matrices, or a list of matrices after merged
+#' 
 #' @seealso merge_list_mx.by.rows
+#' @example
+#' xlistm <- list(matrix(c(1:9),nrow=3,dimnames=list(c("a","b","c"),c())),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c("a","e"),c())),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c("e","f"),c())))
+#' merge_list_mx.by.cols(xlistm)
 merge_list_mx.by.cols <- function(...) {
 	xlistm <- if (nargs() > 1) list(...) else (...)
 	merge_list_mx.by.rows(lapply(xlistm, t))
 }
+
 
 #' Takes any number of 2D matrices, each with the same number of rows but with 
 #' any set of named cols. Every row 1 of the matrices are combined into a new 
@@ -499,6 +560,10 @@ merge_list_mx.by.cols <- function(...) {
 #'
 #' @param ...
 #'  matrices, or a list of matrices
+#' 
+#' @return 
+#'  matrices, or a list of matrices after merged
+#' 
 #' @export
 #' @examples
 #'  	xlistm <- list(matrix(c(1,5,2,6,3,7,4,8),nrow=2,dimnames=list(c(),c("a","b","c","d"))),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c(),c("a","d","e"))),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c(),c("c","e","f"))))
@@ -675,10 +740,15 @@ redim.mx <- function(mx, newrows, newcols, dim.names) {
 	structure(result, meta = attr(mx, "meta"))
 }
 
+
 #' Remove cols that contain all zeros.
 #' 
 #' @param mx
 #'  matrix
+#' 
+#' @return 
+#'  matrix after removed.
+#' 
 #' @export
 #' @examples
 #' mx <- matrix(c(1:4, 0, 0), nrow=2)
@@ -688,10 +758,15 @@ remove.zero.cols <- function(mx) {
 	structure(mx[, col.is.non.zero, drop = FALSE], meta=attr(mx,"meta"))
 }
 
+
 #' Remove rows that contain all zeros.
 #' 
 #' @param mx
 #'  matrix
+#' 
+#' @return 
+#'  matrix after removed.
+#'
 #' @export
 #' @examples
 #' mx <- matrix(c(1:3, 0, 0, 0), nrow=2, byrow = TRUE)
@@ -700,6 +775,7 @@ remove.zero.rows <- function(mx) {
 	row.is.non.zero <- !(rowSums(mx) == 0)
 	structure(mx[row.is.non.zero, , drop = FALSE], meta=attr(mx,"meta"))
 }
+
 
 #' Remove cols specified by indices.
 #' 
@@ -727,6 +803,10 @@ remove.cols <- function(mx, indices) {
 #' 
 #' @param mx
 #'  matrix
+#' 
+#' @return 
+#'  matrix after removed.
+#'
 #' @export
 #' @examples
 #' mx <- matrix(c(1:4, NA, NA), nrow=2)
@@ -736,6 +816,7 @@ remove.NA.cols <- function(mx) {
 	structure(mx[,!col.is.na, drop = FALSE], meta=attr(mx,"meta"))
 }
 
+
 #' Remove cols by name.
 #' 
 #' @param x
@@ -743,6 +824,9 @@ remove.NA.cols <- function(mx) {
 #' @param cnames
 #'  vector of colnames
 #' 
+#' @return 
+#'  matrix after removed.
+#'
 #' @export
 #' @examples
 #' 
@@ -761,12 +845,17 @@ remove.cols.named <- function(x, cnames) {
 	}
 }
 
+
 #' Remove rows by name.
 #' 
 #' @param mx
 #'  matrix or dataframe
 #' @param rnames
 #'  vector of rownames
+#' 
+#' @return 
+#'  matrix after removed.
+#'
 #' @export
 #' @examples
 #'
@@ -783,6 +872,7 @@ remove.rows.named <- function(mx, rnames) {
 	}
 }
 
+
 #' Select only the specified row from each matrix in a list,
 #' and return a list of row vectors.
 #' 
@@ -792,6 +882,9 @@ remove.rows.named <- function(mx, rnames) {
 #'  row number to select
 #' @param na.rm
 #'  if TRUE, then do not return any selected row that contains a NA
+#' 
+#' @return
+#' a list of selected row vectors
 #' 
 #' @export
 #' @examples 
@@ -814,14 +907,19 @@ select.row.list.mx <- function(mxlist, rownum, na.rm = T) {
 	
 }
 
+
 #' Subset the first dimension, returning the same number of dimensions
 #' 
-#' @param x a vector, matrix or array
+#' @param x 
+#' a vector, matrix or array
 #' 
-#' @param logical vector to subset first dimension by
+#' @param logical 
+#' vector to subset first dimension by
+#' 
+#' @return 
+#' subset of the vector, matrix or array
 #' 
 #' @export 
-#' 
 #' @examples
 #' x <- matrix(c(1:6), nrow=2)
 #' logiset <- c(TRUE,FALSE)

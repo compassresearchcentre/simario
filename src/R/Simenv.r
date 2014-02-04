@@ -21,6 +21,9 @@ expr = {
 
 	#' Create new simenv object
 	#' 
+	#' @param .
+	#'  receiving object.
+	#' 
 	#' @param name
 	#'  simulation name
 	#' 
@@ -62,6 +65,10 @@ expr = {
 	#' @param modules
 	#'  the list of Simmodules for this Simenv
 	#' 
+	#' @return 
+	#' 
+	#' 
+	#' @export
 	#' @examples
 	#' env <- Simenv$new(name = "Base", simframe=simframe.master, dict=dict_demo)
 	new <- function (., name, simframe, dict, cat.adjustments=list(), modules=list()) {
@@ -77,7 +84,13 @@ expr = {
 		)
 	}
 	
+	
+	
+	
 	clone <- function(.) as.proto(.$as.list(all.names=TRUE))
+	
+	
+	
 	
 	class <- function(.) "Simenv"
 	
@@ -100,6 +113,7 @@ expr = {
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
 	#'   
+	#' @export
 	#' @examples
 	#'  . <- env.scenario
 	#' 	iteration = 1 ; print_adj = TRUE
@@ -162,7 +176,13 @@ expr = {
 			varname <- strip_lvl_suffix(varname)
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
 			#cat_adj_vector <- structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr"))
-			cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varname]])
+			
+			contvars <- getOutcomeVars(.$simframe, "continuous")
+			if(varname%in%contvars){
+				cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=names(binbreaks[[varname]])[-1])
+			}else{
+				cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varname]])
+			}
 			
 			if (!any(is.na(cat_adj_vector))) {
 				
@@ -185,6 +205,8 @@ expr = {
 
 	}
 	
+	
+	
 	applyAllFixedOutcomesIfSetToSimframe <- function(.) {
 		iteration <- 1
 		
@@ -194,6 +216,7 @@ expr = {
 				
 				})
 	}
+	
 
 	#' Apply categorical adjustments to simframe.
 	#' 
@@ -205,6 +228,8 @@ expr = {
 	#'  a vector of desired proportions, eg: c(0.1, 0.1, 0.8).
 	#'  Can have a "logisetexpr" attribute - if so, this is evaulated, and becomes a logical vector indicating which observations of "varname" to adjust.
 	#' 		(i.e. the "logisetexpr" attribute gives which subset of the data the desired_props are intended for).
+	#' @param iteration
+	#'  the current iteration
 	#' @param propensities
 	#' 		named list of propensities for the cat.adjustments
 	#' @param printAdj
@@ -213,6 +238,7 @@ expr = {
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
 	#' 
+	#' @export
 	#' @examples
 	#'  desired_props <- cat_adj_vector  
 	#'  
@@ -258,6 +284,7 @@ expr = {
 		
 	}
 
+	
 	#' Adjust the proportions of a single simframe variable.
 	#' 
 	#' @param .
@@ -276,6 +303,7 @@ expr = {
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
 	#' 
+	#' @export
 	#' @examples
 	#' . <- env.scenario
 	#' varname <- "catpregsmk2" ; varname <- varnames
@@ -320,6 +348,7 @@ expr = {
 		}
 	}
 	
+	
 	#' Adjust the proportions of a simframe variable that exists in multiple binary level vectors,
 	#' eg: SESBTHLvl1, SESBTHLvl2, SESBTHLvl3.
 	#' 
@@ -333,12 +362,13 @@ expr = {
 	#'  propensities, if ANY
 	#' @param printAdj
 	#'  if TRUE, display adjusted proportions after adjustment
-	#' 	@param logiset
+	#' @param logiset
 	#' 	logical vector indicating which rows to include, or NULL (the default) to include all. 
 	#'
 	#' @return 
 	#'  NULL. simframe in receiving object is modified directly.
 	#'  
+	#' @export
 	#' @examples
 	#' . <- env.scenario
 	#' binLevelVarnames <- c("SESBTHLvl1","SESBTHLvl2", "SESBTHLvl3") 
@@ -449,6 +479,39 @@ expr = {
 	}
 	
 	
+	
+	#' Apply continuous adjustments to simframe.
+	#' 
+	#' @param .
+	#'  simenv receiving object. .$simframe is modified.  
+	#' 
+	#' @param varnames
+	#'  varname(s) of variable(s) to adjust.
+	#' 
+	#' @param iteration'
+	#'  the current iteration
+	#' 
+	#' @param desired_props
+	#'  a vector of desired proportions, eg: c(0.1, 0.1, 0.8).
+	#'  Can have a "logisetexpr" attribute - if so, this is evaulated, and becomes a logical vector indicating which observations of "varname" to adjust.
+	#' 		(i.e. the "logisetexpr" attribute gives which subset of the data the desired_props are intended for).
+	#' 
+	#' @param catToContModels
+	#'  A list of models which will to used to convert the adjusted categorical variable back 
+	#'  to continuous.
+	#' 
+	#' @param cont.binbreaks
+	#'  Binbreaks for the variable being adjusted if exist.
+	#' 
+	#' @param propensities
+	#' 	named list of propensities for the cat.adjustments
+	#'
+	#' @return 
+	#'  NULL. simframe in receiving object is modified directly.
+	#' 
+	#' @export
+	#' @examples
+	
 	applyContAdjustmentToSimframe <- function(., varname, iteration, desiredProps, catToContModels, cont.binbreaks, propensities) {
 		propens <- propensities[[varname]][,,iteration]
 		logiset <- as.logical(evaluateLogisetExprAttribute(desiredProps, .$simframe))
@@ -468,6 +531,7 @@ expr = {
 		
 	}
 	
+	
 	#' Perform a simulation of X runs.
 	#' 
 	#' NB: if it exists, uses propensities in global environment when doing adjustments for year 1
@@ -476,8 +540,11 @@ expr = {
 	#'  Simenv receiving object
 	#' @param total_runs
 	#'  total number of runs to simulate
+	#' 
 	#' @return 
 	#'  NULL
+	#' 
+	#' @export
 	#' @examples 
 	#'  . <- env.base
 	#'  env.base$simulate()
@@ -535,6 +602,7 @@ expr = {
 		return(end_time - start_time)
 		
 	}
+	
 	
 	numberOfUnits <- function(.) {
 		dim(.$simframe)[1]

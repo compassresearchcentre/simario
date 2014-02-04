@@ -26,6 +26,17 @@
 #' 
 #' @param col.dim.label
 #'  name of the entire col dimension
+#' 
+#' @param numbers
+#'  If TRUE, it produces frequency table. Otherwise, it will return 
+#'  percentage table.
+#' 
+#' @param CI
+#'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
+#' @return
+#'  a matrix of collated result for each iteration
 #'
 #' @seealso \code{\link{collator_mutiple_lists_mx}}
 #' @export 
@@ -96,6 +107,10 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' @param col.dim.label
 #'  name of the entire col dimension
 #' 
+#' @param CI
+#'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
 #' @param cat.adjustments
 #' The cat.adjustments list containing the cat.adjustments for multiple variables.
 #' Within the function the specific cat.adjustments for the variable of interest are 
@@ -108,7 +123,13 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' @param binbreaks 
 #' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
 #' may be provided to the function.
+#' 
+#' @return 
+#' a matrix of collated result for each iteration
+#' 
 #' @export
+#' @example 
+#' 
 
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 
@@ -158,6 +179,13 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 #' 
 #' @param col.dim.label
 #'  name of the entire col dimension
+#' 
+#' @param CI
+#'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
+#' @return 
+#'  a matrix of collated result for each iteration
 #'
 #' @seealso \code{\link{collator_mutiple_lists_mx}}
 #' @export 
@@ -243,6 +271,10 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' @param col.dim.label
 #'  name of the entire col dimension
 #' 
+#' @param CI
+#'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
 #' @param cat.adjustments
 #' The cat.adjustments list containing the cat.adjustments for multiple variables.
 #' Within the function the specific cat.adjustments for the variable of interest are 
@@ -253,7 +285,12 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
 #' may be provided to the function.
 #' 
-#' @export 
+#' @return
+#' a matrix of collated result for each iteration
+#' 
+#' @export
+#' @examples
+
 
 collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
@@ -322,8 +359,12 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 #' @param col.dim.label
 #'  name of the entire col dimension
 #' 
+#' @return
+#' 
 #' @seealso \code{\link{collator_mutiple_lists_mx}}
 #' @export 
+#' @example 
+
 collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
 	runs_mx <- collator_mutiple_lists_mx(runs)
 	
@@ -341,6 +382,9 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 #'  a list of matrices, one matrix per run.
 #' @param dict
 #'  Dictionary object. Used to label columns.
+#' 
+#' @return
+#'  a matrix with the averaged values of runs.
 #'
 #' @seealso \code{\link{collator_list_mx}}
 #' @export 
@@ -447,11 +491,39 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #' on mean_array_pctile_CIS2() more more details.  
 #' Another difference between this function and the original collator_mutiple_lists_mx() 
 #' is that this function takes cat.adjustments, dict, and binbreaks arguments.  
+#' 
+#' @param runs
+#'  a list of lists of matrices, one inner list per run.
+#'  Each inner list may have any number of matrices,
+#'  and each matrix may have a different sets of rows or columns.
+#'  The matrices will be flattened into rows.
+#' 
+#' @param CI
+#'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
+#' @param cat.adjustments
+#'  The cat.adjustments list containing the cat.adjustments for multiple variables.
+#'  Within the function the specific cat.adjustments for the variable of interest are 
+#'  extracted from the list in further embedded functions.
+#' 
+#' @param dict
+#'  Dictionary object.
+#' 
+#' @param binbreaks
+#' The binbreaks for the specific outcome variable.
+#'   
+#' @return
+#'  a matrix with the averaged values of runs.
+#'
+#' @export 
+#' @keywords internal
+#' @examples
+#' 
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
 	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
-
 
 
 
@@ -475,6 +547,8 @@ identify_zero_category_cols <- function (mx) {
 	grep("\\s0|^0", colnames(mx))
 }
 
+
+
 #' Identify and return the indices of columns that 
 #' are for the zero category where grouping has been employed.  
 #' Identifies the outcome variable's zero categories but not the grouping variable's zero categories.  
@@ -486,6 +560,8 @@ identify_zero_category_cols <- function (mx) {
 #'  vector of zero column positions
 #'
 #' @export 
+#' @example 
+#' 
 identify_zero_category_cols_bygrp <- function (mx) {
 	#names of the outcome variable (as opposed to the grouping variable come 2nd
 	col.names <- colnames(mx)
@@ -511,6 +587,16 @@ identify_zero_category_cols_bygrp <- function (mx) {
 #'  
 #' @param dict
 #'  Dictionary object. Used to determine number of groups.
+#' 
+#' @param CI
+#'  if TRUE, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
+#' @param num.runs
+#'  number of runs
+#' 
+#' @return 
+#' a matrix of pecentages within groups
 #' 
 #' @seealso \code{\link{prop.table.mx.grped.rows}}
 #' @export  
@@ -561,6 +647,7 @@ percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
 #'  x with column names that use the codings of varname, and a column label 
 #'  that is the decsription of varname.
 #' 
+#' @export
 #' @examples
 #' \dontrun{
 #' x <- runs_mx
@@ -639,6 +726,9 @@ labelColumnCodes <- function(x, dict, varname) {
 #' @param col.dim.label
 #'  name of the entire col dimension
 #' 
+#' @return
+#'  a flattened matrix with labels.
+#' 
 #' @export
 #' @examples 
 #' \dontrun{
@@ -692,7 +782,21 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' @param col.dim.label
 #'  name of the entire col dimension
 #' 
+#' @param CI
+#'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
+#' @param num.runs
+#'  number of runs
+#' 
+#' @param binbreaks
+#' The binbreaks for the specific outcome variable.
+#' 
+#' @return 
+#'  a flattened matrix with labels and CI.
+#' 
 #' @export
+#' @example
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
@@ -839,7 +943,14 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 #' @param col.names
 #'  a character vector.  
 #' 
+#' @return
+#' A list with two vectors: a vector of the position of last space and 
+#' a vector of number of spaces
+#' 
 #' @export
+#' @example
+#' col.names <- c(" ", "1 2", "1  2", "1 2 3")
+#' identify.position.last.space(col.names)
 identify.position.last.space <- function(col.names) {
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
@@ -854,13 +965,23 @@ identify.position.last.space <- function(col.names) {
 	return(result.list)
 }
 
+
 #' Calculates the proportions within row groupings of a flattened matrix. 
 #' 
 #' @param mx.grped.rows
 #'  a matrix with grped rows, ie: within each row there are groups of 
 #'  columns that form a set. Proportions are then calculated within these groups.
+#' 
 #' @param groupnameprefixes
 #'	 names of the groups. If NULL then no groups.
+#' 
+#' @param CI
+#'  if TRUE, lower and upper confidence intervals 
+#'  are returned in additional columns
+#' 
+#' @param num.runs
+#'  number of runs
+#' 
 #' @return
 #'  the original matrix but with its values converted to proportions.
 #'  Preserves names and any "meta" attribute of \code{mx.grped.rows)}.

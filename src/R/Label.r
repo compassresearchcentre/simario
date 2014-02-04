@@ -3,21 +3,46 @@
 # Author: oman002
 ###############################################################################
 
-
+#' set the columns names of each x in xlist to
+#' each char vector c in colnameslist
+#' 
+#' @param xlist
+#'  list
+#' @param colnameslist
+#'  the list of colnames
+#' 
+#' @return 
+#'  a list with named column
+#' 
+#' @export 
+#' @examples
+#' xlist <- list(matrix(1:8,ncol=2), matrix(1:9,ncol=3))
+#' colnameslist <- list(c("a","b"),c("c","d","e"))
+#' labelColFromVec(xlist, colnameslist)
 labelColFromVec <- function (xlist, colnameslist) {
-	# set the columns names of each x in xlist to
-	# each char vector c in colnameslist
 	labelCol <- function(x, colnames) {dimnames(x)[[COL]] <- colnames;x}
 	mapply(labelCol,
 			xlist, colnameslist, SIMPLIFY = FALSE)
 }	
 
+
+#' names each object's column title with the 
+#' object's name in the named list
+#' 
+#' @param xnamedlist
+#'  list
+#' 
+#' @return 
+#'  a named list with named column
+#' 
+#' @export 
+#' @examples
+#' 
 labelColTitleFromList <- function(xnamedlist) {
-	# names each object's column title with the 
-	# object's name in the named list
 	labelCol <- function(x,xname) { names(dimnames(x))[COL] <- c(xname);x }
 	mapply(labelCol, xnamedlist, names(xnamedlist), SIMPLIFY = FALSE)
 }
+
 
 #' Set the colnames on each object in a list. By default
 #' will only set if no exiting colnames (see onlyIfNull param).
@@ -30,6 +55,9 @@ labelColTitleFromList <- function(xnamedlist) {
 #' @param onlyIfNull
 #'  if TRUE, then naming will only occur if the xlist item 
 #'  has no existing colnames
+#' 
+#' @return 
+#' a list with named colnames
 #' 
 #' @export 
 #' @examples
@@ -52,12 +80,28 @@ labelCols.list <- function(xlist, xlabels = names(xlist), onlyIfNull = TRUE) {
 			xlist, xlabels, SIMPLIFY = FALSE)
 }
 
+
+#' names the "along" dimension with "title"
+#' eg: labelTitle(y, ROW, "Year") 
+#' 
+#' @param xm
+#'  
+#' @param along
+#'  
+#' @param title
+#'  
+#' 
+#' @return 
+#' 
+#' 
+#' @export 
+#' @examples
+#' 
 labelTitle <- function (xm, along, title) {
-	# names the "along" dimension with "title"
-	# eg: labelTitle(y, ROW, "Year") 
 	names(dimnames(xm))[[along]] <- title
 	xm
 }
+
 
 labelprefixseq <- function(xm, along, prefix) {
 	# names the "along" dimension of xm with a prefixed sequence

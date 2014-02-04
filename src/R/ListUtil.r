@@ -106,6 +106,7 @@ append.lists <- function(list.dest, list.src, by.name = FALSE, flatten.src = FAL
 	}
 }
 
+
 #' Convert list to dataframe simply by setting class attr
 #' This preserves any matrices in the list.
 #' 
@@ -113,17 +114,28 @@ append.lists <- function(list.dest, list.src, by.name = FALSE, flatten.src = FAL
 #'  list
 #' @param row.names
 #'  row names for the data.frame
+#' 
+#' @return
+#'  a data frame
+#' 
 #' @export
+#' @example
+#' x <- list(matrix(1:4, nrow=2),c(1:4))
+#' x <- as_data_frame_list_as_is(x)
 as_data_frame_list_as_is <- function(xlist, row.names=NULL) {
 	structure(xlist, 
 			class="data.frame", row.names=row.names)
 }
+
 
 #' Check a list for any NAs, producing error if they exist, otherwise
 #' silently exit.
 #' 
 #' @param xlist
 #'  list to check
+#' 
+#' @return 
+#'  nothing if no NAs, otherwise error message
 #' 
 #' @export
 #' @examples
@@ -147,6 +159,7 @@ checkNAs <- function (xlist) {
 	}
 }
 
+
 #' Select inner elements of a list of lists, and return as a new list.
 #' 
 #' @param xlist
@@ -159,7 +172,6 @@ checkNAs <- function (xlist) {
 #'  
 #' @export
 #' @examples 
-#' 
 #' xlist <- list('1'=list(inner=list(A1=1:2,A2=2:3)))
 #' xlist <- list('1'=list(inner=list(A1=1:2,A2=2:3)),'2'=list(inner=list(B1=3:4,B2=4:5)))
 #' fx <- function(x) x$inner
@@ -174,10 +186,19 @@ c_list <- function(xlist, fx) {
 	result
 }
 
+
 #' True if all list members are NULL
+#' 
 #' @param xlist
 #'  list
+#' 
+#' @return
+#'  a logical value
+#' 
 #' @export
+#' @examplE
+#' x <- list(NULL)
+#' isListOfNulls(x)
 isListOfNulls <- function(xlist) {
 	all(sapply(xlist, is.null))
 }
@@ -187,17 +208,23 @@ isListOfNulls <- function(xlist) {
 #'
 #' @param lol
 #'  list of lists
+#' 
 #' @param .FUN
 #'  function that takes an element from lol
+#' 
 #' @param ...
 #'  other arguments to pass to .FUN
+#' 
 #' @param simplify
 #' logical or character string; should the result be simplified to a vector, 
 #' matrix or higher dimensional array if possible? See \code{\link{sapply}}.
+#' 
 #' @param USE.NAMES
 #' logical; if TRUE and if X is character, use X as names for the result unless it had names already.
 #' See \code{\link{sapply}}.
-#' @return a list of lists, the result of applying .FUN to lol
+#' 
+#' @return 
+#' a list of lists, the result of applying .FUN to lol
 #' 
 #' @export
 #' @examples
@@ -273,6 +300,7 @@ lzip <- function(lol) {
 	lzipper(lol, c)
 }
 
+
 #' Takes a list of lists, and applies a function to 
 #' the combination of each inner element from each outer list.
 #' 
@@ -314,6 +342,7 @@ lzip <- function(lol) {
 #'  function 
 #' @param ...
 #'  additional arguments to .FUN
+#' 
 #' @return
 #'  a list of the results from applying .FUN to each combination
 #'  
@@ -403,6 +432,7 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 	}
 }
 
+
 #' Call lapply with a list of arguments to FUN specified as the parameter FUN.args.
 #' 
 #' @param X
@@ -411,6 +441,9 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #'  the function to be applied to each element of xlist
 #' @param FUN.args
 #'  a named list of arguments to be suppplied to FUN when executed on each element of xlist
+#' 
+#' @return 
+#' 
 #' 
 #' @export
 #' @examples
@@ -431,6 +464,7 @@ lapply.args.as.list <- function (X, FUN, FUN.args) {
 						FUN=FUN)
 					,FUN.args))
 }
+
 
 #' Execute a function over a subset of a list, and merges the results into
 #' an existing list.
@@ -461,6 +495,9 @@ lapply.args.as.list <- function (X, FUN, FUN.args) {
 #' 
 #' @param ...
 #'  additional arguments to .FUN
+#' 
+#' @return 
+#' 
 #' 
 #' @export
 #' @examples
@@ -538,6 +575,9 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #' @param .FUN
 #'  .FUN to execute over elements of X
 #' 
+#' @return 
+#' 
+#' 
 #' @export
 #' @examples
 #' \dontrun{
@@ -600,6 +640,9 @@ lapply.subset.append.lol.args <- function(X, lol, lol.args = attr(lol, "args.lis
 #' @param ...
 #'  names of the elements
 #' 
+#' @return 
+#' a list of NULL elements
+#' 
 #' @export
 #' @examples 
 #' namedList("foo","bar")
@@ -612,12 +655,16 @@ namedList <- function(...) {
 	nlist
 }
 
+
 #' Remove named elements from list
 #' 
 #' @param xlist
 #'  list
 #' @param names_of_elements_to_remove
 #'  character vector
+#' 
+#' @return 
+#' the list after removed
 #' 
 #' @export
 #' @examples
@@ -639,13 +686,21 @@ remove.elements <- function(xlist, names_of_elements_to_remove) {
 #' Update dest with the values in src, removing any values from dest that don't exist in src.
 #' 
 #' Use this to update a dest list when the ordering of src is different from dest and you
-#' wwsh to preserve the dest list ordering.
+#' wish to preserve the dest list ordering.
 #' 
 #' @param dest
 #'  dest list
 #' @param src
 #'  src list
+#' 
+#' @return 
+#' the list "dest" after updated.
+#' 
 #' @export
+#' @example 
+#' dest <- list(a=1,b=2,c=3,d=4)
+#' src <- list(c=3,a=1,e=5)
+#' updatelist(dest, src)
 updatelist <- function(dest, src) {
 	# get all non nulls
 	src <- src[!sapply(src, is.null)]

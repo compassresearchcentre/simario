@@ -21,11 +21,16 @@ ZDIM <- 3
 #' Assign the values of variables (specifed by name in a source character vector)
 #' to another set of variables (specifed by name in a dest character vector).
 #' Will modify variables in enclosing environments.
-#' 
+#'  
 #' @param dest_var_names
 #'  a character vector of variable names to be assigned
+#' 
 #' @param src_var_names
 #'  a parallel character vector of variable names supplying the values to
+#' 
+#' @return 
+#'  NULL
+#' 
 #' @examples
 #' \dontrun{
 #' d1 <- 1; d2 <- 2; s1 <- 10; s2 <- 20
@@ -39,15 +44,21 @@ assign_values <- function(dest_var_names, src_var_names) {
 }
 environment(assign_values) <- .GlobalEnv
 
+
 #' Produces a csv string from x, returned as a length 1 chr vector.
 #' 
 #' @param x
 #'  object
+#' 
 #' @param title
 #'  optional title to prepend to output
+#' 
 #' @param row.names
 #'  either a logical value indicating whether the row names of x are to be written along with x, 
 #'  or a character vector of row names to be written
+#' 
+#' @return 
+#'  a character vector
 #'
 #' @export 
 #' @examples
@@ -70,14 +81,26 @@ as.csv.string <- function(x, title = NULL, row.names = T) {
 	paste(result,"\n")
 }
 
+
 #' Apply to a list using the names from the list
+#' 
 #' @param xlist
 #'  list
+#' 
 #' @param row.names
 #'  either a logical value indicating whether the row names of x are to be written along with x, 
 #'  or a character vector of row names to be written
 #' 
-#' @export 
+#' @return 
+#'  a list of character vectors
+#' 
+#' @export
+#' @example 
+#' x1 <- matrix(1:8,nrow=2)
+#' x2 <- matrix(2:9,nrow=2)
+#' xlist <- list(x1, x2)
+#' names(xlist) <- c("x1", "x2")
+#' as.csv.string.list(xlist)
 as.csv.string.list <- function(xlist, row.names = T) {
 	mapply(function (x, name) {
 						as.csv.string(x,name, row.names = row.names)
@@ -89,6 +112,9 @@ as.csv.string.list <- function(xlist, row.names = T) {
 #' 
 #' @param xvec
 #'  logical vector
+#' 
+#' @return
+#'  If there is FALSE, return error message.
 #' 
 #' @export
 #' @examples
@@ -103,10 +129,14 @@ assert <- function(xvec) {
 	}
 }
 
+
 #' Divides x into bins specified by breaks or a bin size
 #' 
-#' @param x numeric vector to be binned
-#' @param breaks either a numeric vector of two or more cut 
+#' @param x
+#' numeric vector to be binned
+#' 
+#' @param breaks
+#' either a numeric vector of two or more cut 
 #' points, or a single number giving the size of the bins in
 #' which case x is divided in bins of size breaks.
 #' NB: if cut points are specified, note that the cut point
@@ -118,15 +148,20 @@ assert <- function(xvec) {
 #' will cut into the following bins
 #'    (0,34] (34,35] (35,36] (36,37] (37,44] 
 #' 
-#' @param blabels labels for the levels of the resulting category. 
+#' @param blabels
+#' labels for the levels of the resulting category. 
 #' If NULL, labels are constructed using "(a,b]" interval notation.
 #' If specified, NAs are removed first. If breaks is specified,
 #' the the first cut point must be less than min(x) and its name
 #' (ie: the first value in blabels) should be NA.
 #' If unspecified, names(breaks) is used.
-#' @param breaklast if breaks is a bin size and breaklast is
+#' 
+#' @param breaklast 
+#' if breaks is a bin size and breaklast is
 #' specified then this is the position of the last break
-#' @return the values of x factored into bins 
+#' 
+#' @return 
+#' the values of x factored into bins 
 #' 
 #' @export
 #' @examples
@@ -184,6 +219,7 @@ bin <- function (x, breaks, blabels = names(breaks), breaklast=NULL) {
 	}
 	return(factoredx)
 }
+
 
 #' Combine levels specified in seperate binary level variables into one
 #' variable.
@@ -248,10 +284,13 @@ binary.levels.combine  <- function (..., levelvalues = NULL) {
 #' 
 #' @param x
 #'  vector
+#' 
 #' @param f
 #'  factors. Defaults to the unique set of values in x.
+#' 
 #' @return 
 #'  list of binary levels
+#' 
 #' @export
 #' @examples
 #' x <- c(1,2,3,2,1)
@@ -279,12 +318,20 @@ binary.levels.split <- function(x, f=sort(unique(x))) {
 	lapply(f, function(fac) { as.integer(x == fac) } )
 }
 
+
 #' Increments x by factor
 #' 
-#' @param x numeric vector to be incremented
-#' @param factoredx x factored
-#' @param factorincrements amounts to increment each factor of factoredx by
-#' @return x incremented by the factor increments
+#' @param x 
+#' numeric vector to be incremented
+#' 
+#' @param factoredx 
+#' x factored
+#' 
+#' @param factorincrements 
+#' amounts to increment each factor of factoredx by
+#' 
+#' @return 
+#' x incremented by the factor increments
 #' 
 #' @export
 #' @examples
@@ -320,9 +367,16 @@ incByFactor <- function(x, factoredx, factorincrements) {
 #' Detach an environment and return it.
 #' NB: the returned environment contains the contents of the attached environment but is
 #' actually a newly created different environment object from the original.
+#' 
 #' @param envname
 #'  name of the attached environment
-#' @export 
+#' 
+#' @return 
+#' an environment
+#' 
+#' @export
+#' @example 
+#' 
 detachReturn <- function(envname) {
 	#store modified env
 	#env <- updatelist(env, as.list(as.environment(envname)))
@@ -344,10 +398,14 @@ detachReturn <- function(envname) {
 	env
 }
 
+
 #' Calc the 95\% error from the t Distribution.
 #' 
 #' @param x
 #'  vector
+#' 
+#' @return 
+#'  the result calculated
 #' 
 #' @export
 #' @examples
@@ -362,16 +420,25 @@ err <- function (x) {
 	qt(0.975,df=length(x)-1)*sd(x)/sqrt(length(x))	
 }
 
+
 #' Evaluate a list/vector of strings as expressions.
 #' Errors if expressions cannot be evaluated.
 #' 
-#' @param exprlist list/vector of strings to evaluate
-#' @param envir environment to evaluate in, defaults to global environment. 
-#' @param enclos
-#'  Specifies the enclosure, i.e., where R looks for objects not found in envir.
-#'  Defaults to the caller's environment (parent.frame()) 
+#' @param exprlist 
+#' list/vector of strings to evaluate
 #' 
-#' @param allowEmptyExpr allow expressions to return no value, defaults to FALSE
+#' @param envir 
+#' environment to evaluate in, defaults to global environment. 
+#' 
+#' @param enclos
+#' Specifies the enclosure, i.e., where R looks for objects not found in envir.
+#' Defaults to the caller's environment (parent.frame()) 
+#' 
+#' @param allowEmptyExpr 
+#' allow expressions to return no value, defaults to FALSE
+#' 
+#' @return 
+#' 
 #' 
 #' @export
 #' @examples
@@ -412,42 +479,68 @@ eval.list <- function (exprlist, envir = .GlobalEnv, enclos = parent.frame(), al
 	values
 }
 
-#' Ssave x into global variable, ie: top frame, not just this function
+
+#' Save x into global variable, ie: top frame, not just this function
 #' using the supplied varname
+#' 
 #' @param varname
 #'  variable name
+#' 
 #' @param x
 #'  value
+#' 
 #' @param pos
 #'  environment to save into. Defaults to global environment.
 #' 
+#' @return
+#' 
+#' 
 #' @export
+#' @example 
+#' 
 globalNamed <- function (varname, x, pos = 1) {
 	assign(varname, x, pos = pos)	
 }
 
+
 #' Save x into global variable as it's own name.
+#' 
 #' @param x
 #'  value
+#' 
 #' @param pos
 #'  environment to save into. Defaults to global environment.
 #' 
+#' @return
+#' 
+#' 
 #' @export
+#' @example 
+#' 
 global <- function (x, pos = 1) {
 	
 	param1Name <- as.character(sys.call())[2]
 	globalNamed(param1Name, x, pos)
 }
 
+
 #' Returns whether x is a scalar (i.e. length 1)
 #' and numeric.
 #'
-#' @export 
 #' @param x
 #'  object
+#' 
+#' @return 
+#'  logical value
+#' 
+#' @export 
+#' @example 
+#' is_numeric_scalar(c(1,2))
+#' is_numeric_scalar(1)
 is_numeric_scalar <- function (x) {
 	length(x) == 1 && is.numeric(x)
 }
+
 
 #' Return amount of memory, in bytes, used by each
 #' element of a list
@@ -467,6 +560,7 @@ is_numeric_scalar <- function (x) {
 mem.lx <- function(lx) {
 	sapply(lx, object.size)
 }
+
 
 #' Add a meta attribute. Appends to existing meta attribute, if it exists, 
 #' overwriting any meta elements with the same name.
@@ -542,13 +636,19 @@ meta.add.list.varname <- function(xlist, varnames = names(xlist)) {
 #' 
 #' @param x
 #'  object to sort
+#' 
 #' @param stripAlpha
 #'  remove alpha characters before attempting sort, but retain them in the output
+#' 
 #' @param sortAlphaOnlySeparately
 #'  if a value is purely alpha (ie: contains no numeric component) sort is separately
 #'  from the alpha-numeric values, and return it after any numerically sorted values
+#' 
 #' @param ...
 #'  additional arguments passed to sort
+#' 
+#' @return 
+#'  x after sorted.
 #' 
 #' @seealso sort
 #' 
@@ -607,9 +707,12 @@ nsort <- function (x, stripAlpha = TRUE, sortAlphaOnlySeparately = TRUE, ...) {
 #' 
 #' @param exceptions
 #' 	names of vars not to remove
+#' 
+#' @return 
+#'  
+#' 
 #' @export
 #' @examples
-#' 
 #' exceptions <- c("ov")
 #' rmall(exceptions)
 rmall <- function (exceptions = NULL) {
@@ -621,6 +724,17 @@ rmall <- function (exceptions = NULL) {
 }
 
 
+#' Remove empty values from vector
+#' 
+#' @param xvec
+#' 	a vector
+#' 
+#' @return 
+#'  a vector without empty values
+#' 
+#' @export
+#' @examples
+#' stripEmpty(c("", NA, "1"))
 stripEmpty <- function (xvec) {
 	#remove empty values (NAs, empty string) from vector
 	xvec <- xvec[!is.na(xvec)]	#remove NAs
@@ -628,51 +742,97 @@ stripEmpty <- function (xvec) {
 	xvec
 }
 
+
+#' Remove class attribute from an object
+#' 
+#' @param x
+#' 	object
+#' 
+#' @return 
+#'  x without "class" attribute
+#' 
+#' @export
+#' @examples
+#' x <- 1:10
+#' x <- structure(x, class=class(x))
+#' stripClass(x)
 stripClass <- function (x) {
 	#remove the class attribute
 	`attr<-`(x, "class", NULL)
 }
 
+
 #' Remove meta attribute from an object
 #' 
 #' @param x
 #'  object
+#' 
 #' @return
 #'  x without "meta" attribute
+#' 
 #' @export
+#' @example 
+#' 
 stripMeta <- function (x) {
 	`attr<-`(x, "meta", NULL)
 }
+
 
 #' Remove meta attribute from a list
 #' 
 #' @param xlist
 #'  list
+#' 
 #' @return
 #'  xlist with elements without a "meta" attribute
-#' @export
+#' 
+#' @export 
+#' @example 
+#' 
 stripMeta.list <- function (xlist) {
 	lapply(xlist, stripMeta)	
 }
 
 
 #' Return the messages of any element that is a try-error
+#' 
 #' @param xlist
 #'  list
-#' @export 
+#' 
+#' @return 
+#'  vector that contains all components in the list with "try-error" class
+#' 
+#' @export
+#' @example 
+#' x1 <- 1:4
+#' x2 <- 5:8
+#' x3 <- 1
+#' x1 <- structure(x1, class="try-error")
+#' x2 <- structure(x2, class="try-error")
+#' xlist <- list(x1, x2, x3)
+#' tryerrorMsgs(xlist)
 tryerrorMsgs <- function (xlist) {
 	unlist(sapply(xlist, function (x) if (class(x)=="try-error") { stripClass(x) }))
 }
+
 
 #' Same as within, but the expr executed is a function.
 #' Unlike within, the func will be executed within data.
 #' Functions will read variables from data, and if <<- is used 
 #' then values will be assigned in data IF the variable already exists in data.
 #' 
-#' @param data data to use for constructing an environment.  Can be a list or a data frame.
-#' @param func function to evaluate in data
-#' @param ... arguments to pass to func
-#' @return data modified
+#' @param data 
+#' data to use for constructing an environment.  Can be a list or a data frame.
+#' 
+#' @param func 
+#' function to evaluate in data
+#' 
+#' @param ... 
+#' arguments to pass to func
+#' 
+#' @return 
+#' data modified
+#' 
 #' @export
 #' @examples
 #' myvar <- "globalenv"

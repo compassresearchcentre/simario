@@ -37,10 +37,11 @@ Dictionary <- proto(expr = {
 	#' @param varname
 	#'  name of the category of x, or NULL
 	#' 
-	#' @param
+	#' @return
 	#'  x, is there are no codings for varname, else a vector of category names
 	#'  corresponding to the values in x
 	#' 
+	#' @export
 	#' @examples
 	#'  x <- c(0,1,0,1,0,1) ;  varname <- z1singleLvl1
 	#'  x <- character(0) ; varname <- NULL 
@@ -71,6 +72,11 @@ Dictionary <- proto(expr = {
 	#'  identifies the varname coding
 	#' @param grpby.tag
 	#'  identifies the grping coding, or NULL if no grouping coding.
+	#' 
+	#' @return 
+	#' 
+	#' 
+	#' @export
 	#' @examples
 	#'  x.flat = c("1", "2", "3", "4") ; varname = "disability_state"; grpby.tag = NULL
 	#' x.flat = c("0", "1") ; varname = "disability_state"; grpby.tag = NULL
@@ -101,6 +107,7 @@ Dictionary <- proto(expr = {
 		
 	}
 	
+	
 	#' Returns the names of the codings for the supplied variables.
 	#' NB: Requires codings variable to have been set in global environment.
 	#' 
@@ -112,6 +119,7 @@ Dictionary <- proto(expr = {
 	#' @return 
 	#'  list of coding names for the variables supplied
 	#' 
+	#' @export
 	#' @examples
 	#' 
 	#' vars <- c("z1msmokeLvl1", "SESBTH") 
@@ -122,9 +130,18 @@ Dictionary <- proto(expr = {
 		lapply(cn, names)
 	}
 	
+	
 	#' Lookup description of variable x in the dictionary
 	#' first determines the name of variable x, then does the lookup
 	#' 
+	#' @param .
+	#'  this 
+	#' @param x
+	#'  
+	#' 
+	#' @return 
+	#' 
+	#' @export
 	#' @examples
 	#' . <- dict.MELC
 	#' x <- env.base$modules$years1_5$run_results_collated$means$kids
@@ -193,6 +210,8 @@ Dictionary <- proto(expr = {
 		paste(desc, grouping, weightdesc, set, sep="")
 	}
 	
+	
+	
 	#' A version of dlookup that can be use to see if a given expression is a variable in 
 	#' the dictionary or if it is not.  
 	#' Useful when users specifiy their own subgroup expression.  If the expression is not 
@@ -260,8 +279,12 @@ Dictionary <- proto(expr = {
 		paste(desc, grouping, weightdesc, set, sep="")
 	}
 
+	
 	#' Order the list by the results returned applying
 	#' dlookup to the list's elements
+	#' 
+	#' @param .
+	#'  this
 	#' 
 	#' @param ...
 	#'  objects to perform dlookup on
@@ -269,6 +292,8 @@ Dictionary <- proto(expr = {
 	#' 
 	#' @return 
 	#'  ... in order according to dlookup
+	#' 
+	#' @export
 	#' @examples
 	#'  . <- dict.MELC
 	#'  xlist <- means$all.by.ethnicity
@@ -279,7 +304,11 @@ Dictionary <- proto(expr = {
 		xlist[ordering]
 	}
 	
+	
 	#' Create a dictionary object.
+	#' 
+	#' @param .
+	#'  this
 	#' 
 	#' @param descriptions_dataframe
 	#'   a dataframe with the variables:
@@ -298,6 +327,10 @@ Dictionary <- proto(expr = {
 	#' 
 	#'   additional variables are ignored.
 	#' 
+	#' @return 
+	#' a dictionary object
+	#' 
+	#' @export
 	#' @examples
 	#' 
 	new <- function (., descriptions_dataframe, codings_dataframe = NULL) {
@@ -315,6 +348,18 @@ Dictionary <- proto(expr = {
 		
 	}
 	
+	
+	#' Create the codings of the dictionary object. Called by new().
+	#' 
+	#' @param codings_dataframe
+	#'  
+	#' 
+	#' @return 
+	#' a list of category names for categorical variables.
+	#' 
+	#' @export
+	#' @examples
+	#' 
 	createCodings <- function (codings_dataframe) {
 		#remove empty variables, 
 		#these are blank lines at the end of the file or
@@ -335,6 +380,18 @@ Dictionary <- proto(expr = {
 		codings
 	}
 	
+	
+	#' Create the descriptions of the dictionary object. Called by new().
+	#' 
+	#' @param codings_dataframe
+	#'  
+	#' 
+	#' @return 
+	#' 
+	#' 
+	#' @export
+	#' @examples
+	#'
 	createDescriptions <- function (descriptions_dataframe) {
 		#remove empty variables, 
 		#generally these are blank lines at the end of the file

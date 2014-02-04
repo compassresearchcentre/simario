@@ -8,13 +8,20 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	#' Creates a new Demo simulation environment object.
 	#' Call after initialisation.
 	#' 
+	#' @param .
+	#'  receiving object.
 	#' @param name
 	#'  environment name
 	#' @param simframe
 	#'  simframe. Stored in the environment
+	#' @param dict
+	#'  the specific project dictionary
 	#' 
+	#' @return 
+	#'  NULL
+	#' 
+	#' @export
 	#' @examples
-	#' 
 	#' . <- SimenvDemo
 	#' env.scenario <- SimenvDemo$new(name = "My Scenario")
 	new <- function(., name=NULL, simframe=simframe.master, dict=dict_demo) {
@@ -32,8 +39,19 @@ SimenvDemo <- proto(. = Simenv, expr = {
 				modules = modules)
 	}
 	
-	#' Create base tables.
-	#'
+	
+	#' Create base tables that include the statistics of input variables that don't change.
+	#' In demo, it only include sex.
+	#' 
+	#' @param .
+	#'  receiving object.
+	#' @param simframe
+	#'  simframe. Stored in the environment
+	#' 
+	#' @return 
+	#'  a list of tables for variables that don't change
+	#' 
+	#' @export
 	#' @examples
 	#' generatePreSimulationStats()
 	generatePreSimulationStats <- function (., simframe) {
@@ -45,13 +63,26 @@ SimenvDemo <- proto(. = Simenv, expr = {
 		#NB: we transpose to turn the tables into matrices so they
 		#are displayed properly
 		tbls$sex <- t(table.catvar(simframe$sex, codings$sex))
-		#tbls$qualification <- table.catvar.with.CI(binary.levels.combine(simframe$qualificationLvl1, simframe$qualificationLvl2, simframe$qualificationLvl3, simframe$qualificationLvl4), codings$qualification)
-		
 		tbls
 	}
 	
-	#' Create empty categorical variable adjustment matrices.
+	
+	#' Create empty categorical variable adjustment matrices. 
+	#' If it is a continuous variable, then convert it to categorical variable
+	#' according to binbreaks.
 	#' 
+	#' @param simframe
+	#'  simframe. Stored in the environment
+	#' @param dict
+	#'  the specific project dictionary
+	#' @param numiterations
+	#'  number of iterations, which is the number of years that simulated.
+	#'  In demo, the number of iterations is 100.
+	#' 
+	#' @return
+	#'  A list of matrices for categorical variable adjustments.
+	#' 
+	#' @export
 	#' @examples
 	#' simframe <- simframe.master
 	#' dict <- dict_demo

@@ -15,10 +15,14 @@
 
 #' Checks that the variables used in all of the models
 #' exist in simvalues, if not generate stop
+#' 
 #' @param models
 #'  a list of glm objects
 #' @param simframe
 #'  the simframe
+#' 
+#' @return 
+#'  nothing if successful, otherwise errors
 #' 
 #' @export
 #' @examples
@@ -43,11 +47,17 @@ checkModelVars <- function (models, simframe) {
 	}
 }
 
+
 #' Checks that the outcome variables have a source variable in simframe.
 #'  
-#' @param outcomes list of outcome variables with a varname attribute.
-#' @param simframe simframe to test for presence of varname
-#' @return nothing if successful, otherwise errors
+#' @param outcomes 
+#' list of outcome variables with a varname attribute.
+#' 
+#' @param simframe 
+#' simframe to test for presence of varname
+#' 
+#' @return 
+#' nothing if successful, otherwise errors
 #' 
 #' @export
 #' @examples
@@ -61,17 +71,22 @@ checkOutcomeVars <- function(outcomes, simframe) {
 	}
 }
 
+
 #' Create a list of empty outcome matrix variables for a specified outcome set.
 #' The variables to create are those from the outcome set specified by "outcome_module_name". 
 #' 
-#' @param simframe simulation frame
-#' @param outcome_module_name name of the outcomeset to create variables for
-#' @param iterations either a vector of names for each iteration,
+#' @param simframe 
+#' simulation frame
+#' 
+#' @param outcome_module_name 
+#' name of the outcomeset to create variables for
+#' 
+#' @param iterations 
+#' either a vector of names for each iteration,
 #'  eg: ("Year 5", "Year 6" ...) or a scalar specifying the number 
 #'  of iterations.
 #' 
 #' @return 
-#' 
 #' A dataframe of outcome variables. Each output variable is a matrix 
 #' of simvalues by iterations. Each matrix is assigned the "varname" 
 #' attribute that names the source variable in the simframe that will be used 
@@ -104,14 +119,20 @@ createOutcomeMatrices <- function (simframe, outcome_module_name, iterations) {
 	as_data_frame_list_as_is(outcomes, row.names(simframe))
 }
 
+
 #' Create a matrix of NA with specified col/row names/lengths.
 #' 
-#' @param cols columns names, or a numeric scalar for the number of cols
-#' @param rows row names, or a numeric scalar for the number of rows
+#' @param cols 
+#' columns names, or a numeric scalar for the number of cols
+#' 
+#' @param rows 
+#' row names, or a numeric scalar for the number of rows
+#' 
 #' @param varname 
-#' 		simframe source var. stored in the "varname" attribute.
-#'      of the matrix. This is the name of the variable in the
-#' 		simframe that will be used to fill this matrix during simulation
+#' 	simframe source var. stored in the "varname" attribute.
+#'  of the matrix. This is the name of the variable in the
+#'  simframe that will be used to fill this matrix during simulation
+#' 
 #' @return
 #' a matrix with the "varname" attribute set to varname
 #' 
@@ -168,6 +189,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 	if (sorted)	setVars <- setVars[sort(names(setVars))]
 	setVars
 }
+
 
 #' Creates a simulation frame. A simulation frame is the set of all variables
 #' (input, intermediate, and outcome) used or produced by models during 

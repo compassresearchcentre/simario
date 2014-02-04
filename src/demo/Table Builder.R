@@ -11,32 +11,45 @@
 #' user, in the scenario weightings screen, the distributions of the variable of interest for 
 #' their subgroup only so they can better choose the proportions for their subgroup scenario.   
 #' 
-#'  @param envName 
-#'  the environment to use - Base, Scenario 1, Scenario 2 etc.
-#'  @param statistic
-#'  the summary measure to use in producing the dataset - frequencies, means, quintiles
-#'  @param variableName
-#'  the variable to use in producing the dataset
-#' 	@param grpbyName
-#'  a subgroup by which to examine the variable
+#' @param envName 
+#' the environment to use - Base, Scenario etc.
+#' 
+#' @param statistic
+#' the summary measure to use in producing the dataset - frequencies, means, quintiles
+#' 
+#' @param variableName
+#' the variable to use in producing the dataset
+#' 
+#' @param grpbyName
+#' a subgroup by which to examine the variable
+#' 
 #' @param CI
 #' logical indicating whether 95% confidence intervals should be generated
+#' 
 #' @param logisetexpr
 #' a character expression which defines the logiset variable
+#' 
+#' @param dict
+#' Dictionary object.
+#' 
 #' @param not.in.logiset
 #' logical.  If TRUE, then the results will be calculated on those not in the logiset rather 
 #' than those in the logiset.
 #' 
+#' @return 
+#' a summary table for the entire or subgroup of the variable of interest.
+#'  
+#' @export
 #' @examples
-#' dict=dict_demo
-#' test <- tableBuilder(envName="Scenario 1", "frequencies", "disability_state", "",CI=TRUE, logisetexpr=NULL)
+#' dict <- dict_demo
+#' test <- tableBuilder(envName="Scenario", "frequencies", "disability_state", "",CI=TRUE, logisetexpr=NULL)
 #' test <- tableBuilder(envName="Base", statistic="means", variableName="age", grpbyName="", CI=TRUE, logisetexpr=NULL)
 #' test <- tableBuilder("Base", "quintiles", "IQ", "",CI=TRUE, logisetexpr=NULL)
 #' test <- tableBuilder("Base", "frequencies", "disability_state", grpbyName="alive",CI=FALSE, logisetexpr=NULL)
-#' test <- tableBuilder(envName="Base", statistic="means", variableName="earnings", grpbyName="qualification", CI=TRUE, logisetexpr=NULL)
-#' test <- tableBuilder(envName="Base", statistic="means", variableName="earnings", grpbyName="", CI=TRUE, logisetexpr="alive==TRUE", not.in.logiset=TRUE)
-#' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="disability_state", grpbyName="sex", CI=FALSE, logisetexpr="qualification==1")
-
+#' test <- tableBuilder(envName="Base", statistic="means", variable="earnings", grpbyName="qualification", CI=TRUE, logisetexpr=NULL)
+#' test <- tableBuilder(envName="Base", statistic="quintiles", variableName="earnings", grpbyName="", CI=FALSE, logisetexpr="alive==TRUE", not.in.logiset=TRUE)
+#' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="alive", grpbyName="sex", CI=FALSE, dict=dict_demo)
+#' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="disability_state", grpbyName="qualification", CI=FALSE)
 
 tableBuilder <- function(envName, statistic, variableName, grpbyName, CI=TRUE, logisetexpr=NULL, dict=dict_demo, not.in.logiset=FALSE) {
 	
@@ -47,12 +60,10 @@ tableBuilder <- function(envName, statistic, variableName, grpbyName, CI=TRUE, l
 		}
 	}
 	
-	#select env base on envName, eg: base (env.base) or scenario 1 (envs["Scenario 1"]), 
-	#scenario 2 etc....
+	#select env base on envName, eg: base (env.base) or scenario (env.scenario)
 	if (envName=="Base") {
 		env <- env.base
 	} else {		
-		#env <- envs[[envName]]
 		env <- env.scenario
 	}
 	
@@ -62,7 +73,7 @@ tableBuilder <- function(envName, statistic, variableName, grpbyName, CI=TRUE, l
 	presimvars <- names(env$presim.stats)
 	
 	run_results <- env$modules[[1]]$run_results
-	NUM_ITERATIONS <- ncol(env$modules[[1]]$outcomes[[1]])
+	#NUM_ITERATIONS <- ncol(env$modules[[1]]$outcomes[[1]])
 	
 	run_tables <- lapply(run_results, function(single_run) {
 				#single_run <- run_results[[1]]

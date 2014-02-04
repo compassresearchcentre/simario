@@ -11,8 +11,10 @@
 #' 
 #' @param filedir
 #'  file directory, with or without trailing slash
+#' 
 #' @param filename
 #'  file name. File type is determined from the file extension, eg: ".csv", ".xls", ".xlsx" 
+#' 
 #' @param  key_column_name 
 #'  a column in the propensity files to merge on, and select
 #'  those values that appear in selected_keys
@@ -117,14 +119,15 @@ result.as.means.and.errs <- function(result.row, simplify = T) {
 #' 
 #' @param x
 #'  vector of values
+#' 
 #' @param coding
 #'  a coding variable. names(coding) is the labels
 #'  attr(coding, "varname") is a named element in xlist
+#' 
 #' @return 
 #'  a table (proportions) with names specified by coding
 #' 
 #' @export 
-#' 
 #' @examples
 #' \dontrun{
 #' table.catvar(children$SESBTH, codings$SESBTH)
@@ -147,6 +150,31 @@ table.catvar <- function (x, coding) {
 	tbl
 	
 }
+
+
+#' This is the version for table.catvar() with confidence interval.
+#' Produce a proportioned table for x with confidence interval, using
+#' the specified coding as names and setting the "meta" attribute to "varname"
+#' of coding.
+#' 
+#' @param x
+#'  vector of values
+#' 
+#' @param coding
+#'  a coding variable. names(coding) is the labels
+#'  attr(coding, "varname") is a named element in xlist
+#' 
+#' @return 
+#'  a table (proportions) with names specified by coding
+#' 
+#' @export 
+#' @examples
+#' \dontrun{
+#' table.catvar.with.CI(children$SESBTH, codings$SESBTH)
+#' x <- simframe$z1singleLvl1 ; coding <- codings$z1singleLvl1
+#' table.catvar.with.CI(simframe$z1singleLvl1, codings$z1singleLvl1)
+#' x <- binary.levels.combine(simframe.master$SESBTHLvl1, simframe.master$SESBTHLvl2, simframe.master$SESBTHLvl3)
+#' coding <- dict.MELC$codings$SESBTH}
 
 table.catvar.with.CI <- function (x, coding) {
 	
@@ -202,6 +230,9 @@ table.catvar.with.CI <- function (x, coding) {
 #' @param varname
 #'  added as a tag on the meta attribute
 #' 
+#' @return 
+#'  a table (proportions) with names specified by breaks
+#' 
 #' @examples
 #' \dontrun{
 #' x <- env.scenario$simframe$bwkg
@@ -215,6 +246,34 @@ table.contvar <- function (x, breaks, varname) {
 	tbl
 }
 
+
+#' This is the version for table.contvar() with confidence interval.
+#' Display a vector of continuous values in a table with confidence interval 
+#' using the breaks supplied.
+#' Attachs a meta attribute with varname
+#' 
+#' @param x
+#'  vector of continous values
+#' 
+#' @param breaks
+#' a numeric vector of two or more cut points
+#' NB: note that the cut point value is not included in the bin 
+#' (ie: include.lowest = FALSE)
+#' Therefore the very first cut point must be less than min(x)
+#' 
+#' @param varname
+#'  added as a tag on the meta attribute
+#' 
+#' @return 
+#'  a table (proportions) with names specified by breaks
+#' 
+#' @examples
+#' \dontrun{
+#' x <- env.scenario$simframe$bwkg
+#' breaks <- binbreaks$bwkg
+#' 
+#' table.contvar.with.CI(env.scenario$simframe$bwkg, binbreaks$bwkg, "bwkg")
+#' }
 table.contvar.with.CI <- function (x, breaks, varname) {
 	tbl <- prop.table(table(bin(x, breaks, breaklast=NULL), useNA='ifany')) * 100
 	#calculate CIs for each group proportion

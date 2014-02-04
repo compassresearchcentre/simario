@@ -12,8 +12,15 @@
 #'   the data you are working on and want modified
 #' @param n.change
 #'   the number of observations that need moving into or out of each 
-#'   category to get the requested proportions  
+#'   category to get the requested proportions 
+#' 
+#' @return
+#' the categorical vector after modified
+#' 
 #' @seealso This function is called by the function \code{\link{modifyProps}}
+#' 
+#' @export
+#' @example
 change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	if (sign(n.change[i])==1) {
 		steal=F
@@ -102,8 +109,12 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' specific child is in the same row in propens as that same child's value of 
 #' the variable in default.vec.
 #' 
+#' @return 
+#' a modified vector with the proportions requested.
+#' 
 #' @seealso This function calls \code{\link{change.cat}}
 #' 
+#' @export 
 #' @examples
 #' \dontrun{
 #' default.vec <- children$SESBTH
@@ -361,6 +372,7 @@ modifyProps2 <- function(default.vec, desired_props, propens=NULL, accuracy=.01)
 #' @return
 #'  same list of vectors, but with proportions modified
 #' 
+#' @export
 #' @examples
 #' \dontrun{
 #' level1 <- env.scenario$simframe$SESBTHLvl1
@@ -408,9 +420,11 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 #'  a vector that is the proportions requested by the user.
 #'  The vector is the length of the number of distinct values of the variable
 #'  being modified.
+#' 
 #' @param default.vec
 #'  a vector after a run of the simulation. The values of this
 #'  variable will be changed in accordance with what the user requests
+#' 
 #' @param propens
 #'  matrix or vector of the propensity scores for each child
 #'  For binary variables there is one column of propensity scores: the
@@ -420,8 +434,15 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 #'  propensities to change from category 1 to category 2 are in the first
 #'  column and the propensities to change from category 2 to category 3 are
 #'  in the second column.
+#' 
 #' @param logiset
 #' logical vector indicating which observations to include, or NULL to include all.
+#' 
+#' @param accuracy
+#'  gives how close the end proportions are allowed to be away from the desired 
+#' proportions - the default is 0.01. It is passed to function modifyProps().
+#'  
+#' 
 #' @note Assumptions made by the function:
 #' It is assumed that the proportions given in props are given in consectuive 
 #' increasing order (e.g. {0,1}, {1, 2, 3} or {2, 5, 9, 23}).  If the user 
@@ -434,7 +455,11 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 #' specific child is in the same row in propens as that same child's value of 
 #' the variable in default.vec.
 #' 
+#' @return
+#' a vector with the subset modified
+#' 
 #' @seealso This function calls \code{\link{modifyProps}}
+#' 
 #' @export
 #' @examples
 #' default.vec<-c(1,1,1,1,0,0,0,0,0,1,1,1,1)
@@ -483,6 +508,7 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 
 }
 
+
 #' Runs modifyProps on a continuous variable
 #' Takes a continuous variable, converts it to a categorical variable using the binbreaks,
 #' modifyProps is then called on that categorical variable.
@@ -510,6 +536,9 @@ modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NUL
 #'  propensities to change from category 1 to category 2 are in the first
 #'  column and the propensities to change from category 2 to category 3 are
 #'  in the second column.
+#' 
+#' @param logiset
+#'  logical vector indicating which observations to include, or NULL to include all.
 #' 
 #' @param accuracy
 #' 	gives how close the end proportions are allowed to be away from the desired 
@@ -540,6 +569,7 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 	adj.x.cont <- predSimModSelect(adj.x.cat, catToContModels, cont.binbreaks, logiset, envir)
 	adj.x.cont
 }
+
 
 #' A wrapper for modifyProps.  
 #' Subsets by the logiset call the appropriate version of modifyProps 
@@ -575,6 +605,10 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 #' @return
 #' an adjusted vector, either categorical or continuous depending on whether catToCont 
 #' models were provided.
+#' 
+#' @export 
+#' @example
+#' 
 
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
 	if (!is.null(logiset) && length(logiset)>0) {
@@ -607,6 +641,8 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 	}
 }
 
+
+
 #' Combines and reorders (so correct original order) after modifyProps has been called on
 #' a logiset.
 #' Called in adjust.proportions().  
@@ -626,6 +662,13 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 #' @return 
 #' A combined and reordered vector.  Contains evereyone in the population in the correct 
 #' order.
+#' 
+#' @export 
+#' @example 
+#' modified.x <- 1:10*2-1
+#' non.modified.x <- 1:10*2
+#' logiset<-rep(c(TRUE,FALSE),10) 
+#' combine.and.reorder(modified.x, non.modified.x, logiset)
 combine.and.reorder <- function(modified.x, non.modified.x, logiset) {
 	n = length(modified.x) + length(non.modified.x)
 	original.position <- 1:n
@@ -639,89 +682,6 @@ cat("Loaded modifyProps.r\n")
 
 
 
-
-
-#' Change the default simulated values to proportions requested by the user.
-#' The values of a vector are changed so that the proportions of each discrete value 
-#' are that requested by the user.
-#' The values that are changed are the ones with the highest propensity to do so
-#' The propensity score(s) of an observation to be a higher (or lower) value can 
-#' be given as input to the function.
-#' If the propensity score(s) are not provided by the user then random 
-#' propensity scores are generated.
-#' 
-#' @param props
-#'  a vector that is the proportions requested by the user.
-#'  The vector is the length of the number of distinct values of the variable
-#'  being modified.
-#' 
-#' @param default.vec
-#'  a vector after a run of the simulation. The values of this
-#'  variable will be changed in accordance with what the user requests
-#' 
-#' @param propens
-#'  matrix or vector of the propensity scores for each child
-#'  For binary variables there is one column of propensity scores: the
-#'  propensities to change from a 0 to a 1.
-#'  For categorical variables with more than two categories there are multiple
-#'  columns of propensity scores: E.g. for a three category variables the
-#'  propensities to change from category 1 to category 2 are in the first
-#'  column and the propensities to change from category 2 to category 3 are
-#'  in the second column.
-#' 
-#' @param accuracy
-#' 	gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
-#' 	- the default is 0.01.
-#'  If the '.accuracy' global variable exists, its value will be used instead of that in function call.
-#' 
-#' @return 
-#' A vector of values with the proportions requested by the user
-#' 
-#' @note Assumptions made by the function:
-#' It is assumed that the proportions given in props are given in consectuive 
-#' increasing order (e.g. {0,1}, {1, 2, 3} or {2, 5, 9, 23}).  If the user 
-#' wants to make it so no observations are in a particular category the value 
-#' 0 must be put in the corresponding place in the vector props
-#' If the propensity scores (propens) are provided by the user then it is assumed 
-#' that default.vec and propens are given in the same order and exactly the 
-#' same children are in each vector (i.e. there are no children in one vector 
-#' that are not in the other).  In other words, the propensity score for a 
-#' specific child is in the same row in propens as that same child's value of 
-#' the variable in default.vec.
-#' 
-#' @seealso This function calls \code{\link{change.cat}}
-#' 
-#' @export
-#' @examples
-#' \dontrun{
-#' default.vec <- children$SESBTH
-#' desired_props <- c(0.1,0.1,0.8)
-#' propens <- data.frame(propensities$SESBTH)
-#' new.vec <- modifyProps(default.vec, desired_props, propens)
-#' table(default.vec)/sum(table(default.vec))
-#' table(new.vec)/sum(table(new.vec))
-#' 
-#' default.vec <- env.scenario$simframe$z1accomLvl1
-#' desired_props <- c(0.1,0.9)
-#' propens <- propensities$z1accom[,,5]
-#' #propensities$z1accom is a 3 dimentional array so we take only the the 5th z dimension
-#' 	#(the propensities for year 5)
-#'  table(default.vec)/sum(table(default.vec))
-#' new.vec <- modifyProps(default.vec, desired_props, propens)
-#'  table(new.vec)/sum(table(new.vec))
-#' 
-#' default.vec <- env.scenario$simframe$catpregsmk2
-#' desired_props <- c(0.1, 0.1, 0.1, 0.5, 0.2)
-#' propens <- NULL
-#' 
-#' prop.table(table(default.vec))
-#' prop.table(table(modifyProps(default.vec, desired_props, propens)))
-#' 
-#' desired_props <- c(.05, .1, .2, .15, .3, .12, .08)
-#' fhrs.binbreaks = attr(env.scenario$cat.adjustments$fhrswrk, "cont.binbreaks")
-#' x.cat <- bin(x.cont,fhrs.binbreaks)
-#' adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
-#' }
 
 
 ########### Add missing categories ##############
@@ -738,7 +698,13 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		
 		# The categories of the variable
 		#categories<-as.vector(dict_demo$codings[[varname]])
-		categories<-attr(desired_props,"levels")
+		#binbreak <- attr(desired_props,"binbreak")
+		#if(length(binbreak)==0){
+			#categories <- names(binbreak)[-1]
+		#}else{
+			categories <- attr(desired_props,"levels")
+		#}
+		
 		num.missingCategories=0
 		
 		# The list to store all missing categories
@@ -761,7 +727,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 			stop("Add additional type in modifyProps()")	
 		}
 		
-		# A vector of logistic values to store if it belongs to the category in majority
+		# A logical vector to store if each element belongs to the category in majority
 		isMajority <- default.vec == majorityCategory 
 		
 		# The number of units in majority category
@@ -878,6 +844,11 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	
 	if (is.null(default.vec)) {
 		stop(gettextf("%s is NULL", as.character(sys.call())[2]))
+	}
+	
+	if(length(default.vec)==0){
+		#if the default vector is empty, silently do nothing	
+		return(default.vec)
 	}
 	
 	#keep original vector

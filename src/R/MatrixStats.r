@@ -5,14 +5,21 @@
 
 library(plyr)
 
+
+#' calculates the row means of each matrix
+#' NAs are treated as zero.
+#' 
+#' @param xlistm 
+#'  a list of matrices
+#' 
+#' @return 
+#' a list
+#' 
+#' @export
+#' @example
+#' colmeans.list(by.year$base$o.gptotvis)
+#' xlistm <- by.year$base$o.gptotvis
 colmeans.list <- function (xlistm) {
-	# xlistm is a list of matrices
-	# calculates the row means of each matrix
-	# NAs are treated as zero.
-	#
-	# eg: colmeans.list(by.year$base$o.gptotvis)
-	#	  xlistm <- by.year$base$o.gptotvis
-	
 	lapply(xlistm, function (cfreq) {
 				# replace NAs with 0
 				cfreq[is.na(cfreq)] <- 0
@@ -22,6 +29,7 @@ colmeans.list <- function (xlistm) {
 			} 
 	)
 }
+
 
 #' Mean across Z dimension of a 3D array. Each row and column cell is
 #' averaged across the Z dimension.
@@ -100,7 +108,6 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 }
 
 
-
 #' Mean across Z dimension of a 3D array. Each row and column cell is
 #' averaged across the Z dimension.
 #' A version of mean_array_z() where the confidence intervals are percentile based 
@@ -124,6 +131,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 #' @export
 #' @examples
 #' #xa <- runs_array
+#' result <- mean_array_z_pctile_CIs(xa)
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0 #turns any 0s to NAs (this is the default)
 	
@@ -184,6 +192,7 @@ mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 #' go above 100%.   
 #' This function has additional arguments compared to mean_array_z_pctile_CIs(), namely,
 #' cat.adjustments, dict, and binbreaks. 
+#' 
 #' @param xa
 #'  an array with a Z dimension
 #' @param CI
@@ -201,6 +210,13 @@ mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 #' @param binbreaks 
 #' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
 #' may be provided to the function.
+#' 
+#' @return 
+#'  a matrix of means
+#' 
+#' @export 
+#' @example 
+#' 
 mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	if ((NA.as.zero)&(sum(is.na(xa))>0)) xa[is.na(xa)] <- 0
 	
@@ -278,6 +294,13 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 #' mean_array_pctile_CIS2().  
 #'@param dicr
 #' the dictionary of the specific MSM project.
+#' 
+#' @return 
+#' 
+#' 
+#' @export 
+#' @example
+#' 
 proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 	
 	if (!is.na(grpby.tag)) {
@@ -339,6 +362,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 		return(pct.array)
 	}
 }
+
 
 #' Mean applied over a list of matrices/vectors. Aligns matrices/vectors first
 #' so rows and columns match (see align.by.name.list.mx).
@@ -436,6 +460,7 @@ mean_list_mx <- function(listmx) {
 	
 }
 
+
 #' Produce proportions of x in relation to the sum of group
 #' specified by grpby.
 #' 
@@ -497,6 +522,7 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 	#x / grpsum[grpby] #old code before JT modifed it to handle CIs
 	return(result)
 }
+
 
 #' Execute quantile on the columns of a matrix.
 #' The group-by variable must be time-invariant.
@@ -569,6 +595,8 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' Quantiles for each group are put side-by-side in a rbind fashion.
 #' 
 #' @export
+#' @example
+#' 
 quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -668,6 +696,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 	structure(result, meta=c(varname=attr(mx, "varname")))
 }
 
+
 #' Summary table, with option to group and weight results.
 #'  
 #' @param x
@@ -678,6 +707,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 #' @param wgts
 #'  vector of weights, or NULL to do no weighting
 #'  Same length as the columns of x.
+#' 
 #' @return
 #'  a weighted summary table, or rows of weighted summary tables if grpby is specified.
 #' function also returns the weighted number of NA's, but does not include NA's with weights of NA.
@@ -756,6 +786,14 @@ summary.grpby <- function (x, grpby = NULL, wgts=NULL) {
 #' 
 #' @param logiset
 #'  logical vector indicating which rows to include, or NULL to include all.
+#' 
+#' @param wgts
+#'  vector of weights, or NULL to do no weighting
+#'  Same length as the columns of x.
+#' 
+#' @param grpby
+#'  elements to group by, or NULL to do no grouping
+#'  Same length as the columns of x.
 #' 
 #' @return
 #' returns each column's summary as an
@@ -851,6 +889,7 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 	}
 }
 
+
 #' Frequency table, with option to group results.
 #' The group-by variable must be time-invariant.
 #'  
@@ -870,7 +909,6 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 #' 
 #' @export
 #' @examples
-#' 
 #' x <- rep(0,1075)
 #' x <- c(8,8,2,1,1,8)
 #' grpby <- c('M','M','F','F','F','F')
@@ -891,22 +929,28 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 	}
 }
 
+
 #' Frequency table, with option to group results.  
 #' Extension of table.grpby() that can handle grpby as a matrix as well as a vector.  
 #' The group-by variable may be time-invariant or time-variant.  
 #'  
 #' @param x
 #'  vector of values which can be interpreted as factors 
+#' 
 #' @param grpby
 #'  A vector or matrix of elements to group by, or NULL to do no grouping.
 #'  vector must be same length as the columns of x or matrix must have the same number
 #'  of rows as z.
-#' If the group-by variable is  time-invariant grpby can be provided as a vector or as a 
+#' If the group-by variable is not time-invariant grpby can be provided as a vector or as a 
 #' matrix with every column the same.  If the group-by variable is time-variable then 
 #' grpby should be a matrix with number of columns equal to number of years. 
-#' @param useNA
-#'  whether to include extra NA levels in the table.
-#'  one of c("no", "ifany", "always"). Defaults to "ifany".
+#' 
+#' @param wgts
+#'  vector of weights, or NULL to do no weighting
+#'  Same length as the columns of x.
+#' 
+#' @param binbreak
+#'  The binbreaks for the specific outcome variable.
 #' 
 #' @return
 #'  a table. If grpby is specified this will be a table
@@ -914,6 +958,8 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
+#' @example 
+#' 
 table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
@@ -942,7 +988,7 @@ table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 
 #' modified by Mengdan - original above
 #' modified in to make order of tables of continuous variables in run_results be the same as in binbreaks
-table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
+table.grpby_BCASO2 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
 	
@@ -960,9 +1006,9 @@ table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 			stop(gettextf("Length of %s != length of %s", 
 							as.character(sys.call())[2], as.character(sys.call())[3]))
 		}
-		
 		a <- aggregate(wgts, by = list(grpby=grpby, x), FUN = sum)
-		b <- t(tapply(a$x, list(a$grpby, a$Group.2), identity))		
+		b <- t(tapply(a$x, list(a$grpby, a$Group.2), identity))	
+		b[is.na(b)] <- 0
 		if(!is.null(binbreak[[1]])){
 			c1<-b[,1]
 			names(c1) <- rownames(b)
@@ -981,6 +1027,57 @@ table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 }
 
 
+#' modified by Mengdan - a newer version
+
+table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
+	
+	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
+	
+	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
+		a <- wtd.table(x, weights=wgts)
+		a <- a$sum.of.weights
+		if(!is.null(binbreak[[1]])){
+			a <- a[names(binbreak[[1]])]
+			a <- a[!is.na(a)]
+		}
+		return (t(t(a)))
+	} else {
+		
+		if(length(x) != length(grpby)) {
+			stop(gettextf("Length of %s != length of %s", 
+							as.character(sys.call())[2], as.character(sys.call())[3]))
+		}
+		a <- aggregate(wgts, by = list(grpby=grpby, x), FUN = sum)
+		b <- t(tapply(a$x, list(a$grpby, a$Group.2), identity))	
+		#b[is.na(b)] <- 0
+		if(!any(colnames(b)=="FALSE") & !any(colnames(b)=="TRUE")){
+			c <- b
+		}else{
+			c <- matrix(ncol=2, nrow=nrow(b),dimnames=list(rownames(b),c("FALSE", "TRUE")))
+			if(any(colnames(b)=="FALSE")){
+				c[,"FALSE"] <- b[,"FALSE"]
+			} 
+			if(any(colnames(b)=="TRUE")){
+				c[,"TRUE"] <- b[,"TRUE"]
+			}
+		}
+		c[is.na(c)] <- 0
+		if(!is.null(binbreak[[1]])){
+			c1<-c[,1]
+			names(c1) <- rownames(b)
+			c2<-c[,2]
+			names(c2) <- rownames(b)
+			c1 <- c1[names(binbreak[[1]])]
+			c1 <- c1[!is.na(c1)]
+			c2 <- c2[names(binbreak[[1]])]
+			c2 <- c2[!is.na(c2)]
+			c <- cbind(c1,c2)
+		}
+		#b[which(is.na(b))] <- 0
+		return(t(t(c)))
+		
+	}
+}
 
 
 #' Generates a frequency table, with option to group by, for each column of a matrix.
@@ -1079,9 +1176,8 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' @param logiset
 #'  logical vector or matrix indicating which rows to include, or NULL to include all.
 #'
-#' @param useNA
-#'  whether to include extra NA levels in the table.
-#'  one of c("no", "ifany", "always"). Defaults to "ifany".
+#' @param dict
+#'  the specific project dictionary
 #' 
 #' @return
 #'  list. Each element of the list is a frequency table for a column in mx.
@@ -1201,9 +1297,6 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 }
 
 
-
-
-
 #' Weighted frequency table
 #'
 #' @param x
@@ -1252,13 +1345,11 @@ wtdtable <- function (x, wgts=rep(1,length(x))) {
 	as.table(tbl)
 }
 
+
 #' Produces a weighted frequency distribution for each column 
 #' of the matrix mx and returns them altogether in one table.
 #' Each column can have a different set of categories 
 #' (ie: frequency "buckets")
-#' 
-#' @param logiset
-#'  logical vector indicating which rows to include, or NULL to include all.
 #' 
 #' @param mx
 #'  matrix
@@ -1268,6 +1359,9 @@ wtdtable <- function (x, wgts=rep(1,length(x))) {
 #' 
 #' @param addVariableName
 #'  if addVariableName = TRUE, then the columns will be given the name of mx
+#' 
+#' @param logiset
+#'  logical vector indicating which rows to include, or NULL to include all.
 #' 
 #' @return
 #' weighted frequency distributions stacked in rows
@@ -1332,7 +1426,6 @@ wtdtable_mx_cols <- function(mx, wgts = rep(1,nrow(mx)), addVariableName = FALSE
 	
 	tfreqs
 }
-
 
 
 #' Calculates the weighted mean for each column of the matrix
@@ -1450,6 +1543,9 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #'
 #' @param wgts
 #'  elements to weight by, or NULL to do no weighting
+#' 
+#' @param dict
+#'  the specific project dictionary
 #'  
 #' @return 
 #'  a matrix of means. Each row is the mean for a column in mx.

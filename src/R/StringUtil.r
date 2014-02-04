@@ -29,6 +29,10 @@ add_trailing_slash <- function(x) {
 #' 
 #' @param x
 #'  character vector
+#' 
+#' @return 
+#'  logical vector
+#' 
 #' @export
 #' @examples 
 #' 
@@ -43,6 +47,10 @@ is.alpha.only <- function(x) {
 #' 
 #' @param x
 #'  character vector
+#' 
+#' @return 
+#' character vector without alpha
+#' 
 #' @export
 #' @examples 
 #' 
@@ -57,6 +65,10 @@ strip.alpha <- function(x) {
 #' 
 #' @param x
 #'  character vector
+#'  
+#' @return 
+#' character vector without numbers
+#' 
 #' @export
 #' @examples 
 #' 
@@ -71,6 +83,10 @@ strip.numeric <- function(x) {
 #' 
 #' @param mx
 #'  matrix 
+#' 
+#' @return 
+#'  matrix after modify the row and col names
+#' 
 #' @export
 #' @examples 
 #' 
@@ -88,7 +104,14 @@ strip.alpha.mx <- function(mx) {
 #' 
 #' @param string
 #'  character vector
+#' 
+#' @return 
+#'  character vector after remove spaces
+#' 
 #' @export
+#' @example 
+#' x <- c(" 1 (%) ", " -2 (%) ", "2.102 (%) ", " 10 (%)")
+#' trim(x)
 trim <- function (string) {
 	#
 	gsub("^\\s+|\\s+$", "", string)

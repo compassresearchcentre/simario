@@ -19,6 +19,7 @@
 #' "ClassVal0" = variable level. If present is appended to the variable name, eg: MAGELvl1
 #' "Estimate" = variable coeffient
 #' 
+#' @export
 #' @examples 
 #' 
 #' #m.glm <- createGLM(modeldf) 
@@ -88,17 +89,21 @@ createGLM <- function (modeldf) {
 	m.glm
 }
 
+
 #' Load and create a GLM from the first sheet in an xlsx file.
 #' See \code{\link{createGLM}} for file format.
 #'
 #' @param filedir
 #'  file directory, ending with "/", eg: "d:/workspace/"
+#' 
 #' @param filename
 #'  file name, eg: "myfile.xls". See \code{\link{createGLM}} for file format.
+#' 
 #' @return 
 #'  a glm model object
 #'
 #' @seealso See \code{\link{createGLM}} for file format.
+#' 
 #' @export
 #' @examples
 #' \dontrun{
@@ -115,17 +120,21 @@ loadGLMXLS <- function (filedir, filename) {
 	)
 }
 
+
 #' Load and create a GLM from a csv file.
 #' See \code{\link{createGLM}} for file format.
 #' 
 #' @param filedir
 #'  file directory, ending with "/", eg: "d:/workspace/"
+#' 
 #' @param filename
 #'  file name, eg: "myfile.csv"
+#' 
 #' @return 
 #'  a glm model object
 #' 
 #' @seealso See \code{\link{createGLM}} for file format.
+#' 
 #' @export 
 #' @examples
 #' \dontrun{
@@ -142,11 +151,15 @@ loadGLMCSV <- function (filedir, filename) {
 	)
 }
 
+
 #' Get the unique set of names of model coefs for the 
 #' supplied list of models
 #' 
 #' @param models_list
 #'  list of models
+#' 
+#' @return 
+#' 
 #' 
 #' @export
 #' @examples 
@@ -165,18 +178,23 @@ model_coefs_names_unique <- function(models_list) {
 	names.all.coefs.unique[!names.all.coefs.unique.is.previous]
 }
 
+
 #' Return the coefficients used in the supplied model.
 #' 
 #' @param model
 #'  a glm object with a coef variable, or a numeric vector of coefficients
+#' 
 #' @param combineMultipleLevels
 #'  variables that have multiple levels (eg: SESBTHLvl1, SESBTHLvl2) 
 #'  are combined into a single variable (eg: SESBTH) by summing the 
 #'  coefficients
+#' 
 #' @param ignoreMultiplicativeTerms
 #'  remove terms with * in them
+#' 
 #' @param directionOnly
 #'  show "+" or "-" instead of coefficent value
+#' 
 #' @return
 #'   chr named vector of coefficients
 #' 
@@ -230,14 +248,17 @@ modelVariableCoefs <- function (model, combineMultipleLevels = TRUE, ignoreMulti
 	
 }
 
+
 #' Return the variables used in the supplied terms.
 #' Removes "LvlX" suffix, and surrounding "I( )"
 #' as well as disaggregates squared variables
 #' 
 #' @param model
 #'   a glm model
+#' 
 #' @param strip.Lvl
 #'  strip the LvlX from names. Defaults to TRUE.
+#' 
 #' @return
 #'   chr vector of variable names
 #' 
@@ -265,6 +286,7 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 	unique(sort(l))
 	
 }
+
 
 #' Predict. Looks in envir for variables specified by model, then multiples the coefficients
 #' by each variable and summs the results.
@@ -295,6 +317,9 @@ modelVariableNames <- function (model, strip.Lvl = TRUE) {
 #' @param set
 #'  logical vector indicating elements or rows to keep, or NULL to use
 #'  all elements returned by evaluated model variables
+#' 
+#' @return
+#'  a vector of predicted values
 #' 
 #' @export
 #' @examples
@@ -344,6 +369,7 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 	drop(vars.evaluated.mx %*% model$coefficients)
 }
 
+
 #' Predict and simulate binary value from logistic model
 #' 
 #' @param model.glm
@@ -355,6 +381,9 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 #' @param set
 #'  logical vector indicating elements or rows to simulate, or NULL to 
 #'  simulate using all values in envir
+#' 
+#' @return 
+#'  a vector of binary values
 #'
 #' @export   
 #' @examples
@@ -369,6 +398,7 @@ predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
 	randunif <- runif(length(predicted_probabilities)) 
 	ifelse(randunif <= predicted_probabilities, 1, 0) 
 }
+
 
 #' Predict probabilities from the coefficients of a logistic regression
 #' 
@@ -399,6 +429,7 @@ predLogistic <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	predicted_probabilities
 }
+
 
 #' Predict probabilities from the coefficients of a multinomial regression  (currently only works if output catgegories are 1,2,3 etc with 1 being the reference)
 #' 
@@ -442,6 +473,7 @@ predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
 	predicted_probabilities2
 }
 
+
 #' Predict and simulate value from a multinomial model (currently only works if output catgegories are 1,2,3 etc with 1 being the reference)
 #' 
 #' @param model.glm.list
@@ -457,8 +489,13 @@ predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
 #' @param set
 #'  logical vector indicating elements or rows to simulate, or NULL to 
 #'  simulate using all values in envir
+#' 
+#' @return 
+#' 
 #'
-#' @export   
+#' @export
+#' @example
+#'  
 predSimMultinomial <-function(model.glm.list, envir=parent.frame(), set = NULL) {
 		
 	probs<-predMultinomial(model.glm.list, envir=envir, set = set)
@@ -468,6 +505,7 @@ predSimMultinomial <-function(model.glm.list, envir=parent.frame(), set = NULL) 
 				
 				})
 	}
+	
 		
 #' Predict and simulate binary value from binomial
 #' distribution with probability
@@ -502,6 +540,7 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	sapply(predicted_probabilities , function (x) rbinom(1, size=1, prob=x)) 
 }
 
+
 #' Predict and simulate continuous value from poisson model
 #' 
 #' @param model.glm
@@ -514,6 +553,9 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  logical vector indicating elements or rows to simulate, or NULL to 
 #'  simulate using all values in envir
 #'
+#' @return 
+#' a vector of predicted value
+#' 
 #' @export   
 #' @examples
 #' \dontrun{
@@ -531,6 +573,7 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 	sapply(predicted_means, function (x) rpois(1, x)) 
 }
 
+
 #' Predict and simulate continuous value from negative binomial
 #' distribution with mean = exp(predicted) and size=1/alpha
 #' where alpha is specified in the model.
@@ -546,7 +589,10 @@ predSimPois <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  simulate using all values in envir
 #' @param alpha
 #'  if supplied, use this value for alpha rather than the value in the model
-#'
+#' 
+#' @return 
+#' a vector of predicted value
+#' 
 #' @export   
 #' @examples
 #' \dontrun{
@@ -570,6 +616,7 @@ predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL, alpha=NUL
 	sapply(predicted_means, function (x) rnbinom(1, size=1/alpha, mu=x)) 
 }
 
+
 #' Predict and simulate continuous value from normal
 #' distribution of specified standard deviation
 #' 
@@ -582,6 +629,9 @@ predSimNBinom <- function(model.glm, envir=parent.frame(), set = NULL, alpha=NUL
 #' @param set
 #'  logical vector indicating elements or rows to simulate, or NULL to 
 #'  simulate using all values in envir
+#' 
+#' @return 
+#' a vector of predicted value
 #'
 #' @export   
 #' @examples
@@ -604,6 +654,7 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 	sapply(predicted, function (x) rnorm(1, mean=x, sd=sd)) 
 }
 
+
 #' Predict and simulate value from n normal models.
 #' 
 #' for the case where each category has a separate model that should be used to simulate a value
@@ -614,6 +665,11 @@ predSimNorm <- function(model.glm, envir=parent.frame(), set = NULL) {
 #'  a list of models with length equal to the number of categories in x.cat
 #' @param envir
 #'  environment in which to evaluate model variables.
+#' 
+#' @return 
+#' a vector of predicted value
+#'
+#' @export   
 #' @examples
 #' \dontrun{
 #' fhrswrk.cat <- bin(simframe.master$fhrswrk, binbreaks$fhrswrk)
@@ -628,6 +684,7 @@ predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
 	}
 	result
 }
+
 
 #' Predict and simulate value from n normal models with truncation/rounding to ensure simulated 
 #' values stay within their category bounds. 
@@ -674,6 +731,7 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 	result
 }
 
+
 #' Predict and simulate value from n negative binomial models.
 #' No backtransformation included.
 #' 
@@ -688,6 +746,10 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 #' 
 #' @return 
 #' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
+#' 
+#' @export 
+#' @example
+#' 
 predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 	x.cat <- as.integer(x.cat)
 	result <- rep(NA, length(x.cat))
@@ -697,6 +759,7 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 	}
 	result
 }
+
 
 #' Predict and simulate value from n models.   
 #' 
@@ -713,12 +776,19 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 #'  a list of models with length equal to the number of categories in x.cat
 #' @param cont.binbreaks
 #' the binbreaks of the categorical variable
+#' @param logiset
+#' logical vector indicating which observations to include, or NULL to include all.
+#' 
 #' @param envir
 #'  environment in which to evaluate model variables.
 #' 
 #' @return 
 #' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
 #'   envir=.GlobalEnv
+#' 
+#' @export 
+#' @example 
+#' 
 predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=parent.frame()) {
 	#envir=simframe.master
 	x.cat <- as.integer(x.cat)
@@ -757,20 +827,31 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 #' Calculates the predicted probabilities (from an ordinal regression model) to be in each
 #' cateory for a three or more level categorical variable. 
 #' 
-#' @param models. A list of models - one for each category.  The difference in the models will
+#' @param models. 
+#' A list of models - one for each category.  The difference in the models will
 #' only be the intercept if the model is an ordinal multinomial regression (clogit in SAS).
 #' 
-#' @param stochatic.  If TRUE adds random variation around the probabilities to be in each 
+#' @param numchildren
+#'  number of units
+#' 
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @param stochatic.  
+#' If TRUE adds random variation around the probabilities to be in each 
 #' category.  If  TRUE it will cause the probabilities to no longer add to 1 and so should only 
 #' be used when the probabilities are being used as propensities in scenario testing.
 #' 
-#' @return A matrix of probabilities.  Rows correspond to individual units (children) and
+#' @return 
+#' A matrix of probabilities.  Rows correspond to individual units (children) and
 #' columns correspond to the categories of the variable.  The probabilities will add to 1 and be 
 #' the exact probabilities estimated from the model if stocahtic=FALSE, otherwise, if 
 #' stochatic=TRUE, they will approximate probabilities that will most likely not add to 1 and 
 #' could also be negative or greater than 1.
 #' 
 #' @export 
+#' @example 
+#' 
 predictOrdinal <- function(models, numchildren, envir=parent.frame(), stochastic=FALSE) {
 	#number of categories in the outcome is one plus the number of models in the list
 	num.cat <- length(models) + 1
