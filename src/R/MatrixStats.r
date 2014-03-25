@@ -1279,9 +1279,13 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	results.by.col <- lapply(1:ncol(mx), function (i) {
 				#i <- 1
 				#old:
-				##table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+				#note this the above table.grpby_BCASO is one modified by Mengdan
+				#if any problems one options is to revert back to the one before she
+					#modified anything which is table.grpby_BCASO1 
+				#think the below done by Mengdan - doesn't work
 				#new:
-				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i], binbreak=binbreaks[varname])
+				##result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i], binbreak=binbreaks[varname])
 				if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 					colnames(result) <- c("Not in subgroup", "In subgroup")
 				} 
