@@ -253,7 +253,7 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'  simframe_defn <- read_csv(base_dir, "simframedef.csv")
 #'  simframe.master <- loadSimFrame(simframe_defn, envir)
 #' }
-loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame(), na_omit=TRUE) {
+loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame(), na_omit=FALSE) {
 	
 	#remove empty rows
 	#(generally these are blank lines at the end of the file)
