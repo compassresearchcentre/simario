@@ -320,7 +320,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 			#num of categories for the primary variable
 			num.categories <- length(binbreaks) - 1
 			#number of groups for the group-by variable
-			numgroups <- ncol(mat)/num.categories
+			numgroups <- ncol(as.matrix(mat))/num.categories ####### added as.matrix
 			#if there are no binbreaks for the primary variable then num.categories is -1
 			#and numgroups is negative.
 			#numgroups and num.categories must be calculated in a different way
@@ -339,7 +339,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 			}
 			grpby <- rep(1:numgroups, each=num.categories)
 			#calculate proportions
-			props <- apply(mat, ROW, function(x) {
+			props <- apply(mat, ROW, function(x) { ######## up to
 						grpsum <- tapply(x, grpby, sum)
 						grpsum2 <- rep(grpsum, each=num.categories)
 						x/grpsum2})
@@ -1275,22 +1275,62 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	# and rows the categories
 	
 	#use lapply instead of apply because apply simplifies
-	#use lapply instead of alply so we don't have the split attributes
-	results.by.col <- lapply(1:ncol(mx), function (i) {
-				#i <- 1
-				#old:
-				result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-				#note this the above table.grpby_BCASO is one modified by Mengdan
-				#if any problems one options is to revert back to the one before she
-					#modified anything which is table.grpby_BCASO1 
-				#think the below done by Mengdan - doesn't work
-				#new:
-				##result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i], binbreak=binbreaks[varname])
-				if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-					colnames(result) <- c("Not in subgroup", "In subgroup")
-				} 
-				return(result)
-			})
+	#use lapply instead of apply so we don't have the split attributes
+
+	#problem with z1cond because for the first year all the values are NA
+	if (varname=="z1condLvl1") {
+		results.by.col <- lapply(1:ncol(mx), function(i) {
+					if (i<=3) {
+						num.cols <- length(table(grpby))
+						num.rows <- length(table(mx))
+						result <- matrix(rep(0, 4), ncol=num.cols, nrow=num.rows)
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					} else if (i>3) {
+						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					}
+					
+					return(result)
+				})
+	} else if (varname=="NPRESCH") {
+		results.by.col <- lapply(1:ncol(mx), function(i) {
+					if (i<=5) {
+						num.cols <- length(table(grpby))
+						num.rows <- length(table(mx))
+						result <- matrix(rep(0, 4), ncol=num.cols, nrow=num.rows)
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					} else if (i>5) {
+						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					}
+					
+					return(result)
+				})
+	} else {
+		results.by.col <- lapply(1:ncol(mx), function (i) {
+					#i <- 1
+					#old:
+					result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+					#note this the above table.grpby_BCASO is one modified by Mengdan
+					#if any problems one options is to revert back to the one before she
+						#modified anything which is table.grpby_BCASO1 
+					#think the below done by Mengdan - doesn't work
+					#new:
+					##result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i], binbreak=binbreaks[varname])
+					if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+						colnames(result) <- c("Not in subgroup", "In subgroup")
+					} 
+					return(result)
+				})
+	}
 	
 	# add names 
 	names(results.by.col) <- dimnames(mx)[[COL]]

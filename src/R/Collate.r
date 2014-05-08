@@ -156,6 +156,47 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 }
 
 
+collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
+	#workaround to make work for NPRESCH - put values into the matrices for years 1 - 3 (at the
+	#moment they are 0s
+	runs[[1]][[1]] <- runs[[1]][[6]]
+	runs[[1]][[2]] <- runs[[1]][[6]]
+	runs[[1]][[3]] <- runs[[1]][[6]]
+	runs[[1]][[4]] <- runs[[1]][[6]]
+	runs[[1]][[5]] <- runs[[1]][[6]]
+	
+	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
+	
+	num.runs <- length(runs)
+	
+	if ((CI==FALSE|(num.runs==1))) {
+		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs, binbreaks=binbreaks)
+		result <- runs_mx
+	} else if ((CI==TRUE)&&(num.runs>1)) {
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs, binbreaks=binbreaks)
+		resultCI <- runs_mx
+		
+		#label CI components
+		run1_array <- as_array_list_mx(runs[[1]])
+		numGroups <- dim(run1_array)[COL] #number of group-by groups
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		result <- resultCI
+	}
+	result <- result*100
+	
+	#change result at the end  - back to NAs for the first 3 years of conduct
+	if (is.matrix(result)) {
+		result[1:5,] <- NA	
+	} else {
+		#assume result is a vector
+		result[1:5] <- NA
+	}
+	
+	return(result)
+}
+
+
 #' Collate frequencies and removes the zero category. Performs the following:
 #' 
 #' \itemize{
@@ -335,6 +376,69 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 	
 	return(result)
 }
+
+
+collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
+	#workaround to make work for z1cond - put values into the matrices for years 1 - 3 (at the
+		#moment they are 0s
+	for (k in 1:length(runs)) {
+		runs[[k]][[1]] <- runs[[1]][[4]]
+		runs[[k]][[2]] <- runs[[1]][[4]]
+		runs[[k]][[3]] <- runs[[1]][[4]]
+	}
+	
+	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
+	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+	
+	zero_cat_cols <- identify_zero_category_cols(runs_mx)
+	
+	#the above code give incorrect categories with 0s for the outcome 
+	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
+	#(which is what the above code does)
+	if (!is.null(grpby.tag)) {
+		if (!is.na(grpby.tag)) {
+			if (grpby.tag!="") {
+				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
+				if (length(zero_cat_cols)==0) {
+					zero_cat_cols <- identify_zero_category_cols(runs_mx)
+				}
+			}
+		}
+	}
+	
+	numZ <- length(runs) #number of runs
+	
+	if ((CI==FALSE)|(numZ==1)) {
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		result <- remove.cols(runs_mx, zero_cat_cols)*100
+		
+	} else if ((CI==TRUE)&&(numZ>1)) {
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+		resultCI <- remove.cols(runs_mx, zero_cat_cols)
+		
+		#label CI components
+		run1_array <- as_array_list_mx(runs[[1]])
+		numGroups <- dim(run1_array)[COL]
+		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+		names(dimnames(resultCI)) <- names(dimnames(resultCI))
+		result <- resultCI*100
+	}
+	
+	#change result at the end  - back to NAs for the first 3 years of conduct
+	if (is.matrix(result)) {
+		result[1:3,] <- NA	
+	} else {
+		#assume result is a vector
+		result[1:3] <- NA
+	}
+	
+	return(result)
+}
+
+
 
 #' Collates frequencies for use in histogram output with confidence intervals. 
 #' Performs the following:
@@ -522,6 +626,15 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #' 
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
+	if (length(attr(runs, "meta"))>0) {
+		attr(runs_array, "meta") <- attr(runs, "meta")
+	} else if (length(attr(runs[[1]], "meta"))>0) {
+		attr(runs_array, "meta") <- attr(runs[[1]], "meta")
+	} else if (length(attr(runs[[1]][[1]], "meta"))>0) {
+		attr(runs_array, "meta") <- attr(runs[[1]][[1]], "meta")
+	} else {
+		stop("Error in collator_mutiple_lists_mx2: lost varname attribute")
+	}
 	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 

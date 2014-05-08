@@ -566,7 +566,7 @@ expr = {
 			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 
-			invisible(.$applyAllFixedOutcomesIfSetToSimframe())
+			invisible(.$applyAllFixedOutcomesIfSetToSimframe()) ### don't need?
 			
 			if (exists(".DEBUG")) {
 				cat("DEBUG: Stopping to allow manual execution\n")
