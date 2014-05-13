@@ -1280,8 +1280,13 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	#problem with z1cond because for the first year all the values are NA
 	if (varname=="z1condLvl1") {
 		results.by.col <- lapply(1:ncol(mx), function(i) {
+					#i=1
 					if (i<=3) {
 						num.cols <- length(table(grpby))
+						if (num.cols==0) {
+							#no grouping
+							num.cols <- 1
+						}
 						num.rows <- length(table(mx))
 						result <- matrix(rep(0, 4), ncol=num.cols, nrow=num.rows)
 						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {

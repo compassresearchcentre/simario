@@ -626,6 +626,25 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #' 
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
+	#reattach attributes (varname and grpby.tag)
+	if (length(attr(runs, "meta"))>0) {
+		attr(runs_array, "meta") <- attr(runs, "meta")
+	} else if (length(attr(runs[[1]], "meta"))>0) {
+		attr(runs_array, "meta") <- attr(runs[[1]], "meta")
+	} else if (length(attr(runs[[1]][[1]], "meta"))>0) {
+		attr(runs_array, "meta") <- attr(runs[[1]][[1]], "meta")
+	} else {
+		stop("Error in collator_mutiple_lists_mx2: lost varname attribute")
+	}
+	#bug fix for z1cond
+	if (!is.na(attr(runs_array, "meta")["grpby.tag"])) {
+		if (attr(runs_array, "meta")["grpby.tag"]=="z1condLvl1") {
+			num.cats <- nrow(runs[[1]][[13]])
+			cols.to.remove <-(1:num.cats)*2 - 1
+			runs_array <- runs_array[,-cols.to.remove,]
+		}
+	}
+	#reattach attributes (varname and grpby.tag)
 	if (length(attr(runs, "meta"))>0) {
 		attr(runs_array, "meta") <- attr(runs, "meta")
 	} else if (length(attr(runs[[1]], "meta"))>0) {
