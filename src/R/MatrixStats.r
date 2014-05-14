@@ -1288,7 +1288,7 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 							num.cols <- 1
 						}
 						num.rows <- length(table(mx))
-						result <- matrix(rep(0, 4), ncol=num.cols, nrow=num.rows)
+						result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
 						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 							colnames(result) <- c("Not in subgroup", "In subgroup")
 						}
@@ -1305,8 +1305,12 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 		results.by.col <- lapply(1:ncol(mx), function(i) {
 					if (i<=5) {
 						num.cols <- length(table(grpby))
+						if (num.cols==0) {
+							#no grouping
+							num.cols <- 1
+						}
 						num.rows <- length(table(mx))
-						result <- matrix(rep(0, 4), ncol=num.cols, nrow=num.rows)
+						result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
 						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 							colnames(result) <- c("Not in subgroup", "In subgroup")
 						}
