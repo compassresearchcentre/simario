@@ -1712,7 +1712,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	} else {
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
-			#i=14
+			#i=4
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
 			
@@ -1721,7 +1721,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			#Using the weighting procedure on a column of NA's falls down as 
 			#by=list(grpby[non.nas,i]) has length 0.
 			
-			if(all(is.na(x))) {
+			if(all(is.na(x)) | all(is.na(grpby[,i]))) {
 				
 				z2<-t(rep("NA", length(unique(allgrpby))))
 				return(z2)
