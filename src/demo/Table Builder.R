@@ -235,7 +235,7 @@ tableBuilder <- function(envName, statistic, variableName, grpbyName, CI=TRUE, l
 		if ((CI==TRUE)&(length(run_tables)>1)) {
 			#take every third name
 			nms <- names(result)[(1:(length(result)/3))*3-2]
-			#remove "Mean" from it
+			#remove "Mean" from the name
 			nms.noMean <- rep(NA, length(nms))
 			for (i in 1:length(nms)) {
 				nms.noMean[i] <- str_sub(nms[i], 1, regexpr("Mean", nms)[[i]]-2)

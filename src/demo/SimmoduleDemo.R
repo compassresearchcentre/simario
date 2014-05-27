@@ -434,14 +434,14 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		#run_results$confreqs <- lapply(outcomes[convars], table_mx_cols_MELC, dict=dict_demo)
 	    run_results$freqs <- lapply(outcomes[catvars], table_mx_cols_MELC, dict=dict_demo)
-		run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
-		run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
+		##run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
+		##run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
 		run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
 		run_results$freqs_continuousGrouped <- lapply(binned.list, table_mx_cols_MELC, dict=dict_demo)
 
 		run_results$means <- lapply(outcomes[convars], mean_mx_cols_BCASO, dict=dict_demo)
-		run_results$means_males <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$males, dict=dict_demo)
-		run_results$means_females <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$females, dict=dict_demo)
+		##run_results$means_males <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$males, dict=dict_demo)
+		##run_results$means_females <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$females, dict=dict_demo)
 		run_results$means_by_sex <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
 		run_results$summaries <- lapply(outcomes[convars], summary_mx_cols)
 		run_results$quantiles <- lapply(outcomes[convars], quantile_mx_cols, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)

@@ -37,16 +37,59 @@ clearWorkspace()
 #' @examples
 #' codings <- dict_demo$codings
 #' createSets(people, codings) 
-createSets <- function(people, codings) {
+## createSets <- function(people, codings) {
 	
-	sets <- list()
-	sets$females <- people$sex == codings$sex["Female"] 
-	sets$males <- people$sex == codings$sex["Male"]
-	attr(sets$females, "desc") <- "females only"
-	attr(sets$males, "desc") <- "males only"
+	##sets <- list()
+	##sets$females <- people$sex == codings$sex["Female"] 
+	##sets$males <- people$sex == codings$sex["Male"]
+	##attr(sets$females, "desc") <- "females only"
+	##attr(sets$males, "desc") <- "males only"
 	
-	sets
+##	sets
+##}
+
+
+
+
+
+
+# dir <- data_dir
+# loadEarningsScale <- function(dir) {
+	# earnings_scale_dataframe <- read_csv(dir, "Annual_earnings_scale_by_disability_status.csv")
+	# earnings_scale <- structure(earnings_scale_dataframe$Earnings, .Names=earnings_scale_dataframe$Disability.state)
+	# earnings_scale
+# }
+
+
+
+#copied this new version of the loadSimario function from MELC 
+# original is at (H:\COMPASS\MelC\SimarioPaper\OldLoadSimarioFunctionFromDemo) 
+loadSimario <- function() {
+	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0
+	if (.is_dev_environment & !exists(".USELIB")) {
+		cat("loadSimario: loading pre-installed development version using load_all\n")
+		
+		library(stringr)
+		library(devtools)
+		library(testthat)	
+		library(Hmisc)
+		if(installed.packages()["devtools","Version"] >= 0.8) {
+			load_all("../../../simario/src", reset = T) 
+			
+		} else {											
+			load_all("simario", reset = T)
+		} 
+		
+		#workaround for devtools issue https://github.com/hadley/devtools/issues/38
+		Simenv$.super <- .GlobalEnv
+		Simmodule$.super <- .GlobalEnv
+	} else {
+		cat("loadSimario: loading installed library\n")
+		library(simario)
+		cat("simario v", sessionInfo()$otherPkgs$simario$Version, "loaded\n")
+	}
 }
+
 
 
 #' List of breaks codings for adjustable continuous variables.  
@@ -79,88 +122,35 @@ createBinBreaks <- function(people) {
 	binbreaks$IQ <- c(-1, 49, 69, 85, 129, 999)
 	names(binbreaks$IQ) <- c(NA, "0-49", "50-69", "70-85", "86-129", "130+")
 	
-
+	
 	binbreaks
 }
 
-#' Initialise models, basefile, simframe.
-#' 
-#' @param data_dir
-#'  directory holding data
+
+#' Load each model from an xls file, and construct a GLM object from it
 #' 
 #' @param modelfiledir
 #'  directory holding models
 #' 
-#' @param propensityfiledir
-#'  directory holding propensity models
-#' 
-#' @param catToCont.modelfiledir
-#'  directory holding models for mapping from categorical to continuous
-#' 
 #' @return 
-#'  NULL. It creates objects in workspace directly.
+#'  a list of models.
 #' 
 #' @export
 #' @examples
-#' data_dir <- paste(getwd(), "/data/", sep="")
 #' modelfiledir <- "C:/Workspace/simario/src/demo/data/models/"
-#' propensityfiledir <- "C:/Workspace/simario/src/demo/data/models_Propensities/"
-#' catToCont.modelfiledir <- "C:/Workspace/simario/src/demo/data/models_CatToCont/"
-#' initDemo(data_dir, modelfiledir, propensityfiledir, catToCont.modelfiledir)
-
-initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, propensityfiledir, catToCont.modelfiledir) {
-	base_dir <- file.path(data_dir, "base")
+#' models <- loadDemoModels(modelfiledir)
+loadDemoModels <- function(modelfiledir) {
+	models <- list()
 	
-	descriptions_dataframe <- read_file(base_dir, "Data_dictionary.csv")
-	codings_dataframe <- descriptions_dataframe
-	dict_demo <<- Dictionary$new(descriptions_dataframe, codings_dataframe)
+	models$IQModel7_15 <- loadGLMCSV(modelfiledir, "IQModel7_15.csv")
+	models$IQModel16_27 <- loadGLMCSV(modelfiledir, "IQModel16_27.csv")
+	models$IQModel28onwards <- loadGLMCSV(modelfiledir, "IQModel28onwards.csv")
+	models$earningsModel <- loadGLMCSV(modelfiledir, "earningsModel.csv")
 	
-	#load initial basefile
-	people <<- read_csv(base_dir, "Base_file_(people).csv")
-	
-	#create simframer
-	sfdef <- read_csv(base_dir, "simframedef.csv")
-	simframe.master <<- loadSimFrame(sfdef, people)
-	people_sets <<- createSets(people, dict_demo$codings)
-	
-	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
-	transition_probabilities <<- loadTransitionProbabilities(transition_probabilities_dir)
-	
-	#earnings_scale <<- loadEarningsScale(data_dir)
-	
-	breaks_age_grp <<- c(-1, 59, 79, 99)
-	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
-	
-	#load models
-	models <<- loadDemoModels(modelfiledir)
-	checkModelVars(models, simframe.master)
-	
-	#load catToCont models
-	catToContModels <<- loadCatToContModels(catToCont.modelfiledir)
-	lapply(catToContModels, checkModelVars, simframe=simframe.master)
-	
-	#Load propensity models
-	propensityModels <<- loadPropensityModels(propensityfiledir)
-	lapply(propensityModels, checkModelVars, simframe=simframe.master)
-	
-	###load propensities (calculates them from the propensity models)
-	propensities <<- loadDemoPropensities(propensityfiledir, stochastic=TRUE)
-	
-	
-	#load aux
-	binbreaks <<- createBinBreaks(people)
-	
-	cat ("Demo initialised\n")
-	
+	cat("Loaded models\n")
+	models
 }
 
-
-# dir <- data_dir
-# loadEarningsScale <- function(dir) {
-	# earnings_scale_dataframe <- read_csv(dir, "Annual_earnings_scale_by_disability_status.csv")
-	# earnings_scale <- structure(earnings_scale_dataframe$Earnings, .Names=earnings_scale_dataframe$Disability.state)
-	# earnings_scale
-# }
 
 
 #' Load the transition probabilities.
@@ -195,33 +185,34 @@ loadTransitionProbabilities <- function(dir) {
 	transition_probabilities
 }
 
-#copied this new version of the loadSimario function from MELC 
-# original is at (H:\COMPASS\MelC\SimarioPaper\OldLoadSimarioFunctionFromDemo) 
-loadSimario <- function() {
-	.is_dev_environment <- length(find.package("devtools", quiet = T)) > 0
-	if (.is_dev_environment & !exists(".USELIB")) {
-		cat("loadSimario: loading pre-installed development version using load_all\n")
-		
-		library(stringr)
-		library(devtools)
-		library(testthat)	
-		library(Hmisc)
-		if(installed.packages()["devtools","Version"] >= 0.8) {
-			load_all("../../../simario/src", reset = T) 
-			
-		} else {											
-			load_all("simario", reset = T)
-		} 
-		
-		#workaround for devtools issue https://github.com/hadley/devtools/issues/38
-		Simenv$.super <- .GlobalEnv
-		Simmodule$.super <- .GlobalEnv
-	} else {
-		cat("loadSimario: loading installed library\n")
-		library(simario)
-		cat("simario v", sessionInfo()$otherPkgs$simario$Version, "loaded\n")
-	}
+
+
+#' Loads the propensity models (models used for deciding who to change in a scenario).
+#' The function uses loadGLMCSV to load excel files and returns the object PropensityModels which
+#' is a list with each element being a list of propensity models (glm objects) for each variable.
+#' 
+#' @param modelfiledir
+#'  directory holding propensity models 
+#' 
+#' @return 
+#'  a list of propensity models.
+#' 
+#' @export
+#' @examples
+#' modelfiledir <- "C:/Workspace/simario/src/demo/data/models_Propensities/"
+#' PropensityModels <- loadPropensityModels(modelfiledir) 
+loadPropensityModels <- function(modelfiledir) {
+	PropensityModels <- list()
+	
+	PropensityModels$qualification <- list()
+	
+	PropensityModels$qualification <- list(loadGLMCSV(modelfiledir, "qualProb1.csv"),
+			loadGLMCSV(modelfiledir, "qualProb2.csv"), loadGLMCSV(modelfiledir, "qualProb3.csv"))
+	
+	cat("Loaded Propensity models\n")
+	PropensityModels
 }
+
 
 
 #' Calculate propensities for use in scenario testing from propensity models
@@ -270,31 +261,6 @@ loadDemoPropensities <- function(propensityfiledir, stochastic=FALSE) {
 
 
 
-#' Load each model from an xls file, and construct a GLM object from it
-#' 
-#' @param modelfiledir
-#'  directory holding models
-#' 
-#' @return 
-#'  a list of models.
-#' 
-#' @export
-#' @examples
-#' modelfiledir <- "C:/Workspace/simario/src/demo/data/models/"
-#' models <- loadDemoModels(modelfiledir)
-loadDemoModels <- function(modelfiledir) {
-	models <- list()
-	
-	models$IQModel7_15 <- loadGLMCSV(modelfiledir, "IQModel7_15.csv")
-	models$IQModel16_27 <- loadGLMCSV(modelfiledir, "IQModel16_27.csv")
-	models$IQModel28onwards <- loadGLMCSV(modelfiledir, "IQModel28onwards.csv")
-	models$earningsModel <- loadGLMCSV(modelfiledir, "earningsModel.csv")
-	
-	cat("Loaded models\n")
-	models
-}
-
-
 #' Load models for mapping from categorical to continuous (in sceanrio testing of continuous 
 #' variables) 
 #' Load each model from an xls file, and construct a GLM object from it
@@ -324,30 +290,75 @@ loadCatToContModels <- function(modelfiledir) {
 
 
 
-#' Loads the propensity models (models used for deciding who to change in a scenario).
-#' The function uses loadGLMCSV to load excel files and returns the object PropensityModels which
-#' is a list with each element being a list of propensity models (glm objects) for each variable.
+#' Initialise models, basefile, simframe.
+#' 
+#' @param data_dir
+#'  directory holding data
 #' 
 #' @param modelfiledir
-#'  directory holding propensity models 
+#'  directory holding models
+#' 
+#' @param propensityfiledir
+#'  directory holding propensity models
+#' 
+#' @param catToCont.modelfiledir
+#'  directory holding models for mapping from categorical to continuous
 #' 
 #' @return 
-#'  a list of propensity models.
+#'  NULL. It creates objects in workspace directly.
 #' 
 #' @export
 #' @examples
-#' modelfiledir <- "C:/Workspace/simario/src/demo/data/models_Propensities/"
-#' PropensityModels <- loadPropensityModels(modelfiledir) 
-loadPropensityModels <- function(modelfiledir) {
-	PropensityModels <- list()
+#' data_dir <- paste(getwd(), "/data/", sep="")
+#' modelfiledir <- "C:/Workspace/simario/src/demo/data/models/"
+#' propensityfiledir <- "C:/Workspace/simario/src/demo/data/models_Propensities/"
+#' catToCont.modelfiledir <- "C:/Workspace/simario/src/demo/data/models_CatToCont/"
+#' initDemo(data_dir, modelfiledir, propensityfiledir, catToCont.modelfiledir)
+
+initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, propensityfiledir, catToCont.modelfiledir) {
+	base_dir <- file.path(data_dir, "base")
 	
-	PropensityModels$qualification <- list()
+	descriptions_dataframe <- read_file(base_dir, "Data_dictionary.csv")
+	codings_dataframe <- descriptions_dataframe
+	dict_demo <<- Dictionary$new(descriptions_dataframe, codings_dataframe)
 	
-	PropensityModels$qualification <- list(loadGLMCSV(modelfiledir, "qualProb1.csv"),
-			loadGLMCSV(modelfiledir, "qualProb2.csv"), loadGLMCSV(modelfiledir, "qualProb3.csv"))
+	#load initial basefile
+	people <<- read_csv(base_dir, "Base_file_(people).csv")
 	
-	cat("Loaded Propensity models\n")
-	PropensityModels
+	#create simframer
+	sfdef <- read_csv(base_dir, "simframedef.csv")
+	simframe.master <<- loadSimFrame(sfdef, people)
+	##people_sets <<- createSets(people, dict_demo$codings)
+	
+	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
+	transition_probabilities <<- loadTransitionProbabilities(transition_probabilities_dir)
+	
+	#earnings_scale <<- loadEarningsScale(data_dir)
+	
+	breaks_age_grp <<- c(-1, 59, 79, 99)
+	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
+	
+	#load models
+	models <<- loadDemoModels(modelfiledir)
+	checkModelVars(models, simframe.master)
+	
+	#load catToCont models
+	catToContModels <<- loadCatToContModels(catToCont.modelfiledir)
+	lapply(catToContModels, checkModelVars, simframe=simframe.master)
+	
+	#Load propensity models
+	propensityModels <<- loadPropensityModels(propensityfiledir)
+	lapply(propensityModels, checkModelVars, simframe=simframe.master)
+	
+	###load propensities (calculates them from the propensity models)
+	propensities <<- loadDemoPropensities(propensityfiledir, stochastic=TRUE)
+	
+	
+	#load aux
+	binbreaks <<- createBinBreaks(people)
+	
+	cat ("Demo initialised\n")
+	
 }
 
 
@@ -355,12 +366,14 @@ loadPropensityModels <- function(modelfiledir) {
 #setwd(file.path(Sys.getenv("R_USER"), "simario/src/demo/"))
 
 loadSimario()
+
+#load functions in other files
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
 source("DemoScenarios.R")
 source("Table Builder.R")
 
-
+#define directories
 dirs <- list()
 dirs$root <- paste(getwd(),"/",sep="")
 dirs$base <- paste(dirs$root ,"base/",sep="")

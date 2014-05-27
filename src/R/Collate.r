@@ -159,15 +159,16 @@ collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="",
 collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 	#workaround to make work for NPRESCH - put values into the matrices for years 1 - 3 (at the
 	#moment they are 0s
-	runs[[1]][[1]] <- runs[[1]][[6]]
-	runs[[1]][[2]] <- runs[[1]][[6]]
-	runs[[1]][[3]] <- runs[[1]][[6]]
-	runs[[1]][[4]] <- runs[[1]][[6]]
-	runs[[1]][[5]] <- runs[[1]][[6]]
+	num.runs <- length(runs)
+	for (k in 1:num.runs) {
+		runs[[k]][[1]] <- runs[[1]][[6]]
+		runs[[k]][[2]] <- runs[[1]][[6]]
+		runs[[k]][[3]] <- runs[[1]][[6]]
+		runs[[k]][[4]] <- runs[[1]][[6]]
+		runs[[k]][[5]] <- runs[[1]][[6]]
+	}
 	
 	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
-	
-	num.runs <- length(runs)
 	
 	if ((CI==FALSE|(num.runs==1))) {
 		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
