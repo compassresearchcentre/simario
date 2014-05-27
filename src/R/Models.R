@@ -159,7 +159,7 @@ loadGLMCSV <- function (filedir, filename) {
 #'  list of models
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export
 #' @examples 
@@ -491,11 +491,11 @@ predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
 #'  simulate using all values in envir
 #' 
 #' @return 
-#' 
+#' NULL
 #'
 #' @export
-#' @example
-#'  
+#' @examples
+#' \dontrun{}
 predSimMultinomial <-function(model.glm.list, envir=parent.frame(), set = NULL) {
 		
 	probs<-predMultinomial(model.glm.list, envir=envir, set = set)
@@ -748,8 +748,8 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 #' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
 #' 
 #' @export 
-#' @example
-#' 
+#' @examples
+#' \dontrun{}
 predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 	x.cat <- as.integer(x.cat)
 	result <- rep(NA, length(x.cat))
@@ -787,8 +787,8 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 #'   envir=.GlobalEnv
 #' 
 #' @export 
-#' @example 
-#' 
+#' @examples
+#' \dontrun{}
 predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=parent.frame()) {
 	#envir=simframe.master
 	x.cat <- as.integer(x.cat)
@@ -850,8 +850,8 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 #' could also be negative or greater than 1.
 #' 
 #' @export 
-#' @example 
-#' 
+#' @examples
+#' \dontrun{}
 predictOrdinal <- function(models, numchildren, envir=parent.frame(), stochastic=FALSE) {
 	#number of categories in the outcome is one plus the number of models in the list
 	num.cat <- length(models) + 1

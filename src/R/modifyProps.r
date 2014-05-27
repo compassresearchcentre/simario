@@ -20,7 +20,8 @@
 #' @seealso This function is called by the function \code{\link{modifyProps}}
 #' 
 #' @export
-#' @example
+#' @examples
+#' \dontrun{}
 change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	if (sign(n.change[i])==1) {
 		steal=F
@@ -607,8 +608,8 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 #' models were provided.
 #' 
 #' @export 
-#' @example
-#' 
+#' @examples
+#' \dontrun{}
 
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
 	if (!is.null(logiset) && length(logiset)>0) {
@@ -664,7 +665,7 @@ adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catT
 #' order.
 #' 
 #' @export 
-#' @example 
+#' @examples 
 #' modified.x <- 1:10*2-1
 #' non.modified.x <- 1:10*2
 #' logiset<-rep(c(TRUE,FALSE),10) 

@@ -240,6 +240,7 @@ expr = {
 	#' 
 	#' @export
 	#' @examples
+	#' \dontrun{
 	#'  desired_props <- cat_adj_vector  
 	#'  
 	#' 	desired_props<-c(0.5,0.5)
@@ -268,6 +269,7 @@ expr = {
 	#' 	prop.table(table(env.scenario$simframe["examplevariableLvl1"][env.scenario$simframe$residential==1,]))
 	#'	applyCatAdjustmentToSimframe(.,varnames, desired_props, iteration, propensities, print_adj = TRUE)
 	#' 	env.scenario$simframe$examplevariableLvl1[env.scenario$simframe$residential==1]
+	#' }
 
 	applyCatAdjustmentToSimframe <- function(., varnames, desired_props, iteration, propensities, print_adj = TRUE) {
 		is_single_variable_to_adjust <- length(varnames) == 1
@@ -305,6 +307,7 @@ expr = {
 	#' 
 	#' @export
 	#' @examples
+	#' \dontrun{
 	#' . <- env.scenario
 	#' varname <- "catpregsmk2" ; varname <- varnames
 	#' desired_props <- c(0.01,0.02,0.03,0.04,0.90)
@@ -322,6 +325,7 @@ expr = {
 	#' prop.table(table(.$simframe[varname][logiset,]))
 	#' applyCatAdjustmentToSimframeVarSingle(., varname, desired_props, propens, print_adj = T, logiset=logiset)
 	#' .$simframe$examplevariable[logiset==TRUE]
+	#' }
 
 
 	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, logiset=NULL) {
@@ -370,6 +374,7 @@ expr = {
 	#'  
 	#' @export
 	#' @examples
+	#' \dontrun{
 	#' . <- env.scenario
 	#' binLevelVarnames <- c("SESBTHLvl1","SESBTHLvl2", "SESBTHLvl3") 
 	#' desiredProps=c(0.1,0.1,0.8)
@@ -397,6 +402,7 @@ expr = {
 	#' apply(subset(.$simframe[c("examplevariableLvl0", "examplevariableLvl1")], logiset), COL, sum) / apply(subset(.$simframe[c("examplevariableLvl0", "examplevariableLvl1")], logiset), COL, length)
 	#' applyCatAdjustmentToSimframeVarMultipleBinary(., binLevelVarnames, desiredProps, propens, printAdj = TRUE, logiset=logiset)
 	#' .$simframe$examplevariableLvl1[logiset==TRUE]
+	#' }
 	
 
 
@@ -511,6 +517,7 @@ expr = {
 	#' 
 	#' @export
 	#' @examples
+	#' \dontrun{}
 	
 	applyContAdjustmentToSimframe <- function(., varname, iteration, desiredProps, catToContModels, cont.binbreaks, propensities) {
 		propens <- propensities[[varname]][,,iteration]
@@ -546,9 +553,11 @@ expr = {
 	#' 
 	#' @export
 	#' @examples 
+	#' \dontrun{
 	#'  . <- env.base
 	#'  env.base$simulate()
 	#'  . <- env.scenario
+	#' }
 	
 	simulate <- function(., total_runs=1) {
 		start_time <- proc.time()

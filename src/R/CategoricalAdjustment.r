@@ -99,10 +99,12 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #'
 #' @export 
 #' @examples
+#' \dontrun{
 #' varname = "z1homeownLvl1"; coding <- c('Own home'=0,'Not owned'=1)
 #' varname = "catpregsmk2"; coding <- c('0'=0, '1-5'=3, '6-10'=8, '11-20'=16, '>20'=27)
 #' rows = 5
 #' createAdjustmentMatrix(varname, coding, rows)
+#' }
 createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_level_var(varname), cont.binbreaks=NULL, catToContModels=NULL) {
 	
 	if (is_numeric_scalar(rows)) {
@@ -133,8 +135,10 @@ createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_le
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' df <- data.frame(year1 = 1:10/100, year2 = 11:20/100)
 #' create2CategoryPropensityArray(df)
+#' }
 
 create2CategoryPropensityArray <- function(df) {
 	#convert dataframe to array with
@@ -159,9 +163,11 @@ create2CategoryPropensityArray <- function(df) {
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' df <- data.frame(year1_cat1 = 1:10/100, year1_cat2 = 11:20/100)
 #' iteration_name <- "Year 1" 
 #' createSingleIterationPropensityArray(df, iteration_name)
+#' }
 
 createSingleIterationPropensityArray <- function(df, iteration_name) {
 	#convert dataframe to array with
@@ -183,8 +189,10 @@ createSingleIterationPropensityArray <- function(df, iteration_name) {
 #' 
 #' @export 
 #' @examples
+#' \dontrun{
 #' varname <- c("fooLvl1", "bar")
 #' is_level_var(varname)
+#' }
 
 is_level_var <- function(varname) {
 	grepl("Lvl.$", varname)
@@ -202,8 +210,10 @@ is_level_var <- function(varname) {
 #' 
 #' @export 
 #' @examples
+#' \dontrun{
 #' varname <- c("fooLvl1", "bar")
 #' strip_lvl_suffix(varname)
+#' }
 
 strip_lvl_suffix <- function(varname) {
 	gsub("Lvl.$", "", varname)
@@ -229,9 +239,11 @@ strip_lvl_suffix <- function(varname) {
 #'
 #' @export 
 #' @examples
+#' \dontrun{
 #' desired_props <- structure(1, logiset="alive & residential")
 #' simframe <- env.base$simframe
-#' evaluateLogisetExprAttribute(desired_props, simframe) 
+#' evaluateLogisetExprAttribute(desired_props, simframe)
+#' }
 evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") { 
 		
 	logiset_expr <-attr(desired_props, "logisetexpr")
@@ -258,9 +270,11 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 #'
 #' @export 
 #' @examples
+#' \dontrun{
 #' subgroupExpression <- "mhrswrk < 20"
 #' setGlobalSubgroupFilterExpression(subgroupExpression)
 #' attr(env.scenario$cat.adjustments[[1]], "logisetexpr")
+#' }
 setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
 	if (is.null(subgroupExpression) || subgroupExpression == "") {
 		return(removeGlobalSubgroupFilterExpression())
@@ -283,7 +297,7 @@ setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
 #'
 #' @export 
 #' @examples
-#' 
+#' \dontrun{}
 removeGlobalSubgroupFilterExpression <- function() {
 	cat("Clearing global subgroup expression\n")
 	
