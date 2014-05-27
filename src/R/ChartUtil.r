@@ -36,7 +36,7 @@
 #' @seealso result.as.means.and.errs
 #' 
 #' @return 
-#' 
+#'  NULL
 #' 
 #' @export
 #' @examples
@@ -124,7 +124,7 @@ chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, re
 #'  additional params to pass to barplot
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export
 #' @examples
@@ -171,10 +171,10 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 #'   any other parameters to arrows
 #' 
 #' @return 
-#' 
+#' NULL
 #' @export
 #' @examples
-#' 
+#' \dontrun{
 #' y <- rnorm(500, mean=1)
 #' y <- matrix(y,100,5)
 #' y.means <- apply(y,2,mean)
@@ -185,7 +185,7 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 #' 
 #' error.bar(barx, y.means, y.err)
 #' x = barx; y = y.means
-#' upper = y.err; lower=upper
+#' upper = y.err; lower=upper}
 error.bar <- function(x, y, upper, lower=pmin(y,upper), length=0.1,...){
 	if(length(x) != length(y) | length(y) !=length(lower) | length(lower) != length(upper))
 		stop("vectors must be same length")

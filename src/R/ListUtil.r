@@ -119,7 +119,7 @@ append.lists <- function(list.dest, list.src, by.name = FALSE, flatten.src = FAL
 #'  a data frame
 #' 
 #' @export
-#' @example
+#' @examples
 #' x <- list(matrix(1:4, nrow=2),c(1:4))
 #' x <- as_data_frame_list_as_is(x)
 as_data_frame_list_as_is <- function(xlist, row.names=NULL) {
@@ -196,7 +196,7 @@ c_list <- function(xlist, fx) {
 #'  a logical value
 #' 
 #' @export
-#' @examplE
+#' @examples
 #' x <- list(NULL)
 #' isListOfNulls(x)
 isListOfNulls <- function(xlist) {
@@ -443,7 +443,7 @@ lapply.subset <- function (X, indices, .FUN, ...) {
 #'  a named list of arguments to be suppplied to FUN when executed on each element of xlist
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export
 #' @examples
@@ -497,7 +497,7 @@ lapply.args.as.list <- function (X, FUN, FUN.args) {
 #'  additional arguments to .FUN
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export
 #' @examples
@@ -576,7 +576,7 @@ lapply.subset.append <- function (results.list, X, indices=names(results.list), 
 #'  .FUN to execute over elements of X
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export
 #' @examples
@@ -697,7 +697,7 @@ remove.elements <- function(xlist, names_of_elements_to_remove) {
 #' the list "dest" after updated.
 #' 
 #' @export
-#' @example 
+#' @examples
 #' dest <- list(a=1,b=2,c=3,d=4)
 #' src <- list(c=3,a=1,e=5)
 #' updatelist(dest, src)

@@ -210,7 +210,7 @@ append.list.mx <- function(listmx.dest, listmx.src, into.dim=ZDIM) {
 #' 
 #' @export 
 #' @examples
-#' 
+#' \dontrun{}
 copyMeta.list <- function(list.dest, list.src) {
 	mapply(function(dest,source){
 				#add back names of dimension 
@@ -545,9 +545,11 @@ namedMatrix <- function (rows, cols) {
 #'  matrices, or a list of matrices after merged
 #' 
 #' @seealso merge_list_mx.by.rows
-#' @example
+#' @examples
+#' \dontrun{
 #' xlistm <- list(matrix(c(1:9),nrow=3,dimnames=list(c("a","b","c"),c())),matrix(c(11,15,14,18,20,21),nrow=2,dimnames=list(c("a","e"),c())),matrix(c(13,17,30,31,40,41),nrow=2,dimnames=list(c("e","f"),c())))
 #' merge_list_mx.by.cols(xlistm)
+#' }
 merge_list_mx.by.cols <- function(...) {
 	xlistm <- if (nargs() > 1) list(...) else (...)
 	merge_list_mx.by.rows(lapply(xlistm, t))

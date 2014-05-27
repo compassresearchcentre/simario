@@ -128,8 +128,8 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' a matrix of collated result for each iteration
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples
+#' \dontrun{}
 
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 
@@ -331,6 +331,7 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' 
 #' @export
 #' @examples
+#' \dontrun{}
 
 
 collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
@@ -464,10 +465,11 @@ collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Ye
 #'  name of the entire col dimension
 #' 
 #' @return
-#' 
+#' NULL
 #' @seealso \code{\link{collator_mutiple_lists_mx}}
 #' @export 
-#' @example 
+#' @examples
+#' \dontrun{}
 
 collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
 	runs_mx <- collator_mutiple_lists_mx(runs)
@@ -623,7 +625,7 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #' @export 
 #' @keywords internal
 #' @examples
-#' 
+#' \dontrun{}
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	runs_array <- flatten_mxlists_to_array(runs)
 	#reattach attributes (varname and grpby.tag)
@@ -675,8 +677,8 @@ identify_zero_category_cols <- function (mx) {
 #'  vector of zero column positions
 #'
 #' @export 
-#' @example 
-#' 
+#' @examples
+#' \dontrun{}
 identify_zero_category_cols_bygrp <- function (mx) {
 	#names of the outcome variable (as opposed to the grouping variable come 2nd
 	col.names <- colnames(mx)
@@ -911,7 +913,8 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #'  a flattened matrix with labels and CI.
 #' 
 #' @export
-#' @example
+#' @examples
+#' \dontrun{}
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
 	varname <- attr(mx.flattened, "meta")["varname"]
 	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
@@ -1063,9 +1066,11 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 #' a vector of number of spaces
 #' 
 #' @export
-#' @example
+#' @examples
+#' \dontrun{
 #' col.names <- c(" ", "1 2", "1  2", "1 2 3")
 #' identify.position.last.space(col.names)
+#' }
 identify.position.last.space <- function(col.names) {
 	space.ids <- str_locate_all(col.names, " ")
 	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))

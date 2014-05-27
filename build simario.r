@@ -21,7 +21,7 @@ if_does_not_exist_create_dir <- function (dir) {
 					)
 }
 
-package_name <- "."
+package_name <- ".."
 package_dir <- "~/simario" 
 
 build_dir <- file.path(package_dir, "build")

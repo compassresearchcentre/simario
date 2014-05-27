@@ -16,9 +16,11 @@ library(plyr)
 #' a list
 #' 
 #' @export
-#' @example
+#' @examples
+#' \dontrun{
 #' colmeans.list(by.year$base$o.gptotvis)
 #' xlistm <- by.year$base$o.gptotvis
+#' }
 colmeans.list <- function (xlistm) {
 	lapply(xlistm, function (cfreq) {
 				# replace NAs with 0
@@ -130,8 +132,10 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' #xa <- runs_array
 #' result <- mean_array_z_pctile_CIs(xa)
+#' }
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0 #turns any 0s to NAs (this is the default)
 	
@@ -215,8 +219,8 @@ mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 #'  a matrix of means
 #' 
 #' @export 
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	if ((NA.as.zero)&(sum(is.na(xa))>0)) xa[is.na(xa)] <- 0
 	
@@ -296,11 +300,11 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 #' the dictionary of the specific MSM project.
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export 
-#' @example
-#' 
+#' @examples
+#' \dontrun{}
 proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 	
 	if (!is.na(grpby.tag)) {
@@ -595,8 +599,8 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' Quantiles for each group are put side-by-side in a rbind fashion.
 #' 
 #' @export
-#' @example
-#' 
+#' @examples
+#' \dontrun{}
 quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -958,8 +962,8 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples
+#' \dontrun{}
 table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   

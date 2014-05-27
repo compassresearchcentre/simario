@@ -95,7 +95,7 @@ as.csv.string <- function(x, title = NULL, row.names = T) {
 #'  a list of character vectors
 #' 
 #' @export
-#' @example 
+#' @examples 
 #' x1 <- matrix(1:8,nrow=2)
 #' x2 <- matrix(2:9,nrow=2)
 #' xlist <- list(x1, x2)
@@ -375,8 +375,8 @@ incByFactor <- function(x, factoredx, factorincrements) {
 #' an environment
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 detachReturn <- function(envname) {
 	#store modified env
 	#env <- updatelist(env, as.list(as.environment(envname)))
@@ -438,7 +438,7 @@ err <- function (x) {
 #' allow expressions to return no value, defaults to FALSE
 #' 
 #' @return 
-#' 
+#' NULL
 #' 
 #' @export
 #' @examples
@@ -493,11 +493,11 @@ eval.list <- function (exprlist, envir = .GlobalEnv, enclos = parent.frame(), al
 #'  environment to save into. Defaults to global environment.
 #' 
 #' @return
-#' 
+#' NULL
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 globalNamed <- function (varname, x, pos = 1) {
 	assign(varname, x, pos = pos)	
 }
@@ -512,11 +512,11 @@ globalNamed <- function (varname, x, pos = 1) {
 #'  environment to save into. Defaults to global environment.
 #' 
 #' @return
-#' 
+#' NULL
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 global <- function (x, pos = 1) {
 	
 	param1Name <- as.character(sys.call())[2]
@@ -534,7 +534,7 @@ global <- function (x, pos = 1) {
 #'  logical value
 #' 
 #' @export 
-#' @example 
+#' @examples 
 #' is_numeric_scalar(c(1,2))
 #' is_numeric_scalar(1)
 is_numeric_scalar <- function (x) {
@@ -709,7 +709,7 @@ nsort <- function (x, stripAlpha = TRUE, sortAlphaOnlySeparately = TRUE, ...) {
 #' 	names of vars not to remove
 #' 
 #' @return 
-#'  
+#' NULL 
 #' 
 #' @export
 #' @examples
@@ -771,8 +771,8 @@ stripClass <- function (x) {
 #'  x without "meta" attribute
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 stripMeta <- function (x) {
 	`attr<-`(x, "meta", NULL)
 }
@@ -787,8 +787,8 @@ stripMeta <- function (x) {
 #'  xlist with elements without a "meta" attribute
 #' 
 #' @export 
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 stripMeta.list <- function (xlist) {
 	lapply(xlist, stripMeta)	
 }
@@ -803,7 +803,7 @@ stripMeta.list <- function (xlist) {
 #'  vector that contains all components in the list with "try-error" class
 #' 
 #' @export
-#' @example 
+#' @examples 
 #' x1 <- 1:4
 #' x2 <- 5:8
 #' x3 <- 1

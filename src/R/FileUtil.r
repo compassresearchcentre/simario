@@ -44,9 +44,11 @@ file_extension <- function(x) {
 #'  a data frame
 #' 
 #' @export
-#' @example 
+#' @examples
+#' \dontrun{
 #' filedir <- "D:/workspace.sim/simario/demo/data/base"
 #' people <<- read_csv(base_dir, "Base_file_(people).csv")
+#' }
 read_csv <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 	filedir <- add_trailing_slash(filedir)		
 	read.csv(paste(filedir, filename, sep=""), stringsAsFactors = stringsAsFactors, ...)
@@ -107,8 +109,8 @@ read_file <- function (filedir, filename, filetype = file_extension(filename), s
 #'  a data frame
 #' 
 #' @export
-#' @example 
-#' 
+#' @examples 
+#' \dontrun{}
 readXLSSheet1 <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 	filedir <- add_trailing_slash(filedir)		
 	oldOpt <- options(stringsAsFactors = stringsAsFactors)

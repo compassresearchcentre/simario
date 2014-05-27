@@ -109,7 +109,7 @@ strip.alpha.mx <- function(mx) {
 #'  character vector after remove spaces
 #' 
 #' @export
-#' @example 
+#' @examples 
 #' x <- c(" 1 (%) ", " -2 (%) ", "2.102 (%) ", " 10 (%)")
 #' trim(x)
 trim <- function (string) {
