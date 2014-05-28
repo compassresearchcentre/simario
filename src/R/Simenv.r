@@ -167,7 +167,7 @@ expr = {
 			#catadj <- .$cat.adjustments[[1]]
 			#catadj <- .$cat.adjustments$z1single
 			#catadj <- .$cat.adjustments$SESBTH
-			#catadj <- .$cat.adjustments$catpregsmk2
+			#catadj <- .$cat.adjustments$householdsize
 			#catadj <- .$cat.adjustments$INTERACT
 			#catadj <- .$cat.adjustments$MAGE
 			cat_adj_vector <- catadj[iteration, ]	
@@ -176,28 +176,33 @@ expr = {
 			varname <- strip_lvl_suffix(varname)
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
 			#cat_adj_vector <- structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr"))
+						
+			if (varname %in% c("INTERACT", "NPRESCH", "PUNISH")) {
+				#DO NOTHING
+			} else {
 			
-			contvars <- getOutcomeVars(.$simframe, "continuous")
-			if(varname%in%contvars){
-				cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=names(binbreaks[[varname]])[-1])
-			}else{
-				cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varname]])
-			}
-			
-			if (!any(is.na(cat_adj_vector))) {
-				
-				catToContModels <- attr(catadj, "catToContModel")
-				cont.binbreaks <- attr(catadj, "cont.binbreaks")
-				
-				
-				if (is.null(varnames)) {
-					stop(gettextf("Missing varnames attribute"))
+				contvars <- getOutcomeVars(.$simframe, "continuous")
+				if(varname%in%contvars){
+					cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=names(binbreaks[[varname]])[-1])
+				}else{
+					cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varname]])
 				}
 				
-				if (!is.null(catToContModels)) {
-					.$applyContAdjustmentToSimframe(varnames, iteration, cat_adj_vector, catToContModels, cont.binbreaks, propensities)
-				} else {
-					.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
+				if (!any(is.na(cat_adj_vector))) {
+					
+					catToContModels <- attr(catadj, "catToContModel")
+					cont.binbreaks <- attr(catadj, "cont.binbreaks")
+					
+					
+					if (is.null(varnames)) {
+						stop(gettextf("Missing varnames attribute"))
+					}
+					
+					if (!is.null(catToContModels)) {
+						.$applyContAdjustmentToSimframe(varnames, iteration, cat_adj_vector, catToContModels, cont.binbreaks, propensities)
+					} else {
+						.$applyCatAdjustmentToSimframe(varnames, cat_adj_vector, iteration, propensities, print_adj)
+					}
 				}
 			}
 			

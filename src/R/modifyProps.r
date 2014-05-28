@@ -146,7 +146,7 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' x.cat <- bin(x.cont,fhrs.binbreaks)
 #' adj.x.cat <- modifyProps(x.cat, desired_props, propens, accuracy)
 #' }
-modifyProps2 <- function(default.vec, desired_props, propens=NULL, accuracy=.01) {
+modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) {
 	if (exists(".accuracy")) {accuracy<-.accuracy}
 	
 	if (is.null(desired_props) || any(is.na(desired_props))) {
@@ -686,7 +686,7 @@ cat("Loaded modifyProps.r\n")
 
 
 ########### Add missing categories ##############
-modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) {
+modifyProps.Mengdan <- function(default.vec, desired_props, propens=NULL, accuracy=.01) {
 
 				
 	# If the length of desired_props not equal to number of categories in variable which means
