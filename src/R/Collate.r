@@ -194,6 +194,8 @@ collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.l
 		result[1:5] <- NA
 	}
 	
+	result <- result[6,]
+	
 	return(result)
 }
 
