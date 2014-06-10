@@ -186,15 +186,16 @@ collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.l
 	}
 	result <- result*100
 	
-	#change result at the end  - back to NAs for the first 3 years of conduct
-	if (is.matrix(result)) {
-		result[1:5,] <- NA	
-	} else {
-		#assume result is a vector
-		result[1:5] <- NA
+	varname1 <- attr(result, "meta")["varname"]
+	if (is.null(varname1)) {
+		varname1 <- attr(result, "varname")
 	}
-	
 	result <- result[6,]
+	#this makes it lose it varname attributes - need to put back on
+	#put on as meta attribute
+	result <- structure(result, meta=varname1)
+	#also put as 'normal' attribute just in case 
+	attr(result, "varname") <- as.character(varname1)
 	
 	return(result)
 }

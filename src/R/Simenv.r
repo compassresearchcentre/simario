@@ -588,7 +588,7 @@ expr = {
 		
 
 		for (i in 1:total_runs) {
-			#i = 2
+			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 
 			invisible(.$applyAllFixedOutcomesIfSetToSimframe()) ### don't need?
