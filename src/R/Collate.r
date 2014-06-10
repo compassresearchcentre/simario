@@ -190,11 +190,14 @@ collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.l
 	if (is.null(varname1)) {
 		varname1 <- attr(result, "varname")
 	}
+	
+	meta.attributes <- attr(result, "meta")
+
 	result <- result[6,]
 	#this makes it lose it varname attributes - need to put back on
-	#put on as meta attribute
-	result <- structure(result, meta=varname1)
-	#also put as 'normal' attribute just in case 
+	#reattach meta attributes
+	result <- structure(result, meta=meta.attributes)
+	#also put as 'normal' attribute in case meta.attributes are NULL
 	attr(result, "varname") <- as.character(varname1)
 	
 	return(result)
