@@ -22,7 +22,7 @@ if_does_not_exist_create_dir <- function (dir) {
 }
 
 package_name <- ".."
-package_dir <- "~/simario" 
+package_dir <- "S:/Research Groups/COMPASS/Martin/Workspace" 
 
 build_dir <- file.path(package_dir, "build")
 deploy_dir <- file.path(package_dir, "deploy")

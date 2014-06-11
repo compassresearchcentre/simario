@@ -22,6 +22,7 @@ function also returns the weighted number of NA's, but does not include NA's wit
 Summary table, with option to group and weight results.
 }
 \examples{
+\dontrun{
 library(Hmisc)
 x <- c(8,8,2,1,1,8)
 x <- c(8,8,2,1,1,NA)
@@ -30,6 +31,6 @@ grpby <- c('M','M','F','F','F','F')
 wgts<- c(1,2,2,3,1,1)
 summary.grpby(x)
 summary.grpby(x, grpby)
-summary.grpby(x=x, grpby=grpby,wgts=wgts)
+summary.grpby(x=x, grpby=grpby,wgts=wgts)}
 }
 

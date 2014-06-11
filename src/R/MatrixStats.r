@@ -718,6 +718,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' library(Hmisc)
 #' x <- c(8,8,2,1,1,8)
 #' x <- c(8,8,2,1,1,NA)
@@ -726,7 +727,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 #' wgts<- c(1,2,2,3,1,1)
 #' summary.grpby(x)
 #' summary.grpby(x, grpby)
-#' summary.grpby(x=x, grpby=grpby,wgts=wgts)
+#' summary.grpby(x=x, grpby=grpby,wgts=wgts)}
 summary.grpby <- function (x, grpby = NULL, wgts=NULL) {
 	
 # 1. beginning check - that weight dimensions are correct
@@ -913,12 +914,13 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' x <- rep(0,1075)
 #' x <- c(8,8,2,1,1,8)
 #' grpby <- c('M','M','F','F','F','F')
 #'
 #' table.grpby(x)
-#' table.grpby(x, grpby)
+#' table.grpby(x, grpby)}
 table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 	if (is.null(grpby)) {
 		t(t(table(x, useNA = useNA, deparse.level = 0)))

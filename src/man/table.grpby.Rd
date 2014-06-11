@@ -25,11 +25,12 @@ Frequency table, with option to group results.
 The group-by variable must be time-invariant.
 }
 \examples{
+\dontrun{
 x <- rep(0,1075)
 x <- c(8,8,2,1,1,8)
 grpby <- c('M','M','F','F','F','F')
 
 table.grpby(x)
-table.grpby(x, grpby)
+table.grpby(x, grpby)}
 }
 

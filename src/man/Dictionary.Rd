@@ -9,33 +9,36 @@ This object holds:
 \format{\preformatted{proto object 
  $ cmatchFlattened   :function (., x.flat, varname, grpby.tag)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 88 21 108 2 28 9 88 108 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ createCodings     :function (codings_dataframe)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 363 19 381 2 26 9 363 381 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 428 19 446 2 26 9 428 446 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ cmatch            :function (., x, varname)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 49 12 59 2 19 9 49 59 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ codings           : list() 
  $ descriptions      : NULL 
  $ createDescriptions:function (descriptions_dataframe)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 395 24 405 2 31 9 395 405 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 460 24 470 2 31 9 460 470 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ cnamesLookup      :function (., vars)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 128 18 131 2 25 9 128 131 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ dlookup_exists    :function (., x)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 220 20 280 2 27 9 220 280 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 285 20 345 2 27 9 285 345 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ dlookup           :function (., x)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 155 13 211 2 20 9 155 211 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 214 13 276 2 20 9 214 276 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
+ $ dlookup_orig      :function (., x)   
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 155 18 211 2 25 9 155 211 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ new               :function (., descriptions_dataframe, codings_dataframe = NULL)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 336 9 349 2 16 9 336 349 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 401 9 414 2 16 9 401 414 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
  $ order_by_dlookup  :function (., ...)   
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 301 22 305 2 29 9 301 305 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000022898960>  
+  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 366 22 370 2 29 9 366 370 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000013281218>  
 }}
 \usage{
 Dictionary
