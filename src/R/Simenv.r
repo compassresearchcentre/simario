@@ -588,10 +588,10 @@ expr = {
 		
 
 		for (i in 1:total_runs) {
-			#i = 1
+			#i = 2
 			cat("Run",i,"of",total_runs,"\n")
 
-			invisible(.$applyAllFixedOutcomesIfSetToSimframe()) ### don't need?
+			##invisible(.$applyAllFixedOutcomesIfSetToSimframe()) ### don't need?
 			
 			if (exists(".DEBUG")) {
 				cat("DEBUG: Stopping to allow manual execution\n")

@@ -51,7 +51,7 @@
 #' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="alive", grpbyName="sex", CI=FALSE, dict=dict_demo)
 #' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="disability_state", grpbyName="qualification", CI=FALSE)
 
-tableBuilder <- function(envName, statistic, variableName, grpbyName, CI=TRUE, logisetexpr=NULL, dict=dict_demo, not.in.logiset=FALSE) {
+tableBuilder <- function(envName, statistic, variableName, grpbyName="", CI=TRUE, logisetexpr=NULL, dict=dict_demo, not.in.logiset=FALSE) {
 	
 	
 	if (!is.null(logisetexpr)) {
