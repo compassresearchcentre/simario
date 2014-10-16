@@ -571,19 +571,6 @@ expr = {
 		
 		if (!exists("propensities")) propensities <- NULL
 		
-		##.$applyAllCatAdjustmentsToSimframe(1, propensities)
-		#at this point after adjusting continuous variables some values may be higher than 
-			#the limits set throughout the simulation - can fix here (rather than changing
-			#more deep down simario functions)
-		if (exists("limits")) {
-			for (j in 1:length(limits)) {
-				v <- .$simframe[[names(limits)[j]]]
-				#v[v>limits[[j]]] <- limits[[j]]
-				#id <- which(v>limits[[j]])
-				.$simframe[[names(limits)[j]]][v>limits[[j]]] <- limits[[j]]
-			}
-		}
-		
 		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
 		
 
