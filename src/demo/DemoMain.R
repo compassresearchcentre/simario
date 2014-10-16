@@ -110,7 +110,7 @@ loadSimario <- function() {
 createBinBreaks <- function(people) {
 	binbreaks <- list()
 	
-	#NB: the very first cut point must be less than min(x)
+	#NB: the  first cut point must be less than min(x)
 	#subsequent cut points are the closed right bound,
 	#and the final cut point should be max(x)
 	# eg: breaks of c(0, 34, 35, 36, 37, 44)
@@ -315,7 +315,7 @@ loadCatToContModels <- function(modelfiledir) {
 #' catToCont.modelfiledir <- "C:/Workspace/simario/src/demo/data/models_CatToCont/"
 #' initDemo(data_dir, modelfiledir, propensityfiledir, catToCont.modelfiledir)
 
-initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, propensityfiledir, catToCont.modelfiledir) {
+initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), model.filedir, propensity.filedir, catToCont.model.filedir, transition.probabilities.filedir) {
 	base_dir <- file.path(data_dir, "base")
 	
 	descriptions_dataframe <- read_file(base_dir, "Data_dictionary.csv")
@@ -330,8 +330,7 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, pr
 	simframe.master <<- loadSimFrame(sfdef, people)
 	##people_sets <<- createSets(people, dict_demo$codings)
 	
-	transition_probabilities_dir <- file.path(data_dir, "transition_probabilities")
-	transition_probabilities <<- loadTransitionProbabilities(transition_probabilities_dir)
+	transition_probabilities <<- loadTransitionProbabilities(transition.probabilities.filedir)
 	
 	#earnings_scale <<- loadEarningsScale(data_dir)
 	
@@ -339,19 +338,19 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), modelfiledir, pr
 	names(breaks_age_grp) <<- c(NA, names(dict_demo$codings$age_grp)) 
 	
 	#load models
-	models <<- loadDemoModels(modelfiledir)
+	models <<- loadDemoModels(model.filedir)
 	checkModelVars(models, simframe.master)
 	
 	#load catToCont models
-	catToContModels <<- loadCatToContModels(catToCont.modelfiledir)
+	catToContModels <<- loadCatToContModels(catToCont.model.filedir)
 	lapply(catToContModels, checkModelVars, simframe=simframe.master)
 	
 	#Load propensity models
-	propensityModels <<- loadPropensityModels(propensityfiledir)
+	propensityModels <<- loadPropensityModels(propensity.filedir)
 	lapply(propensityModels, checkModelVars, simframe=simframe.master)
 	
 	###load propensities (calculates them from the propensity models)
-	propensities <<- loadDemoPropensities(propensityfiledir, stochastic=TRUE)
+	propensities <<- loadDemoPropensities(propensity.filedir, stochastic=TRUE)
 	
 	
 	#load aux
@@ -378,10 +377,11 @@ dirs <- list()
 dirs$root <- paste(getwd(),"/",sep="")
 dirs$base <- paste(dirs$root ,"base/",sep="")
 dirs$models <- paste(dirs$root,"data/models/",sep="")
+dirs$TransitionProbabilities <- paste(dirs$root, "data/transition_probabilities/", sep="")
 dirs$catToContModels <- paste(dirs$root, "data/models_CatToCont/", sep="")
 dirs$PropensityModels <- paste(dirs$root, "data/models_Propensities/", sep="")
 
-initDemo(modelfiledir=dirs$models, propensityfiledir=dirs$PropensityModels, catToCont.modelfiledir=dirs$catToContModels)
+initDemo(model.filedir=dirs$models, propensity.filedir=dirs$PropensityModels, catToCont.model.filedir=dirs$catToContModels, transition.probabilities.filedir=dirs$TransitionProbabilities)
 
 #if no base simulation yet, then simulate 
 if (!exists("env.base")) {

@@ -105,7 +105,7 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #' rows = 5
 #' createAdjustmentMatrix(varname, coding, rows)
 #' }
-createAdjustmentMatrix <- function(varname, coding, rows, is_a_level_var = is_level_var(varname), cont.binbreaks=NULL, catToContModels=NULL) {
+createAdjustmentMatrix <- function(varname, coding=cont.binbreaks[-1], rows, is_a_level_var = is_level_var(varname), cont.binbreaks=NULL, catToContModels=NULL) {
 	
 	if (is_numeric_scalar(rows)) {
 		rows <- paste("Year", seq(rows))

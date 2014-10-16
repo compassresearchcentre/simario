@@ -104,7 +104,7 @@ runScenario6 <- function() {
 	setGlobalSubgroupFilterExpression(subgroupExpression)
 	env.scenario$cat.adjustments$IQ[1,] <- rep(1/5, 5)
 	env.scenario$cat.adjustments$IQ[50,] <- c(0.1,0.1,0.5,0.2,0.1)
-	env.scenario$simulate(2)
+	env.scenario$simulate(1)
 	
 	### test if the adjustment work
 	#env.scenario$modules$demo$run_results_collated$freqs_continuousGrouped_by_subgroup$IQ[1,]
@@ -133,7 +133,7 @@ runScenario8 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 8")
 	subgroupExpression <- "sex==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	env.scenario$cat.adjustments$qualification[1,] <- rep(1/4, 4)
+	#env.scenario$cat.adjustments$qualification[1,] <- rep(1/4, 4)
 	env.scenario$cat.adjustments$qualification[50,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$simulate(2)
 	

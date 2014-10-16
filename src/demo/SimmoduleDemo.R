@@ -282,7 +282,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		outcomes <- createOutcomeMatrices(simenv$simframe, "demo", c(1:NUM_ITERATIONS))
 		
 		for (iteration in 1:NUM_ITERATIONS) {
-			#iteration = 1
+			#iteration = 17
 			cat("Run", simenv$num_runs_simulated+1, "year", iteration, "\n")
 
 			store_current_values_in_previous()
@@ -290,6 +290,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			alive[age >= MAX_AGE] <- F
 			
 			if (any(alive)) {
+				age[alive] <- age[alive] + 1
 			
 				disability_transition_probs <- lookup_disability_transition_probs(sex[alive], age_grp[alive], disability_state[alive])
 				
@@ -301,8 +302,6 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				disability_state <- adjustVar(disability_state, "disability_state")
 				
 				simulate_qualification()
-				
-				age[alive] <- age[alive] + 1
 				
 				age_grp[alive] <- bin(age[alive], breaks_age_grp)	
 				
@@ -425,10 +424,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		
 		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
 			run_results$freqs_by_subgroup <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
-			run_results$means_by_subgroup <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
-			run_results$freqs_continuousGrouped_by_subgroup <- lapply(binned.list, table_mx_cols_MELC, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
 			run_results$freqs_by_subgroup_base_data <- lapply(base.outcomes.current.run[catvars], table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
+			run_results$means_by_subgroup <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
 			run_results$means_by_subgroup_base_data <- lapply(base.outcomes.current.run[convars], mean_mx_cols_BCASO, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
+			run_results$freqs_continuousGrouped_by_subgroup <- lapply(binned.list, table_mx_cols_MELC, grpby=sg.var, grpby.tag=sg.expr, dict=dict_demo)
 			run_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(binned.list.base, table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
 		}
 		
@@ -436,13 +435,13 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	    run_results$freqs <- lapply(outcomes[catvars], table_mx_cols_MELC, dict=dict_demo)
 		##run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
 		##run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
-		run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
+		##run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
 		run_results$freqs_continuousGrouped <- lapply(binned.list, table_mx_cols_MELC, dict=dict_demo)
 
 		run_results$means <- lapply(outcomes[convars], mean_mx_cols_BCASO, dict=dict_demo)
 		##run_results$means_males <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$males, dict=dict_demo)
 		##run_results$means_females <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$females, dict=dict_demo)
-		run_results$means_by_sex <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
+		##run_results$means_by_sex <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
 		run_results$summaries <- lapply(outcomes[convars], summary_mx_cols)
 		run_results$quantiles <- lapply(outcomes[convars], quantile_mx_cols, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
 		
@@ -496,13 +495,13 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
 		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$freqs_continuousGrouped <- lapply(all_run_results_zipped$freqs_continuousGrouped, collator_freqs2, dict=dict_demo, CI=TRUE, cat.adjustments=cat.adjustments)
-		collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs_remove_zero_cat, dict = dict_demo)
-		collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs_remove_zero_cat, dict = dict_demo)
-		collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs_remove_zero_cat, dict = dict_demo)
+		##collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs_remove_zero_cat, dict = dict_demo)
+		##collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs_remove_zero_cat, dict = dict_demo)
+		##collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$means <- lapply(all_run_results_zipped$means, collator_means, dict = dict_demo)
-		collated_results$means_males <- lapply(all_run_results_zipped$means_males, collator_means, dict = dict_demo)
-		collated_results$means_females <- lapply(all_run_results_zipped$means_females, collator_means, dict = dict_demo)
-		collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, collator_means, dict = dict_demo)
+		##collated_results$means_males <- lapply(all_run_results_zipped$means_males, collator_means, dict = dict_demo)
+		##collated_results$means_females <- lapply(all_run_results_zipped$means_females, collator_means, dict = dict_demo)
+		##collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, collator_means, dict = dict_demo)
 		collated_results$summaries <- lapply(all_run_results_zipped$summaries, collator_list_mx)
 		collated_results$quantiles <- lapply(all_run_results_zipped$quantiles, collator_list_mx)
 		

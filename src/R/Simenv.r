@@ -79,7 +79,7 @@ expr = {
 				presim.stats=list(),
 				cat.adjustments=cat.adjustments,
 				modules=modules,
-				fixed.outcomes=list(),
+				#fixed.outcomes=list(),
 				dict=dict
 		)
 	}
@@ -571,7 +571,7 @@ expr = {
 		
 		if (!exists("propensities")) propensities <- NULL
 		
-		.$applyAllCatAdjustmentsToSimframe(1, propensities)
+		##.$applyAllCatAdjustmentsToSimframe(1, propensities)
 		#at this point after adjusting continuous variables some values may be higher than 
 			#the limits set throughout the simulation - can fix here (rather than changing
 			#more deep down simario functions)
@@ -588,10 +588,8 @@ expr = {
 		
 
 		for (i in 1:total_runs) {
-			#i = 2
+			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
-
-			##invisible(.$applyAllFixedOutcomesIfSetToSimframe()) ### don't need?
 			
 			if (exists(".DEBUG")) {
 				cat("DEBUG: Stopping to allow manual execution\n")

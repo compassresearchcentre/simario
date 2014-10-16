@@ -50,6 +50,7 @@
 #' test <- tableBuilder(envName="Base", statistic="quintiles", variableName="earnings", grpbyName="", CI=FALSE, logisetexpr="alive==TRUE", not.in.logiset=TRUE)
 #' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="alive", grpbyName="sex", CI=FALSE, dict=dict_demo)
 #' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="disability_state", grpbyName="qualification", CI=FALSE)
+#' tableBuilder(envName="Base", statistic="means", variableName="earnings", grpbyName="sex", CI=FALSE, dict=dict_demo)
 
 tableBuilder <- function(envName, statistic, variableName, grpbyName="", CI=TRUE, logisetexpr=NULL, dict=dict_demo, not.in.logiset=FALSE) {
 	
