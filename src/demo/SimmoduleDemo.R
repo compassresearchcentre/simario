@@ -261,10 +261,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		# Simulate earnings
 		simulate_earnings <- function(){
 			if(iteration <= 15){
-				earnings <<- 0
+				earnings <<- rep(0, num_people)
 			} else if (iteration > 15){
-				earnings <<- outcomes$earnings[,iteration-1]
-				earnings[alive] <<- predSimNBinom(models$earningsModel)
+				earnings[alive] <<- predSimNBinom(models$earningsModel, set=alive)
 			}
 			earnings
 		}
@@ -280,9 +279,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 		MAX_AGE <- 99		
 		
 		outcomes <- createOutcomeMatrices(simenv$simframe, "demo", c(1:NUM_ITERATIONS))
-		
+							#NUM_ITERATIONS
 		for (iteration in 1:NUM_ITERATIONS) {
-			#iteration = 17
+			#iteration = 18
 			cat("Run", simenv$num_runs_simulated+1, "year", iteration, "\n")
 
 			store_current_values_in_previous()
@@ -365,46 +364,38 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	#'  map_outcomes_to_run_results(simframe, outcomes, cat.adjustments, run)
 									
 	map_outcomes_to_run_results <- function(., simframe, outcomes, cat.adjustments, run) {
-																	#have added cat.adjustments and run here 		
-		cat(gettextf("Generating run results for %s\n", .$name))	#to get to work with newer simario version of map_outcomes_to_run_results
-		catvars <- getOutcomeVars(simframe.master, "categorical", "demo")	#yet to make these parameters do anything in this function
+																		
+		cat(gettextf("Generating run results for %s\n", .$name))	
+		catvars <- getOutcomeVars(simframe.master, "categorical", "demo")	
 		convars <- getOutcomeVars(simframe.master, "continuous", "demo")		
-		
-		# add additional "all years" row totals to continuous vars
-		# outcomes_wtotals <- lapply(outcomes[convars], function(x) {
-						#x <- outcomes[[convars[1]]] 
-		#			structure(cbind(x, "All Years"=rowSums(x, na.rm=TRUE)), varname=attr(x,"varname"))
-		#		})
 	
-	
-	#bin/group continuous variables that are displayed as categorical for scenario testing purposes
-	#(IQ)	
-	
-	binned.list <- binned.list.base <- list()
-	for (i in 1:length(convars)) {
-		tab <- outcomes[c(convars[i])]
-		binned.tab <- matrix(bin(tab[[1]], binbreaks[[convars[i]]]), ncol=100)
-		attr(binned.tab, "meta") <- c(varname=convars[[i]])
-		binned.list[[i]] <- binned.tab
-		names(binned.list)[i] <- convars[i]
-		if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
-			#the env.base$...run1$outcomes object only exits if we are in the scenario environments
-			#we only need the base.outcomes.current.run if a subgroup scenario was run 
-			#(otherwise, if no subgroup scenario run, they just look at the tables from env.base)
-			base.outcomes.expr <- paste("env.base$modules$demo$run_results$run", run, "$outcomes", sep="")
-			base.outcomes.current.run <- eval(parse(text=base.outcomes.expr))
+		#bin/group continuous variables that are displayed as categorical for scenario testing purposes
+		#(IQ)	
+		binned.list <- binned.list.base <- list()
+		for (i in 1:length(convars)) {
+			tab <- outcomes[c(convars[i])]
+			binned.tab <- matrix(bin(tab[[1]], binbreaks[[convars[i]]]), ncol=100)
+			attr(binned.tab, "meta") <- c(varname=convars[[i]])
+			binned.list[[i]] <- binned.tab
+			names(binned.list)[i] <- convars[i]
+			if (!is.null(attr(cat.adjustments[[1]], "logisetexpr"))) {
+				#the env.base$...run1$outcomes object only exits if we are in the scenario environments
+				#we only need the base.outcomes.current.run if a subgroup scenario was run 
+				#(otherwise, if no subgroup scenario run, they just look at the tables from env.base)
+				base.outcomes.expr <- paste("env.base$modules$demo$run_results$run", run, "$outcomes", sep="")
+				base.outcomes.current.run <- eval(parse(text=base.outcomes.expr))
 			
-			if (is.null(base.outcomes.current.run)) {
-				stop(gettextf("%s does not exist. Cannot create binned.list.base", base.outcomes.expr))
+				if (is.null(base.outcomes.current.run)) {
+					stop(gettextf("%s does not exist. Cannot create binned.list.base", base.outcomes.expr))
+				}
+			
+				tab.base <- base.outcomes.current.run[c(convars[i])]
+				binned.tab.base <- matrix(bin(tab.base[[1]], binbreaks[[convars[i]]]), ncol=100)
+				attr(binned.tab.base, "meta") <- c(varname=convars[[i]])
+				binned.list.base[[i]] <- binned.tab.base
+				names(binned.list.base)[i] <- convars[i]
 			}
-			
-			tab.base <- base.outcomes.current.run[c(convars[i])]
-			binned.tab.base <- matrix(bin(tab.base[[1]], binbreaks[[convars[i]]]), ncol=100)
-			attr(binned.tab.base, "meta") <- c(varname=convars[[i]])
-			binned.list.base[[i]] <- binned.tab.base
-			names(binned.list.base)[i] <- convars[i]
 		}
-	}
 		
 		#user specified subgroup variable
 		#prepend "outcomes$", "simframe$", or "env.base$...outcomes$" to variables so they
@@ -431,17 +422,10 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			run_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(binned.list.base, table_mx_cols_MELC, grpby=sg.var.base, grpby.tag=sg.expr.base, dict=dict_demo)
 		}
 		
-		#run_results$confreqs <- lapply(outcomes[convars], table_mx_cols_MELC, dict=dict_demo)
+		
 	    run_results$freqs <- lapply(outcomes[catvars], table_mx_cols_MELC, dict=dict_demo)
-		##run_results$freqs_males <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$males, dict=dict_demo)
-		##run_results$freqs_females <- lapply(outcomes[catvars], table_mx_cols_MELC, logiset=people_sets$females, dict=dict_demo)
-		##run_results$freqs_by_sex <- lapply(outcomes[catvars], table_mx_cols_MELC, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
 		run_results$freqs_continuousGrouped <- lapply(binned.list, table_mx_cols_MELC, dict=dict_demo)
-
 		run_results$means <- lapply(outcomes[convars], mean_mx_cols_BCASO, dict=dict_demo)
-		##run_results$means_males <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$males, dict=dict_demo)
-		##run_results$means_females <- lapply(outcomes[convars], mean_mx_cols_BCASO, logiset=people_sets$females, dict=dict_demo)
-		##run_results$means_by_sex <- lapply(outcomes[convars], mean_mx_cols_BCASO, grpby=people$sex, grpby.tag="sex", dict=dict_demo)
 		run_results$summaries <- lapply(outcomes[convars], summary_mx_cols)
 		run_results$quantiles <- lapply(outcomes[convars], quantile_mx_cols, new.names=c("Min", "20th", "40th", "60th","80th","Max"), probs=seq(0,1,0.2), na.rm = TRUE)
 		
@@ -491,17 +475,9 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			collated_results$freqs_continuousGrouped_by_subgroup_base_data <- lapply(all_run_results_zipped$freqs_continuousGrouped_by_subgroup_base_data, collator_freqs2, dict=dict_demo, CI=FALSE, cat.adjustments=cat.adjustments) #cat.adjustments only used to get binbreaks
 		}
 		
-		#collated_results$confreqs <- lapply(all_run_results_zipped$confreqs, collator_freqs, dict = dict_demo)
-		#collated_results$histogram <- lapply(all_run_results_zipped$confreqs, collator_histogram, dict = dict_demo)
 		collated_results$freqs <- lapply(all_run_results_zipped$freqs, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$freqs_continuousGrouped <- lapply(all_run_results_zipped$freqs_continuousGrouped, collator_freqs2, dict=dict_demo, CI=TRUE, cat.adjustments=cat.adjustments)
-		##collated_results$freqs_males <- lapply(all_run_results_zipped$freqs_males, collator_freqs_remove_zero_cat, dict = dict_demo)
-		##collated_results$freqs_females <- lapply(all_run_results_zipped$freqs_females, collator_freqs_remove_zero_cat, dict = dict_demo)
-		##collated_results$freqs_by_sex <- lapply(all_run_results_zipped$freqs_by_sex, collator_freqs_remove_zero_cat, dict = dict_demo)
 		collated_results$means <- lapply(all_run_results_zipped$means, collator_means, dict = dict_demo)
-		##collated_results$means_males <- lapply(all_run_results_zipped$means_males, collator_means, dict = dict_demo)
-		##collated_results$means_females <- lapply(all_run_results_zipped$means_females, collator_means, dict = dict_demo)
-		##collated_results$means_by_sex <- lapply(all_run_results_zipped$means_by_sex, collator_means, dict = dict_demo)
 		collated_results$summaries <- lapply(all_run_results_zipped$summaries, collator_list_mx)
 		collated_results$quantiles <- lapply(all_run_results_zipped$quantiles, collator_list_mx)
 		

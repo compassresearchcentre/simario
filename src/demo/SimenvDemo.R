@@ -59,7 +59,7 @@ SimenvDemo <- proto(. = Simenv, expr = {
 		
 		tbls <- list()
 		
-		# cat vars at birth
+		# categorcial variables in the starting population file
 		#NB: we transpose to turn the tables into matrices so they
 		#are displayed properly
 		tbls$sex <- t(table.catvar(simframe$sex, codings$sex))

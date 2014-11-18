@@ -370,35 +370,15 @@ predict <- function(model, envir = parent.frame(), set = NULL) {
 }
 
 
-#' Predict and simulate binary value from logistic model
-#' 
-#' @param model.glm
-#'  model specifying variables to evaluate and coefficients
-#'  to multiple by.
-#' @param envir
-#'  environment in which to evaluate model variables.
-#'  if unspecified, uses caller's environment
-#' @param set
-#'  logical vector indicating elements or rows to simulate, or NULL to 
-#'  simulate using all values in envir
-#' 
-#' @return 
-#'  a vector of binary values
-#'
-#' @export   
-#' @examples
-#'  #model.glm <- models$z1msmokeLvl1
-predSimBin <- function(model.glm, envir=parent.frame(), set = NULL) {
-	
-	#determine predicted values
-	predicted_logits <- predict(model.glm, envir, set)
-	predicted_probabilities <- exp(predicted_logits)/(1+exp(predicted_logits))
-	
-	#simulate
-	randunif <- runif(length(predicted_probabilities)) 
-	ifelse(randunif <= predicted_probabilities, 1, 0) 
+predSimNormsSelect <- function(x.cat, models, envir=parent.frame()) {
+	x.cat <- as.integer(x.cat)
+	result <- rep(NA, length(x.cat))
+	for (i in 1:length(models)) {
+		select <- x.cat == i
+		result[select] <- predSimNorm(models[[i]], envir, set=select)
+	}
+	result
 }
-
 
 #' Predict probabilities from the coefficients of a logistic regression
 #' 
@@ -538,6 +518,37 @@ predSimBinom <- function(model.glm, envir=parent.frame(), set = NULL) {
 	
 	#simulate
 	sapply(predicted_probabilities , function (x) rbinom(1, size=1, prob=x)) 
+}
+
+
+#' Predict and simulate binary value from 2 binomial models.
+#' 
+#' @param select
+#'  a logical vector, or vector of 0s and 1s, which determine
+#'  when to use model0 and when to use model1, i.e:
+#'  when select == 0, then result is predSimBinom using model0
+#'  when select == 1, then result is 1 - predSimBinom using model1
+#' @param model0
+#'  model0
+#' @param model1
+#'  model1
+#' @param envir
+#'  environment in which to evaluate model variables.
+#' 
+#' @examples
+#' \dontrun{
+#' 	select <- z1single_previousLvl1
+#' 	model0 <- models$z1singlePrev0 ; model1 <- models$z1singlePrev1
+#' 	predSimBinomsSelect(select, model0, model1)
+#' }
+#envir=.GlobalEnv
+predSimBinomSelect <- function(select, model0, model1, envir=parent.frame()) {
+	select0 <- select == 0
+	select1 <- select == 1
+	result <- rep(NA, length(select))
+	result[select0] <- predSimBinom(model0, envir, set=select0)
+	result[select1] <- predSimBinom(model1, envir, set=select1)
+	return(result)
 }
 
 
@@ -763,12 +774,12 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 
 #' Predict and simulate value from n models.   
 #' 
-#' Models can be normal or negative binomial.  Normal models include the truncation that is 
-#' described in predSimNormsSelect(). I.e. any simulated values outside the binbreaks for the group
-#' are truncated to the limits for their gorup.  Negative binomial models assume that only the last 
-#' category will have a negative binomial model and the simulated values are backtransformed by
-#' adding the start value of the last cateogory.  E.g. if the last category is 5+, then 5 is added
-#' to any values simulated from a negative binomial distribution.  
+#' Models should be normal with the option of a negative binomial model for the last model in the 
+#' list.  Normal models include the truncation that is described in predSimNormsSelect(). I.e. any 
+#' simulated values outside the binbreaks for the group are truncated to the limits for their group.  
+#' Values simulated from a negative binomial distribution are backtransformed by adding the start 
+#' value of the last cateogory.  E.g. if the last category is 5+, then 5 is added to any values 
+#' simulated from a negative binomial distribution.  
 #' 
 #' @param x.cat
 #' a categorical vector

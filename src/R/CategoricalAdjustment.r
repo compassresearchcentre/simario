@@ -258,8 +258,8 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 
 
 
-#' Set the subgroup expression to all cat.adjustments if the subgroup expression exists. 
-#' Otherwise, remove the subgroup expression.
+#' Set the subgroup expression as an attribute on all cat.adjustments 
+#' if the subgroup expression exists. Otherwise, remove the subgroup expression.
 #' 
 #' @param subgroupExpression
 #'  the subgroup expression that is requested by the user. 
