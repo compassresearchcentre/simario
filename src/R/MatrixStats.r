@@ -1329,6 +1329,29 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 					
 					return(result)
 				})
+	} else if (varname=="alcabuseLvl1" | varname=="depressionLvl1") {
+		results.by.col <- lapply(1:ncol(mx), function(i) {
+					#i=1
+					if (i<=17) {
+						num.cols <- length(table(grpby))
+						if (num.cols==0) {
+							#no grouping
+							num.cols <- 1
+						}
+						num.rows <- length(table(mx))
+						result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					} else if (i>17) {
+						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					}
+					
+					return(result)
+				})
 	} else {
 		results.by.col <- lapply(1:ncol(mx), function (i) {
 					#i <- 1
