@@ -132,7 +132,11 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' \dontrun{}
 
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
-
+	#check rownames are present for each iteration for each run
+	#(will cause error in collator_mutiple_lists_mx2 otherwise)
+	#and if not present make the rownames be the same as for iterations where they are present
+	runs <- lapply(runs, check.row.names)
+	
 	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
 	
 	num.runs <- length(runs)
@@ -389,10 +393,38 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
 	#workaround to make work for z1cond - put values into the matrices for years 1 - 3 (at the
 		#moment they are 0s
+	
+	#store colnames for later
+	colnames <- colnames(runs[[1]][[1]])
+	rownames <- rownames(runs[[1]][[1]])
+	
+	#identify for which iterations the variable was not simulated (will manifest as a matrix of 0s)
+	#sum the matrix for each iteration
+	numobs <- lapply(runs[[1]], function(x) {sum(unlist(x))})
+	numobs <- unlist(numobs)
+	#create index for iterations where sum=0 (all NAs for the variable at that iteration)
+	id0 <- which(numobs==0)
+	#index for those iterations where the sum is not 0
+	idnot0 <- which(numobs!=0)
+	#make the iterations where there was no values have a matrix like the first iteration where there 
+	#were values (just as a workaround, later they will be changed back to NAs)
 	for (k in 1:length(runs)) {
-		runs[[k]][[1]] <- runs[[1]][[4]]
-		runs[[k]][[2]] <- runs[[1]][[4]]
-		runs[[k]][[3]] <- runs[[1]][[4]]
+		for (j in id0) {
+			if (is.null(runs[[k]][[idnot0[1]]])) {
+				runs[[k]][[j]] <- matrix(1:4, ncol=2, nrow=2) #may not always be a two-by-two matrix - check and see if I need to do this in a more generic way
+				#lose column and row names here, which are used in identify_zero_category_cols(), 
+				#identify_zero_category_cols_bygrp() and label_flattened_mx_grping.and.CIs().
+				#Put back on
+				colnames(runs[[k]][[j]]) <- colnames
+				if (!is.null(rownames)) {
+					rownames(runs[[k]][[j]]) <- rownames
+				} else {
+					rownames(runs[[k]][[j]]) <- c("0", "1") #not sure if this would always be the case - check
+				}
+			} else {
+				runs[[k]][[j]] <- runs[[k]][[idnot0[1]]]
+			}
+		}
 	}
 	
 	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
@@ -400,12 +432,13 @@ collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Ye
 	
 	zero_cat_cols <- identify_zero_category_cols(runs_mx)
 	
-	#the above code give incorrect categories with 0s for the outcome 
+	#the above code gives incorrect categories with 0s for the outcome 
 	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
 	#(which is what the above code does)
 	if (!is.null(grpby.tag)) {
 		if (!is.na(grpby.tag)) {
 			if (grpby.tag!="") {
+				#there is a subgroup
 				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
 				if (length(zero_cat_cols)==0) {
 					zero_cat_cols <- identify_zero_category_cols(runs_mx)
@@ -437,10 +470,10 @@ collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Ye
 	
 	#change result at the end  - back to NAs for the first 3 years of conduct
 	if (is.matrix(result)) {
-		result[1:3,] <- NA	
+		result[id0,] <- NA	
 	} else {
 		#assume result is a vector
-		result[1:3] <- NA
+		result[id0] <- NA
 	}
 	
 	return(result)
@@ -1156,3 +1189,17 @@ prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE
 	return(result)
 }
 
+# run is a list of length = number of iterations
+check.row.names <- function(run) {
+	#for each iteration, check row.names exist, if not, set rownames to be the same as those that do exist
+	rownames.list <- lapply(run, rownames)
+	not.present <- lapply(rownames.list, function(x) { which(is.null(x)) })
+	not.present.id <- as.numeric(names(unlist(not.present)))
+	present.id <- (1:length(run))[-not.present.id]
+	
+	#for iterations where row names are not present, make the row names the same as the rows where they are present
+	for (i in not.present.id) {
+		rownames(run[[i]]) <- rownames(run[[present.id[1]]])
+	}
+	return(run)
+}

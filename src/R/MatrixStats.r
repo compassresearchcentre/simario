@@ -1212,6 +1212,19 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
 	if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
 	
+	#Check: If there are columns in grpby with only NAs and FALSE's (no TRUE's),
+	#set all values to be NA.  This has probably happened because if one of the variables that 
+	#made up the subgroup expression has all NAs for a certain year but for another variable
+	#it does not, then the combination of these variables gives FALSE and NA when it should give all
+	#NA, because 1 & NA = NA but 0 & NA = FALSE.
+	unique.vals <- apply(grpby, COL, function(x) { unique(x)})
+	make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+	for (i in 1:length(make.col.all.NA)) {
+		if (make.col.all.NA[i]==TRUE) {
+			grpby[,i] <- rep(NA, nrow(grpby))
+		}
+	}
+	
 	#save varname
 	varname <- attr(mx, "varname")
 	if (is.null(varname)) {
@@ -1283,99 +1296,70 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	#use lapply instead of apply because apply simplifies
 	#use lapply instead of apply so we don't have the split attributes
 
-	#problem with z1cond because for the first year all the values are NA
-	if (varname=="z1condLvl1") {
-		results.by.col <- lapply(1:ncol(mx), function(i) {
-					#i=1
-					if (i<=3) {
-						num.cols <- length(table(grpby))
-						if (num.cols==0) {
-							#no grouping
-							num.cols <- 1
-						}
-						num.rows <- length(table(mx))
-						result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
-					} else if (i>3) {
-						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
+	#identify NA cols for each variable
+	nas.present <- apply(mx, COL, function(x) { any(is.na(x)) })
+	na.col.id <- which(nas.present==TRUE)
+							
+	results.by.col <- lapply(1:ncol(mx), function(i) {
+				#i=18
+				if ((i %in% na.col.id)==TRUE) {
+					#in an iteration with all NAs (variable not simulated)
+					num.cols <- length(table(grpby))
+					if (num.cols==0) {
+						#no grouping
+						num.cols <- 1
 					}
-					
-					return(result)
-				})
-	} else if (varname=="NPRESCH") {
-		results.by.col <- lapply(1:ncol(mx), function(i) {
-					if (i<=5) {
-						num.cols <- length(table(grpby))
-						if (num.cols==0) {
-							#no grouping
-							num.cols <- 1
-						}
-						num.rows <- length(table(mx))
-						result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
-					} else if (i>5) {
-						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
-					}
-					
-					return(result)
-				})
-	} else if (varname=="alcabuseLvl1" | varname=="depressionLvl1") {
-		results.by.col <- lapply(1:ncol(mx), function(i) {
-					#i=1
-					if (i<=17) {
-						num.cols <- length(table(grpby))
-						if (num.cols==0) {
-							#no grouping
-							num.cols <- 1
-						}
-						num.rows <- length(table(mx))
-						result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
-					} else if (i>17) {
-						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
-					}
-					
-					return(result)
-				})
-	} else {
-		results.by.col <- lapply(1:ncol(mx), function (i) {
-					#i <- 1
-					#old:
-					result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-					#note this the above table.grpby_BCASO is one modified by Mengdan
-					#if any problems one options is to revert back to the one before she
-						#modified anything which is table.grpby_BCASO1 
-					#think the below done by Mengdan - doesn't work
-					#new:
-					##result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i], binbreak=binbreaks[varname])
+					num.rows <- length(table(mx))
+					result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
 					if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 						colnames(result) <- c("Not in subgroup", "In subgroup")
-					} 
-					return(result)
-				})
-	}
+					}
+				} else if ((i %in% na.col.id)==FALSE) {
+					#iteration where variable was simulated
+				
+					if (!is.null(grpby)) {
+						#this function is used for both standard and subgroup scenarios so need to
+						#first check whether grpby exists or will get an error in the following if
+						#statement
+						if (all(is.na(grpby[,i]))) {
+							#a subgroup scenario was run but the groupby variable was not simulated 
+							#for the current iteration. (E.g. a subgroup scenario was run for where 
+							#welfare==1, and the table here being computed is the depression by welfare 
+							#which cannot be done if welfare is a vector of NAs)
+						
+							#for now, set the table to be a table of 0s (which will come out at NAs
+							#in the collated results.  ALternative idea is to use the values of 
+							#welfare at the last available iteration as the subgroup criterion or to
+							#take the mean of welfare and determine whether they were on welfare for
+							#the majority of the time or not.
+							num.cols <- length(table(grpby))
+							if (num.cols==0) {
+								#no grouping
+								num.cols <- 1
+							}
+							num.rows <- length(table(mx))
+							result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+						} else {
+							result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+							if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+								colnames(result) <- c("Not in subgroup", "In subgroup")
+							}
+						}
+					} else {
+						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+							colnames(result) <- c("Not in subgroup", "In subgroup")
+						}
+					}
+				}
+				return(result)
+			})
 	
 	# add names 
 	names(results.by.col) <- dimnames(mx)[[COL]]
 	
 	# return with meta
 	structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
-	
 }
 
 
@@ -1680,6 +1664,18 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		}	
 	}
 	
+	#3. beginning check - if there are columns in grpby with only NAs and FALSE's (no TRUE's),
+	#set all values to be NA.  This has probably happened because if one of the variables that 
+	#made up the subgroup expression has all NAs for a certain year but for another variable
+	#it does not, then the combination of these variables gives FALSE and NA when it should give all
+	#NA, because 1 & NA = NA but 0 & NA = FALSE.
+	unique.vals <- apply(grpby, COL, function(x) { unique(x)})
+	make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+	for (i in 1:length(make.col.all.NA)) {
+		if (make.col.all.NA[i]==TRUE) {
+			grpby[,i] <- rep(NA, nrow(grpby))
+		}
+	}
 	#bulk of function starts   
 	
 	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
@@ -1741,7 +1737,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	} else {
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
-			#i=4
+			#i=1
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
 			
