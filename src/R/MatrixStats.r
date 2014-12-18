@@ -318,7 +318,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 		#empty array into which the proportions will be placed
 		pct.array <- array(dim=dim(xa))
 		#for each run calculate proportions
-		for (i in 1:dim(xa)[3]) {
+		for (i in 1:(dim(xa)[3])) {
 			#take data from run i
 			mat <- xa[,,i]
 			#num of categories for the primary variable
@@ -1218,7 +1218,12 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	#it does not, then the combination of these variables gives FALSE and NA when it should give all
 	#NA, because 1 & NA = NA but 0 & NA = FALSE.
 	unique.vals <- apply(grpby, COL, function(x) { unique(x)})
-	make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+	if ("list" %in% is(unique.vals)) {
+		make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
+		make.col.all.NA <- unlist(make.col.all.NA)
+	} else {
+		make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+	}
 	for (i in 1:length(make.col.all.NA)) {
 		if (make.col.all.NA[i]==TRUE) {
 			grpby[,i] <- rep(NA, nrow(grpby))
@@ -1301,7 +1306,7 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	na.col.id <- which(nas.present==TRUE)
 							
 	results.by.col <- lapply(1:ncol(mx), function(i) {
-				#i=18
+				#i=1
 				if ((i %in% na.col.id)==TRUE) {
 					#in an iteration with all NAs (variable not simulated)
 					num.cols <- length(table(grpby))
@@ -1339,6 +1344,17 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 							}
 							num.rows <- length(table(mx))
 							result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+							if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+								colnames(result) <- c("Not in subgroup", "In subgroup")
+							}
+							rownames1 <- rownames(table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i]))
+							if (length(rownames1)!=nrow(result)) {
+								rownames1 <- dict$cnamesLookup(varname)[[1]]
+								if (is.null(rownames1[[1]])) {
+									stop("Check assignation of rownames in table_mx_cols_MELC()")
+								}
+							}
+							rownames(result) <- rownames1
 						} else {
 							result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
 							if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
@@ -1669,13 +1685,27 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	#made up the subgroup expression has all NAs for a certain year but for another variable
 	#it does not, then the combination of these variables gives FALSE and NA when it should give all
 	#NA, because 1 & NA = NA but 0 & NA = FALSE.
-	unique.vals <- apply(grpby, COL, function(x) { unique(x)})
-	make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+	if ("vector" %in% is(grpby)) {
+		unique.vals <- unique(grpby)
+	} else {
+		unique.vals <- apply(grpby, COL, function(x) { unique(x)})
+	}
+	if ("list" %in% is(unique.vals)) {
+		make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
+		make.col.all.NA <- unlist(make.col.all.NA)
+	} else {
+		if ("vector" %in% is(unique.vals)) {
+			make.col.all.NA <- sum(is.na(unique.vals))==1 & length(unique.vals)==2
+		} else {
+			make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+		}
+	}
 	for (i in 1:length(make.col.all.NA)) {
 		if (make.col.all.NA[i]==TRUE) {
 			grpby[,i] <- rep(NA, nrow(grpby))
 		}
 	}
+	
 	#bulk of function starts   
 	
 	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))

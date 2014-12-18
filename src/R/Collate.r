@@ -390,13 +390,20 @@ collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", co
 }
 
 
-collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
-	#workaround to make work for z1cond - put values into the matrices for years 1 - 3 (at the
-		#moment they are 0s
+collator_freqs_remove_zero_cat3 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
+	#this function works when there are iterations at which a variable is not simulated (vector of NAs instead)
 	
 	#store colnames for later
 	colnames <- colnames(runs[[1]][[1]])
 	rownames <- rownames(runs[[1]][[1]])
+	
+	rownames.length <- unlist(lapply(runs[[1]], function(x) { length(rownames(x)) }))
+	rownames.id <- which(rownames.length==max(rownames.length))[1]
+	rownames <- rownames(runs[[1]][[rownames.id]])
+	
+	n.col <- max(unlist(lapply(runs[[1]], ncol)))
+	n.row <- max(unlist(lapply(runs[[1]], nrow)))
+	
 	
 	#identify for which iterations the variable was not simulated (will manifest as a matrix of 0s)
 	#sum the matrix for each iteration
@@ -410,8 +417,8 @@ collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Ye
 	#were values (just as a workaround, later they will be changed back to NAs)
 	for (k in 1:length(runs)) {
 		for (j in id0) {
-			if (is.null(runs[[k]][[idnot0[1]]])) {
-				runs[[k]][[j]] <- matrix(1:4, ncol=2, nrow=2) #may not always be a two-by-two matrix - check and see if I need to do this in a more generic way
+			##if (is.null(runs[[k]][[idnot0[1]]])) {
+				runs[[k]][[j]] <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row) 
 				#lose column and row names here, which are used in identify_zero_category_cols(), 
 				#identify_zero_category_cols_bygrp() and label_flattened_mx_grping.and.CIs().
 				#Put back on
@@ -419,11 +426,11 @@ collator_freqs_remove_zero_cat2_z1cond <- function(runs, dict, row.dim.label="Ye
 				if (!is.null(rownames)) {
 					rownames(runs[[k]][[j]]) <- rownames
 				} else {
-					rownames(runs[[k]][[j]]) <- c("0", "1") #not sure if this would always be the case - check
+					rownames(runs[[k]][[j]]) <- as.character(1:n.row) #not sure if this would always be the case - check
 				}
-			} else {
-				runs[[k]][[j]] <- runs[[k]][[idnot0[1]]]
-			}
+			##} else {
+				##runs[[k]][[j]] <- runs[[k]][[idnot0[1]]]
+			##}
 		}
 	}
 	
