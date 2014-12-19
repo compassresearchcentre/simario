@@ -1219,7 +1219,7 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	#NA, because 1 & NA = NA but 0 & NA = FALSE.
 	unique.vals <- apply(grpby, COL, function(x) { unique(x)})
 	if ("list" %in% is(unique.vals)) {
-		make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
+		make.col.all.NA <- lapply(unique.vals, function(x) { (sum(is.na(x))==1 & length(x)==2) | all(is.na(x))})
 		make.col.all.NA <- unlist(make.col.all.NA)
 	} else {
 		make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
@@ -1306,13 +1306,20 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	na.col.id <- which(nas.present==TRUE)
 							
 	results.by.col <- lapply(1:ncol(mx), function(i) {
-				#i=1
+				#i=18
 				if ((i %in% na.col.id)==TRUE) {
 					#in an iteration with all NAs (variable not simulated)
 					num.cols <- length(table(grpby))
-					if (num.cols==0) {
+					if (num.cols==0 & is.null(grpby)) {
 						#no grouping
 						num.cols <- 1
+					} else if (num.cols==0 & !is.null(grpby)) {
+						#is grouping
+						if (!is.null(logiset)) {
+							stop("check about gettinng number of groups from logiset object in table_mx_cols_MELC()")
+						} else {
+							num.cols <- 2
+						}	
 					}
 					num.rows <- length(table(mx))
 					result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
@@ -1338,9 +1345,16 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 							#take the mean of welfare and determine whether they were on welfare for
 							#the majority of the time or not.
 							num.cols <- length(table(grpby))
-							if (num.cols==0) {
+							if (num.cols==0 & is.null(grpby)) {
 								#no grouping
 								num.cols <- 1
+							} else if (num.cols==0 & !is.null(grpby)) {
+								#is grouping
+								if (!is.null(logiset)) {
+									stop("check about gettinng number of groups from logiset object in table_mx_cols_MELC()")
+								} else {
+									num.cols <- 2
+								}	
 							}
 							num.rows <- length(table(mx))
 							result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
@@ -1685,7 +1699,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	#made up the subgroup expression has all NAs for a certain year but for another variable
 	#it does not, then the combination of these variables gives FALSE and NA when it should give all
 	#NA, because 1 & NA = NA but 0 & NA = FALSE.
-	if ("vector" %in% is(grpby)) {
+	if (("vector" %in% is(grpby)) & !("matrix" %in% is(grpby))) {
 		unique.vals <- unique(grpby)
 	} else {
 		unique.vals <- apply(grpby, COL, function(x) { unique(x)})
@@ -1694,7 +1708,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
 		make.col.all.NA <- unlist(make.col.all.NA)
 	} else {
-		if ("vector" %in% is(unique.vals)) {
+		if (("vector" %in% is(unique.vals)) & !("matrix" %in% is(unique.vals))) {
 			make.col.all.NA <- sum(is.na(unique.vals))==1 & length(unique.vals)==2
 		} else {
 			make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
@@ -1754,7 +1768,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		allgrpby=c(); j=1;while (j<=ncol(grpby)) {allgrpby=c(allgrpby,grpby[,j]);j=j+1}
 	}
 	
-	if ( is.null(grpby) || sum(is.na(grpby)) == length(grpby) ) {
+	if ( is.null(grpby)) { ##|| sum(is.na(grpby)) == length(grpby) ) {
 		
 		result <- apply(matrix(1:ncol(mx),nrow=1), COL, function(i) {
 					#i = 1
@@ -1767,7 +1781,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	} else {
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
-			#i=1
+			#i=3
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
 			
@@ -1776,11 +1790,15 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			#Using the weighting procedure on a column of NA's falls down as 
 			#by=list(grpby[non.nas,i]) has length 0.
 			
-			if(all(is.na(x)) | all(is.na(grpby[,i]))) {
+			if((all(is.na(x)) | all(is.na(grpby[,i]))) & is.null(grpby.tag)) {
 				
-				z2<-t(rep("NA", length(unique(allgrpby))))
+				##z2 <- t(rep("NA", length(unique(allgrpby))))
+				z2 <- t(rep("NA", length(unique(grpby[,i]))))
 				return(z2)
-			} else{      
+			} else if ((all(is.na(x)) | all(is.na(grpby[,i]))) & !is.null(grpby.tag)) {
+				z2 <- t(rep("NA", 2))
+				return(z2)
+			} else {      
 				weightsGrouped <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x
 				
 				a <- aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x / weightsGrouped
@@ -1791,7 +1809,8 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 				#creating a matrix of NA's for those grpby's not present in the column
 				#this enables each i'th step to return the same number of elements,
 				#further helping to enable correct naming of the result later (by unique allgrpby)
-				uall <- unique(allgrpby);
+				##uall <- unique(allgrpby);
+				uall <- unique(grpby[,i])
 				uGOTsomeNOTNA <- unique(grpby[non.nas,i]);
 				leftover <- uall[!(uall %in% uGOTsomeNOTNA)]
 				nmat <- matrix(c(leftover,rep(NA,length(leftover))), ncol=2)
@@ -1808,7 +1827,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			result <- matrix(as.numeric(result), ncol=ncol(result), nrow=nrow(result), byrow=F)
 		}
 		#if there is a column of NAs due to using a logiset then remove the last column which will only be NAs
-		if (sum(is.na(result[,ncol(result)]))==nrow(result)) {
+		if ((sum(is.na(result[,ncol(result)]))==nrow(result)) & !is.null(logiset)) {
 			result <- result[,-ncol(result)]
 		}
 		dimnames(result)[[COL]] <- sort(unique(allgrpby))
