@@ -161,28 +161,28 @@ expr = {
 	#'	applyAllCatAdjustmentsToSimframe(., iteration, propensities, print_adj = TRUE,cat.adjustments=.$cat.adjustments)
 	#' 
 
-	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities=NULL, print_adj = TRUE, cat.adjustments=.$cat.adjustments) {
-
+	applyAllCatAdjustmentsToSimframe <- function(., iteration, propensities=NULL, print_adj=TRUE, cat.adjustments=.$cat.adjustments) {
+	
 		invisible(lapply(cat.adjustments, function (catadj) {
 			#catadj <- .$cat.adjustments[[1]]
 			#catadj <- .$cat.adjustments$z1single
 			#catadj <- .$cat.adjustments$SESBTH
 			#catadj <- .$cat.adjustments$householdsize
 			#catadj <- .$cat.adjustments$INTERACT
-			#catadj <- .$cat.adjustments$MAGE
+			#catadj <- .$cat.adjustments$z1accom
 			cat_adj_vector <- catadj[iteration, ]	
 			varnames <- attr(catadj,"varnames")
 			varname <- varnames[length(varnames)]
 			varname <- strip_lvl_suffix(varname)
 			#have to do this line - as cat_adjust_vector does not inherit this meta info of catadj for some reason
-			#cat_adj_vector <- structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr"))
-						
+			#cat_adj_vector <- structure(cat_adj_vector, logisetexpr=attr(catadj,"logisetexpr")) 
+					
 			if (varname %in% c("INTERACT", "NPRESCH", "PUNISH")) {
 				#DO NOTHING
 			} else {
 			
 				contvars <- getOutcomeVars(.$simframe, "continuous")
-				if(varname%in%contvars){
+				if (varname %in% contvars) {
 					cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=names(binbreaks[[varname]])[-1])
 				}else{
 					cat_adj_vector <- structure(cat_adj_vector, varname=varname, logisetexpr=attr(catadj,"logisetexpr"), levels=.$dict$codings[[varname]])
@@ -191,8 +191,7 @@ expr = {
 				if (!any(is.na(cat_adj_vector))) {
 					
 					catToContModels <- attr(catadj, "catToContModel")
-					cont.binbreaks <- attr(catadj, "cont.binbreaks")
-					
+					cont.binbreaks <- attr(catadj, "cont.binbreaks")					
 					
 					if (is.null(varnames)) {
 						stop(gettextf("Missing varnames attribute"))
@@ -207,8 +206,9 @@ expr = {
 			}
 			
 		}))
-
 	}
+
+
 	
 	
 	
@@ -431,7 +431,7 @@ expr = {
 		
 		if (!is.null(logiset) && length(logiset) > 0) {
 			#subsetting the propensities according to logiset
-			propens<-subset(propens, logiset)
+			propens <- subset(propens, logiset)
 			
 			#adding a temporary ID variable - a rank column - onto a copy of the simframe portion
 			#will enable the subsets to be put back into the same order later
@@ -543,6 +543,23 @@ expr = {
 		
 	}
 	
+	check.subgroup.expr <- function(., cat.adjustments=.$cat.adjustments, simframe=.$simframe) {
+		catadj1 <- cat.adjustments[[1]]
+		logisetexpr <- attr(catadj1,"logisetexpr")
+		valid.subgroup <- 1
+		if (!is.null(logisetexpr)) {
+			#evaluate the logiset expression using the simframe prior to the first simulations
+			#(e.g. for year 1/basefile data in MELC)
+			logiset <- eval(parse(text=logisetexpr), envir=simframe)
+			u.logi <- unique(logiset)
+					#Fs and NAs due to a combination subgroup such as welfare and alcohol
+			if (((length(u.logi)==2) & (NA %in% u.logi)) | (length(table(logiset))==0)) {
+				valid.subgroup <- 0							#e.g. due to subgroup alcoholAbuse==1
+			}
+		}
+		return(valid.subgroup)
+	}
+	
 	
 	#' Perform a simulation of X runs.
 	#' 
@@ -571,7 +588,16 @@ expr = {
 		
 		if (!exists("propensities")) propensities <- NULL
 		
-		.$applyAllCatAdjustmentsToSimframe(1, propensities)
+		valid.subgroup <- .$check.subgroup.expr()
+		
+		if (valid.subgroup==1) {
+			.$applyAllCatAdjustmentsToSimframe(1, propensities)
+		} else if (valid.subgroup==0) {
+			cat("Pre-simulation scenario adjustments cannot be made because the subgroup expression is not defined \n")
+		} else {
+			stop("Check creation of valid.subgroup \n")
+		}
+		
 		#at this point after adjusting continuous variables some values may be higher than 
 			#the limits set throughout the simulation - can fix here (rather than changing
 			#more deep down simario functions)
@@ -588,7 +614,7 @@ expr = {
 		
 
 		for (i in 1:total_runs) {
-			#i = 2
+			#i = 1
 			cat("Run",i,"of",total_runs,"\n")
 			
 			if (exists(".DEBUG")) {

@@ -1217,16 +1217,18 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	#made up the subgroup expression has all NAs for a certain year but for another variable
 	#it does not, then the combination of these variables gives FALSE and NA when it should give all
 	#NA, because 1 & NA = NA but 0 & NA = FALSE.
-	unique.vals <- apply(grpby, COL, function(x) { unique(x)})
-	if ("list" %in% is(unique.vals)) {
-		make.col.all.NA <- lapply(unique.vals, function(x) { (sum(is.na(x))==1 & length(x)==2) | all(is.na(x))})
-		make.col.all.NA <- unlist(make.col.all.NA)
-	} else {
-		make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
-	}
-	for (i in 1:length(make.col.all.NA)) {
-		if (make.col.all.NA[i]==TRUE) {
-			grpby[,i] <- rep(NA, nrow(grpby))
+	if (!is.null(grpby)) {
+		unique.vals <- apply(grpby, COL, function(x) { unique(x)})
+		if ("list" %in% is(unique.vals)) {
+			make.col.all.NA <- lapply(unique.vals, function(x) { (sum(is.na(x))==1 & length(x)==2) | all(is.na(x))})
+			make.col.all.NA <- unlist(make.col.all.NA)
+		} else {
+			make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+		}
+		for (i in 1:length(make.col.all.NA)) {
+			if (make.col.all.NA[i]==TRUE) {
+				grpby[,i] <- rep(NA, nrow(grpby))
+			}
 		}
 	}
 	
@@ -1306,7 +1308,7 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 	na.col.id <- which(nas.present==TRUE)
 							
 	results.by.col <- lapply(1:ncol(mx), function(i) {
-				#i=18
+				#i=14
 				if ((i %in% na.col.id)==TRUE) {
 					#in an iteration with all NAs (variable not simulated)
 					num.cols <- length(table(grpby))
@@ -1325,6 +1327,9 @@ table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logise
 					result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
 					if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
 						colnames(result) <- c("Not in subgroup", "In subgroup")
+					}
+					if (is.null(rownames(result))) {
+						rownames(result) <- names(table(mx))
 					}
 				} else if ((i %in% na.col.id)==FALSE) {
 					#iteration where variable was simulated
@@ -1714,6 +1719,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
 		}
 	}
+	
 	for (i in 1:length(make.col.all.NA)) {
 		if (make.col.all.NA[i]==TRUE) {
 			grpby[,i] <- rep(NA, nrow(grpby))
@@ -1790,12 +1796,12 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			#Using the weighting procedure on a column of NA's falls down as 
 			#by=list(grpby[non.nas,i]) has length 0.
 			
-			if((all(is.na(x)) | all(is.na(grpby[,i]))) & is.null(grpby.tag)) {
+			if((all(is.na(x)) | all(is.na(grpby[,i]))) & !all(is.na(grpby[,i]))) {
 				
 				##z2 <- t(rep("NA", length(unique(allgrpby))))
 				z2 <- t(rep("NA", length(unique(grpby[,i]))))
 				return(z2)
-			} else if ((all(is.na(x)) | all(is.na(grpby[,i]))) & !is.null(grpby.tag)) {
+			} else if ((all(is.na(x)) | all(is.na(grpby[,i]))) & all(is.na(grpby[,i]))) {
 				z2 <- t(rep("NA", 2))
 				return(z2)
 			} else {      
