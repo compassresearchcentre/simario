@@ -672,13 +672,13 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 
 		for (j in 1:num.groups) {
 			grp.result <- matrix(nrow=num.yrs, ncol=length(probs))
-			for (i in 1:num.yrs) {
-				if (nrow(result.by.col[[i]])>0) {
+			for (i in 1:num.yrs) {#1:num.yrs
+				if (nrow(result.by.col[[i]])>1) {
 					#this will be FALSE for iterations where the variable was not simulated and grp.result[i,] will stay as NAs
 					grp.result[i,] <- result.by.col[[i]][j,][,2]
 				} 
 			}
-			result[,((j*7)-6):(j*7)]<-grp.result
+			result[,((j*7)-6):(j*7)] <- grp.result
 		}
 		
 		#name columns
