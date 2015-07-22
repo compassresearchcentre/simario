@@ -269,10 +269,11 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	}
 
 	numZ <- length(runs) #number of runs
+	#browser()
 	
 	if ((CI==FALSE)|(numZ==1)) {
-		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
+		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		#runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		result <- remove.cols(runs_mx, zero_cat_cols)
 		
@@ -975,6 +976,7 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 	col.names <- colnames(mx.flattened)
 	
 	#identify the position of the last space in each name
+	#browser()
 	last.space.output <- identify.position.last.space(col.names)
 	pos.last.space.vec <- last.space.output[[1]]
 	num.spaces <- last.space.output[[2]]
