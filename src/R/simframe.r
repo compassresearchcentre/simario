@@ -253,12 +253,12 @@ getOutcomeVars <- function(simframe, outcome_type_select=NULL, outcome_module_na
 #'  simframe_defn <- read_csv(base_dir, "simframedef.csv")
 #'  simframe.master <- loadSimFrame(simframe_defn, envir)
 #' }
-loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame(), na_omit=FALSE) {
+loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.frame(), 
+		na_omit=FALSE) {
 	
 	#remove empty rows
 	#(generally these are blank lines at the end of the file)
-	empty_rows <- simframe_defn$Varname==""
-	simframe_defn <- simframe_defn[!empty_rows, ]
+	simframe_defn <- simframe_defn[simframe_defn$Varname!="", ]
 	
 	#check for duplicated varnames
 	duplicates <- which(duplicated(simframe_defn$Varname))
@@ -266,7 +266,8 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.fra
 		stop(paste("Simframe varname duplicate:", simframe_defn$Varname[duplicates], "\n"))
 	}
 	
-	initial_value_exprs <- structure(simframe_defn$Initial_value, .Names=simframe_defn$Varname)
+	initial_value_exprs <- structure(simframe_defn$Initial_value, 
+			names = simframe_defn$Varname)
 	
 	empty_exprs <- (initial_value_exprs == "")
 	initial_value_exprs[empty_exprs] <- NA_real_
@@ -309,7 +310,8 @@ loadSimFrame <- function (simframe_defn, envir = .GlobalEnv, enclos = parent.fra
 	}
 	
 	#data frame of outcome var mappings, types and set
-	outcome_vars <- with(simframe_defn, simframe_defn[Outcome_module != "", c("Varname", "Outcome_type", "Outcome_module")])
+	outcome_vars <- with(simframe_defn, simframe_defn[Outcome_module != "", 
+					c("Varname", "Outcome_type", "Outcome_module")])
 	
 	#return
 	structure(simframe, previous=previous,

@@ -429,8 +429,8 @@ Dictionary <- proto(expr = {
 		#remove empty variables, 
 		#these are blank lines at the end of the file or
 		#variables without any coding expr
-		codings_dataframe  <- subset(codings_dataframe, !(Varname==""))
-		codings_dataframe  <- subset(codings_dataframe, !(Codings_Expr==""))
+		codings_dataframe  <- subset(codings_dataframe, (Varname!=""))
+		codings_dataframe  <- subset(codings_dataframe, (Codings_Expr!=""))
 		
 		#evaluate "Codings_Expr" column in global environment
 		codings <- eval.list(codings_dataframe$Codings_Expr)
@@ -460,7 +460,7 @@ Dictionary <- proto(expr = {
 	createDescriptions <- function (descriptions_dataframe) {
 		#remove empty variables, 
 		#generally these are blank lines at the end of the file
-		descriptions_dataframe <- subset(descriptions_dataframe, !(Varname==""))
+		descriptions_dataframe <- subset(descriptions_dataframe, (Varname!=""))
 		
 		dict <- descriptions_dataframe$Description
 		names(dict) <- descriptions_dataframe$Varname
