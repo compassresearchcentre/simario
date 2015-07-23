@@ -269,11 +269,14 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 	}
 
 	numZ <- length(runs) #number of runs
+	
+	colnames(runs_mx)[is.na(colnames(runs_mx))] = "NA"
+	
 	#browser()
 	
 	if ((CI==FALSE)|(numZ==1)) {
-		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		#runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
+		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
 		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
 		result <- remove.cols(runs_mx, zero_cat_cols)
 		

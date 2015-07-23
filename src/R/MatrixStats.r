@@ -1702,33 +1702,6 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		}	
 	}
 	
-	#3. beginning check - if there are columns in grpby with only NAs and FALSE's (no TRUE's),
-	#set all values to be NA.  This has probably happened because if one of the variables that 
-	#made up the subgroup expression has all NAs for a certain year but for another variable
-	#it does not, then the combination of these variables gives FALSE and NA when it should give all
-	#NA, because 1 & NA = NA but 0 & NA = FALSE.
-	if (("vector" %in% is(grpby)) & !("matrix" %in% is(grpby))) {
-		unique.vals <- unique(grpby)
-	} else {
-		unique.vals <- apply(grpby, COL, function(x) { unique(x)})
-	}
-	if ("list" %in% is(unique.vals)) {
-		make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
-		make.col.all.NA <- unlist(make.col.all.NA)
-	} else {
-		if (("vector" %in% is(unique.vals)) & !("matrix" %in% is(unique.vals))) {
-			make.col.all.NA <- sum(is.na(unique.vals))==1 & length(unique.vals)==2
-		} else {
-			make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
-		}
-	}
-	
-	for (i in 1:length(make.col.all.NA)) {
-		if (make.col.all.NA[i]==TRUE) {
-			grpby[,i] <- rep(NA, nrow(grpby))
-		}
-	}
-	
 	#bulk of function starts   
 	
 	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
@@ -1788,6 +1761,35 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		
 		result <- t(t(result))
 	} else {
+		
+		
+		#3. beginning check - if there are columns in grpby with only NAs and FALSE's (no TRUE's),
+		#set all values to be NA.  This has probably happened because if one of the variables that 
+		#made up the subgroup expression has all NAs for a certain year but for another variable
+		#it does not, then the combination of these variables gives FALSE and NA when it should give all
+		#NA, because 1 & NA = NA but 0 & NA = FALSE.
+		if (("vector" %in% is(grpby)) & !("matrix" %in% is(grpby))) {
+			unique.vals <- unique(grpby)
+		} else {
+			unique.vals <- apply(grpby, COL, function(x) { unique(x)})
+		}
+		if ("list" %in% is(unique.vals)) {
+			make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
+			make.col.all.NA <- unlist(make.col.all.NA)
+		} else {
+			if (("vector" %in% is(unique.vals)) & !("matrix" %in% is(unique.vals))) {
+				make.col.all.NA <- sum(is.na(unique.vals))==1 & length(unique.vals)==2
+			} else {
+				make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+			}
+		}
+		
+		for (i in 1:length(make.col.all.NA)) {
+			if (make.col.all.NA[i]==TRUE) {
+				grpby[,i] <- rep(NA, nrow(grpby))
+			}
+		}
+		
 		#there is grouping
 		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
 			#i=3
