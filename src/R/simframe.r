@@ -120,6 +120,7 @@ createOutcomeMatrices <- function (simframe, outcome_module_name, iterations) {
 }
 
 
+
 #' Create a matrix of NA with specified col/row names/lengths.
 #' 
 #' @param cols 
