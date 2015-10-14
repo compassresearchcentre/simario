@@ -653,6 +653,90 @@ expr = {
 	}
 	
 	
+	#' Perform a simulation of X runs using parallel computing.
+	#' 
+	#' NB: if it exists, uses propensities in global environment when doing adjustments for year 1
+	#' 
+	#' @param .
+	#'  Simenv receiving object
+	#' @param total_runs
+	#'  total number of runs to simulate
+	#' 
+	#' @return 
+	#'  NULL
+	#' 
+	#' @export
+	#' @examples 
+	#' \dontrun{
+	#'  . <- env.base
+	#'  env.base$simulate()
+	#'  . <- env.scenario
+	#' }
+	
+	simulateP <- function(., total_runs=1) {
+		start_time <- proc.time()
+		
+		cat(gettextf("Simulating %s\n", .$name))
+		
+		if (!exists("propensities")) propensities <- NULL
+		
+		valid.subgroup <- .$check.subgroup.expr()
+		
+		if (valid.subgroup==1) {
+			.$applyAllCatAdjustmentsToSimframe(1, propensities)
+		} else if (valid.subgroup==0) {
+			cat("Pre-simulation scenario adjustments cannot be made because the subgroup expression is not defined \n")
+		} else {
+			stop("Check creation of valid.subgroup \n")
+		}
+		
+		#at this point after adjusting continuous variables some values may be higher than 
+			#the limits set throughout the simulation - can fix here (rather than changing
+			#more deep down simario functions)
+		if (exists("limits")) {
+			for (j in 1:length(limits)) {
+				v <- .$simframe[[names(limits)[j]]]
+				#v[v>limits[[j]]] <- limits[[j]]
+				#id <- which(v>limits[[j]])
+				.$simframe[[names(limits)[j]]][v>limits[[j]]] <- limits[[j]]
+			}
+		}
+		
+		.$presim.stats <- .$generatePreSimulationStats(.$simframe)
+		
+	
+		env.base.list = as.list(.)
+
+		outcomes <-sfLapply(1:total_runs, simulateRun, simenv=env.base.list)
+		
+		all_run_results <-sfLapply(1:total_runs, map_outcomes_to_run_results,  
+			simframe = env.base.list$simframe, 
+			outcomes = outcomes, 
+			cat.adjustments = env.base.list$cat.adjustments)		
+		
+		run_results_collated <- collate_all_run_results(all_run_results, 
+				cat.adjustments = env.base.list$cat.adjustments,
+				simframe = env.base.list$simframe, outcomes = outcomes[[1]])
+		
+		rm(env.base.list)
+		
+		.$num_runs_simulated <- total_runs
+		.$modules[[1]]$outcomes <- outcomes
+		.$modules[[1]]$all_run_results <- all_run_results
+
+		.$modules[[1]]$run_results_collated <- run_results_collated
+		
+		# call garbage collector to release memory used during calculation (sometimes this is a lot)
+		gc()
+		
+		end_time <- proc.time()
+		
+		return(end_time - start_time)
+		
+	}
+	
+	
+	
 	numberOfUnits <- function(.) {
 		dim(.$simframe)[1]
 	}
