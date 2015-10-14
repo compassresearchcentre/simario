@@ -27,7 +27,7 @@ colmeans.list <- function (xlistm) {
 				cfreq[is.na(cfreq)] <- 0
 				
 				# apply mean by col
-				apply(cfreq, COL, mean)
+				apply(cfreq, 2, mean)
 			} 
 	)
 }
@@ -66,14 +66,14 @@ colmeans.list <- function (xlistm) {
 mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0
 	
-	result <- apply(xa, c(ROW,COL), mean)
+	result <- apply(xa, c(1,2), mean)
 	numZ <- dim(xa)[ZDIM]
 	
 	# CIs only make sense if more than 1 Z dim
 	if (CI && numZ > 1) {
 		
 		#calculate error of each row
-		errZ <- apply(xa,c(ROW,COL),err)
+		errZ <- apply(xa,c(1,2),err)
 		
 		#calculate left CI
 		leftZ <- result - errZ
@@ -87,7 +87,7 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 		#dimnames(result)[[2]] <- c("Mean", "Lower", "Upper")
 		
 		# reorder so that lower and upper is next to the mean of each grouping
-		numGroups <- dim(xa)[COL]
+		numGroups <- dim(xa)[2]
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
 		
@@ -139,25 +139,25 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	if (NA.as.zero) xa[is.na(xa)] <- 0 #turns any 0s to NAs (this is the default)
 	
-	result <- apply(xa, c(ROW,COL), mean, na.rm=TRUE) 
+	result <- apply(xa, c(1,2), mean, na.rm=TRUE) 
 	numZ <- dim(xa)[ZDIM]
 	
 	# CIs only make sense if more than 1 Z dim
 	if (CI && numZ > 1) {
 		
-		##errZ <- apply(xa,c(ROW,COL),err)
+		##errZ <- apply(xa,c(1,2),err)
 		
 		#calculate left CI
-		leftZ <- apply(xa, c(ROW,COL), function(x) {quantile(x, .025, na.rm=T)})
+		leftZ <- apply(xa, c(1,2), function(x) {quantile(x, .025, na.rm=T)})
 		
 		#calculate right CI
-		rightZ <- apply(xa, c(ROW,COL), function(x) {quantile(x, .975, na.rm=T)})
+		rightZ <- apply(xa, c(1,2), function(x) {quantile(x, .975, na.rm=T)})
 		
 		#add left and right Z to the right hand side of result
 		resultCI <- cbind(Mean=result,  Lower=leftZ, Upper=rightZ)
 		
 		# reorder resultCI so that lower and upper is next to the mean of each grouping
-		numGroups <- dim(xa)[COL]
+		numGroups <- dim(xa)[2]
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
 
@@ -235,7 +235,7 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 	pct.array <- proportions_at_each_run(xa, grpby.tag, binbreaks, varname, dict)
 	
 	#take the mean across the z-dimensions to get the mean percentage in each category in each year across runs
-	result <- apply(pct.array, c(ROW,COL), mean)
+	result <- apply(pct.array, c(1,2), mean)
 	col.names <- colnames(xa)
 	colnames(result) <- col.names
 	
@@ -245,18 +245,18 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 	if (CI && numZ > 1) {
 		
 		#calculate left CI
-		leftZ <- apply(pct.array, c(ROW,COL), function(x) {quantile(x, .025, na.rm=T)})
+		leftZ <- apply(pct.array, c(1,2), function(x) {quantile(x, .025, na.rm=T)})
 		colnames(leftZ) <- col.names
 		
 		#calculate right CI
-		rightZ <- apply(pct.array, c(ROW,COL), function(x) {quantile(x, .975, na.rm=T)})
+		rightZ <- apply(pct.array, c(1,2), function(x) {quantile(x, .975, na.rm=T)})
 		colnames(rightZ) <- col.names
 		
 		#add left and right Z to the right hand side of result
 		resultCI <- cbind(Mean=result,  Lower=leftZ, Upper=rightZ)
 		
 		# reorder resultCI so that lower and upper is next to the mean of each grouping
-		numGroups <- dim(xa)[COL] #CHECK
+		numGroups <- dim(xa)[2] #CHECK
 		reordering <- as.vector(sapply(c(1:numGroups), function (x) { seq(from=x, length.out=3, by=numGroups)}))
 		resultCI <- resultCI[, reordering]
 		
@@ -343,7 +343,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 			}
 			grpby <- rep(1:numgroups, each=num.categories)
 			#calculate proportions
-			props <- apply(mat, ROW, function(x) { ######## up to
+			props <- apply(mat, 1, function(x) { ######## up to
 						grpsum <- tapply(x, grpby, sum)
 						grpsum2 <- rep(grpsum, each=num.categories)
 						x/grpsum2})
@@ -357,7 +357,7 @@ proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 		#each z-dimension is a cross-tab of years by categories
 		#xa has the raw numbers
 		#pct.list is a list (1 element per run), each element of the list is the percentages in each category in each year
-		pct.list <- apply(xa, 3, function(x) {list(t(apply(x, ROW, function(x) {x/sum(x)})))})
+		pct.list <- apply(xa, 3, function(x) {list(t(apply(x, 1, function(x) {x/sum(x)})))})
 		#convert the list to a 3D array
 		pct.array <- array(dim=c(nrow(xa), ncol(xa), length(pct.list)))
 		for (i in 1:length(pct.list)) {
@@ -556,7 +556,7 @@ prop.table.grpby <- function (x, grpby, na.rm=TRUE, CI=FALSE, num.runs) {
 #' }
 quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
-	result <- t(apply(mx, COL, function (x) {
+	result <- t(apply(mx, 2, function (x) {
 						qx <- quantile(x, ...)
 						if (!is.null(new.names)) {
 							names(qx) <- new.names
@@ -658,7 +658,7 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 
 	
 	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
-		result <- t(apply(mx, COL, function(x) {quantile(x, probs=probs, ...)}))
+		result <- t(apply(mx, 2, function(x) {quantile(x, probs=probs, ...)}))
 		colnames(result) <- new.names
 	} else {
 		result.by.col<- lapply(1:ncol(mx), function(i) {
@@ -703,6 +703,140 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 	structure(result, meta=c(varname=attr(mx, "varname")))
 }
 
+#' Execute quantile on the columns of a matrix by a grouping variable.
+#' Only used for user-specified subgroups.
+#' Extension of quantile_mx_cols to handle a time-variant grouing variable.
+#' grpby can be a vector or a matrix with columns representing the value of the 
+#' grpby variable in different years.
+#' Does not have ability to include weights or logisets.   
+#' The group-by variable may be time-invariant or time-variant.  
+#' Not sure if can handle no grouping. 
+#' 
+#' @param mx
+#'  matrix
+#' @param grpby
+#' a vector or matrix indicating the group to whic the unit belongs.  
+#' Quantiles will be calculated separately for each group.
+#' If the group-by variable is time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then 
+#' grpby should be a matrix with number of columns equal to number of years. 
+#' @param grpby.tag
+#' string. grouping variable names
+#' @param new.names
+#'  if specified, the names of the result will be 
+#'  set to this vector
+#' @param ...
+#'  additional arguments to pass to \code{\link{quantile}}
+#' e.g. na.rm=T
+#' 
+#' @return
+#'  quantile of each column returned as a row.  
+#' Quantiles for each group are put side-by-side in a rbind fashion.
+#' 
+#' @export
+#' @examples
+#' \dontrun{}
+quantile_mx_cols_BCASO_list <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
+	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
+	
+	# check that grpby dimensions are correct   
+	if (!is.null(grpby)){
+		if (is.vector(grpby)) {
+			if (!is.null(dim(grpby))) {
+				#if a matrix
+				if(nrow(mx) != nrow(grpby)) {
+					param1Name <- as.character(sys.call())[2]
+					stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
+				}
+			} else if (nrow(mx)!=length(grpby)) {
+				param1Name <- as.character(sys.call())[2]
+				stop(gettextf("Number of rows in %s != number of rows of grpby", param1Name))
+			}
+		}	
+	}
+	
+	if(is.vector(grpby)) {
+		grpby <- matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+	}
+	
+	if (!is.null(logiset)) {
+		logiset[is.na(logiset)] <- 0
+		#converts logiset from T/F to 0/1 (even if no NAs)
+		if (is.vector(logiset)) {
+			#mx <- mx[logiset, , drop=FALSE] #appears to be incorrect 
+			mx <- mx[logiset==1,]
+			#subset grpby which is a matrix by the logiset vector
+			grpby <- grpby[logiset==1,]
+		}
+		if (is.matrix(logiset)) {
+			mx2 <- as.vector(mx)
+			if (length(mx2)!=length(logiset)) {
+				#logiset can be matrix with one column,  in thsi case we have to repeat out
+				#logiset so the entire dataset gets subset rather than just the first column
+				logiset <- rep(logiset, ncol(mx))
+				logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
+			}
+			if (length(mx)!=length(logiset)) {
+				stop("Check logiset subsetting in quantile_mx_col_BCASO()")
+			}
+			NA_index <- which(logiset==F)
+			
+			mx2[NA_index] <- NA
+			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
+			if (!is.null(grpby)) {
+				grpby2 <- as.vector(grpby)
+				grpby2[NA_index] <- NA
+				grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))
+			}
+		}
+	}
+
+	
+	if ((is.null(grpby))|(sum(is.na(grpby))==length(grpby))) {
+		result <- t(apply(mx, 2, function(x) {quantile(x, probs=probs, ...)}))
+		colnames(result) <- new.names
+	} else {
+		result.by.col<- lapply(1:ncol(mx), function(i) {
+					#i=1
+					aggregate(mx[,i], by=list(grpby[,i]), FUN=quantile, probs=probs, ...)
+				})
+		num.groups <- nrow(result.by.col[[1]])
+		num.yrs <- length(result.by.col)
+		#empty, then gets filled
+		result <- matrix(ncol=length(probs)*num.groups, nrow=num.yrs)
+
+		for (j in 1:num.groups) {
+			grp.result <- matrix(nrow=num.yrs, ncol=length(probs))
+			for (i in 1:num.yrs) {#1:num.yrs
+				if (nrow(result.by.col[[i]])>1) {
+					#this will be FALSE for iterations where the variable was not simulated and grp.result[i,] will stay as NAs
+					grp.result[i,] <- result.by.col[[i]][j,][,2]
+				} 
+			}
+			result[,((j*7)-6):(j*7)] <- grp.result
+		}
+		
+		#name columns
+		start.colnames <- rep(new.names, num.groups)
+		if ((!is.null(grpby.tag))&(dlookup_exists(dict, grpby.tag)==1)) {
+			#colnames(result) <- c("Not in subgroup", "In subgroup")
+			cat.names <- c("Not in subgroup", "In subgroup")
+		} else if (!is.null(grpby.tag)) {
+			cat.names <- unlist(cnamesLookup(dict, grpby.tag))
+		} else {
+			cat("Checking naming sections in quantile_mx_cols_BCASO \n")
+		}
+		colname.prefixes <- rep(cat.names, each=ncol(result)/length(cat.names))
+		final.colnames <- character(length(start.colnames))
+		for (i in 1:length(colname.prefixes)) {
+			final.colnames[i] <- paste(colname.prefixes[i], start.colnames[i])
+		}
+		colnames(result) <- final.colnames
+
+	}
+	
+	structure(result, meta=c(varname=attr(mx, "varname")))
+}
 
 #' Summary table, with option to group and weight results.
 #'  
@@ -874,7 +1008,7 @@ summary_mx_cols <- function (mx, logiset=NULL) {
 	if (!is.null(logiset)) mx <- mx[logiset, ,drop=FALSE]
 	#if (!is.null(logiset)) grpby <- grpby[logiset]
 	
-	sm <- apply(mx, COL, summary)
+	sm <- apply(mx, 2, summary)
 	
 	if(is.list(sm)) {
 		# a list was returned which means 
@@ -1130,8 +1264,8 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 	if (!is.null(logiset)) grpby <- grpby[logiset]
 	
 	# if no column names, number them off
-	if (is.null(dimnames(mx)[[COL]])) {
-		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
+	if (is.null(dimnames(mx)[[2]])) {
+		dimnames(mx)[[2]] <- seq(dim(mx)[2])
 	}
 	
 	# get freqs for each column of mx, return a list
@@ -1148,7 +1282,7 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 			})
 	
 	# add names 
-	names(results.by.col) <- dimnames(mx)[[COL]]
+	names(results.by.col) <- dimnames(mx)[[2]]
 	
 	varname <- attr(mx, "varname")
 	if (is.null(varname)) {
@@ -1210,194 +1344,428 @@ table_mx_cols <- function(mx, grpby = NULL, grpby.tag = NULL, logiset = NULL, us
 #' table_mx_cols_BCASO(mx, grpby = grpby, logiset = logiset)
 #' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)}
 table_mx_cols_MELC <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logiset=NULL, dict) {
-	
-	if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
-	if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
-	if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
-	
-	#Check: If there are columns in grpby with only NAs and FALSE's (no TRUE's),
-	#set all values to be NA.  This has probably happened because if one of the variables that 
-	#made up the subgroup expression has all NAs for a certain year but for another variable
-	#it does not, then the combination of these variables gives FALSE and NA when it should give all
-	#NA, because 1 & NA = NA but 0 & NA = FALSE.
-	if (!is.null(grpby)) {
-		unique.vals <- apply(grpby, COL, function(x) { unique(x)})
-		if ("list" %in% is(unique.vals)) {
-			make.col.all.NA <- lapply(unique.vals, function(x) { (sum(is.na(x))==1 & length(x)==2) | all(is.na(x))})
-			make.col.all.NA <- unlist(make.col.all.NA)
-		} else {
-			make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
-		}
-		for (i in 1:length(make.col.all.NA)) {
-			if (make.col.all.NA[i]==TRUE) {
-				grpby[,i] <- rep(NA, nrow(grpby))
-			}
-		}
-	}
-	
-	#save varname
-	varname <- attr(mx, "varname")
-	if (is.null(varname)) {
-		varname <- attr(mx, "meta")[["varname"]]
-	}
-	
-	if (!is.null(logiset)) {
-		logiset[is.na(logiset)] <- 0
-		
-		# subset by logiset - if logiset is a vector
-		if (!is.matrix(logiset)) {
-			logiset <- as.logical(logiset)
-			mx <- mx[logiset, ,drop=FALSE]
-			if ( !is.null(grpby) ) grpby <- grpby[logiset, ,drop=FALSE]
-			if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
-		}
-		#subset by logiset - if logiset is a matrix
-		if (is.matrix(logiset)) {
-			
-			#mx loses varname here
-			mx2 <- as.vector(mx)
+  
+  #browser()
+  #if(!is.matrix(mx)) browser()  
+  
+  mx <- as.matrix(mx)
+  
+  if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
+  if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
+  if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+  
+  #Check: If there are columns in grpby with only NAs and FALSE's (no TRUE's),
+  #set all values to be NA.  This has probably happened because if one of the variables that 
+  #made up the subgroup expression has all NAs for a certain year but for another variable
+  #it does not, then the combination of these variables gives FALSE and NA when it should give all
+  #NA, because 1 & NA = NA but 0 & NA = FALSE.
+  if (!is.null(grpby)) {
+    unique.vals <- apply(grpby, 2, function(x) { unique(x)})
+    if ("list" %in% is(unique.vals)) {
+      make.col.all.NA <- lapply(unique.vals, function(x) { (sum(is.na(x))==1 & length(x)==2) | all(is.na(x))})
+      make.col.all.NA <- unlist(make.col.all.NA)
+    } else {
+      make.col.all.NA <- apply(unique.vals, 2, function(x) { sum(is.na(x))==1 & length(x)==2})
+    }
+    #for (i in 1:length(make.col.all.NA)) {
+    #	if (make.col.all.NA[i]==TRUE) {
+    #		grpby[,i] <- rep(NA, nrow(grpby))
+    #	}
+    #}
+    grpby[,make.col.all.NA] <- NA		
+  }
+  
+  #save varname
+  varname <- attr(mx, "varname")
+ 
+  if (is.null(varname)) {
+    varname <- attr(mx, "meta")[["varname"]]
+  }
+  
+  if (!is.null(logiset)) {
+    logiset[is.na(logiset)] <- 0
+    
+    # subset by logiset - if logiset is a vector
+    if (!is.matrix(logiset)) {
+      logiset <- as.logical(logiset)
+      mx <- mx[logiset, ,drop=FALSE]
+      if ( !is.null(grpby) ) grpby <- grpby[logiset, ,drop=FALSE]
+      if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
+    }
+    #subset by logiset - if logiset is a matrix
+    if (is.matrix(logiset)) {
+      
+      #mx loses varname here
+      mx2 <- as.vector(mx)
+      
+      if (length(mx2)!=length(logiset)) {
+        #logiset can be matrix with one column,  in thsi case we have to repeat out
+        #logiset so the entire dataset gets subset rather than just the first column
+        logiset <- rep(logiset, ncol(mx))
+        logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
+      }
+      if (length(mx)!=length(logiset)){
+        stop("Check logiset subsetting in table_mx_cols_MELC()")
+      }
+      NA_index <- which(logiset==F)
+      
+      mx2[NA_index] <- NA
+      mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
+      
+      if (!is.null(grpby)) {
+        grpby2 <- as.vector(grpby)
+        grpby2[NA_index] <- NA
+        grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))	
+      }
+      if (!is.null(wgts))  { 
+        wgts2 <- as.vector(wgts)
+        wgts2[NA_index] <- NA
+        wgts <- matrix(wgts2, byrow=F, nrow=nrow(wgts))
+      }			
+    }		
+  }
+  
+  # if no column names, number them off
+  if (is.null(dimnames(mx)[[2]])) {
+    dimnames(mx)[[2]] <- seq(dim(mx)[2])
+  }
+  
+  if (!is.null(grpby.tag)) {
+    if (grpby.tag=="") {
+      grpby.tag <- NULL
+    }
+  }
+  
+  # get freqs for each column of mx, return a list
+  # in case dimensions of results of the table.grpby calls are different
+  # each element of the list represents a column, 
+  # each element is a matrix where columns are the group by
+  # and rows the categories
+  
+  #use lapply instead of apply because apply simplifies
+  #use lapply instead of apply so we don't have the split attributes
+  
+  #identify NA cols for each variable
+  nas.present <- apply(mx, 2, function(x) { any(is.na(x)) })
+  na.col.id <- which(nas.present)
+  #num.rows <- length(table(mx))
+  num.rows <-length(sort(unique(as.numeric(mx))))
+  #num.cols <- length(table(grpby))			
+  num.cols <- length(sort(unique(as.numeric(grpby))))
+  
+  #a subgroup scenario was run but the groupby variable was not simulated 
+  #for the current iteration. (E.g. a subgroup scenario was run for where 
+  #welfare==1, and the table here being computed is the depression by welfare 
+  #which cannot be done if welfare is a vector of NAs)
+  
+  #for now, set the table to be a table of 0s (which will come out at NAs
+  #in the collated results.  ALternative idea is to use the values of 
+  #welfare at the last available iteration as the subgroup criterion or to
+  #take the mean of welfare and determine whether they were on welfare for
+  #the majority of the time or not.
+  
+  if (num.cols==0 & is.null(grpby)) {
+    #no grouping
+    num.cols <- 1
+  } else if (num.cols==0 & !is.null(grpby)) {
+    #is grouping
+    if (!is.null(logiset)) {
+      stop("check about gettinng number of groups from logiset object in table_mx_cols_MELC()")
+    } else {
+      num.cols <- 2
+    }	
+  }
+  
+  results.by.col <- lapply(1:ncol(mx), function(i) {
+    #i=18
+    if (i %in% na.col.id) {
+      #in an iteration with all NAs (variable not simulated)
+      result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+      if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+        colnames(result) <- c("Not in subgroup", "In subgroup")
+      }
+      if (is.null(rownames(result))) {
+        #rownames(result) <- names(table(mx))
+		rownames(result) <- sort(unique(as.numeric(mx)))
+      }
+    } else {
+      #iteration where variable was simulated      
+      if (!is.null(grpby)) {
+        #this function is used for both standard and subgroup scenarios so need to
+        #first check whether grpby exists or will get an error in the following if
+        #statement
+        if (all(is.na(grpby[,i]))) {          
+          result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+          if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+            colnames(result) <- c("Not in subgroup", "In subgroup")
+          }
+          rownames1 <- rownames(table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i]))
+          if (length(rownames1)!=nrow(result)) {
+            rownames1 <- dict$cnamesLookup(varname)[[1]]
+            if (is.null(rownames1[[1]])) {
+              stop("Check assignation of rownames in table_mx_cols_MELC()")
+            }
+          }
+          rownames(result) <- rownames1
+        } else {
+          result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+          if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+            colnames(result) <- c("Not in subgroup", "In subgroup")
+          }
+        }
+      } else {
+        result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+        if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
+          colnames(result) <- c("Not in subgroup", "In subgroup")
+        }
+      }
+    }
+    return(result)
+  })
+  
+  # add names 
+  names(results.by.col) <- dimnames(mx)[[2]]
+  
+  # return with meta
+  structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
+}
 
-			if (length(mx2)!=length(logiset)) {
-				#logiset can be matrix with one column,  in thsi case we have to repeat out
-					#logiset so the entire dataset gets subset rather than just the first column
-				logiset <- rep(logiset, ncol(mx))
-				logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
-			}
-			if (length(mx)!=length(logiset)){
-				stop("Check logiset subsetting in table_mx_cols_MELC()")
-			}
-			NA_index <- which(logiset==F)
-			
-			mx2[NA_index] <- NA
-			mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
-			
-			if (!is.null(grpby)) {
-				grpby2 <- as.vector(grpby)
-				grpby2[NA_index] <- NA
-				grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))	
-			}
-			if (!is.null(wgts))  { 
-				wgts2 <- as.vector(wgts)
-				wgts2[NA_index] <- NA
-				wgts <- matrix(wgts2, byrow=F, nrow=nrow(wgts))
-			}
-			
-		}
-		
-	}
-	
-	# if no column names, number them off
-	if (is.null(dimnames(mx)[[COL]])) {
-		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
-	}
-	
-	if (!is.null(grpby.tag)) {
-		if (grpby.tag=="") {
-			grpby.tag <- NULL
-		}
-	}
-	
-	# get freqs for each column of mx, return a list
-	# in case dimensions of results of the table.grpby calls are different
-	# each element of the list represents a column, 
-	# each element is a matrix where columns are the group by
-	# and rows the categories
-	
-	#use lapply instead of apply because apply simplifies
-	#use lapply instead of apply so we don't have the split attributes
 
-	#identify NA cols for each variable
-	nas.present <- apply(mx, COL, function(x) { any(is.na(x)) })
-	na.col.id <- which(nas.present==TRUE)
-							
-	results.by.col <- lapply(1:ncol(mx), function(i) {
-				#i=14
-				if ((i %in% na.col.id)==TRUE) {
-					#in an iteration with all NAs (variable not simulated)
-					num.cols <- length(table(grpby))
-					if (num.cols==0 & is.null(grpby)) {
-						#no grouping
-						num.cols <- 1
-					} else if (num.cols==0 & !is.null(grpby)) {
-						#is grouping
-						if (!is.null(logiset)) {
-							stop("check about gettinng number of groups from logiset object in table_mx_cols_MELC()")
-						} else {
-							num.cols <- 2
-						}	
-					}
-					num.rows <- length(table(mx))
-					result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
-					if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-						colnames(result) <- c("Not in subgroup", "In subgroup")
-					}
-					if (is.null(rownames(result))) {
-						rownames(result) <- names(table(mx))
-					}
-				} else if ((i %in% na.col.id)==FALSE) {
-					#iteration where variable was simulated
-				
-					if (!is.null(grpby)) {
-						#this function is used for both standard and subgroup scenarios so need to
-						#first check whether grpby exists or will get an error in the following if
-						#statement
-						if (all(is.na(grpby[,i]))) {
-							#a subgroup scenario was run but the groupby variable was not simulated 
-							#for the current iteration. (E.g. a subgroup scenario was run for where 
-							#welfare==1, and the table here being computed is the depression by welfare 
-							#which cannot be done if welfare is a vector of NAs)
-						
-							#for now, set the table to be a table of 0s (which will come out at NAs
-							#in the collated results.  ALternative idea is to use the values of 
-							#welfare at the last available iteration as the subgroup criterion or to
-							#take the mean of welfare and determine whether they were on welfare for
-							#the majority of the time or not.
-							num.cols <- length(table(grpby))
-							if (num.cols==0 & is.null(grpby)) {
-								#no grouping
-								num.cols <- 1
-							} else if (num.cols==0 & !is.null(grpby)) {
-								#is grouping
-								if (!is.null(logiset)) {
-									stop("check about gettinng number of groups from logiset object in table_mx_cols_MELC()")
-								} else {
-									num.cols <- 2
-								}	
-							}
-							num.rows <- length(table(mx))
-							result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
-							if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-								colnames(result) <- c("Not in subgroup", "In subgroup")
-							}
-							rownames1 <- rownames(table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i]))
-							if (length(rownames1)!=nrow(result)) {
-								rownames1 <- dict$cnamesLookup(varname)[[1]]
-								if (is.null(rownames1[[1]])) {
-									stop("Check assignation of rownames in table_mx_cols_MELC()")
-								}
-							}
-							rownames(result) <- rownames1
-						} else {
-							result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-							if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-								colnames(result) <- c("Not in subgroup", "In subgroup")
-							}
-						}
-					} else {
-						result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
-						if ((!is.null(grpby.tag))&(dict$dlookup_exists(grpby.tag)==1)) {
-							colnames(result) <- c("Not in subgroup", "In subgroup")
-						}
-					}
-				}
-				return(result)
-			})
-	
-	# add names 
-	names(results.by.col) <- dimnames(mx)[[COL]]
-	
-	# return with meta
-	structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
+
+
+#' Generates a frequency table, with option to group by, and weight, for each column of a 
+#' matrix.  The group-by variable may be time-invariant or time-variant.  
+#' 
+#' @param mx
+#'  matrix, or dataframe
+#' 
+#' @param grpby
+#'  a vector or matrix of T/F elements to group by, or NULL or unspecified to do no grouping.
+#'  Same length (or number of columns) as the columns of mx.
+#' If  the group-by variable is time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then grpby 
+#' should be a matrix with number of columns equal to number of years. 
+#' 
+#' @param wgts
+#'  a vector or matrix of weights, or NULL or unspecified to do no weighting.
+#'  Same length (or number of columns) as the columns of mx.
+#' 
+#' @param grpby.tag
+#'  a character vector. If specified this value with be attached as the
+#'  meta attribute "grpby.tag"
+#'
+#' @param logiset
+#'  logical vector or matrix indicating which rows to include, or NULL to include all.
+#'
+#' @param dict
+#'  the specific project dictionary
+#' 
+#' @return
+#'  list. Each element of the list is a frequency table for a column in mx.
+#'  If grpby is specified this will be a table with columns that are the group by and rows the categories. 
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
+#'
+#' @export 
+#' @examples
+#' \dontrun{
+#' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
+#' grpby <- c('M','F','F','M')
+#' grpby<-matrix(c('M','F','F','M',  'M','M','F','M',  'M','M','M','M',  'F','F','F','F', 'F','F','F','M'),nrow=4,ncol=5)
+#' wgts<-matrix(c(rep(c(1,2,1,1),4),1,3,1,1),nrow=4,ncol=5)
+#' table_mx_cols(mx)
+#' table_mx_cols(mx, grpby)
+#' table_mx_cols(mx, grpby,wgts)
+#' logiset <- c(FALSE, TRUE, FALSE, TRUE)
+#' logiset <- c(0, 1, 0, 1)
+#' logiset <- matrix(data=c(rep(c(FALSE, TRUE, FALSE, TRUE),2),rep(c(TRUE, FALSE, TRUE,FALSE),3)), nrow=4,ncol=5)
+#' logiset <- matrix(data=c(rep(c(0, 1, 0, 1),2),rep(c(1, 0, 1,0),3)), nrow=4,ncol=5)
+#' table_mx_cols_BCASO(mx, grpby = grpby, logiset = logiset)
+#' table_mx_cols_BCASO(mx, grpby = grpby, wgts=wgts, logiset = logiset)}
+table_mx_cols_MELC_list <- function(mx, grpby=NULL, wgts=NULL, grpby.tag=NULL, logiset=NULL, dict) {
+  
+  #browser()
+  #if(!is.matrix(mx)) browser()  
+  
+  mx <- as.matrix(mx)
+  
+  if (is.vector(wgts)) wgts <-matrix(rep(wgts, ncol(mx)), ncol=ncol(mx))
+  if (is.null(wgts)) wgts <- matrix(rep(1, length(mx)), ncol=ncol(mx))
+  if (is.vector(grpby)) grpby <-matrix(rep(grpby, ncol(mx)), ncol=ncol(mx))
+  
+  #Check: If there are columns in grpby with only NAs and FALSE's (no TRUE's),
+  #set all values to be NA.  This has probably happened because if one of the variables that 
+  #made up the subgroup expression has all NAs for a certain year but for another variable
+  #it does not, then the combination of these variables gives FALSE and NA when it should give all
+  #NA, because 1 & NA = NA but 0 & NA = FALSE.
+  if (!is.null(grpby)) {
+    unique.vals <- apply(grpby, 2, function(x) { unique(x)})
+    if ("list" %in% is(unique.vals)) {
+      make.col.all.NA <- lapply(unique.vals, function(x) { (sum(is.na(x))==1 & length(x)==2) | all(is.na(x))})
+      make.col.all.NA <- unlist(make.col.all.NA)
+    } else {
+      make.col.all.NA <- apply(unique.vals, 2, function(x) { sum(is.na(x))==1 & length(x)==2})
+    }
+    #for (i in 1:length(make.col.all.NA)) {
+    #	if (make.col.all.NA[i]==TRUE) {
+    #		grpby[,i] <- rep(NA, nrow(grpby))
+    #	}
+    #}
+    grpby[,make.col.all.NA] <- NA		
+  }
+  
+  #save varname
+  varname <- attr(mx, "varname")
+ 
+  if (is.null(varname)) {
+    varname <- attr(mx, "meta")[["varname"]]
+  }
+  
+  if (!is.null(logiset)) {
+    logiset[is.na(logiset)] <- 0
+    
+    # subset by logiset - if logiset is a vector
+    if (!is.matrix(logiset)) {
+      logiset <- as.logical(logiset)
+      mx <- mx[logiset, ,drop=FALSE]
+      if ( !is.null(grpby) ) grpby <- grpby[logiset, ,drop=FALSE]
+      if ( !is.null(wgts) ) wgts <- wgts[logiset, ,drop=FALSE]
+    }
+    #subset by logiset - if logiset is a matrix
+    if (is.matrix(logiset)) {
+      
+      #mx loses varname here
+      mx2 <- as.vector(mx)
+      
+      if (length(mx2)!=length(logiset)) {
+        #logiset can be matrix with one column,  in thsi case we have to repeat out
+        #logiset so the entire dataset gets subset rather than just the first column
+        logiset <- rep(logiset, ncol(mx))
+        logiset <- matrix(logiset, byrow=F, nrow=nrow(mx))
+      }
+      if (length(mx)!=length(logiset)){
+        stop("Check logiset subsetting in table_mx_cols_MELC()")
+      }
+      NA_index <- which(logiset==F)
+      
+      mx2[NA_index] <- NA
+      mx <- matrix(mx2, byrow=F, nrow=nrow(mx))
+      
+      if (!is.null(grpby)) {
+        grpby2 <- as.vector(grpby)
+        grpby2[NA_index] <- NA
+        grpby <- matrix(grpby2, byrow=F, nrow=nrow(grpby))	
+      }
+      if (!is.null(wgts))  { 
+        wgts2 <- as.vector(wgts)
+        wgts2[NA_index] <- NA
+        wgts <- matrix(wgts2, byrow=F, nrow=nrow(wgts))
+      }			
+    }		
+  }
+  
+  # if no column names, number them off
+  if (is.null(dimnames(mx)[[2]])) {
+    dimnames(mx)[[2]] <- seq(dim(mx)[2])
+  }
+  
+  if (!is.null(grpby.tag)) {
+    if (grpby.tag=="") {
+      grpby.tag <- NULL
+    }
+  }
+  
+  # get freqs for each column of mx, return a list
+  # in case dimensions of results of the table.grpby calls are different
+  # each element of the list represents a column, 
+  # each element is a matrix where columns are the group by
+  # and rows the categories
+  
+  #use lapply instead of apply because apply simplifies
+  #use lapply instead of apply so we don't have the split attributes
+  
+  #identify NA cols for each variable
+  nas.present <- apply(mx, 2, function(x) { any(is.na(x)) })
+  na.col.id <- which(nas.present)
+  #num.rows <- length(table(mx))
+  num.rows <-length(sort(unique(as.numeric(mx))))
+  #num.cols <- length(table(grpby))			
+  num.cols <- length(sort(unique(as.numeric(grpby))))
+  
+  #a subgroup scenario was run but the groupby variable was not simulated 
+  #for the current iteration. (E.g. a subgroup scenario was run for where 
+  #welfare==1, and the table here being computed is the depression by welfare 
+  #which cannot be done if welfare is a vector of NAs)
+  
+  #for now, set the table to be a table of 0s (which will come out at NAs
+  #in the collated results.  ALternative idea is to use the values of 
+  #welfare at the last available iteration as the subgroup criterion or to
+  #take the mean of welfare and determine whether they were on welfare for
+  #the majority of the time or not.
+  
+  if (num.cols==0 & is.null(grpby)) {
+    #no grouping
+    num.cols <- 1
+  } else if (num.cols==0 & !is.null(grpby)) {
+    #is grouping
+    if (!is.null(logiset)) {
+      stop("check about gettinng number of groups from logiset object in table_mx_cols_MELC()")
+    } else {
+      num.cols <- 2
+    }	
+  }
+  
+  results.by.col <- lapply(1:ncol(mx), function(i) {
+    #i=18
+    if (i %in% na.col.id) {
+      #in an iteration with all NAs (variable not simulated)
+      result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+      if ((!is.null(grpby.tag))&(dlookup_exists(dict,grpby.tag)==1)) {
+        colnames(result) <- c("Not in subgroup", "In subgroup")
+      }
+      if (is.null(rownames(result))) {
+        #rownames(result) <- names(table(mx))
+		rownames(result) <- sort(unique(as.numeric(mx)))
+      }
+    } else {
+      #iteration where variable was simulated      
+      if (!is.null(grpby)) {
+        #this function is used for both standard and subgroup scenarios so need to
+        #first check whether grpby exists or will get an error in the following if
+        #statement
+        if (all(is.na(grpby[,i]))) {          
+          result <- matrix(rep(0, num.cols*num.rows), ncol=num.cols, nrow=num.rows)
+          if ((!is.null(grpby.tag))&(dlookup_exists(dict,grpby.tag)==1)) {
+            colnames(result) <- c("Not in subgroup", "In subgroup")
+          }
+          rownames1 <- rownames(table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i]))
+          if (length(rownames1)!=nrow(result)) {
+            rownames1 <- cnamesLookup(dict,varname)[[1]]
+            if (is.null(rownames1[[1]])) {
+              stop("Check assignation of rownames in table_mx_cols_MELC()")
+            }
+          }
+          rownames(result) <- rownames1
+        } else {
+          result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+          if ((!is.null(grpby.tag))&(dlookup_exists(dict,grpby.tag)==1)) {
+            colnames(result) <- c("Not in subgroup", "In subgroup")
+          }
+        }
+      } else {
+        result <- table.grpby_BCASO(mx[,i], grpby[,i], wgts=wgts[,i])
+        if ((!is.null(grpby.tag))&(dlookup_exists(dict,grpby.tag)==1)) {
+          colnames(result) <- c("Not in subgroup", "In subgroup")
+        }
+      }
+    }
+    return(result)
+  })
+  
+  # add names 
+  names(results.by.col) <- dimnames(mx)[[2]]
+  
+  # return with meta
+  structure(results.by.col, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
 }
 
 
@@ -1472,7 +1840,7 @@ wtdtable <- function (x, wgts=rep(1,length(x))) {
 #' 
 #' @export 
 #' @examples 
-#' COL<-2
+#' 2<-2
 #' library(Hmisc)
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
 #' wgts = rep(1,nrow(mx))
@@ -1495,15 +1863,16 @@ wtdtable_mx_cols <- function(mx, wgts = rep(1,nrow(mx)), addVariableName = FALSE
 	}
 	
 	# if no column names, number them off
-	if (is.null(dimnames(mx)[[COL]])) {
-		dimnames(mx)[[COL]] <- seq(dim(mx)[COL])
+	if (is.null(dimnames(mx)[[2]])) {
+		dimnames(mx)[[2]] <- seq(dim(mx)[2])
 	}
 	
 	# get the total set of categories (ie: frequency buckets)
-	cats <- as.numeric(names(table(mx)))
-	
+	#cats <- as.numeric(names(table(mx)))
+	cats <- sort(unique(as.numeric(mx)))
+
 	# get freqs for each column of mx
-	freqs <- apply(mx, COL, function (x) { wtdtable(x,wgts)})
+	freqs <- apply(mx, 2, function (x) { wtdtable(x,wgts)})
 	
 	if (mode(freqs)=="list") {
 		# if its a list it means that the set of cats between
@@ -1583,7 +1952,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 	if (!is.null(logiset)) grpby <- subset(grpby, logiset)
 	
 	if (is.null(grpby)) {
-		result <- apply(mx, COL, function(x) {
+		result <- apply(mx, 2, function(x) {
 					#x <- mx[,60]
 					if (!na.rm & any(is.na(x))) {
 						NA
@@ -1596,7 +1965,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 		result <- t(t(result)) #turn into matrix
 		
 	} else {
-		result <- t(apply(mx, COL, function (x) {
+		result <- t(apply(mx, 2, function (x) {
 							#x <- mx[,6]
 							if (!na.rm&any(is.na(x))) {
 								rep(NA, length(unique(grpby)))
@@ -1612,7 +1981,7 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 							}
 							
 						}))
-		dimnames(result)[[COL]] <- sort(unique(grpby))	
+		dimnames(result)[[2]] <- sort(unique(grpby))	
 	}
 	
 	structure(result, meta=c(varname=varname, grpby.tag = grpby.tag, set=attr(logiset,"desc")))
@@ -1671,7 +2040,9 @@ mean_mx_cols <- function (mx, grpby=NULL, grpby.tag = NULL, logiset=NULL, wgts =
 #' wgts<-matrix(c(1,1,1,1,1,2,2,2,2,1), ncol = 2)
 #' na.rm = FALSE ; na.rm = TRUE
 mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wgts=NULL, dict=NULL) {
-		
+	
+	mx <- as.matrix(mx)
+	
 	# 1. beginning check - that weight dimensions are correct
 	if (!is.null(wgts)) {
 		if (is.vector(wgts)) {
@@ -1710,6 +2081,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	
 	# save before subsetting mx
 	varname <- attr(mx, "varname")
+	
 	
 	# subset by logiset
 	if (!is.null(logiset)) {
@@ -1752,7 +2124,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 	
 	if ( is.null(grpby)) { ##|| sum(is.na(grpby)) == length(grpby) ) {
 		
-		result <- apply(matrix(1:ncol(mx),nrow=1), COL, function(i) {
+		result <- apply(matrix(1:ncol(mx),nrow=1), 2, function(i) {
 					#i = 1
 					x <- mx[,i]
 					non.nas <-  !is.na(x)
@@ -1771,7 +2143,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		if (("vector" %in% is(grpby)) & !("matrix" %in% is(grpby))) {
 			unique.vals <- unique(grpby)
 		} else {
-			unique.vals <- apply(grpby, COL, function(x) { unique(x)})
+			unique.vals <- apply(grpby, 2, function(x) { unique(x)})
 		}
 		if ("list" %in% is(unique.vals)) {
 			make.col.all.NA <- lapply(unique.vals, function(x) { sum(is.na(x))==1 & length(x)==2})
@@ -1780,7 +2152,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			if (("vector" %in% is(unique.vals)) & !("matrix" %in% is(unique.vals))) {
 				make.col.all.NA <- sum(is.na(unique.vals))==1 & length(unique.vals)==2
 			} else {
-				make.col.all.NA <- apply(unique.vals, COL, function(x) { sum(is.na(x))==1 & length(x)==2})
+				make.col.all.NA <- apply(unique.vals, 2, function(x) { sum(is.na(x))==1 & length(x)==2})
 			}
 		}
 		
@@ -1791,7 +2163,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		}
 		
 		#there is grouping
-		result <- t(apply(matrix(1:ncol(mx),nrow=1), COL, function (i) {
+		result <- t(apply(matrix(1:ncol(mx),nrow=1), 2, function (i) {
 			#i=3
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
@@ -1841,7 +2213,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		if ((sum(is.na(result[,ncol(result)]))==nrow(result)) & !is.null(logiset)) {
 			result <- result[,-ncol(result)]
 		}
-		dimnames(result)[[COL]] <- sort(unique(allgrpby))
+		dimnames(result)[[2]] <- sort(unique(allgrpby))
 		
 		if (is.null(dict)) {
 			stop("Dict is NULL")

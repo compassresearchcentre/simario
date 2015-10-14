@@ -471,5 +471,136 @@ Dictionary <- proto(expr = {
 	
 })
 
+dlookup <- function(dict, x) {
+		
+		name <- c()
+		grouping <- c()
+		set <- c()
+		weighting <- c()
+		meta <- attr(x, "meta")
+		
+		#get the variable name
+		if (!is.null(meta)) {
+			#use the meta attribute
+			name <- meta["varname"]
+			if (!is.na(meta["grouping"])) grouping <- paste(" by ", meta["grouping"], sep="")
+			if (!is.na(meta["grpby.tag"])) {
+				if (length(grep("sg.var", meta["grpby.tag"]))>=1) {
+					grouping <- " by subgroup"	
+				} else {
+					grouping <- paste(" by ", dlookup(dict, meta["grpby.tag"]), sep="")
+				}
+			} 
+			if (!is.na(meta["set"])) set <- paste(" (", meta["set"], ")", sep="")
+			if (!is.na(meta["weighting"])) weighting <- meta["weighting"]
+			
+		} 
+		
+		# if no meta, or no name from meta
+		if (is.null(name) || is.na(name)) {
+			
+			if (class(x) %in% c("matrix", "array", "table") && !is.null(names(dimnames(x)))) {
+				#get name from names of dimensions
+				namesdim <- names(dimnames(x))
+				namesdim <- stripEmpty(namesdim) #remove NAs and empty strings
+				
+				# get last dim for name
+				name <- namesdim[length(namesdim)]
+				
+			} else if (class(x) == "character") {
+				#get name from first position of char vector
+				name <- x[1]
+				
+			} else {
+				#fail
+				firstParamName <- as.character(sys.call())[2]
+				stop(gettextf("cannot determine varname from %s: no meta or names", firstParamName))
+			}
+		}
+		
+		#lookup name in dictionary
+		if (!name %in% names(dict$descriptions)) {
+			stop(gettextf("'%s' does not exist in the data dictionary", name))
+		}
+		
+		desc <- dict$descriptions[[name]]
+		
+		if (is.null(desc)) {
+			stop(gettextf("variable named '%s' does not exist in data dictionary", name))
+			name <- dname
+		}
+		
+		#add grouping, weighting, and set descriptions (if any)
+		weightdesc <- ifelse(weighting == "weightBase", "", " scenario")
+		paste(desc, grouping, weightdesc, set, sep="")
+	}
+
+	dlookup_exists <- function(dict, x) {
+		
+		name <- c()
+		grouping <- c()
+		set <- c()
+		weighting <- c()
+		meta <- attr(x, "meta")
+		
+		#get the variable name
+		if (!is.null(meta)) {
+			#use the meta attribute
+			name <- meta["varname"]
+			if (!is.na(meta["grouping"])) grouping <- paste(" by ", meta["grouping"], sep="")
+			if (!is.na(meta["grpby.tag"])) grouping <- paste(" by ", .$dlookup(meta["grpby.tag"]), sep="")
+			if (!is.na(meta["set"])) set <- paste(" (", meta["set"], ")", sep="")
+			if (!is.na(meta["weighting"])) weighting <- meta["weighting"]
+			
+		} 
+		
+		# if no meta, or no name from meta
+		if (is.null(name) || is.na(name)) {
+			
+			if (class(x) %in% c("matrix", "array", "table") && !is.null(names(dimnames(x)))) {
+				#get name from names of dimensions
+				namesdim <- names(dimnames(x))
+				namesdim <- stripEmpty(namesdim) #remove NAs and empty strings
+				
+				# get last dim for name
+				name <- namesdim[length(namesdim)]
+				
+			} else if (class(x) == "character") {
+				#get name from first position of char vector
+				name <- x[1]
+				
+			} else {
+				#fail
+				firstParamName <- as.character(sys.call())[2]
+				#cat("Variable does not exist in the data dictionary \n")
+				return(1)
+				#stop(gettextf("cannot determine varname from %s: no meta or names", firstParamName))
+			}
+		}
+		
+		#lookup name in dictionary
+		if (!name %in% names(dict$descriptions)) {
+			#cat("Variable does not exist in the data dictionary \n")
+			return(1)
+			#stop(gettextf("'%s' does not exist in the data dictionary", name))
+		}
+		
+		desc <- dict$descriptions[[name]]
+		
+		if (is.null(desc)) {
+			stop(gettextf("variable named '%s' does not exist in data dictionary", name))
+			name <- dname
+		}
+		
+		#add grouping, weighting, and set descriptions (if any)
+		weightdesc <- ifelse(weighting == "weightBase", "", " scenario")
+		paste(desc, grouping, weightdesc, set, sep="")
+	}
+
+	cnamesLookup <- function(dict, vars) {
+		cn <- dict$codings[vars]
+		lapply(cn, names)
+	}
+		
 cat("Loaded Dictionary\n")
 
