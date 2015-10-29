@@ -27,7 +27,8 @@ SimenvDemo <- proto(. = Simenv, expr = {
 	new <- function(., name=NULL, simframe=simframe.master, dict=dict_demo) {
 		
 		NUM_ITERATIONS <- 100
-		cat.adjustments <- createEmptyCatAdjustments(simframe, dict, numiterations=NUM_ITERATIONS)
+		cat.adjustments <- createEmptyCatAdjustments(simframe, dict, 
+				numiterations=NUM_ITERATIONS)
 		
 		modules <- list(demo = SimmoduleDemo$new(simframe))
 		
@@ -95,10 +96,12 @@ SimenvDemo <- proto(. = Simenv, expr = {
 		
 		#create continuous variable cat.adjustments
 		#cat.adjustments$IQ <- createAdjustmentMatrix("IQ", binbreaks$IQ[-1], numiterations, is_a_level_var=F, cont.binbreaks=binbreaks$IQ, catToContModels=catToContModels$IQ)
-		cat.adjustments$IQ <- createAdjustmentMatrix("IQ", rows=numiterations, is_a_level_var=F, cont.binbreaks=binbreaks$IQ, catToContModels=catToContModels$IQ)
+		cat.adjustments$IQ <- createAdjustmentMatrix("IQ", rows=numiterations, is_a_level_var=F, 
+				cont.binbreaks=binbreaks$IQ, catToContModels=catToContModels$IQ)
 		#is_a_level_var is not strictly needed - I tried it without it and the default works to correctly identify whether this is a categorical or continuous variable
 		
-		cat.adjustments$earnings <- createAdjustmentMatrix("earnings", binbreaks$earnings[-1], numiterations, is_a_level_var=F, cont.binbreaks=binbreaks$earnings)
+		cat.adjustments$earnings <- createAdjustmentMatrix("earnings", binbreaks$earnings[-1], 
+				numiterations, is_a_level_var=F, cont.binbreaks=binbreaks$earnings)
 		
 		cat.adjustments 
 	}

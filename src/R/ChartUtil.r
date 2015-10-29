@@ -77,35 +77,35 @@
 #' chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name)
 #' }
 chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
-	
-	# remove NAs
-	result.row.base <- na.omit(result.row.base)
-	result.row.scenario <- na.omit(result.row.scenario)
-	
-	me.base <- result.as.means.and.errs(result.row.base)
-	me.scenario <- result.as.means.and.errs(result.row.scenario)
-	
-	me <- merge_list_mx.by.rows(me.base, me.scenario)
-	
-	#replace NAs with zeros
-	me <- lapply(me, function(x) {
-				#x <- me$means
-				x[is.na(x)] <- 0; x
-			})
-	
-	chart.bar.err(me$means, me$errs, 
-			xlab=xlab, 
-			ylab=ylab, main=title,
-			col=c("cornflowerblue", "chocolate1"),
-			legend.text=c("Base", scenario.name))
+  
+  # remove NAs
+  result.row.base <- na.omit(result.row.base)
+  result.row.scenario <- na.omit(result.row.scenario)
+  
+  me.base <- result.as.means.and.errs(result.row.base)
+  me.scenario <- result.as.means.and.errs(result.row.scenario)
+  
+  me <- merge_list_mx.by.rows(me.base, me.scenario)
+  
+  #replace NAs with zeros
+  me <- lapply(me, function(x) {
+    #x <- me$means
+    x[is.na(x)] <- 0; x
+  })
+  
+  chart.bar.err(me$means, me$errs, 
+                xlab=xlab, 
+                ylab=ylab, main=title,
+                col=c("cornflowerblue", "chocolate1"),
+                legend.text=c("Base", scenario.name))
 }
 
 #' Close over parameters to chart.2series.bar.err 
 #' @export 
 chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
-	function() {
-		chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) 
-	}
+  function() {
+    chart.2series.bar.err(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) 
+  }
 }
 
 #' Draw a side-by-side bar plot with error bars and a legend to the right
@@ -136,22 +136,22 @@ chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, re
 #' chart.bar.err(y, y.err, legend.text, col)
 #' }
 chart.bar.err <- function(y, y.err, legend.text, col, ...) {
-	# default margins
-	#mar.default <- c(5, 4, 4, 2) + 0.1
-	#par(mar.default) #set default
-	
-	# xpd=T: allow drawing outside of plot (ie. in margin)
-	# par()$mar+c(0,0,0,6): extend current right margin of plot by 4 lines
-	# mar.default + c(0,0,0,6): default margin + 4 lines extended to the right 
-	#par(xpd=T, mar=mar.default+c(0,0,0,6))
-	
-	# barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)), names.arg=names(y), axis.lty=1, col=col)
-	barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)*1.25), 
-			names.arg=names(y), axis.lty=1, col=col, ...)
-	legend(x=mean(barx), xjust = 0.5, y=max(y+y.err) *1.25, legend=legend.text, fill=col)
-	
-	error.bar(barx, y, y.err)
-	
+  # default margins
+  #mar.default <- c(5, 4, 4, 2) + 0.1
+  #par(mar.default) #set default
+  
+  # xpd=T: allow drawing outside of plot (ie. in margin)
+  # par()$mar+c(0,0,0,6): extend current right margin of plot by 4 lines
+  # mar.default + c(0,0,0,6): default margin + 4 lines extended to the right 
+  #par(xpd=T, mar=mar.default+c(0,0,0,6))
+  
+  # barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)), names.arg=names(y), axis.lty=1, col=col)
+  barx <- barplot(y, beside=TRUE, ylim=c(0,max(y + y.err)*1.25), 
+                  names.arg=names(y), axis.lty=1, col=col, ...)
+  legend(x=mean(barx), xjust = 0.5, y=max(y+y.err) *1.25, legend=legend.text, fill=col)
+  
+  error.bar(barx, y, y.err)
+  
 }
 
 
@@ -187,14 +187,14 @@ chart.bar.err <- function(y, y.err, legend.text, col, ...) {
 #' x = barx; y = y.means
 #' upper = y.err; lower=upper}
 error.bar <- function(x, y, upper, lower=pmin(y,upper), length=0.1,...){
-	if(length(x) != length(y) | length(y) !=length(lower) | length(lower) != length(upper))
-		stop("vectors must be same length")
-	
-	#don't draw when no arrow, else get warning
-	ind.nonzero <- abs(upper) + abs(lower) > 0
-	
-	arrows(x[ind.nonzero], (y+upper)[ind.nonzero], x[ind.nonzero], (y-lower)[ind.nonzero], 
-			angle=90, code=3, length=length, ...)
+  if(length(x) != length(y) | length(y) !=length(lower) | length(lower) != length(upper))
+    stop("vectors must be same length")
+  
+  #don't draw when no arrow, else get warning
+  ind.nonzero <- abs(upper) + abs(lower) > 0
+  
+  arrows(x[ind.nonzero], (y+upper)[ind.nonzero], x[ind.nonzero], (y-lower)[ind.nonzero], 
+         angle=90, code=3, length=length, ...)
 }
 
 

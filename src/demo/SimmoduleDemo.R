@@ -313,8 +313,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 	
 				now_dead <- runif(length(death_transition_probs)) <= death_transition_probs
 				
-				alive[alive] <- !now_dead
-				
+				alive[alive] <- !now_dead	
 				
 				
 			}
@@ -405,7 +404,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			names(binned.list.base)[i] <- convars[i]
 		}
 	}
-		
+		#browser()
 		#user specified subgroup variable
 		#prepend "outcomes$", "simframe$", or "env.base$...outcomes$" to variables so they
 		#can be found
@@ -532,11 +531,13 @@ prepend.paths <- function(expr) {
 	presimvars <- names(env.base$presim.stats)
 	#presimvars are time-invariant
 	
+	#browser()
+	
 	for (i in 1:length(time.variant.vars)) {
 		pos1 <- str_locate(expr, time.variant.vars[i])
 		if (sum(is.na(pos1))==0) {
 			replace.expr1 <- paste("outcomes$", time.variant.vars[i], sep="")
-			expr <- str_replace_all(expr, time.variant.vars[i], replace.expr1)	
+			expr <- stri_replace_all_fixed(expr, time.variant.vars[i], replace.expr1)	
 		}
 	}
 	for (i in 1:length(presimvars)) {
@@ -544,13 +545,15 @@ prepend.paths <- function(expr) {
 		if (sum(is.na(pos2))==0) {
 			replace.expr2 <- paste("simframe$", presimvars[i], sep="")
 			##expr <- str_replace(expr, presimvars[i], replace.expr2)
-			expr <- str_replace_all(expr, presimvars[i], replace.expr2)
+			expr <- stri_replace_all_fixed(expr, presimvars[i], replace.expr2)
 		}
 	}
+	
+	
 	sg.expr <- paste("sg.var <- ", expr, sep="")
-	sg.expr.base <- str_replace_all(sg.expr, "outcomes", "base.outcomes.current.run")
+	sg.expr.base <- stri_replace_all_fixed(sg.expr, "outcomes", "base.outcomes.current.run")
 	sg.expr.base <- str_replace(sg.expr.base, "sg.var", "sg.var.base")
-	sg.expr.base <- str_replace_all(sg.expr.base, "simframe", "env.base$simframe")
+	sg.expr.base <- stri_replace_all_fixed(sg.expr.base, "simframe", "env.base$simframe")
 	result <- list(sg.expr=sg.expr, sg.expr.base=sg.expr.base)
 	return(result)
 }

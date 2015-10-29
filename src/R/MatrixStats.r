@@ -33,13 +33,14 @@ colmeans.list <- function (xlistm) {
 }
 
 
-#' Mean across Z dimension of a 3D array. Each row and column cell is
-#' averaged across the Z dimension.
+#' Mean across Z dimension of a 3D array. Each row and column cell
+#' is averaged across the Z dimension.
 #' 
 #' @param xa
 #'  an array with a Z dimension
 #' @param CI
-#'  if TRUE and xa has more than 1 Z dimension, lower and upper confidence intervals 
+#'  if TRUE and xa has more than 1 Z dimension, lower and upper
+#' confidence intervals 
 #'  are returned in additional columns
 #' @param NA.as.zero
 #'  if TRUE (default), treat NAs as if they are zeros
@@ -56,7 +57,8 @@ colmeans.list <- function (xlistm) {
 #' xa <- env.base$years1_5$runstats$means$all.by.SESBTH.2cat$gpmorb
 #' xa <- years1_5$runstats$means$all.by.gender$gptotvis
 #' 
-#' xa <- flatten_mxlists_to_array(env.scenario$modules$years6_13$run_results$confreqs[["cond"]])
+#' xa <- flatten_mxlists_to_array(
+#'	env.scenario$modules$years6_13$run_results$confreqs[["cond"]])
 #' 
 #' xa <- env.base$years1_5$runstats$means$all.by.ethnicity$gptotvis
 #' xa <- env.base$years1_5$runstats$means$all.by.gender$gptotvis
@@ -110,18 +112,18 @@ mean_array_z <- function (xa, CI = TRUE, NA.as.zero = T, re_write_colnames=T) {
 }
 
 
-#' Mean across Z dimension of a 3D array. Each row and column cell is
-#' averaged across the Z dimension.
-#' A version of mean_array_z() where the confidence intervals are percentile based 
-#' rather than using asymptotic theory.
+#' Mean across Z dimension of a 3D array. Each row and column cell 
+#' is averaged across the Z dimension.
+#' A version of mean_array_z() where the confidence intervals are #' percentile based rather than using asymptotic theory.
 #' 
-#' For the vector of statistic values (e.g. a vector of means from multiple runs),
-#' the 2.5 and 97.5 percentiles are used as the upper and lower limits of the 95% C.I..
+#' For the vector of statistic values (e.g. a vector of means 
+#' from multiple runs), the 2.5 and 97.5 percentiles are used as #' the upper and lower limits of the 95% C.I..
 #' 
 #' @param xa
 #'  an array with a Z dimension
 #' @param CI
-#'  if TRUE and xa has more than 1 Z dimension, lower and upper confidence intervals 
+#'  if TRUE and xa has more than 1 Z dimension, lower and upper 
+#'  confidence intervals 
 #'  are returned in additional columns
 #' @param NA.as.zero
 #'  if TRUE (default), treat NAs as if they are zeros
@@ -176,26 +178,35 @@ mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 	result
 }
 
-#' A new version of mean_array_z_pctile_CIs().  Differs from mean_array_z_pctile_CIs() in
-#' that the percentages are calculated within each run and the mean of the percentages
-#' taken as the point estimate. In mean_array_z_pctile_CIs() the mean numerator and 
-#' denominator are taken over the runs and to get the point estimate this mean numerator 
-#' is divided by the mean denominatoror to get a point estimate of the percentage.  This
-#' is equivalent to the first method (implemented in this function) if the denominator
-#' does not change over time, but if the denominator does change over time (e.g. this
-#' might happen when we are taking percentages by groups where the grouping variable is
-#' time-variant) the results are different and the method in this function is preferable.
-#' The same difference between the two versions of the function is seen in the calculation
-#' of confidence intervals.  In mean_array_z_pctile_CIs() the 2.5th and 97.5th percentiles
-#' of the frequencies over the runs are taken and then these are divided by the mean
-#' denominator.  If the we have a situation as described above where percentages are being
-#' calculated by a time-variant grouping variable then we can end up with confidence
-#' intervals that are greater than 100%. In this function, the 2.5th and 97.5th percentiles
-#' of the percentages are taken so that, in the case where percentages are calculated by a 
-#' time-variant grouping variable, the confidence intervals are more accurate and will not
-#' go above 100%.   
-#' This function has additional arguments compared to mean_array_z_pctile_CIs(), namely,
-#' cat.adjustments, dict, and binbreaks. 
+#' A new version of mean_array_z_pctile_CIs().  
+#'
+#' Differs from mean_array_z_pctile_CIs() in that the percentages 
+#' are calculated within each run and the mean of the percentages
+#' taken as the point estimate. 
+#'
+#' In mean_array_z_pctile_CIs() the #' mean numerator and 
+#' denominator are taken over the runs and to #' get the point 
+#' estimate this mean numerator is divided by the mean 
+#' denominatoror to get a point estimate of the percentage.  
+#' This is equivalent to the first method (implemented in this 
+#' function) if the denominator does not change over time, but if 
+#' the denominator does change over time (e.g. this might happen #' when we are taking percentages by groups where the grouping 
+#' variable is time-variant) the results are different and the 
+#' method in this function is preferable. The same difference 
+#' between the two versions of the function is seen in the 
+#' calculation of confidence intervals.  In 
+#' mean_array_z_pctile_CIs() the 2.5th and 97.5th percentiles
+#' of the frequencies over the runs are taken and then these are 
+#' divided by the mean denominator.  If the we have a situation as 
+#' described above where percentages are being calculated by a 
+#' time-variant grouping variable then we can end up with confidence
+#' intervals that are greater than 100%. In this function, the 
+#' 2.5th and 97.5th percentiles of the percentages are taken so 
+#' that, in the case where percentages are calculated by a
+#' time-variant grouping variable, the confidence intervals are 
+#' more accurate and will not go above 100%. This function has 
+#' additional arguments compared to mean_array_z_pctile_CIs(), 
+#' namely, cat.adjustments, dict, and binbreaks. 
 #' 
 #' @param xa
 #'  an array with a Z dimension
@@ -1129,8 +1140,38 @@ table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 
 
 
-#' modified by Mengdan - original above
-#' modified in to make order of tables of continuous variables in run_results be the same as in binbreaks
+#' Frequency table, with option to group results - modified by Mengdan.  
+#' Extension of table.grpby() that can handle grpby as a matrix as well as a vector.  
+#' The group-by variable may be time-invariant or time-variant. This function is  modified in 
+#' to make order of tables of continuous variables in run_results be the same as in binbreaks 
+#' 
+#'
+#' @param x
+#'  vector of values which can be interpreted as factors 
+#' 
+#' @param grpby
+#'  A vector or matrix of elements to group by, or NULL to do no grouping.
+#'  vector must be same length as the columns of x or matrix must have the same number
+#'  of rows as z.
+#' If the group-by variable is not time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then 
+#' grpby should be a matrix with number of columns equal to number of years. 
+#' 
+#' @param wgts
+#'  vector of weights, or NULL to do no weighting
+#'  Same length as the columns of x.
+#' 
+#' @param binbreak
+#'  The binbreaks for the specific outcome variable.
+#' 
+#' @return
+#'  a table. If grpby is specified this will be a table
+#'  with columns that are the group by and rows the categories. 
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
+#' 
+#' @export
+#' @examples
+#' \dontrun{}
 table.grpby_BCASO2 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
@@ -1840,7 +1881,6 @@ wtdtable <- function (x, wgts=rep(1,length(x))) {
 #' 
 #' @export 
 #' @examples 
-#' 2<-2
 #' library(Hmisc)
 #' mx <- matrix(c(8,2,2,2,8,2,3,2,3,2,2,4,8,2,3,4,2,2,4,3),nrow=4,ncol=5)
 #' wgts = rep(1,nrow(mx))
@@ -2132,8 +2172,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 				})
 		
 		result <- t(t(result))
-	} else {
-		
+	} else {		
 		
 		#3. beginning check - if there are columns in grpby with only NAs and FALSE's (no TRUE's),
 		#set all values to be NA.  This has probably happened because if one of the variables that 
@@ -2167,7 +2206,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 			#i=3
 			x <- mx[,i]
 			non.nas <-  !is.na(x) 
-			
+	
 			#if all numbers in a column of mx are NA, then return NA's for each grpby category,
 			#otherwise continue the weigting procedure.
 			#Using the weighting procedure on a column of NA's falls down as 
@@ -2182,18 +2221,19 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 				z2 <- t(rep("NA", 2))
 				return(z2)
 			} else {      
-				weightsGrouped <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x
+				weightsGrouped <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum, na.rm=TRUE)$x
 				
-				a <- aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$x / weightsGrouped
-				grp <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum)$Group.1
+				a <- aggregate(x[non.nas] * wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum, na.rm=TRUE)$x / weightsGrouped
+				
+				grp <- aggregate(wgts[non.nas,i], by = list(grpby[non.nas,i]), FUN = sum, na.rm=TRUE)$Group.1
 				
 				
 				num_and_grp <- cbind(grp,a)
 				#creating a matrix of NA's for those grpby's not present in the column
 				#this enables each i'th step to return the same number of elements,
 				#further helping to enable correct naming of the result later (by unique allgrpby)
-				##uall <- unique(allgrpby);
-				uall <- unique(grpby[,i])
+				uall <- unique(allgrpby)
+				#uall <- unique(grpby[,i])
 				uGOTsomeNOTNA <- unique(grpby[non.nas,i]);
 				leftover <- uall[!(uall %in% uGOTsomeNOTNA)]
 				nmat <- matrix(c(leftover,rep(NA,length(leftover))), ncol=2)
@@ -2203,9 +2243,11 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 				#ordering on the grpby, to maintain the correct ordering of grpby across all
 				#ith steps - ensuring correct order in naming of the result later (by unique allgrpby)
 				z2 <- z[order(z[,1]),]
+				
 				z2[,2]
 			}
 		}))
+		#browser()
 		if (sum(is(result[1,])=="character")>=1) {
 			result <- matrix(as.numeric(result), ncol=ncol(result), nrow=nrow(result), byrow=F)
 		}
@@ -2213,6 +2255,7 @@ mean_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, logiset=NULL, wg
 		if ((sum(is.na(result[,ncol(result)]))==nrow(result)) & !is.null(logiset)) {
 			result <- result[,-ncol(result)]
 		}
+		
 		dimnames(result)[[2]] <- sort(unique(allgrpby))
 		
 		if (is.null(dict)) {

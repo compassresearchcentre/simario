@@ -3,8 +3,9 @@
 # Author: oman002
 ###############################################################################
 
-#' Collate frequencies. Performs the following:
-#' 
+#' Collate frequencies. 
+#'
+#'Performs the following: 
 #' \itemize{
 #'   \item Takes mean without confidence intervals using \code{\link{collator_mutiple_lists_mx}}  
 #'   \item Labels the result using the dictionary 
@@ -53,32 +54,32 @@
 #' collator_freqs(runs, dict)
 #' collator_freqs(runs, dict, numbers=TRUE)
 collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", numbers=FALSE, CI=FALSE) {
-	
-	runs_mx <- collator_mutiple_lists_mx(runs, CI)
-	
-	num.runs <- length(runs)
-	
-	if ((CI==FALSE|(num.runs==1))) {
-		runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		if (numbers==FALSE) {
-			result <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
-		} else {
-			result <- runs_mx
-		}
-	} else if ((CI==TRUE)&&(num.runs>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs = num.runs)
-		if (numbers==FALSE) {
-			resultCI <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
-		} else {
-		resultCI <- runs_mx
-		}
-		#label CI components
-		run1_array <- as_array_list_mx(runs[[1]])
-		numGroups <- dim(run1_array)[COL] #number of group-by groups
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		result <- resultCI
-	}
-	return(result)
+  
+  runs_mx <- collator_mutiple_lists_mx(runs, CI)
+  
+  num.runs <- length(runs)
+  
+  if ((CI==FALSE|(num.runs==1))) {
+    runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+    if (numbers==FALSE) {
+      result <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
+    } else {
+      result <- runs_mx
+    }
+  } else if ((CI==TRUE)&&(num.runs>1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs = num.runs)
+    if (numbers==FALSE) {
+      resultCI <- percentages_flattened_mx(runs_mx, dict, CI, num.runs=num.runs)
+    } else {
+      resultCI <- runs_mx
+    }
+    #label CI components
+    run1_array <- as_array_list_mx(runs[[1]])
+    numGroups <- dim(run1_array)[COL] #number of group-by groups
+    colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+    result <- resultCI
+  }
+  return(result)
 }
 
 #'A new version of collator_freqs() that calls collator_mutiple_lists_mx2() (and then
@@ -117,8 +118,6 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' extracted from the list in further embedded functions.  Either cat.adjustments or 
 #' binbreaks are needed if frequencies of a continuous variable are being requested.  
 #' 
-#' @param dict
-#' the specific project dictionary
 #' 
 #' @param binbreaks 
 #' The binbreaks for the specific outcome variable.  Either binbreaks or cat.adjustments 
@@ -132,79 +131,79 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' \dontrun{}
 
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
-	#check rownames are present for each iteration for each run
-	#(will cause error in collator_mutiple_lists_mx2 otherwise)
-	#and if not present make the rownames be the same as for iterations where they are present
-	runs <- lapply(runs, check.row.names)
-	
-	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
-	
-	num.runs <- length(runs)
-	
-	if ((CI==FALSE|(num.runs==1))) {
-		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs, binbreaks=binbreaks)
-		result <- runs_mx
-	} else if ((CI==TRUE)&&(num.runs>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs, binbreaks=binbreaks)
-		resultCI <- runs_mx
-	
-		#label CI components
-		run1_array <- as_array_list_mx(runs[[1]])
-		numGroups <- dim(run1_array)[COL] #number of group-by groups
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		result <- resultCI
-	}
-	result <- result*100
-	return(result)
+  #check rownames are present for each iteration for each run
+  #(will cause error in collator_mutiple_lists_mx2 otherwise)
+  #and if not present make the rownames be the same as for iterations where they are present
+  runs <- lapply(runs, check.row.names)
+  
+  runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
+  
+  num.runs <- length(runs)
+  
+  if ((CI==FALSE|(num.runs==1))) {
+    #runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs, binbreaks=binbreaks)
+    result <- runs_mx
+  } else if ((CI==TRUE)&&(num.runs>1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs, binbreaks=binbreaks)
+    resultCI <- runs_mx
+    
+    #label CI components
+    run1_array <- as_array_list_mx(runs[[1]])
+    numGroups <- dim(run1_array)[COL] #number of group-by groups
+    colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+    result <- resultCI
+  }
+  result <- result*100
+  return(result)
 }
 
 
 collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
-	#workaround to make work for NPRESCH - put values into the matrices for years 1 - 3 (at the
-	#moment they are 0s
-	num.runs <- length(runs)
-	for (k in 1:num.runs) {
-		runs[[k]][[1]] <- runs[[1]][[6]]
-		runs[[k]][[2]] <- runs[[1]][[6]]
-		runs[[k]][[3]] <- runs[[1]][[6]]
-		runs[[k]][[4]] <- runs[[1]][[6]]
-		runs[[k]][[5]] <- runs[[1]][[6]]
-	}
-	
-	runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
-	
-	if ((CI==FALSE|(num.runs==1))) {
-		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs, binbreaks=binbreaks)
-		result <- runs_mx
-	} else if ((CI==TRUE)&&(num.runs>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs, binbreaks=binbreaks)
-		resultCI <- runs_mx
-		
-		#label CI components
-		run1_array <- as_array_list_mx(runs[[1]])
-		numGroups <- dim(run1_array)[COL] #number of group-by groups
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		result <- resultCI
-	}
-	result <- result*100
-	
-	varname1 <- attr(result, "meta")["varname"]
-	if (is.null(varname1)) {
-		varname1 <- attr(result, "varname")
-	}
-	
-	meta.attributes <- attr(result, "meta")
-
-	result <- result[6,]
-	#this makes it lose it varname attributes - need to put back on
-	#reattach meta attributes
-	result <- structure(result, meta=meta.attributes)
-	#also put as 'normal' attribute in case meta.attributes are NULL
-	attr(result, "varname") <- as.character(varname1)
-	
-	return(result)
+  #workaround to make work for NPRESCH - put values into the matrices for years 1 - 3 (at the
+  #moment they are 0s
+  num.runs <- length(runs)
+  for (k in 1:num.runs) {
+    runs[[k]][[1]] <- runs[[1]][[6]]
+    runs[[k]][[2]] <- runs[[1]][[6]]
+    runs[[k]][[3]] <- runs[[1]][[6]]
+    runs[[k]][[4]] <- runs[[1]][[6]]
+    runs[[k]][[5]] <- runs[[1]][[6]]
+  }
+  
+  runs_mx <- collator_mutiple_lists_mx2(runs, CI, cat.adjustments, dict, binbreaks)
+  
+  if ((CI==FALSE|(num.runs==1))) {
+    #runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=num.runs, binbreaks=binbreaks)
+    result <- runs_mx
+  } else if ((CI==TRUE)&&(num.runs>1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=num.runs, binbreaks=binbreaks)
+    resultCI <- runs_mx
+    
+    #label CI components
+    run1_array <- as_array_list_mx(runs[[1]])
+    numGroups <- dim(run1_array)[COL] #number of group-by groups
+    colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+    result <- resultCI
+  }
+  result <- result*100
+  
+  varname1 <- attr(result, "meta")["varname"]
+  if (is.null(varname1)) {
+    varname1 <- attr(result, "varname")
+  }
+  
+  meta.attributes <- attr(result, "meta")
+  
+  result <- result[6,]
+  #this makes it lose it varname attributes - need to put back on
+  #reattach meta attributes
+  result <- structure(result, meta=meta.attributes)
+  #also put as 'normal' attribute in case meta.attributes are NULL
+  attr(result, "varname") <- as.character(varname1)
+  
+  return(result)
 }
 
 
@@ -247,53 +246,53 @@ collator_freqs2_NPRESCH <- function (runs, dict, row.dim.label="Year", col.dim.l
 #' runs <- all_run_results_zipped$freqs_by_sex[[1]]
 #' collator_freqs_remove_zero_cat(runs, dict_example)
 #' }
-	
-collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
-	runs_mx <- collator_mutiple_lists_mx(runs=runs, CI=CI)
-	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
-	
-	zero_cat_cols <- identify_zero_category_cols(runs_mx)
-	
-	#the above code give incorrect categories with 0s for the outcome 
-	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
-	#(which is what the above code does)
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag!="") {
-				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
-				if (length(zero_cat_cols)==0) {
-					zero_cat_cols <- identify_zero_category_cols(runs_mx)
-				}
-			}
-		}
-	}
 
-	numZ <- length(runs) #number of runs
-	
-	colnames(runs_mx)[is.na(colnames(runs_mx))] = "NA"
-	
-	#browser()
-	
-	if ((CI==FALSE)|(numZ==1)) {
-		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
-		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		result <- remove.cols(runs_mx, zero_cat_cols)
-		
-	} else if ((CI==TRUE)&&(numZ>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
-		runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		resultCI <- remove.cols(runs_mx, zero_cat_cols)
-		
-		#label CI components
-		run1_array <- as_array_list_mx(runs[[1]])
-		numGroups <- dim(run1_array)[COL]
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		names(dimnames(resultCI)) <- names(dimnames(resultCI))
-		result <- resultCI
-	}
-	
-	return(result)
+collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE) {
+  runs_mx <- collator_mutiple_lists_mx(runs=runs, CI=CI)
+  grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+  
+  zero_cat_cols <- identify_zero_category_cols(runs_mx)
+  
+  #the above code give incorrect categories with 0s for the outcome 
+  #we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
+  #(which is what the above code does)
+  if (!is.null(grpby.tag)) {
+    if (!is.na(grpby.tag)) {
+      if (grpby.tag!="") {
+        zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
+        if (length(zero_cat_cols)==0) {
+          zero_cat_cols <- identify_zero_category_cols(runs_mx)
+        }
+      }
+    }
+  }
+  
+  numZ <- length(runs) #number of runs
+  
+  colnames(runs_mx)[is.na(colnames(runs_mx))] = "NA"
+  
+  #browser()
+  
+  if ((CI==FALSE)|(numZ==1)) {
+    #runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=FALSE, num.runs=numZ)
+    runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+    result <- remove.cols(runs_mx, zero_cat_cols)
+    
+  } else if ((CI==TRUE)&&(numZ>1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+    runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+    resultCI <- remove.cols(runs_mx, zero_cat_cols)
+    
+    #label CI components
+    run1_array <- as_array_list_mx(runs[[1]])
+    numGroups <- dim(run1_array)[COL]
+    colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+    names(dimnames(resultCI)) <- names(dimnames(resultCI))
+    result <- resultCI
+  }
+  
+  return(result)
 }
 
 #' Collate frequencies and removes the zero category. 
@@ -350,144 +349,144 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 
 
 collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
-	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
-	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
-	
-	zero_cat_cols <- identify_zero_category_cols(runs_mx)
-	
-	#the above code give incorrect categories with 0s for the outcome 
-	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
-	#(which is what the above code does)
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag!="") {
-				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
-				if (length(zero_cat_cols)==0) {
-					zero_cat_cols <- identify_zero_category_cols(runs_mx)
-				}
-			}
-		}
-	}
-	
-	numZ <- length(runs) #number of runs
-	
-	if ((CI==FALSE)|(numZ==1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
-		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		result <- remove.cols(runs_mx, zero_cat_cols)*100
-		
-	} else if ((CI==TRUE)&&(numZ>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
-		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		resultCI <- remove.cols(runs_mx, zero_cat_cols)
-		
-		#label CI components
-		run1_array <- as_array_list_mx(runs[[1]])
-		numGroups <- dim(run1_array)[COL]
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		names(dimnames(resultCI)) <- names(dimnames(resultCI))
-		result <- resultCI*100
-	}
-	
-	return(result)
+  runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
+  grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+  
+  zero_cat_cols <- identify_zero_category_cols(runs_mx)
+  
+  #the above code give incorrect categories with 0s for the outcome 
+  #we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
+  #(which is what the above code does)
+  if (!is.null(grpby.tag)) {
+    if (!is.na(grpby.tag)) {
+      if (grpby.tag!="") {
+        zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
+        if (length(zero_cat_cols)==0) {
+          zero_cat_cols <- identify_zero_category_cols(runs_mx)
+        }
+      }
+    }
+  }
+  
+  numZ <- length(runs) #number of runs
+  
+  if ((CI==FALSE)|(numZ==1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+    #runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+    #runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+    result <- remove.cols(runs_mx, zero_cat_cols)*100
+    
+  } else if ((CI==TRUE)&&(numZ>1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+    #runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+    resultCI <- remove.cols(runs_mx, zero_cat_cols)
+    
+    #label CI components
+    run1_array <- as_array_list_mx(runs[[1]])
+    numGroups <- dim(run1_array)[COL]
+    colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+    names(dimnames(resultCI)) <- names(dimnames(resultCI))
+    result <- resultCI*100
+  }
+  
+  return(result)
 }
 
 
 collator_freqs_remove_zero_cat3 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
-	#this function works when there are iterations at which a variable is not simulated (vector of NAs instead)
-	
-	#store colnames for later
-	colnames <- colnames(runs[[1]][[1]])
-	rownames <- rownames(runs[[1]][[1]])
-	
-	rownames.length <- unlist(lapply(runs[[1]], function(x) { length(rownames(x)) }))
-	rownames.id <- which(rownames.length==max(rownames.length))[1]
-	rownames <- rownames(runs[[1]][[rownames.id]])
-	
-	n.col <- max(unlist(lapply(runs[[1]], ncol)))
-	n.row <- max(unlist(lapply(runs[[1]], nrow)))
-	
-	
-	#identify for which iterations the variable was not simulated (will manifest as a matrix of 0s)
-	#sum the matrix for each iteration
-	numobs <- lapply(runs[[1]], function(x) {sum(unlist(x))})
-	numobs <- unlist(numobs)
-	#create index for iterations where sum=0 (all NAs for the variable at that iteration)
-	id0 <- which(numobs==0)
-	#index for those iterations where the sum is not 0
-	idnot0 <- which(numobs!=0)
-	#make the iterations where there was no values have a matrix like the first iteration where there 
-	#were values (just as a workaround, later they will be changed back to NAs)
-	for (k in 1:length(runs)) {
-		for (j in id0) {
-			##if (is.null(runs[[k]][[idnot0[1]]])) {
-				runs[[k]][[j]] <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row) 
-				#lose column and row names here, which are used in identify_zero_category_cols(), 
-				#identify_zero_category_cols_bygrp() and label_flattened_mx_grping.and.CIs().
-				#Put back on
-				colnames(runs[[k]][[j]]) <- colnames
-				if (!is.null(rownames)) {
-					rownames(runs[[k]][[j]]) <- rownames
-				} else {
-					rownames(runs[[k]][[j]]) <- as.character(1:n.row) #not sure if this would always be the case - check
-				}
-			##} else {
-				##runs[[k]][[j]] <- runs[[k]][[idnot0[1]]]
-			##}
-		}
-	}
-	
-	runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
-	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
-	
-	zero_cat_cols <- identify_zero_category_cols(runs_mx)
-	
-	#the above code gives incorrect categories with 0s for the outcome 
-	#we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
-	#(which is what the above code does)
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag!="") {
-				#there is a subgroup
-				zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
-				if (length(zero_cat_cols)==0) {
-					zero_cat_cols <- identify_zero_category_cols(runs_mx)
-				}
-			}
-		}
-	}
-	
-	numZ <- length(runs) #number of runs
-	
-	if ((CI==FALSE)|(numZ==1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
-		#runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
-		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		result <- remove.cols(runs_mx, zero_cat_cols)*100
-		
-	} else if ((CI==TRUE)&&(numZ>1)) {
-		runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
-		#runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
-		resultCI <- remove.cols(runs_mx, zero_cat_cols)
-		
-		#label CI components
-		run1_array <- as_array_list_mx(runs[[1]])
-		numGroups <- dim(run1_array)[COL]
-		colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
-		names(dimnames(resultCI)) <- names(dimnames(resultCI))
-		result <- resultCI*100
-	}
-	
-	#change result at the end  - back to NAs for the first 3 years of conduct
-	if (is.matrix(result)) {
-		result[id0,] <- NA	
-	} else {
-		#assume result is a vector
-		result[id0] <- NA
-	}
-	
-	return(result)
+  #this function works when there are iterations at which a variable is not simulated (vector of NAs instead)
+  
+  #store colnames for later
+  colnames <- colnames(runs[[1]][[1]])
+  rownames <- rownames(runs[[1]][[1]])
+  
+  rownames.length <- unlist(lapply(runs[[1]], function(x) { length(rownames(x)) }))
+  rownames.id <- which(rownames.length==max(rownames.length))[1]
+  rownames <- rownames(runs[[1]][[rownames.id]])
+  
+  n.col <- max(unlist(lapply(runs[[1]], ncol)))
+  n.row <- max(unlist(lapply(runs[[1]], nrow)))
+  
+  
+  #identify for which iterations the variable was not simulated (will manifest as a matrix of 0s)
+  #sum the matrix for each iteration
+  numobs <- lapply(runs[[1]], function(x) {sum(unlist(x))})
+  numobs <- unlist(numobs)
+  #create index for iterations where sum=0 (all NAs for the variable at that iteration)
+  id0 <- which(numobs==0)
+  #index for those iterations where the sum is not 0
+  idnot0 <- which(numobs!=0)
+  #make the iterations where there was no values have a matrix like the first iteration where there 
+  #were values (just as a workaround, later they will be changed back to NAs)
+  for (k in 1:length(runs)) {
+    for (j in id0) {
+      ##if (is.null(runs[[k]][[idnot0[1]]])) {
+      runs[[k]][[j]] <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row) 
+      #lose column and row names here, which are used in identify_zero_category_cols(), 
+      #identify_zero_category_cols_bygrp() and label_flattened_mx_grping.and.CIs().
+      #Put back on
+      colnames(runs[[k]][[j]]) <- colnames
+      if (!is.null(rownames)) {
+        rownames(runs[[k]][[j]]) <- rownames
+      } else {
+        rownames(runs[[k]][[j]]) <- as.character(1:n.row) #not sure if this would always be the case - check
+      }
+      ##} else {
+      ##runs[[k]][[j]] <- runs[[k]][[idnot0[1]]]
+      ##}
+    }
+  }
+  
+  runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
+  grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+  
+  zero_cat_cols <- identify_zero_category_cols(runs_mx)
+  
+  #the above code gives incorrect categories with 0s for the outcome 
+  #we only want to remove those columns that are 0 for the outcome, not also for the grouping variable
+  #(which is what the above code does)
+  if (!is.null(grpby.tag)) {
+    if (!is.na(grpby.tag)) {
+      if (grpby.tag!="") {
+        #there is a subgroup
+        zero_cat_cols <- identify_zero_category_cols_bygrp(runs_mx)
+        if (length(zero_cat_cols)==0) {
+          zero_cat_cols <- identify_zero_category_cols(runs_mx)
+        }
+      }
+    }
+  }
+  
+  numZ <- length(runs) #number of runs
+  
+  if ((CI==FALSE)|(numZ==1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+    #runs_mx <- label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label)
+    #runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+    result <- remove.cols(runs_mx, zero_cat_cols)*100
+    
+  } else if ((CI==TRUE)&&(numZ>1)) {
+    runs_mx <- label_flattened_mx_grping.and.CIs(runs_mx, dict, row.dim.label, col.dim.label, CI=CI, num.runs=numZ)
+    #runs_mx <- percentages_flattened_mx(runs_mx, dict, CI, numZ)
+    resultCI <- remove.cols(runs_mx, zero_cat_cols)
+    
+    #label CI components
+    run1_array <- as_array_list_mx(runs[[1]])
+    numGroups <- dim(run1_array)[COL]
+    colnames(resultCI) <- paste(colnames(resultCI), rep(c("Mean", "Lower", "Upper"), numGroups))
+    names(dimnames(resultCI)) <- names(dimnames(resultCI))
+    result <- resultCI*100
+  }
+  
+  #change result at the end  - back to NAs for the first 3 years of conduct
+  if (is.matrix(result)) {
+    result[id0,] <- NA	
+  } else {
+    #assume result is a vector
+    result[id0] <- NA
+  }
+  
+  return(result)
 }
 
 
@@ -523,9 +522,9 @@ collator_freqs_remove_zero_cat3 <- function(runs, dict, row.dim.label="Year", co
 #' \dontrun{}
 
 collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
-	runs_mx <- collator_mutiple_lists_mx(runs)
-	
-	label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label) 
+  runs_mx <- collator_mutiple_lists_mx(runs)
+  
+  label_flattened_mx(runs_mx, dict, row.dim.label, col.dim.label) 
 }
 
 #' Collate means over multiple runs. Performs the following:
@@ -539,6 +538,8 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 #'  a list of matrices, one matrix per run.
 #' @param dict
 #'  Dictionary object. Used to label columns.
+#' @param ...
+#'  Additional arguments passed to \code{\link{collator_list_mx}} 
 #' 
 #' @return
 #'  a matrix with the averaged values of runs.
@@ -553,33 +554,33 @@ collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="
 #' dict <- dict_example
 #' collator_means(runs, dict)
 collator_means <- function(runs, dict, ...) {
-	#runs_mx <- collator_list_mx(runs)
-	runs_mx <- collator_list_mx(runs, ...)
-	
-	grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag=="") {
-				grpby.tag<-NA
-			}
-		}
-	}
-	
-	#if there are spaces in the groupby tag it means that this table is one grouped by
-	#by the subgroup expression specific by the user
-	spaces.in.grpby.tag <- str_locate_all(grpby.tag, " ")[[1]]
-	if (length(spaces.in.grpby.tag)>0) {
-		colnames(runs_mx) <- colnames(runs_mx)
-		#fix labelling for means_by_subgroup later
-		runs_mx_labelled <- runs_mx
-	} else {
-		runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
-	}
-
-	if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
-	result <- runs_mx_labelled
-
-	return(result)
+  #runs_mx <- collator_list_mx(runs)
+  runs_mx <- collator_list_mx(runs, ...)
+  
+  grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
+  if (!is.null(grpby.tag)) {
+    if (!is.na(grpby.tag)) {
+      if (grpby.tag=="") {
+        grpby.tag<-NA
+      }
+    }
+  }
+  
+  #if there are spaces in the groupby tag it means that this table is one grouped by
+  #by the subgroup expression specific by the user
+  spaces.in.grpby.tag <- str_locate_all(grpby.tag, " ")[[1]]
+  if (length(spaces.in.grpby.tag)>0) {
+    colnames(runs_mx) <- colnames(runs_mx)
+    #fix labelling for means_by_subgroup later
+    runs_mx_labelled <- runs_mx
+  } else {
+    runs_mx_labelled <- labelColumnCodes(runs_mx, dict, grpby.tag)
+  }
+  
+  if (is.null(colnames(runs_mx_labelled))) colnames(runs_mx_labelled) <- "Mean"
+  result <- runs_mx_labelled
+  
+  return(result)
 }
 
 
@@ -592,6 +593,8 @@ collator_means <- function(runs, dict, ...) {
 #' @param CI
 #'  if TRUE and length(runs) > 1, lower and upper confidence intervals 
 #'  are returned in additional columns
+#' @param ...
+#'  Additional arguments passed to \code{\link{mean_array_z_pctile_CIs}} 
 #' 
 #' @return
 #'  a matrix with the averaged values of runs.
@@ -603,8 +606,8 @@ collator_means <- function(runs, dict, ...) {
 #' runs <- list(run1=run1,run2=run2) 
 #' collator_list_mx(runs)
 collator_list_mx <- function(runs, CI=TRUE, ...) {
-	runs_array <- as_array_list_mx(runs)
-	mean_array_z_pctile_CIs(runs_array, CI=CI, ...)
+  runs_array <- as_array_list_mx(runs)
+  mean_array_z_pctile_CIs(runs_array, CI=CI, ...)
 }
 
 
@@ -637,8 +640,8 @@ collator_list_mx <- function(runs, CI=TRUE, ...) {
 #' runs <- list(run1=run1,run2=run2) 
 #' collator_mutiple_lists_mx(runs, CI=FALSE)
 collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
-	runs_array <- flatten_mxlists_to_array(runs)
-	mean_array_z_pctile_CIs(runs_array, CI=CI)
+  runs_array <- flatten_mxlists_to_array(runs)
+  mean_array_z_pctile_CIs(runs_array, CI=CI)
 }
 
 #'A new version of collator_mutiple_lists_mx() that calls 
@@ -678,19 +681,19 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #' @examples
 #' \dontrun{}
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
-	runs_array <- flatten_mxlists_to_array(runs)
-	#reattach attributes (varname and grpby.tag)
-	if (length(attr(runs, "meta"))>0) {
-		attr(runs_array, "meta") <- attr(runs, "meta")
-	} else if (length(attr(runs[[1]], "meta"))>0) {
-		attr(runs_array, "meta") <- attr(runs[[1]], "meta")
-	} else if (length(attr(runs[[1]][[1]], "meta"))>0) {
-		attr(runs_array, "meta") <- attr(runs[[1]][[1]], "meta")
-	} else {
-		stop("Error in collator_mutiple_lists_mx2: lost varname attribute")
-	}
-	
-	mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
+  runs_array <- flatten_mxlists_to_array(runs)
+  #reattach attributes (varname and grpby.tag)
+  if (length(attr(runs, "meta"))>0) {
+    attr(runs_array, "meta") <- attr(runs, "meta")
+  } else if (length(attr(runs[[1]], "meta"))>0) {
+    attr(runs_array, "meta") <- attr(runs[[1]], "meta")
+  } else if (length(attr(runs[[1]][[1]], "meta"))>0) {
+    attr(runs_array, "meta") <- attr(runs[[1]][[1]], "meta")
+  } else {
+    stop("Error in collator_mutiple_lists_mx2: lost varname attribute")
+  }
+  
+  mean_array_z_pctile_CIs2(runs_array, CI=CI, cat.adjustments=cat.adjustments, dict=dict, binbreaks=binbreaks)
 }
 
 
@@ -712,7 +715,7 @@ collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict
 #'  mx <- matrix(1:4, nrow=1, dimnames=list(NULL, c("1 0","1 1","2 0", "2 1")))
 #'  identify_zero_category_cols(mx)
 identify_zero_category_cols <- function (mx) {
-	grep("\\s0|^0", colnames(mx))
+  grep("\\s0|^0", colnames(mx))
 }
 
 
@@ -731,17 +734,17 @@ identify_zero_category_cols <- function (mx) {
 #' @examples
 #' \dontrun{}
 identify_zero_category_cols_bygrp <- function (mx) {
-	#names of the outcome variable (as opposed to the grouping variable come 2nd
-	col.names <- colnames(mx)
-	#identify the position of the last space in each name
-	space.ids <- str_locate_all(col.names, " ")
-	relevant.name.pos <- lapply(space.ids, function(x) {x[1,1] + 1}) #position of relevant name
-	rel.name.pos.vec <- rep(NA, length(relevant.name.pos))
-	for (i in 1:length(rel.name.pos.vec)) {
-		rel.name.pos.vec[i]<-relevant.name.pos[[i]]
-	}
-	rel.names <- str_sub(col.names, rel.name.pos.vec, rel.name.pos.vec)
-	grep("\\s0|^0", rel.names)
+  #names of the outcome variable (as opposed to the grouping variable come 2nd
+  col.names <- colnames(mx)
+  #identify the position of the last space in each name
+  space.ids <- str_locate_all(col.names, " ")
+  relevant.name.pos <- lapply(space.ids, function(x) {x[1,1] + 1}) #position of relevant name
+  rel.name.pos.vec <- rep(NA, length(relevant.name.pos))
+  for (i in 1:length(rel.name.pos.vec)) {
+    rel.name.pos.vec[i]<-relevant.name.pos[[i]]
+  }
+  rel.names <- str_sub(col.names, rel.name.pos.vec, rel.name.pos.vec)
+  grep("\\s0|^0", rel.names)
 }
 
 
@@ -782,23 +785,23 @@ identify_zero_category_cols_bygrp <- function (mx) {
 #' percentages_flattened_mx(mx.flattened, dict, num.runs = 1)
 
 percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
-	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
-	
-	groupnameprefixes <- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
-	
-	if(is.null(grpby.tag) || is.na(grpby.tag)) {
-		groupnameprefixes <- NULL
-	} else if (!is.null(grpby.tag) & !is.na(grpby.tag) & is.null(names(dict$codings[[grpby.tag]]))) {
-		groupnameprefixes <- c("Not in subgroup", "In specified subgroup")
-	} else if (!is.null(grpby.tag) & !is.na(grpby.tag) & !is.null(names(dict$codings[[grpby.tag]]))) {
-		groupnameprefixes <- names(dict$codings[[grpby.tag]])
-	} else {
-		stop("Check percentages_flattened_mx()")
-	}
-
-	result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI, num.runs) * 100
-	colnames(result) <- paste(colnames(result), "(%)")
-	return(result)
+  grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
+  
+  groupnameprefixes <- if(is.null(grpby.tag) || is.na(grpby.tag)) NULL else names(dict$codings[[grpby.tag]])
+  
+  if(is.null(grpby.tag) || is.na(grpby.tag)) {
+    groupnameprefixes <- NULL
+  } else if (!is.null(grpby.tag) & !is.na(grpby.tag) & is.null(names(dict$codings[[grpby.tag]]))) {
+    groupnameprefixes <- c("Not in subgroup", "In specified subgroup")
+  } else if (!is.null(grpby.tag) & !is.na(grpby.tag) & !is.null(names(dict$codings[[grpby.tag]]))) {
+    groupnameprefixes <- names(dict$codings[[grpby.tag]])
+  } else {
+    stop("Check percentages_flattened_mx()")
+  }
+  
+  result <- prop.table.mx.grped.rows(mx.flattened, groupnameprefixes, CI, num.runs) * 100
+  colnames(result) <- paste(colnames(result), "(%)")
+  return(result)
 }
 
 
@@ -834,35 +837,35 @@ percentages_flattened_mx <- function(mx.flattened, dict, CI=FALSE, num.runs) {
 #' labelColumnCodes(x, dict, varname)
 #' }
 labelColumnCodes <- function(x, dict, varname) {
-	
-	if (is.null(varname) || is.na(varname)) {
-		return(x)
-	}
-	
-	# match codings into colnames stripped of alpha
-	cnames <- dimnames(x)[[COL]]
-	cnames_numeric <- strip.alpha(cnames)
-	cnames_alpha <- strip.numeric(cnames)
-	catcodings <- dict$codings[[varname]]
-	
-	codings_indices <- match(cnames_numeric, catcodings)
-	
-	if (any(is.na(codings_indices))) {
-		warning(
-				paste("For varname", varname, "Expecting codings of",paste(catcodings, collapse=" "),"but got", paste(cnames_numeric[is.na(codings_indices)],collapse=" "))
-		)
-	}
-	
-	cnames_numeric_desc <- names(catcodings)[codings_indices]
-	
-	# combine desc with existing alpha, NB: assume alpha is at the end
-	dimnames(x)[[COL]] <- paste(cnames_numeric_desc, cnames_alpha, sep = "")	
-	
-	# add varname desc
-	desc <- dict$descriptions[[varname]]
-	names(dimnames(x))[[COL]] <- desc
-	
-	x
+  
+  if (is.null(varname) || is.na(varname)) {
+    return(x)
+  }
+  
+  # match codings into colnames stripped of alpha
+  cnames <- dimnames(x)[[COL]]
+  cnames_numeric <- strip.alpha(cnames)
+  cnames_alpha <- strip.numeric(cnames)
+  catcodings <- dict$codings[[varname]]
+  
+  codings_indices <- match(cnames_numeric, catcodings)
+  
+  if (any(is.na(codings_indices))) {
+    warning(
+      paste("For varname", varname, "Expecting codings of",paste(catcodings, collapse=" "),"but got", paste(cnames_numeric[is.na(codings_indices)],collapse=" "))
+    )
+  }
+  
+  cnames_numeric_desc <- names(catcodings)[codings_indices]
+  
+  # combine desc with existing alpha, NB: assume alpha is at the end
+  dimnames(x)[[COL]] <- paste(cnames_numeric_desc, cnames_alpha, sep = "")	
+  
+  # add varname desc
+  desc <- dict$descriptions[[varname]]
+  names(dimnames(x))[[COL]] <- desc
+  
+  x
 }
 
 #' Label a flattened matrix. Labels flattened columns according to dictionary codings, 
@@ -906,30 +909,30 @@ labelColumnCodes <- function(x, dict, varname) {
 #' label_flattened_mx(mx.flattened, dict, row.dim.label="Year")
 #' }
 label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.label="") {
-	varname <- attr(mx.flattened, "meta")["varname"]
-	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
-	
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag=="") {
-				grpby.tag <- NULL
-			}
-		}
-	}
-	
-	#label
-	colnames_original <- attr(mx.flattened, "colnames_original")
-	cnames <- if (!is.null(colnames_original)) colnames_original else colnames(mx.flattened)
-	
-	colnames(mx.flattened) <- dict$cmatchFlattened(cnames, varname, grpby.tag)
-	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
-	
-	means_suffix<-attr(mx.flattened, "means_suffix")
-	
-	if (!is.null(means_suffix)) colnames(mx.flattened)<-paste(colnames(mx.flattened), means_suffix)
-	
-	structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
-
+  varname <- attr(mx.flattened, "meta")["varname"]
+  grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
+  
+  if (!is.null(grpby.tag)) {
+    if (!is.na(grpby.tag)) {
+      if (grpby.tag=="") {
+        grpby.tag <- NULL
+      }
+    }
+  }
+  
+  #label
+  colnames_original <- attr(mx.flattened, "colnames_original")
+  cnames <- if (!is.null(colnames_original)) colnames_original else colnames(mx.flattened)
+  
+  colnames(mx.flattened) <- dict$cmatchFlattened(cnames, varname, grpby.tag)
+  names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
+  
+  means_suffix<-attr(mx.flattened, "means_suffix")
+  
+  if (!is.null(means_suffix)) colnames(mx.flattened)<-paste(colnames(mx.flattened), means_suffix)
+  
+  structure(mx.flattened, grpingNames=  attr(colnames(mx.flattened), "grpingNames"))
+  
 }
 
 #' Extension of label_flattened_mx() to label a flattened matrix that contains confidence 
@@ -967,138 +970,138 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #' @examples
 #' \dontrun{}
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
-	varname <- attr(mx.flattened, "meta")["varname"]
-	grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
-	grpingNames <- attr(colnames(mx.flattened), "grpingNames")
-	
-	#e.g. colnames start off as:
-	#  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
-	#[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
-	#[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
-	
-	col.names <- colnames(mx.flattened)
-	
-	#identify the position of the last space in each name
-	#browser()
-	last.space.output <- identify.position.last.space(col.names)
-	pos.last.space.vec <- last.space.output[[1]]
-	num.spaces <- last.space.output[[2]]
-	
-	if ((CI==TRUE)&(num.runs>1)) {
-		# Need to remove the Mean, Lower, and Upper parts
-		sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
-	} else if ((CI==FALSE)|(num.runs==1)) {
-		sub.col.names <- col.names
-	}
-	
-	#if grpby.tag="" then convert it to NA
-	if (!is.null(grpby.tag)) {
-		if (!is.na(grpby.tag)) {
-			if (grpby.tag=="") {
-				grpby.tag <- NA
-			}
-		}
-	}
-
-	last.space.output <- identify.position.last.space(sub.col.names)
-	num.spaces <- last.space.output[[2]]
-	if ((num.spaces[1]==0)) {
-		#no grouping
-		if (!is.null(binbreaks)) {
-			if (any(is.na(as.numeric(sub.col.names)))) {
-				#names are already the character versions and the match is not needed
-				un.ordered.names <- sub.col.names
-			} else {
-				#convert numeric codes to character names
-				un.ordered.names <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
-			}
-			ord <- match(un.ordered.names, names(binbreaks[-1]))
-			ordered.names <- un.ordered.names[order(ord)]
-			#reorder results
-			mx.flattened <- mx.flattened[,order(ord)]
-			colnames(mx.flattened) <- ordered.names
-		} else {
-			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
-		}
-	} else if (num.spaces[1]>0) {
-		#there is grouping
-	
-		#names of the variable of interest (not the grouping variable)
-		#take last part of sub.col.names to match
-		name.length <- str_length(sub.col.names)
-		
-		#identify the position of the last space in each name again 
-		#(will have changed if removed Mean, Lower, Upper but will be same if didn't
-		last.space.output <- identify.position.last.space(sub.col.names)
-		pos.last.space.vec <- last.space.output[[1]]
-		num.spaces <- last.space.output[[2]]
-		
-		#primary variable names
-		simple.names <- str_sub(sub.col.names, pos.last.space.vec+1, name.length)
-		if (any(is.na(as.numeric(simple.names)))) {
-			#names are already the character versions and the match is not needed
-			simple.names.words <- simple.names
-		} else {
-			#convert numeric codes to character names
-			simple.names.words <- dict$cmatch(simple.names, varname)
-		}
-		
-		if (!is.null(binbreaks)) {
-			un.ordered.names <- simple.names.words
-			ord <- match(un.ordered.names, names(binbreaks[-1]))
-			ordered.names <- unique(un.ordered.names[order(ord)])
-			if ((CI==TRUE)&(num.runs>1)) {
-				num.grps <- (length(un.ordered.names)/length(ordered.names))/3
-			} else if ((CI==FALSE)|(num.runs==1)) {
-				num.grps <- length(un.ordered.names)/length(ordered.names)
-			}
-			ord2 <- NULL
-			for (i in 1:num.grps) {
-				ord2 <- c(ord2, ord[1:(length(ord)/num.grps)]+(i-1)*length(ordered.names))
-			}
-			ordered.names <- un.ordered.names[order(ord2)]
-			
-			#reorder results
-			mx.flattened <- mx.flattened[,order(ord2)]
-			
-			#grping variable names
-			grp.names <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
-			if (any(is.na(as.numeric(grp.names)))) {
-				#names are already the character versions and the match is not needed
-				grp.names.words <- grp.names
-			} else {
-				#no binbreaks
-				#convert numeric codes to character names
-				grp.names.words <- dict$cmatch(grp.names, grpby.tag)
-			}
-			
-			final.names <- rep(NA, length(sub.col.names))
-			for (i in 1:length(sub.col.names)) {
-				final.names[i] <- paste(grp.names.words[i], ordered.names[i])
-			}
-			colnames(mx.flattened) <- final.names
-			
-		} else {
-			colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
-		}
-		
-		if ((sum(grepl("NA", colnames(mx.flattened)))==ncol(mx.flattened)) | (any(grepl("subgroup", colnames(mx.flattened))))) {
-			#should be inside collate_all_run_results() and are collating results by a user specified subgroup
-		
-			#take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
-			grp.names.words <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
-			final.names <- rep(NA, length(sub.col.names))
-			for (i in 1:length(sub.col.names)) {
-			final.names[i] <- paste(grp.names.words[i], simple.names.words[i])
-			}
-			colnames(mx.flattened) <- final.names
-		}
-
-	}
-	names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
-	
-	result <- structure(mx.flattened, grpingNames=grpingNames, varname=varname)
-	return(result)
+  varname <- attr(mx.flattened, "meta")["varname"]
+  grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
+  grpingNames <- attr(colnames(mx.flattened), "grpingNames")
+  
+  #e.g. colnames start off as:
+  #  [1] "1 0 Mean"  "1 0 Lower" "1 0 Upper" "1 1 Mean"  "1 1 Lower" "1 1 Upper"
+  #[7] "2 0 Mean"  "2 0 Lower" "2 0 Upper" "2 1 Mean"  "2 1 Lower" "2 1 Upper"
+  #[13] "3 0 Mean"  "3 0 Lower" "3 0 Upper" "3 1 Mean"  "3 1 Lower" "3 1 Upper"
+  
+  col.names <- colnames(mx.flattened)
+  
+  #identify the position of the last space in each name
+  #browser()
+  last.space.output <- identify.position.last.space(col.names)
+  pos.last.space.vec <- last.space.output[[1]]
+  num.spaces <- last.space.output[[2]]
+  
+  if ((CI==TRUE)&(num.runs>1)) {
+    # Need to remove the Mean, Lower, and Upper parts
+    sub.col.names <- str_sub(col.names, 1, pos.last.space.vec-1)
+  } else if ((CI==FALSE)|(num.runs==1)) {
+    sub.col.names <- col.names
+  }
+  
+  #if grpby.tag="" then convert it to NA
+  if (!is.null(grpby.tag)) {
+    if (!is.na(grpby.tag)) {
+      if (grpby.tag=="") {
+        grpby.tag <- NA
+      }
+    }
+  }
+  
+  last.space.output <- identify.position.last.space(sub.col.names)
+  num.spaces <- last.space.output[[2]]
+  if ((num.spaces[1]==0)) {
+    #no grouping
+    if (!is.null(binbreaks)) {
+      if (any(is.na(as.numeric(sub.col.names)))) {
+        #names are already the character versions and the match is not needed
+        un.ordered.names <- sub.col.names
+      } else {
+        #convert numeric codes to character names
+        un.ordered.names <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+      }
+      ord <- match(un.ordered.names, names(binbreaks[-1]))
+      ordered.names <- un.ordered.names[order(ord)]
+      #reorder results
+      mx.flattened <- mx.flattened[,order(ord)]
+      colnames(mx.flattened) <- ordered.names
+    } else {
+      colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+    }
+  } else if (num.spaces[1]>0) {
+    #there is grouping
+    
+    #names of the variable of interest (not the grouping variable)
+    #take last part of sub.col.names to match
+    name.length <- str_length(sub.col.names)
+    
+    #identify the position of the last space in each name again 
+    #(will have changed if removed Mean, Lower, Upper but will be same if didn't
+    last.space.output <- identify.position.last.space(sub.col.names)
+    pos.last.space.vec <- last.space.output[[1]]
+    num.spaces <- last.space.output[[2]]
+    
+    #primary variable names
+    simple.names <- str_sub(sub.col.names, pos.last.space.vec+1, name.length)
+    if (any(is.na(as.numeric(simple.names)))) {
+      #names are already the character versions and the match is not needed
+      simple.names.words <- simple.names
+    } else {
+      #convert numeric codes to character names
+      simple.names.words <- dict$cmatch(simple.names, varname)
+    }
+    
+    if (!is.null(binbreaks)) {
+      un.ordered.names <- simple.names.words
+      ord <- match(un.ordered.names, names(binbreaks[-1]))
+      ordered.names <- unique(un.ordered.names[order(ord)])
+      if ((CI==TRUE)&(num.runs>1)) {
+        num.grps <- (length(un.ordered.names)/length(ordered.names))/3
+      } else if ((CI==FALSE)|(num.runs==1)) {
+        num.grps <- length(un.ordered.names)/length(ordered.names)
+      }
+      ord2 <- NULL
+      for (i in 1:num.grps) {
+        ord2 <- c(ord2, ord[1:(length(ord)/num.grps)]+(i-1)*length(ordered.names))
+      }
+      ordered.names <- un.ordered.names[order(ord2)]
+      
+      #reorder results
+      mx.flattened <- mx.flattened[,order(ord2)]
+      
+      #grping variable names
+      grp.names <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
+      if (any(is.na(as.numeric(grp.names)))) {
+        #names are already the character versions and the match is not needed
+        grp.names.words <- grp.names
+      } else {
+        #no binbreaks
+        #convert numeric codes to character names
+        grp.names.words <- dict$cmatch(grp.names, grpby.tag)
+      }
+      
+      final.names <- rep(NA, length(sub.col.names))
+      for (i in 1:length(sub.col.names)) {
+        final.names[i] <- paste(grp.names.words[i], ordered.names[i])
+      }
+      colnames(mx.flattened) <- final.names
+      
+    } else {
+      colnames(mx.flattened) <- dict$cmatchFlattened(sub.col.names, varname, grpby.tag)
+    }
+    
+    if ((sum(grepl("NA", colnames(mx.flattened)))==ncol(mx.flattened)) | (any(grepl("subgroup", colnames(mx.flattened))))) {
+      #should be inside collate_all_run_results() and are collating results by a user specified subgroup
+      
+      #take first part of sub.col.names ('Not in subgroup' or 'In subgroup')
+      grp.names.words <- str_sub(sub.col.names, 1, pos.last.space.vec-1)
+      final.names <- rep(NA, length(sub.col.names))
+      for (i in 1:length(sub.col.names)) {
+        final.names[i] <- paste(grp.names.words[i], simple.names.words[i])
+      }
+      colnames(mx.flattened) <- final.names
+    }
+    
+  }
+  names(dimnames(mx.flattened)) <- c(row.dim.label,col.dim.label)
+  
+  result <- structure(mx.flattened, grpingNames=grpingNames, varname=varname)
+  return(result)
 }
 
 
@@ -1124,17 +1127,17 @@ label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label=
 #' identify.position.last.space(col.names)
 #' }
 identify.position.last.space <- function(col.names) {
-	space.ids <- str_locate_all(col.names, " ")
-	num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
-	pos.last.space <- rep(NA, length(num.spaces))
-	if (sum(num.spaces)>0) {
-		for (i in 1:length(num.spaces)) {
-			pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
-		}
-	}
-	pos.last.space.vec <- pos.last.space
-	result.list <- list(pos.last.space.vec=pos.last.space.vec, num.spaces=num.spaces)
-	return(result.list)
+  space.ids <- str_locate_all(col.names, " ")
+  num.spaces <- unlist(lapply(space.ids, function(x) {nrow(x)}))
+  pos.last.space <- rep(NA, length(num.spaces))
+  if (sum(num.spaces)>0) {
+    for (i in 1:length(num.spaces)) {
+      pos.last.space[i] <- space.ids[[i]][num.spaces[i], 2]
+    }
+  }
+  pos.last.space.vec <- pos.last.space
+  result.list <- list(pos.last.space.vec=pos.last.space.vec, num.spaces=num.spaces)
+  return(result.list)
 }
 
 
@@ -1178,40 +1181,40 @@ identify.position.last.space <- function(col.names) {
 #' 
 #' prop.table.mx.grped.rows(mx.grped.rows, groupnameprefixes, num.runs = 1)
 prop.table.mx.grped.rows <- function (mx.grped.rows, groupnameprefixes, CI=FALSE, num.runs) {
-
-	grpingNames <- attr(mx.grped.rows,"grpingNames")
-	
-	if (is.null(groupnameprefixes) || is.null(grpingNames)) {
-		grpby <- rep(1, ncol(mx.grped.rows))
-	} else {
-		grpby <- match(grpingNames,groupnameprefixes)
-		if (sum(is.na(grpby))==length(grpby)) {
-			#grpby <- as.numeric(grpingNames)
-			grpby <- grpingNames
-		}
-		assert(!is.na(grpby))	
-	}
-	# get proportions by grp
-	mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby, CI=CI, num.runs=num.runs)
-	
-	mx.grped.rows.prop.t <- t(mx.grped.rows.prop)
-	
-	result <- structure(mx.grped.rows.prop.t, meta = attr(mx.grped.rows, "meta"), dimnames=dimnames(mx.grped.rows))
-	
-	return(result)
+  
+  grpingNames <- attr(mx.grped.rows,"grpingNames")
+  
+  if (is.null(groupnameprefixes) || is.null(grpingNames)) {
+    grpby <- rep(1, ncol(mx.grped.rows))
+  } else {
+    grpby <- match(grpingNames,groupnameprefixes)
+    if (sum(is.na(grpby))==length(grpby)) {
+      #grpby <- as.numeric(grpingNames)
+      grpby <- grpingNames
+    }
+    assert(!is.na(grpby))	
+  }
+  # get proportions by grp
+  mx.grped.rows.prop <- apply(mx.grped.rows, ROW, prop.table.grpby, grpby=grpby, CI=CI, num.runs=num.runs)
+  
+  mx.grped.rows.prop.t <- t(mx.grped.rows.prop)
+  
+  result <- structure(mx.grped.rows.prop.t, meta = attr(mx.grped.rows, "meta"), dimnames=dimnames(mx.grped.rows))
+  
+  return(result)
 }
 
 # run is a list of length = number of iterations
 check.row.names <- function(run) {
-	#for each iteration, check row.names exist, if not, set rownames to be the same as those that do exist
-	rownames.list <- lapply(run, rownames)
-	not.present <- lapply(rownames.list, function(x) { which(is.null(x)) })
-	not.present.id <- as.numeric(names(unlist(not.present)))
-	present.id <- (1:length(run))[-not.present.id]
-	
-	#for iterations where row names are not present, make the row names the same as the rows where they are present
-	for (i in not.present.id) {
-		rownames(run[[i]]) <- rownames(run[[present.id[1]]])
-	}
-	return(run)
+  #for each iteration, check row.names exist, if not, set rownames to be the same as those that do exist
+  rownames.list <- lapply(run, rownames)
+  not.present <- lapply(rownames.list, function(x) { which(is.null(x)) })
+  not.present.id <- as.numeric(names(unlist(not.present)))
+  present.id <- (1:length(run))[-not.present.id]
+  
+  #for iterations where row names are not present, make the row names the same as the rows where they are present
+  for (i in not.present.id) {
+    rownames(run[[i]]) <- rownames(run[[present.id[1]]])
+  }
+  return(run)
 }

@@ -1,22 +1,17 @@
 Package: simario
-Depends:
-    plyr,
-    xlsx,
-    proto,
-    stringr
-Imports:
-    abind,
-    plyr,
-    Hmisc,
-    stringr
+Depends: R (>= 3.1.0), proto
+Imports: abind, plyr, Hmisc, stringr, testthat, stringi, xlsx, snowfall
 Type: Package
 Title: Discrete-time dynamic micro-simulation framework for R
-Version: 1.6.4
-Date: 2014-06-30
+Version: 1.7.0
+Date: 2015-11-01
 Author: Oliver Mannion <o.mannion@auckland.ac.nz>
-Maintainer: Oliver Mannion <o.mannion@auckland.ac.nz>
+Maintainer: Kevin Chang <k.chang@auckland.ac.nz>
 Description: Framework for executing multi-run dynamic micro-simulation and
     aggregating results across all runs
 License: LGPL
-URL: http://code.google.com/p/simario/
+URL: https://github.com/compassresearchcentre/simario
 LazyData: true
+
+
+

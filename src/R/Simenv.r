@@ -256,7 +256,11 @@ expr = {
 	#' 	varnames<-"examplevariable"
 	#'  env.scenario$simframe$residential<-c(0,0,1,1,0,1,1,1,1,1,1,1,1)
 	#' 	iteration=1
-	#' 	propensities<-list(examplevariable=array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9) , dim=c(13,1,1)),var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2) , dim=c(13,1,1)))
+	#' 	propensities<-list(examplevariable=
+	#'		array(c(0.9,0.8,0.8,0.7,0.5,0.4,0.1,0.1,0.15,0.7,0.9,0.9,0.9), 	
+	#'		dim=c(13,1,1)),
+	#'		var2=array(c(0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.2,0.2,0.2,0.2), 
+	#'		dim=c(13,1,1)))
 	#' 	prop.table(table(env.scenario$simframe["examplevariable"][env.scenario$simframe$residential==1,]))
 	#'	applyCatAdjustmentToSimframe(.,varnames, desired_props, iteration, propensities, print_adj = TRUE)
 	#' 	env.scenario$simframe$examplevariable[env.scenario$simframe$residential==1]
@@ -638,6 +642,7 @@ expr = {
 			
 		}
 		
+		#browser()
 		invisible(lapply(.$modules, function(module) {
 							#module <- .$modules[[1]]
 							module$run_results_collated <- module$collate_all_run_results(module$run_results, .$cat.adjustments, .$simframe)
@@ -709,11 +714,15 @@ expr = {
 
 		outcomes <-sfLapply(1:total_runs, simulateRun, simenv=env.base.list)
 		
+		cat(gettextf("Generating run results for %s\n", .$name))
+		   
 		all_run_results <-sfLapply(1:total_runs, map_outcomes_to_run_results,  
 			simframe = env.base.list$simframe, 
 			outcomes = outcomes, 
 			cat.adjustments = env.base.list$cat.adjustments)		
 		
+		 cat(gettextf("Collating all run results for %s\n", .$name))
+  
 		run_results_collated <- collate_all_run_results(all_run_results, 
 				cat.adjustments = env.base.list$cat.adjustments,
 				simframe = env.base.list$simframe, outcomes = outcomes[[1]])
@@ -722,8 +731,9 @@ expr = {
 		
 		.$num_runs_simulated <- total_runs
 		.$modules[[1]]$outcomes <- outcomes
-		.$modules[[1]]$all_run_results <- all_run_results
-
+		.$modules[[1]]$run_results <- all_run_results
+		names(.$module$run_results) <- paste("run", 1:total_runs, sep="")
+		
 		.$modules[[1]]$run_results_collated <- run_results_collated
 		
 		# call garbage collector to release memory used during calculation (sometimes this is a lot)

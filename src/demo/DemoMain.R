@@ -70,6 +70,7 @@ loadSimario <- function() {
 		cat("loadSimario: loading pre-installed development version using load_all\n")
 		
 		library(stringr)
+		library(stringi)
 		library(devtools)
 		library(testthat)	
 		library(Hmisc)
@@ -168,19 +169,23 @@ loadDemoModels <- function(modelfiledir) {
 loadTransitionProbabilities <- function(dir) {
 	transition_probabilities <- list()
 	
-	transition_probabilities$disability_state <- read_csv(dir, "Disability_state_transition_probabilities.csv", stringsAsFactors=T)
+	transition_probabilities$disability_state <- read_csv(dir, 
+			"Disability_state_transition_probabilities.csv", stringsAsFactors=T)
 	transition_probabilities$disability_state$index <- with(transition_probabilities$disability_state, 
 			index_sex_age_grp_disability_state(Sex, Agegrp, Current.disability.state))
 	transition_probabilities$disability_state$probs <- 
-			as.matrix(transition_probabilities$disability_state[c("No.Disability", "Mild.Disability", "Moderate.Disability", "Severe.Disability")])
+			as.matrix(transition_probabilities$disability_state[c("No.Disability", "Mild.Disability", 
+									"Moderate.Disability", "Severe.Disability")])
 	
 	transition_probabilities$death <- read_csv(dir, "Probabilities_of_male_and_female_death_by_age_and_sex.csv")
 	
-	transition_probabilities$qualification <- read_csv(dir, "QualTransitionProbs.csv", stringsAsFactors=T)
+	transition_probabilities$qualification <- read_csv(dir, "QualTransitionProbs.csv", 
+			stringsAsFactors=T)
 	transition_probabilities$qualification$index <- with(transition_probabilities$qualification, 
 			index_age_qualification(age, Current.qualification))
 	transition_probabilities$qualification$probs <- 
-			as.matrix(transition_probabilities$qualification[c("None", "Secondary.School", "Below.Degree", "Degree")])
+			as.matrix(transition_probabilities$qualification[c("None", "Secondary.School", 
+									"Below.Degree", "Degree")])
 	
 	transition_probabilities
 }
@@ -315,7 +320,9 @@ loadCatToContModels <- function(modelfiledir) {
 #' catToCont.modelfiledir <- "C:/Workspace/simario/src/demo/data/models_CatToCont/"
 #' initDemo(data_dir, modelfiledir, propensityfiledir, catToCont.modelfiledir)
 
-initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), model.filedir, propensity.filedir, catToCont.model.filedir, transition.probabilities.filedir) {
+initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), model.filedir, 
+		propensity.filedir, catToCont.model.filedir, transition.probabilities.filedir) {
+	
 	base_dir <- file.path(data_dir, "base")
 	
 	descriptions_dataframe <- read_file(base_dir, "Data_dictionary.csv")
@@ -361,8 +368,8 @@ initDemo <- function(data_dir=paste(getwd(), "/data/", sep=""), model.filedir, p
 }
 
 
-
 #setwd(file.path(Sys.getenv("R_USER"), "simario/src/demo/"))
+#setwd("C:/Users/kcha193/workspace/simario/src/demo")
 
 loadSimario()
 
@@ -370,7 +377,7 @@ loadSimario()
 source("SimenvDemo.R")
 source("SimmoduleDemo.R")
 source("DemoScenarios.R")
-source("Table Builder.R")
+#source("Table Builder.R")
 
 #define directories
 dirs <- list()
@@ -381,7 +388,9 @@ dirs$TransitionProbabilities <- paste(dirs$root, "data/transition_probabilities/
 dirs$catToContModels <- paste(dirs$root, "data/models_CatToCont/", sep="")
 dirs$PropensityModels <- paste(dirs$root, "data/models_Propensities/", sep="")
 
-initDemo(model.filedir=dirs$models, propensity.filedir=dirs$PropensityModels, catToCont.model.filedir=dirs$catToContModels, transition.probabilities.filedir=dirs$TransitionProbabilities)
+initDemo(model.filedir=dirs$models, propensity.filedir=dirs$PropensityModels, 
+		catToCont.model.filedir=dirs$catToContModels, 
+		transition.probabilities.filedir=dirs$TransitionProbabilities)
 
 #if no base simulation yet, then simulate 
 if (!exists("env.base")) {

@@ -1,17 +1,7 @@
 #' Categorical adjusment
 #' 
-#' Before or during the simulation the user may wish to specify the proportion of category values 
-#' desired for a simframe variable
-#' Eg: a user may wish the proportion of home owners in year 2 to be 0.4, 0.6
-#' Desired proportions can be specified in a categorical adjustment matrix in which rows = iterations
-#' In the above example instead of simulating the home ownership variable in year 2, it will be set to 
-#' the desired proportions 0.4, 0.6 
-#' A desired proportion of NA will leave the variable unchanged
-#' If propensities are supplied they will be used to select which micro-units to adjust, otherwise the 
-#' selection will be random
-#' Propensities are specified via the global list variable propensities
-
-
+#' Before or during the simulation the user may wish to specify the proportion of category values desired for a simframe variable. Eg: a user may wish the proportion of home owners in year 2 to be 0.4, 0.6. Desired proportions can be specified in a categorical adjustment matrix in which rows = iterations. In the above example instead of simulating the home ownership variable in year 2, it will be set to the desired proportions 0.4, 0.6. A desired proportion of NA will leave the variable unchanged. If propensities are supplied they will be used to select which micro-units to adjust, otherwise the selection will be random Propensities are specified via the global list variable propensities.
+#'
 #' Create empty categorical variable adjustment matrices for specified number of iterations.
 #' Initial matrix values are NA (i.e: no adjustment).
 #'
@@ -46,24 +36,23 @@
 #' createAdjustmentMatrices(cat.varnames, dict, rows)
 #' }
 createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
-	
-	cat.adjustments <- lapply(cat.varnames, function (varname) {
-				coding <- dict$codings[[varname]]
-				if (is.null(coding)) stop(gettextf("No codings for %s", varname))
-				
-				createAdjustmentMatrix(varname, coding, rows)
-			})
-	
-	names(cat.adjustments) <- sapply(cat.varnames, function (varname) {
-				if (is_level_var(varname)) strip_lvl_suffix(varname) else varname
-			})
-	
-	cat.adjustments 
+  
+  cat.adjustments <- lapply(cat.varnames, function (varname) {
+    coding <- dict$codings[[varname]]
+    if (is.null(coding)) stop(gettextf("No codings for %s", varname))
+    
+    createAdjustmentMatrix(varname, coding, rows)
+  })
+  
+  names(cat.adjustments) <- sapply(cat.varnames, function (varname) {
+    if (is_level_var(varname)) strip_lvl_suffix(varname) else varname
+  })
+  
+  cat.adjustments 
 }
 
-#' Creates an empty adjustment matrix of NAs. An adjustment matrix contains cells
-#' for each categorical value across a supplied number of rows. Each row 
-#' represents an iteration.
+#' Creates an empty adjustment matrix of NAs. 
+#' An adjustment matrix contains cells for each categorical value across a supplied number of rows. Each row  represents an iteration.
 #' 
 #' @param varname
 #'  variable name. This can be a standard variable name, eg: "catpregsmk2"
@@ -106,18 +95,18 @@ createAdjustmentMatrices <- function(cat.varnames, dict, rows) {
 #' createAdjustmentMatrix(varname, coding, rows)
 #' }
 createAdjustmentMatrix <- function(varname, coding=cont.binbreaks[-1], rows, is_a_level_var = is_level_var(varname), cont.binbreaks=NULL, catToContModels=NULL) {
-	
-	if (is_numeric_scalar(rows)) {
-		rows <- paste("Year", seq(rows))
-	}
-	
-	if (is_a_level_var) {
-		varnames <- paste(strip_lvl_suffix(varname), "Lvl", coding, sep="")	
-	} else {
-		varnames <- varname
-	}
-	
-	structure(namedMatrix(rows, paste(names(coding),"(%)")), varnames=varnames, cont.binbreaks=cont.binbreaks, catToContModel=catToContModels)
+  
+  if (is_numeric_scalar(rows)) {
+    rows <- paste("Year", seq(rows))
+  }
+  
+  if (is_a_level_var) {
+    varnames <- paste(strip_lvl_suffix(varname), "Lvl", coding, sep="")	
+  } else {
+    varnames <- varname
+  }
+  
+  structure(namedMatrix(rows, paste(names(coding),"(%)")), varnames=varnames, cont.binbreaks=cont.binbreaks, catToContModel=catToContModels)
 }
 
 
@@ -141,10 +130,10 @@ createAdjustmentMatrix <- function(varname, coding=cont.binbreaks[-1], rows, is_
 #' }
 
 create2CategoryPropensityArray <- function(df) {
-	#convert dataframe to array with
-	#rows = obs, cols = "Level 1", z = vars 
-	array(as.matrix(df), dim=c(nrow(df), 1, ncol(df)), 
-			dimnames=list(rownames(df), "1st to 2nd category propensity", colnames(df))  )
+  #convert dataframe to array with
+  #rows = obs, cols = "Level 1", z = vars 
+  array(as.matrix(df), dim=c(nrow(df), 1, ncol(df)), 
+        dimnames=list(rownames(df), "1st to 2nd category propensity", colnames(df))  )
 }
 
 
@@ -170,10 +159,10 @@ create2CategoryPropensityArray <- function(df) {
 #' }
 
 createSingleIterationPropensityArray <- function(df, iteration_name) {
-	#convert dataframe to array with
-	#rows = obs, cols = cols, z = "At Birth"
-	array(as.matrix(df), dim=c(nrow(df), ncol(df), 1), 
-			dimnames=list(rownames(df), colnames(df), iteration_name)  )
+  #convert dataframe to array with
+  #rows = obs, cols = cols, z = "At Birth"
+  array(as.matrix(df), dim=c(nrow(df), ncol(df), 1), 
+        dimnames=list(rownames(df), colnames(df), iteration_name)  )
 }
 
 
@@ -195,7 +184,7 @@ createSingleIterationPropensityArray <- function(df, iteration_name) {
 #' }
 
 is_level_var <- function(varname) {
-	grepl("Lvl.$", varname)
+  grepl("Lvl.$", varname)
 }
 
 
@@ -216,7 +205,7 @@ is_level_var <- function(varname) {
 #' }
 
 strip_lvl_suffix <- function(varname) {
-	gsub("Lvl.$", "", varname)
+  gsub("Lvl.$", "", varname)
 }
 
 
@@ -245,15 +234,15 @@ strip_lvl_suffix <- function(varname) {
 #' evaluateLogisetExprAttribute(desired_props, simframe)
 #' }
 evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") { 
-		
-	logiset_expr <-attr(desired_props, "logisetexpr")
-	cat("Evaluating logiset expression: \"",logiset_expr,"\" for variable ",varname, "\n", sep="")
-	if (is.null(logiset_expr )) {
-		logiset<-NULL
-	} else {
-		logiset<- eval(parse(text=logiset_expr), envir = simframe)
-	}
-	logiset
+  
+  logiset_expr <-attr(desired_props, "logisetexpr")
+  cat("Evaluating logiset expression: \"",logiset_expr,"\" for variable ",varname, "\n", sep="")
+  if (is.null(logiset_expr )) {
+    logiset<-NULL
+  } else {
+    logiset<- eval(parse(text=logiset_expr), envir = simframe)
+  }
+  logiset
 }
 
 
@@ -276,15 +265,15 @@ evaluateLogisetExprAttribute <- function(desired_props, simframe, varname="") {
 #' attr(env.scenario$cat.adjustments[[1]], "logisetexpr")
 #' }
 setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
-	if (is.null(subgroupExpression) || subgroupExpression == "") {
-		return(removeGlobalSubgroupFilterExpression())
-	}
-	
-	cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
-	
-	for (i in 1:length(env.scenario$cat.adjustments)) {
-		attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
-	}
+  if (is.null(subgroupExpression) || subgroupExpression == "") {
+    return(removeGlobalSubgroupFilterExpression())
+  }
+  
+  cat("Setting global subgroup expression \"",subgroupExpression,"\"\n", sep="")
+  
+  for (i in 1:length(env.scenario$cat.adjustments)) {
+    attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- subgroupExpression
+  }
 }
 
 
@@ -299,9 +288,9 @@ setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
 #' @examples
 #' \dontrun{}
 removeGlobalSubgroupFilterExpression <- function() {
-	cat("Clearing global subgroup expression\n")
-	
-	for (i in 1:length(env.scenario$cat.adjustments)) {
-		attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- NULL
-	}
+  cat("Clearing global subgroup expression\n")
+  
+  for (i in 1:length(env.scenario$cat.adjustments)) {
+    attr(env.scenario$cat.adjustments[[i]], "logisetexpr") <- NULL
+  }
 }
