@@ -209,8 +209,6 @@ append.list.mx <- function(listmx.dest, listmx.src, into.dim=ZDIM) {
 #'  list of vector/matrix/arrays after add names and attributes
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
 copyMeta.list <- function(list.dest, list.src) {
 	mapply(function(dest,source){
 				#add back names of dimension 
@@ -915,7 +913,7 @@ select.row.list.mx <- function(mxlist, rownum, na.rm = T) {
 #' @param x 
 #' a vector, matrix or array
 #' 
-#' @param logical 
+#' @param logiset 
 #' vector to subset first dimension by
 #' 
 #' @return 

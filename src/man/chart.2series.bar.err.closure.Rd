@@ -7,7 +7,30 @@
 chart.2series.bar.err.closure(title, xlab, ylab, result.row.base,
   result.row.scenario, scenario.name)
 }
+\arguments{
+\item{title}{chart title. Also used in navigator node name.}
+
+\item{xlab}{x axis label.}
+
+\item{ylab}{y axis label}
+
+\item{result.row.base}{the base result row, ie: a vector with values named Mean and Lower eg:
+
+>  envs$`Scenario 1`$years1_5$run_results_collated$means$kids["Total",]
+    Mean    Lower    Upper
+10.99488 10.62256 11.36721
+
+ if there are no values named Mean, then it will be assumed that all values
+ are Means and that Lower is 0.}
+
+\item{result.row.scenario}{the scenario result row, formatted the same as result.row.base}
+
+\item{scenario.name}{name of scenario. Used to great navigator node path and label series.}
+}
 \description{
 Close over parameters to chart.2series.bar.err
+}
+\seealso{
+result.as.means.and.errs
 }
 

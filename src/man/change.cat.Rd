@@ -26,9 +26,6 @@ the categorical vector after modified
 \description{
 Change values in a categorical vector to a lower or higher value
 }
-\examples{
-\dontrun{}
-}
 \seealso{
 This function is called by the function \code{\link{modifyProps}}
 }

@@ -44,7 +44,9 @@ colmeans.list <- function (xlistm) {
 #'  are returned in additional columns
 #' @param NA.as.zero
 #'  if TRUE (default), treat NAs as if they are zeros
-#' 
+#' @param re_write_colnames
+#'  a logic to rewrite the colnames of the cells.
+#'
 #' @return
 #'  a matrix of means across the Z dimension. The "meta" attribute
 #'  of xa, if any, is retained.
@@ -230,8 +232,6 @@ mean_array_z_pctile_CIs <- function (xa, CI=TRUE, NA.as.zero=T) {
 #'  a matrix of means
 #' 
 #' @export 
-#' @examples 
-#' \dontrun{}
 mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments=NULL, dict, binbreaks=NULL) {
 	if ((NA.as.zero)&(sum(is.na(xa))>0)) xa[is.na(xa)] <- 0
 	
@@ -307,15 +307,13 @@ mean_array_z_pctile_CIs2 <- function (xa, CI=TRUE, NA.as.zero=T, cat.adjustments
 #' @param varname
 #' a string of length 1 with the name of the outcome variable.  Passed from 
 #' mean_array_pctile_CIS2().  
-#'@param dicr
+#'@param dict
 #' the dictionary of the specific MSM project.
 #' 
 #' @return 
 #' NULL
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
 proportions_at_each_run <- function(xa, grpby.tag, binbreaks, varname, dict) {
 	
 	if (!is.na(grpby.tag)) {
@@ -601,6 +599,12 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' @param new.names
 #'  if specified, the names of the result will be 
 #'  set to this vector
+#' @param probs
+#'  numeric vector of probabilities with values in [0,1]. (Values up to 2e-14 outside that range are accepted and moved to the nearby endpoint.)
+#' @param logiset
+#'  logical vector or matrix indicating which rows to include, or NULL to include all.
+#' @param dict
+#'  the specific project dictionary
 #' @param ...
 #'  additional arguments to pass to \code{\link{quantile}}
 #' e.g. na.rm=T
@@ -610,8 +614,6 @@ quantile_mx_cols <- function (mx, new.names=NULL, ...) {
 #' Quantiles for each group are put side-by-side in a rbind fashion.
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
 quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -736,6 +738,12 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 #' @param new.names
 #'  if specified, the names of the result will be 
 #'  set to this vector
+#' @param probs
+#'  numeric vector of probabilities with values in [0,1]. (Values up to 2e-14 outside that range are accepted and moved to the nearby endpoint.)
+#' @param logiset
+#'  logical vector or matrix indicating which rows to include, or NULL to include all.
+#' @param dict
+#'  the specific project dictionary
 #' @param ...
 #'  additional arguments to pass to \code{\link{quantile}}
 #' e.g. na.rm=T
@@ -745,8 +753,6 @@ quantile_mx_cols_BCASO <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NU
 #' Quantiles for each group are put side-by-side in a rbind fashion.
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
 quantile_mx_cols_BCASO_list <- function (mx, grpby=NULL, grpby.tag=NULL, new.names=NULL, probs=c(0,.1,.25,.5,.75,.9,1), logiset=NULL, dict=dict, ...) {
 	#quantile(mx[,1], probs=seq(0.2, 1, 0.2))
 	
@@ -1112,8 +1118,6 @@ table.grpby <- function (x, grpby = NULL, useNA = "ifany") {
 #'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
 table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
@@ -1170,8 +1174,6 @@ table.grpby_BCASO1 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 #'  If grpby = NULL then a table with 1 column and rows as categories is returned.
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
 table.grpby_BCASO2 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   
@@ -1211,8 +1213,36 @@ table.grpby_BCASO2 <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 }
 
 
-#' modified by Mengdan - a newer version
-
+#' Old Frequency table, with option to group results
+#' Extension of table.grpby() that can handle grpby as a matrix as well as a vector.  
+#' The group-by variable may be time-invariant or time-variant. This function is  modified in 
+#' to make order of tables of continuous variables in run_results be the same as in binbreaks 
+#' 
+#'
+#' @param x
+#'  vector of values which can be interpreted as factors 
+#' 
+#' @param grpby
+#'  A vector or matrix of elements to group by, or NULL to do no grouping.
+#'  vector must be same length as the columns of x or matrix must have the same number
+#'  of rows as z.
+#' If the group-by variable is not time-invariant grpby can be provided as a vector or as a 
+#' matrix with every column the same.  If the group-by variable is time-variable then 
+#' grpby should be a matrix with number of columns equal to number of years. 
+#' 
+#' @param wgts
+#'  vector of weights, or NULL to do no weighting
+#'  Same length as the columns of x.
+#' 
+#' @param binbreak
+#'  The binbreaks for the specific outcome variable.
+#' 
+#' @return
+#'  a table. If grpby is specified this will be a table
+#'  with columns that are the group by and rows the categories. 
+#'  If grpby = NULL then a table with 1 column and rows as categories is returned.
+#' 
+#' @export
 table.grpby_BCASO <- function (x, grpby = NULL, wgts=NULL, binbreak=NULL) {
 	
 	if (is.null(wgts)) {wgts <- rep(1,length(x)) }   

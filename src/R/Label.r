@@ -36,8 +36,6 @@ labelColFromVec <- function (xlist, colnameslist) {
 #'  a named list with named column
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
 labelColTitleFromList <- function(xnamedlist) {
 	labelCol <- function(x,xname) { names(dimnames(x))[COL] <- c(xname);x }
 	mapply(labelCol, xnamedlist, names(xnamedlist), SIMPLIFY = FALSE)
@@ -94,9 +92,6 @@ labelCols.list <- function(xlist, xlabels = names(xlist), onlyIfNull = TRUE) {
 #' @return 
 #' NULL
 #' 
-#' @export 
-#' @examples
-#' \dontrun{}
 labelTitle <- function (xm, along, title) {
 	names(dimnames(xm))[[along]] <- title
 	xm

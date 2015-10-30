@@ -285,8 +285,6 @@ setGlobalSubgroupFilterExpression <- function(subgroupExpression) {
 #' NULL
 #'
 #' @export 
-#' @examples
-#' \dontrun{}
 removeGlobalSubgroupFilterExpression <- function() {
   cat("Clearing global subgroup expression\n")
   

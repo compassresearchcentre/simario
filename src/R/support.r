@@ -375,8 +375,6 @@ incByFactor <- function(x, factoredx, factorincrements) {
 #' an environment
 #' 
 #' @export
-#' @examples 
-#' \dontrun{}
 detachReturn <- function(envname) {
 	#store modified env
 	#env <- updatelist(env, as.list(as.environment(envname)))
@@ -496,8 +494,6 @@ eval.list <- function (exprlist, envir = .GlobalEnv, enclos = parent.frame(), al
 #' NULL
 #' 
 #' @export
-#' @examples 
-#' \dontrun{}
 globalNamed <- function (varname, x, pos = 1) {
 	assign(varname, x, pos = pos)	
 }
@@ -515,8 +511,6 @@ globalNamed <- function (varname, x, pos = 1) {
 #' NULL
 #' 
 #' @export
-#' @examples 
-#' \dontrun{}
 global <- function (x, pos = 1) {
 	
 	param1Name <- as.character(sys.call())[2]
@@ -771,8 +765,6 @@ stripClass <- function (x) {
 #'  x without "meta" attribute
 #' 
 #' @export
-#' @examples 
-#' \dontrun{}
 stripMeta <- function (x) {
 	`attr<-`(x, "meta", NULL)
 }
@@ -787,8 +779,6 @@ stripMeta <- function (x) {
 #'  xlist with elements without a "meta" attribute
 #' 
 #' @export 
-#' @examples 
-#' \dontrun{}
 stripMeta.list <- function (xlist) {
 	lapply(xlist, stripMeta)	
 }

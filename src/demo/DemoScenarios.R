@@ -46,8 +46,8 @@ runScenario2 <- function() {
 	env.scenario$simulate(2)
 	
 	### test if the adjustment work
-	#test1<-env.scenario$modules$demo$outcomes$disability_state[,1]
-	#test2<-env.scenario$modules$demo$outcomes$disability_state[,50]
+	test1<-env.scenario$modules$demo$outcomes$disability_state[,1]
+	test2<-env.scenario$modules$demo$outcomes$disability_state[,50]
 	#table(test1[env.scenario$simframe$sex==2])
 	#table(test2[env.scenario$simframe$sex==2])
 }
@@ -133,7 +133,7 @@ runScenario8 <- function() {
 	env.scenario <<- SimenvDemo$new("Scenario 8")
 	subgroupExpression <- "sex==2"
 	setGlobalSubgroupFilterExpression(subgroupExpression)
-	#env.scenario$cat.adjustments$qualification[1,] <- rep(1/4, 4)
+	env.scenario$cat.adjustments$qualification[1,] <- rep(1/4, 4)
 	env.scenario$cat.adjustments$qualification[50,] <- c(0.1,0.1,0.6,0.2)
 	env.scenario$simulate(2)
 	

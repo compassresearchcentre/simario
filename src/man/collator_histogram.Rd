@@ -25,9 +25,6 @@ collator_histogram(runs, dict, row.dim.label = "Year", col.dim.label = "")
   \item Labels the result using the dictionary
 }
 }
-\examples{
-\dontrun{}
-}
 \seealso{
 \code{\link{collator_mutiple_lists_mx}}
 }

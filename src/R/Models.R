@@ -494,8 +494,6 @@ predMultinomial <- function(model.glm.list, envir=parent.frame(), set = NULL) {
 #' NULL
 #'
 #' @export
-#' @examples
-#' \dontrun{}
 predSimMultinomial <-function(model.glm.list, envir=parent.frame(), set = NULL) {
 		
 	probs<-predMultinomial(model.glm.list, envir=envir, set = set)
@@ -748,8 +746,6 @@ predSimNormsSelectWithRounding <- function(x.cat, models, cont.binbreaks, envir=
 #' a continuous vector that when binned by cont.bonbreaks will be the same as x.cat
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
 predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 	x.cat <- as.integer(x.cat)
 	result <- rep(NA, length(x.cat))
@@ -787,8 +783,6 @@ predSimNBinomsSelect <- function(x.cat, models, envir=parent.frame()) {
 #'   envir=.GlobalEnv
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
 predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=parent.frame()) {
 	#envir=simframe.master
 	x.cat <- as.integer(x.cat)
@@ -827,7 +821,7 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 #' Calculates the predicted probabilities (from an ordinal regression model) to be in each
 #' cateory for a three or more level categorical variable. 
 #' 
-#' @param models. 
+#' @param models 
 #' A list of models - one for each category.  The difference in the models will
 #' only be the intercept if the model is an ordinal multinomial regression (clogit in SAS).
 #' 
@@ -837,7 +831,7 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 #' @param envir
 #'  environment in which to evaluate model variables.
 #' 
-#' @param stochatic.  
+#' @param stochastic  
 #' If TRUE adds random variation around the probabilities to be in each 
 #' category.  If  TRUE it will cause the probabilities to no longer add to 1 and so should only 
 #' be used when the probabilities are being used as propensities in scenario testing.
@@ -846,12 +840,10 @@ predSimModSelect <- function(x.cat, models, cont.binbreaks, logiset=NULL, envir=
 #' A matrix of probabilities.  Rows correspond to individual units (children) and
 #' columns correspond to the categories of the variable.  The probabilities will add to 1 and be 
 #' the exact probabilities estimated from the model if stocahtic=FALSE, otherwise, if 
-#' stochatic=TRUE, they will approximate probabilities that will most likely not add to 1 and 
+#' stochastic=TRUE, they will approximate probabilities that will most likely not add to 1 and 
 #' could also be negative or greater than 1.
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
 predictOrdinal <- function(models, numchildren, envir=parent.frame(), stochastic=FALSE) {
 	#number of categories in the outcome is one plus the number of models in the list
 	num.cat <- length(models) + 1

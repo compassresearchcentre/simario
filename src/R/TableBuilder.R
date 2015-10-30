@@ -11,32 +11,31 @@
 #' their subgroup only so they can better choose the proportions for their subgroup scenario.   
 #' 
 #' @param envName 
-#' the environment to use - Base, Scenario etc.
+#'  the environment to use - Base, Scenario etc.
 #' 
 #' @param statistic
-#' the summary measure to use in producing the dataset - frequencies, means, quintiles
+#'  the summary measure to use in producing the dataset - frequencies, means, quintiles
 #' 
 #' @param variableName
-#' the variable to use in producing the dataset
+#'  the variable to use in producing the dataset
 #' 
 #' @param grpbyName
-#' a subgroup by which to examine the variable
+#'  a subgroup by which to examine the variable
 #' 
 #' @param CI
-#' logical indicating whether 95% confidence intervals should be generated
+#'  logical indicating whether 95% confidence intervals should be generated
 #' 
 #' @param logisetexpr
-#' a character expression which defines the logiset variable
+#'  a character expression which defines the logiset variable
 #' 
 #' @param dict
-#' Dictionary object.
+#'  Dictionary object.
 #' 
 #' @param not.in.logiset
-#' logical.  If TRUE, then the results will be calculated on those not in the logiset rather 
-#' than those in the logiset.
+#'  logical.  If TRUE, then the results will be calculated on those not in the logiset rather than those in the logiset.
 #' 
 #' @return 
-#' a summary table for the entire or subgroup of the variable of interest.
+#'  a summary table for the entire or subgroup of the variable of interest.
 #'  
 #' @export
 #' @examples
@@ -52,7 +51,6 @@
 #' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="alive", grpbyName="sex", CI=FALSE, dict=dict_demo)
 #' test <- tableBuilder(envName="Base", statistic="frequencies", variableName="disability_state", grpbyName="qualification", CI=FALSE)
 #' tableBuilder(envName="Base", statistic="means", variableName="earnings", grpbyName="sex", CI=FALSE, dict=dict_demo)}
-#'
 tableBuilder <- function(envName, statistic, variableName, grpbyName="", CI=TRUE, logisetexpr=NULL, dict=dict_demo, not.in.logiset=FALSE) {
   
   

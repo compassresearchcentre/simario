@@ -9,14 +9,14 @@ predictOrdinal(models, numchildren, envir = parent.frame(),
   stochastic = FALSE)
 }
 \arguments{
+\item{models}{A list of models - one for each category.  The difference in the models will
+only be the intercept if the model is an ordinal multinomial regression (clogit in SAS).}
+
 \item{numchildren}{number of units}
 
 \item{envir}{environment in which to evaluate model variables.}
 
-\item{models.}{A list of models - one for each category.  The difference in the models will
-only be the intercept if the model is an ordinal multinomial regression (clogit in SAS).}
-
-\item{stochatic.}{If TRUE adds random variation around the probabilities to be in each
+\item{stochastic}{If TRUE adds random variation around the probabilities to be in each
 category.  If  TRUE it will cause the probabilities to no longer add to 1 and so should only
 be used when the probabilities are being used as propensities in scenario testing.}
 }
@@ -24,14 +24,11 @@ be used when the probabilities are being used as propensities in scenario testin
 A matrix of probabilities.  Rows correspond to individual units (children) and
 columns correspond to the categories of the variable.  The probabilities will add to 1 and be
 the exact probabilities estimated from the model if stocahtic=FALSE, otherwise, if
-stochatic=TRUE, they will approximate probabilities that will most likely not add to 1 and
+stochastic=TRUE, they will approximate probabilities that will most likely not add to 1 and
 could also be negative or greater than 1.
 }
 \description{
 Calculates the predicted probabilities (from an ordinal regression model) to be in each
 cateory for a three or more level categorical variable.
-}
-\examples{
-\dontrun{}
 }
 

@@ -17,7 +17,4 @@ a named list with named column
 names each object's column title with the
 object's name in the named list
 }
-\examples{
-\dontrun{}
-}
 

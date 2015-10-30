@@ -36,7 +36,4 @@ intervals.  Can handle grouping or no grouping.
 Labels flattened columns according to dictionary codings,
 and applies the specified row and col dimension label (if any).
 }
-\examples{
-\dontrun{}
-}
 

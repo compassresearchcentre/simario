@@ -22,8 +22,7 @@ tableBuilder(envName, statistic, variableName, grpbyName = "", CI = TRUE,
 
 \item{dict}{Dictionary object.}
 
-\item{not.in.logiset}{logical.  If TRUE, then the results will be calculated on those not in the logiset rather
-than those in the logiset.}
+\item{not.in.logiset}{logical.  If TRUE, then the results will be calculated on those not in the logiset rather than those in the logiset.}
 }
 \value{
 a summary table for the entire or subgroup of the variable of interest.

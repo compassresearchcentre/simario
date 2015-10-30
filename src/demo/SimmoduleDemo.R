@@ -226,7 +226,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 				qualification_transition_probs <- lookup_qualification_transition_probs(age[alive], qualification[alive])
 				
 				qualification[alive] <<- apply(qualification_transition_probs, ROW, function(prob) {
-							sample(1:4, size = 1, replace = T, prob=prob)	
+							sample(1:4, size = 1, replace = TRUE, prob=prob)	
 						})
 			}
 						
@@ -235,7 +235,7 @@ SimmoduleDemo <- proto(. = Simmodule, expr = {
 			qualificationmodels <- propensityModels[["qualification"]]
 			qualificationPropensities <- predictOrdinal(qualificationmodels, numPeople, envir=env.base$simframe, stochastic=TRUE)
 			qualification <<- adjustVar(qualification, "qualification", propens=qualificationPropensities[,-ncol(qualificationPropensities)])
-	
+
 		}
 		
 		

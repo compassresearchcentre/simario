@@ -21,7 +21,4 @@ copy names of dimensions and meta attributes
 from elements of list.src to list.dest
 Called by append.list.mx().
 }
-\examples{
-\dontrun{}
-}
 

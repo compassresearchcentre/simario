@@ -9,7 +9,4 @@ removeGlobalSubgroupFilterExpression()
 \description{
 Clear the subgroup expression for all cat.adjustments.
 }
-\examples{
-\dontrun{}
-}
 

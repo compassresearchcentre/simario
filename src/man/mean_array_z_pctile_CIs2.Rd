@@ -58,7 +58,4 @@ more accurate and will not go above 100%. This function has
 additional arguments compared to mean_array_z_pctile_CIs(),
 namely, cat.adjustments, dict, and binbreaks.
 }
-\examples{
-\dontrun{}
-}
 

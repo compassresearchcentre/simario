@@ -33,7 +33,4 @@ Frequency table, with option to group results.
 Extension of table.grpby() that can handle grpby as a matrix as well as a vector.
 The group-by variable may be time-invariant or time-variant.
 }
-\examples{
-\dontrun{}
-}
 

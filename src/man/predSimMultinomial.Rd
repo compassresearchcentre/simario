@@ -23,7 +23,4 @@ if unspecified, uses caller's environment}
 \description{
 Predict and simulate value from a multinomial model (currently only works if output catgegories are 1,2,3 etc with 1 being the reference)
 }
-\examples{
-\dontrun{}
-}
 

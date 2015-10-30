@@ -17,6 +17,10 @@ modifyProps(default.vec, desired_props, propens = NULL, accuracy = 0.01)
 \item{default.vec}{a vector after a run of the simulation. The values of this
  variable will be changed in accordance with what the user requests}
 
+\item{desired_props}{a vector that is the proportions requested by the user.
+ The vector is the length of the number of distinct values of the variable
+ being modified.}
+
 \item{propens}{matrix or vector of the propensity scores for each child
  For binary variables there is one column of propensity scores: the
  propensities to change from a 0 to a 1.
@@ -29,10 +33,6 @@ modifyProps(default.vec, desired_props, propens = NULL, accuracy = 0.01)
 \item{accuracy}{gives how close the end proportions are allowed to be away from the desired proportions before an error message is given
     - the default is 0.01.
  If the '.accuracy' global variable exists, its value will be used instead of that in function call.}
-
-\item{props}{a vector that is the proportions requested by the user.
- The vector is the length of the number of distinct values of the variable
- being modified.}
 }
 \value{
 a modified vector with the proportions requested.

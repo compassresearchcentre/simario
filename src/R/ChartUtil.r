@@ -101,6 +101,37 @@ chart.2series.bar.err <- function(title, xlab, ylab, result.row.base, result.row
 }
 
 #' Close over parameters to chart.2series.bar.err 
+#'
+#' @param title
+#'  chart title. Also used in navigator node name.
+#' 
+#' @param xlab
+#'  x axis label. 
+#' 
+#' @param ylab
+#'  y axis label
+#' 
+#' @param result.row.base
+#'   the base result row, ie: a vector with values named Mean and Lower eg:
+#' 
+#'>  envs$`Scenario 1`$years1_5$run_results_collated$means$kids["Total",]
+#'     Mean    Lower    Upper 
+#' 10.99488 10.62256 11.36721 
+#' 
+#'  if there are no values named Mean, then it will be assumed that all values
+#'  are Means and that Lower is 0.
+#' 
+#' @param result.row.scenario
+#'  the scenario result row, formatted the same as result.row.base
+#' 
+#' @param scenario.name
+#'  name of scenario. Used to great navigator node path and label series.
+#'
+#' @seealso result.as.means.and.errs
+#' 
+#' @return 
+#'  NULL
+#' 
 #' @export 
 chart.2series.bar.err.closure <- function(title, xlab, ylab, result.row.base, result.row.scenario, scenario.name) {
   function() {

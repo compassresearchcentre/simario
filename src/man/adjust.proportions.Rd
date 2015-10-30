@@ -41,7 +41,4 @@ Subsets by the logiset call the appropriate version of modifyProps
 combine and reorder the data using combine.and.reorder().
 Called in adjustCatVar(), adjustContVar, and applyContAdjustmentToSimframe().
 }
-\examples{
-\dontrun{}
-}
 

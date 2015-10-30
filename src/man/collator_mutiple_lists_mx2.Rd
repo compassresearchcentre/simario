@@ -42,8 +42,5 @@ on mean_array_pctile_CIS2() more more details.
 Another difference between this function and the original collator_mutiple_lists_mx()
 is that this function takes cat.adjustments, dict, and binbreaks arguments.
 }
-\examples{
-\dontrun{}
-}
 \keyword{internal}
 

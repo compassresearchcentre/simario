@@ -21,7 +21,4 @@ are for the zero category where grouping has been employed.
 Identifies the outcome variable's zero categories but not the grouping variable's zero categories.
 Zero category column names begin with a "0" or, for flatten column names, contain " 0".
 }
-\examples{
-\dontrun{}
-}
 

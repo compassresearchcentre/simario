@@ -20,8 +20,6 @@
 #' @seealso This function is called by the function \code{\link{modifyProps}}
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
 change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 	if (sign(n.change[i])==1) {
 		steal=F
@@ -63,8 +61,6 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 }
 
 
-
-
 #' Change the default simulated values to proportions requested by the user.
 #' The values of a vector are changed so that the proportions of each discrete value 
 #' are that requested by the user.
@@ -74,15 +70,15 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 #' If the propensity score(s) are not provided by the user then random 
 #' propensity scores are generated.
 #' 
-#' @param props
-#'  a vector that is the proportions requested by the user.
-#'  The vector is the length of the number of distinct values of the variable
-#'  being modified.
-#' 
 #' @param default.vec
 #'  a vector after a run of the simulation. The values of this
 #'  variable will be changed in accordance with what the user requests
 #' 
+#' @param desired_props
+#'  a vector that is the proportions requested by the user.
+#'  The vector is the length of the number of distinct values of the variable
+#'  being modified.
+#'
 #' @param propens
 #'  matrix or vector of the propensity scores for each child
 #'  For binary variables there is one column of propensity scores: the
@@ -149,11 +145,11 @@ change.cat <- function(num, rank.col, i, new.all.dat, n.change) {
 modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) {
 	if (exists(".accuracy")) {accuracy<-.accuracy}
 	
-	if (is.null(desired_props) || any(is.na(desired_props))) {
+	if (is.null(desired_props) || any(is.na(desired_props)) || length(default.vec) == 0) {
 		#no props, silently do nothing	  
 		return(default.vec)
-	}
-	
+	}	
+			
 	if (is.null(default.vec)) {
 		stop(gettextf("%s is NULL", as.character(sys.call())[2]))
 	}
@@ -161,8 +157,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	#keep original vector
 	orig.default.vec <- default.vec
 	
-	dim(propens)
-	dim(orig.default.vec)
+	#dim(propens)
+	#dim(orig.default.vec)
 	if (!is.null(propens) 
 			&& ( 
 				(length(dim(propens)) != 2 && length(orig.default.vec) != length(propens))
@@ -216,19 +212,21 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		stop("Add additional type in modifyProps()")	
 	}
 	
-	if (sum(tab.names!= 1:length(desired_props))>=1) {
-		default.vec2 <- numeric(length(default.vec))
-		for (i in 1:length(desired_props)) {
-			default.vec2[default.vec==tab.names[i]] <- i
-		}
-		default.vec <- default.vec2
-	}
-	
+	#if (sum(tab.names!= 1:length(desired_props))>=1) {
+	#	default.vec2 <- numeric(length(default.vec))
+	#	for (i in 1:length(desired_props)) {
+	#		default.vec2[default.vec==tab.names[i]] <- i
+	#	}
+	#	default.vec <- default.vec2
+	#}
+	#browser()
 	#match propensity scores to children
 	#(this function assumed that default.vec and propens have the same children
 	#in the same order) 
 	#the last column is a child identifier so I can put them back in the right
 	#order
+	#browser()
+	default.vec <- as.numeric(factor(default.vec, levels = attr(desired_props, "levels")))	
 	all.dat <- data.frame(default.vec, propens, 1:n)
 	new.all.dat <- all.dat
 	
@@ -239,7 +237,8 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	#create table of given data and calculate current proportions and the numbers 
 	#that need moving into or out of categories to get the requested proportions 
 	#(n.change)
-	tab <- table(new.all.dat[,1])
+	
+	tab <- table(new.all.dat[,1])	
 	cats <- c(1:length(desired_props))
 	#if any categories in desired_props are not present in default.vec then this merge is needed to fix the 
 	#problem
@@ -256,6 +255,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 	
 	num <- 1
 	i <- 1 #i = current category
+	#browser()
 	while (i < length(desired_props)) {
 		if (n.change[i]==0) {
 			#if no change needs to be made for category i then move onto next category
@@ -294,6 +294,7 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		current.props <- tab.df$Freq/sum(tab.df$Freq)
 		n.change <- round(current.props*n) - round(desired_props*n)
 	} 
+	#browser()
 	#check if requested proportions acheived
 	if (sum(abs(desired_props - current.props))<=accuracy) {
 		#if correct
@@ -302,23 +303,23 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		#been changed to 1s and alls 1s changed to 2s.  At this step, after the 
 		#changes to get the right proportions, the 1s are changed back to 0s and 
 		#the 2s are changed back to 1s.
-		if (sum(tab.names!= 1:length(desired_props))>=1) {
-			default.vec2 = numeric(nrow(new.all.dat))
-			if (type=="factor") {
-				for (i in 1:length(desired_props)) {
-					default.vec2[new.all.dat[,1]==i] <- levels(orig.default.vec)[i]
-					default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
-				}
-				new.all.dat[,1] = default.vec2
-			} else if ((type=="integer")|(type=="numeric")) {
-				for (i in 1:length(desired_props)) {
-					default.vec2[new.all.dat[,1]==i] <- tab.names[i]
-				}
-				new.all.dat[,1] = default.vec2
-			} else {
-				stop("Add additional type in modifyProps()")
-			}
-		}
+		# if (sum(tab.names!= 1:length(desired_props))>=1) {
+			# default.vec2 = numeric(nrow(new.all.dat))
+			# if (type=="factor") {
+				# for (i in 1:length(desired_props)) {
+					# default.vec2[new.all.dat[,1]==i] <- levels(orig.default.vec)[i]
+					# default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
+				# }
+				# new.all.dat[,1] = default.vec2
+			# } else if ((type=="integer")|(type=="numeric")) {
+				# for (i in 1:length(desired_props)) {
+					# default.vec2[new.all.dat[,1]==i] <- tab.names[i]
+				# }
+				# new.all.dat[,1] = default.vec2
+			# } else {
+				# stop("Add additional type in modifyProps()")
+			# }
+		# }
 		
 		#and put children back in the right order
 		new.all.dat2 = new.all.dat[order(new.all.dat[,rank.col-1]),]
@@ -330,23 +331,23 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		#(output should all be correct if I have thought of everything and made no 
 		#mistakes)
 		#change back to orignal category names
-		if (sum(tab.names!= 1:length(desired_props))>=1) {
-			default.vec2 = numeric(nrow(new.all.dat))
-			if (type=="factor") {
-				for (i in 1:length(desired_props)) {
-					default.vec2[new.all.dat[,1]==i] <- levels(orig.default.vec)[i]
-					default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
-				}
-				new.all.dat[,1] = default.vec2
-			} else if ((type=="integer")|(type=="numeric")) {
-				for (i in 1:length(desired_props)) {
-					default.vec2[new.all.dat[,1]==i] <- tab.names[i]
-				}
-				new.all.dat[,1] = default.vec2
-			} else {
-				stop("Add additional type in modifyProps()")
-			}
-		}
+		# if (sum(tab.names!= 1:length(desired_props))>=1) {
+			# default.vec2 = numeric(nrow(new.all.dat))
+			# if (type=="factor") {
+				# for (i in 1:length(desired_props)) {
+					# default.vec2[new.all.dat[,1]==i] <- levels(orig.default.vec)[i]
+					# default.vec2 <- factor(default.vec2, levels=levels(orig.default.vec))
+				# }
+				# new.all.dat[,1] = default.vec2
+			# } else if ((type=="integer")|(type=="numeric")) {
+				# for (i in 1:length(desired_props)) {
+					# default.vec2[new.all.dat[,1]==i] <- tab.names[i]
+				# }
+				# new.all.dat[,1] = default.vec2
+			# } else {
+				# stop("Add additional type in modifyProps()")
+			# }
+		# }
 		
 		#put observations back in the right order
 		new.all.dat2 = new.all.dat[order(new.all.dat[,rank.col-1]),]
@@ -355,8 +356,6 @@ modifyProps <- function(default.vec, desired_props, propens=NULL, accuracy=.01) 
 		return(new.all.dat2[,1])
 	}
 }
-
-
 
 
 #' Takes a categorical var specified in separate binary level variables
@@ -479,7 +478,7 @@ modifyPropsAsBinLevels <- function (vecs.list, desiredProps, propens=NULL) {
 #' prop.table(table(a[logiset]))
 
 modifypropsVarSingle_on_subset<-function(default.vec, desired_props, propens=NULL, logiset=NULL, accuracy=.01) {
-	if (is.null(logiset)) {logiset<-rep(T, length(default.vec))}
+	if (is.null(logiset)) {logiset<-rep(TRUE, length(default.vec))}
 	default.df<-as.data.frame(default.vec)
 	propens<-subset(propens, logiset)
 	
@@ -608,11 +607,10 @@ modifyPropsContinuous <- function(x.cont, desired_props, catToContModels, cont.b
 #' models were provided.
 #' 
 #' @export 
-#' @examples
-#' \dontrun{}
+
 
 adjust.proportions <- function(x, desiredProps, propens=NULL, logiset=NULL, catToContModels=NULL, cont.binbreaks=NULL, envir=parent.frame()) {
-	if (!is.null(logiset) && length(logiset)>0) {
+	if (!is.null(logiset) && sum(logiset)>0) {
 		#subset the propensities according to the logiset
 		propens_subset <- if (!is.null(propens)) { subsetFirstDimension(propens, logiset) } else NULL
 		

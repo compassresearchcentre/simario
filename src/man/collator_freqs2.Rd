@@ -54,7 +54,4 @@ Another difference between this function and the original collator_freqs() is th
 this function takes cat.adjustment and binbreaks arguments.  These are sent to
 collator_mutiple_lists_mx2().
 }
-\examples{
-\dontrun{}
-}
 

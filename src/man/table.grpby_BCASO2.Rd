@@ -35,7 +35,4 @@ Extension of table.grpby() that can handle grpby as a matrix as well as a vector
 The group-by variable may be time-invariant or time-variant. This function is  modified in
 to make order of tables of continuous variables in run_results be the same as in binbreaks
 }
-\examples{
-\dontrun{}
-}
 

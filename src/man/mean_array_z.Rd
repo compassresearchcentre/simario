@@ -15,6 +15,8 @@ confidence intervals
  are returned in additional columns}
 
 \item{NA.as.zero}{if TRUE (default), treat NAs as if they are zeros}
+
+\item{re_write_colnames}{a logic to rewrite the colnames of the cells.}
 }
 \value{
 a matrix of means across the Z dimension. The "meta" attribute

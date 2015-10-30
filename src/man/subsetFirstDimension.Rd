@@ -9,7 +9,7 @@ subsetFirstDimension(x, logiset)
 \arguments{
 \item{x}{a vector, matrix or array}
 
-\item{logical}{vector to subset first dimension by}
+\item{logiset}{vector to subset first dimension by}
 }
 \value{
 subset of the vector, matrix or array

@@ -21,7 +21,4 @@ a data frame
 \description{
 Returns first sheet of XLS as dataframe
 }
-\examples{
-\dontrun{}
-}
 

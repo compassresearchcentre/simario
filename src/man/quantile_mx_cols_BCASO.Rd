@@ -29,6 +29,12 @@ grpby should be a matrix with number of columns equal to number of years.}
 \item{new.names}{if specified, the names of the result will be
 set to this vector}
 
+\item{probs}{numeric vector of probabilities with values in [0,1]. (Values up to 2e-14 outside that range are accepted and moved to the nearby endpoint.)}
+
+\item{logiset}{logical vector or matrix indicating which rows to include, or NULL to include all.}
+
+\item{dict}{the specific project dictionary}
+
 \item{...}{additional arguments to pass to \code{\link{quantile}}
 e.g. na.rm=T}
 }
@@ -45,8 +51,5 @@ grpby variable in different years.
 Does not have ability to include weights or logisets.
 The group-by variable may be time-invariant or time-variant.
 Not sure if can handle no grouping.
-}
-\examples{
-\dontrun{}
 }
 

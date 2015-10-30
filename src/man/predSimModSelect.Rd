@@ -30,7 +30,4 @@ category will have a negative binomial model and the simulated values are backtr
 adding the start value of the last cateogory.  E.g. if the last category is 5+, then 5 is added
 to any values simulated from a negative binomial distribution.
 }
-\examples{
-\dontrun{}
-}
 

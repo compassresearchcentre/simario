@@ -20,7 +20,7 @@ the outcome variable.}
 \item{varname}{a string of length 1 with the name of the outcome variable.  Passed from
 mean_array_pctile_CIS2().}
 
-\item{dicr}{the dictionary of the specific MSM project.}
+\item{dict}{the dictionary of the specific MSM project.}
 }
 \description{
 Other way had the means of the numerator collated.  A percentage was calculated by
@@ -30,8 +30,5 @@ Because of this, the percentages are calculated for each group (if there is grou
 for each year for each run.  Then later the mean of the percentages is taken rather
 than the mean of the frequencies.  For more details see the preamble to
 mean_array_pctile_CIs2().
-}
-\examples{
-\dontrun{}
 }
 

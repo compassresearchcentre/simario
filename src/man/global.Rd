@@ -14,7 +14,4 @@ global(x, pos = 1)
 \description{
 Save x into global variable as it's own name.
 }
-\examples{
-\dontrun{}
-}
 

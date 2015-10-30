@@ -143,6 +143,7 @@ Dictionary <- proto(expr = {
 	#' 
 	#' @export
 	#' @examples
+	#'\dontrun{
 	#' . <- dict.MELC
 	#' x <- env.base$modules$years1_5$run_results_collated$means$kids
 	#' x <- env.base$modules$years1_5$run_results_collated$means.by.ethnicity$kids
@@ -151,7 +152,7 @@ Dictionary <- proto(expr = {
 	#' .$dlookup(c(1,2))
 	#' .$dlookup(freqSingle)
 	#' .$dlookup("single")
-	#' .$dlookup("don't exist")
+	#' .$dlookup("don't exist")}
 	dlookup_orig <- function(., x) {
 		
 		name <- c()

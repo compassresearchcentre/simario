@@ -50,7 +50,4 @@ this functiont takes cat.adjustments and binbreaks arguments.
   \item Labels the result using the dictionary
 }
 }
-\examples{
-\dontrun{}
-}
 

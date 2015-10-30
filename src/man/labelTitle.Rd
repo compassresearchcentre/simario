@@ -18,7 +18,4 @@ labelTitle(xm, along, title)
 names the "along" dimension with "title"
 eg: labelTitle(y, ROW, "Year")
 }
-\examples{
-\dontrun{}
-}
 

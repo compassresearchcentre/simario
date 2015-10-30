@@ -1,5 +1,5 @@
 library(proto)
-
+ 
 #' Simenv object - a simulation environment.
 #'
 #' A simulation environment contains everything required to perform a simulation. Typically 1 Simenv will be created 
@@ -15,7 +15,6 @@ library(proto)
 #' This class will be subclassed by specific simulation problems which will provide their own simframe,
 #' Simmodules and adjustments.  
 #'  
-#' @export 
 Simenv <- proto(
 expr = {  
 
@@ -284,6 +283,7 @@ expr = {
 		is_single_variable_to_adjust <- length(varnames) == 1
 		
 		logiset <- as.logical(evaluateLogisetExprAttribute(desired_props, .$simframe, varnames))
+			
 		
 		if (is_single_variable_to_adjust) {
 			propens <- propensities[[varnames]][,,iteration]
@@ -294,7 +294,6 @@ expr = {
 		}
 		
 	}
-
 	
 	#' Adjust the proportions of a single simframe variable.
 	#' 
@@ -339,14 +338,14 @@ expr = {
 
 	applyCatAdjustmentToSimframeVarSingle <- function(., varname, desired_props, propens, print_adj = T, logiset=NULL) {
 		if (print_adj) {
-			if(is.null(logiset) || length(logiset) == 0) {
+			if(is.null(logiset) || sum(logiset) == 0) {
 				cat(varname,"\n")
 			} else {
 				cat(varname,"- just for the logiset subset: ", "\n")
 			}
 		}
-		
-		if (!is.null(logiset) && length(logiset) > 0) {
+				
+		if (!is.null(logiset) && sum(logiset) > 0) {
 			.$simframe[varname]<-modifypropsVarSingle_on_subset(default.vec=.$simframe[varname], desired_props=desired_props, propens=propens, logiset=logiset)
 		}
 		else {
@@ -355,7 +354,7 @@ expr = {
 		
 		if (print_adj) {
 		
-			if (is.null(logiset) || length(logiset) == 0) {print(prop.table(table(.$simframe[varname])), digits=3)}
+			if (is.null(logiset) || sum(logiset) == 0) {print(prop.table(table(.$simframe[varname])), digits=3)}
 			else {print(prop.table(table(subset(.$simframe[varname],logiset))), digits=3)}
 			
 		}
@@ -433,7 +432,7 @@ expr = {
 			vecs.list <- vecs.list[binLevelVarnames] 
 		}
 		
-		if (!is.null(logiset) && length(logiset) > 0) {
+		if (!is.null(logiset) && sum(logiset) > 0) {
 			#subsetting the propensities according to logiset
 			propens <- subset(propens, logiset)
 			
@@ -481,7 +480,7 @@ expr = {
 		
 		if (printAdj) {
 			
-			if (is.null(logiset) || length(logiset) == 0) {
+			if (is.null(logiset) || sum(logiset) == 0) {
 				print(apply(.$simframe[varnames], COL, sum) / apply(.$simframe[varnames], COL, length), digits=3)
 				cat("\n")
 			} else {
@@ -525,9 +524,6 @@ expr = {
 	#'  NULL. simframe in receiving object is modified directly.
 	#' 
 	#' @export
-	#' @examples
-	#' \dontrun{}
-	
 	applyContAdjustmentToSimframe <- function(., varname, iteration, desiredProps, catToContModels, cont.binbreaks, propensities) {
 		propens <- propensities[[varname]][,,iteration]
 		logiset <- as.logical(evaluateLogisetExprAttribute(desiredProps, .$simframe))
@@ -642,7 +638,6 @@ expr = {
 			
 		}
 		
-		#browser()
 		invisible(lapply(.$modules, function(module) {
 							#module <- .$modules[[1]]
 							module$run_results_collated <- module$collate_all_run_results(module$run_results, .$cat.adjustments, .$simframe)

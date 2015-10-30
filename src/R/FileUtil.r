@@ -109,8 +109,6 @@ read_file <- function (filedir, filename, filetype = file_extension(filename), s
 #'  a data frame
 #' 
 #' @export
-#' @examples 
-#' \dontrun{}
 readXLSSheet1 <- function (filedir, filename, stringsAsFactors = FALSE, ...) {
 	filedir <- add_trailing_slash(filedir)		
 	oldOpt <- options(stringsAsFactors = stringsAsFactors)

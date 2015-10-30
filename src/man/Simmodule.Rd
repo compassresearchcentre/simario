@@ -7,22 +7,22 @@
 \format{\preformatted{proto object 
  $ class                      :function (.)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 123 11 123 33 18 40 123 123 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009cff930>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009d119e8>  
  $ clone                      :function (.)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 119 11 119 57 18 64 119 119 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009cff930>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009d119e8>  
  $ collate_all_run_results    :function (., all_run_results)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 112 29 114 2 36 9 112 114 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009cff930>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009d119e8>  
  $ simulateRun                :function (., simenv)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 69 17 71 2 24 9 69 71 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009cff930>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009d119e8>  
  $ new                        :function (., name)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 42 9 50 2 16 9 42 50 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009cff930>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009d119e8>  
  $ map_outcomes_to_run_results:function (., simframe, outcomes)   
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 93 33 95 2 40 9 93 95 
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009cff930>  
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x0000000009d119e8>  
 }}
 \usage{
 Simmodule

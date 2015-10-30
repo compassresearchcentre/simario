@@ -127,9 +127,6 @@ collator_freqs <- function (runs, dict, row.dim.label="Year", col.dim.label="", 
 #' a matrix of collated result for each iteration
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
-
 collator_freqs2 <- function (runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
   #check rownames are present for each iteration for each run
   #(will cause error in collator_mutiple_lists_mx2 otherwise)
@@ -344,10 +341,6 @@ collator_freqs_remove_zero_cat <- function(runs, dict, row.dim.label="Year", col
 #' a matrix of collated result for each iteration
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
-
-
 collator_freqs_remove_zero_cat2 <- function(runs, dict, row.dim.label="Year", col.dim.label="", CI=FALSE, cat.adjustments=NULL, binbreaks=NULL) {
   runs_mx <- collator_mutiple_lists_mx2(runs=runs, CI=CI, dict=dict, cat.adjustments=cat.adjustments, binbreaks=binbreaks)
   grpby.tag <- attr(runs_mx, "meta")["grpby.tag"]
@@ -518,9 +511,6 @@ collator_freqs_remove_zero_cat3 <- function(runs, dict, row.dim.label="Year", co
 #' NULL
 #' @seealso \code{\link{collator_mutiple_lists_mx}}
 #' @export 
-#' @examples
-#' \dontrun{}
-
 collator_histogram <- function(runs, dict, row.dim.label="Year", col.dim.label="") {
   runs_mx <- collator_mutiple_lists_mx(runs)
   
@@ -678,8 +668,6 @@ collator_mutiple_lists_mx <- function(runs, CI=TRUE) {
 #'
 #' @export 
 #' @keywords internal
-#' @examples
-#' \dontrun{}
 collator_mutiple_lists_mx2 <- function(runs, CI=TRUE, cat.adjustments=NULL, dict, binbreaks=NULL) {
   runs_array <- flatten_mxlists_to_array(runs)
   #reattach attributes (varname and grpby.tag)
@@ -731,8 +719,6 @@ identify_zero_category_cols <- function (mx) {
 #'  vector of zero column positions
 #'
 #' @export 
-#' @examples
-#' \dontrun{}
 identify_zero_category_cols_bygrp <- function (mx) {
   #names of the outcome variable (as opposed to the grouping variable come 2nd
   col.names <- colnames(mx)
@@ -967,8 +953,6 @@ label_flattened_mx <- function(mx.flattened, dict, row.dim.label="", col.dim.lab
 #'  a flattened matrix with labels and CI.
 #' 
 #' @export
-#' @examples
-#' \dontrun{}
 label_flattened_mx_grping.and.CIs <- function(mx.flattened, dict, row.dim.label="", col.dim.label="", CI=TRUE, num.runs, binbreaks=NULL) {
   varname <- attr(mx.flattened, "meta")["varname"]
   grpby.tag <- attr(mx.flattened, "meta")["grpby.tag"]
